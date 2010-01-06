@@ -27,7 +27,7 @@
 
 #define CHMSEE_TYPE_UI_INDEX (chmsee_ui_index_get_type())
 #define CHMSEE_UI_INDEX(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), CHMSEE_TYPE_UI_INDEX, ChmseeUiIndex))
-#define CHMSEE_IS_UI_INDEX(obj) (G_TYPE_CHECK_INSTANCE_TYPR((obj), CHMSEE_TYPE_UI_INDEX))
+#define CHMSEE_IS_UI_INDEX(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), CHMSEE_TYPE_UI_INDEX))
 
 typedef struct _ChmseeUiIndex ChmseeUiIndex;
 typedef struct _ChmseeUiIndexClass ChmseeUiIndexClass;
@@ -54,5 +54,6 @@ void chmsee_ui_index_refresh(ChmseeUiIndex* self);
  */
 gboolean chmsee_ui_index_select_link_by_name(ChmseeUiIndex* self, const gchar* name);
 
+void chmsee_ui_index_set_filter_string (ChmseeUiIndex *self, const gchar *key);
 
 #endif /* UI_INDEX_H_ */
