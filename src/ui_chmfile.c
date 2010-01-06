@@ -88,6 +88,8 @@ struct _ChmseeUiChmfilePrivate {
 
     GtkWidget* html_notebook;
 
+    GtkWidget* input;
+
     GtkActionGroup* action_group;
     GtkUIManager* ui_manager;
 
@@ -1083,8 +1085,22 @@ void chmsee_refresh_index(ChmseeUiChmfile* self) {
 	}
 }
 
+static void
+on_changed (GtkEntry *entry,
+            ChmseeUiChmfile *self)
+{
+    const gchar *text;
+
+    text = gtk_entry_get_text (entry);
+    chmsee_ui_index_set_filter_string (CHMSEE_UI_INDEX (selfp->ui_index), text);
+}
+
 static GtkWidget* chmsee_new_index_page(ChmseeUiChmfile* self) {
+        GtkWidget* vbox;
+        GtkWidget* input;
 	GtkWidget* booktree_sw = gtk_scrolled_window_new(NULL, NULL);
+
+
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (booktree_sw),
 			GTK_POLICY_NEVER,
 			GTK_POLICY_AUTOMATIC);
@@ -1092,8 +1108,16 @@ static GtkWidget* chmsee_new_index_page(ChmseeUiChmfile* self) {
 			GTK_SHADOW_IN);
 	gtk_container_set_border_width(GTK_CONTAINER (booktree_sw), 2);
 
+        vbox = gtk_vbox_new (FALSE, 0);
+        input = gtk_entry_new ();
+        g_signal_connect (input, "changed", G_CALLBACK (on_changed), self);
+        gtk_widget_show (input);
+
 	GtkWidget* uiIndex = chmsee_ui_index_new(NULL);
 	gtk_container_add(GTK_CONTAINER (booktree_sw), uiIndex);
+        gtk_box_pack_start (GTK_BOX (vbox), input, FALSE, TRUE, 0);
+        gtk_box_pack_start (GTK_BOX (vbox), booktree_sw, TRUE, TRUE, 0);
+
 	g_signal_connect_swapped(uiIndex,
 			"link-selected",
 			G_CALLBACK (on_ui_index_link_selected),
@@ -1101,7 +1125,8 @@ static GtkWidget* chmsee_new_index_page(ChmseeUiChmfile* self) {
 
 	selfp->index_page = booktree_sw;
 	selfp->ui_index = uiIndex;
-	return GTK_WIDGET(booktree_sw);
+        selfp->input = input;
+	return GTK_WIDGET(vbox);
 }
 
 void on_ui_index_link_selected(ChmseeUiChmfile* self, Link* link) {
