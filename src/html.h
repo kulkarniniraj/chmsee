@@ -17,12 +17,12 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef __CHMSEE_HTML_H__
-#define __CHMSEE_HTML_H__
+#ifndef __HTML_H__
+#define __HTML_H__
 
 #include <glib-object.h>
 #include <gtk/gtk.h>
-#include <webkit/webkit.h>
+#include <gtkmozembed.h>
 
 #define TYPE_HTML \
         (html_get_type())
@@ -40,8 +40,7 @@ typedef struct _HtmlClass   HtmlClass;
 
 struct _Html {
         GObject parent;
-        WebKitWebView *webview;
-		GtkWidget *scrolled;
+        GtkMozEmbed *gecko;
 };
 
 struct _HtmlClass {
@@ -78,6 +77,6 @@ void html_shutdown(Html*);
 void html_set_variable_font(Html*, const gchar*);
 void html_set_fixed_font(Html*, const gchar*);
 void html_init_system(void);
-void html_set_default_lang(Html*, gint);
+void html_set_default_lang(gint);
 
 #endif /* !__HTML_H__ */

@@ -21,8 +21,6 @@
 #include "config.h"
 #include "booktree.h"
 
-#include <string.h>
-
 #include "models/hhc.h"
 #include "utils/utils.h"
 
@@ -55,10 +53,8 @@ typedef struct {
 
 struct _BookTreePrivate {
     GtkTreeStore    *store;
-    GtkTreeModelFilter *filter_model;
     BookTreePixbufs *pixbufs;
     Hhc             *link_tree;
-    gchar           *filter_string;
 };
 
 /* Signals */
@@ -105,55 +101,6 @@ booktree_class_init(BookTreeClass *klass)
                               G_TYPE_POINTER);
 }
 
-static gboolean
-booktree_visible_func (GtkTreeModel *model,
-                       GtkTreeIter  *iter,
-                       gpointer     data)
-{
-    BookTree *self;
-    gboolean ret = FALSE;
-    gchar *text;
-    gchar *key;
-    gchar *normalized_string;
-    gchar *case_normalized_string;
-
-    self = BOOKTREE (data);
-
-    gtk_tree_model_get (model, iter,
-                        COL_TITLE, &text, -1);
-
-    if (selfp->filter_string == NULL)
-        return TRUE;
-
-    key = selfp->filter_string;
-
-    if (text) {
-        normalized_string = g_utf8_normalize (text, -1, G_NORMALIZE_ALL);
-        case_normalized_string = g_utf8_casefold (normalized_string, -1);
-
-        if (!strncasecmp (key, case_normalized_string, strlen (key)))
-            ret = TRUE;
-
-        g_free (text);
-        g_free (normalized_string);
-        g_free (case_normalized_string);
-    }
-
-    return ret;
-}
-
-static void
-apply_filter_model (BookTree *self)
-{
-    selfp->filter_model = GTK_TREE_MODEL_FILTER (gtk_tree_model_filter_new (GTK_TREE_MODEL(selfp->store), NULL));
-    gtk_tree_model_filter_set_visible_func (selfp->filter_model,
-                                            booktree_visible_func,
-                                            self,
-                                            NULL);
-    gtk_tree_view_set_model(GTK_TREE_VIEW (self),
-			    GTK_TREE_MODEL (selfp->filter_model));
-}
-
 static void
 booktree_init(BookTree *self)
 {
@@ -163,7 +110,8 @@ booktree_init(BookTree *self)
 			GDK_TYPE_PIXBUF,
 			G_TYPE_STRING,
 			G_TYPE_POINTER);
-        apply_filter_model (self);
+	gtk_tree_view_set_model(GTK_TREE_VIEW (self),
+			GTK_TREE_MODEL (selfp->store));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW (self), FALSE);
 	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(self), TRUE);
 
@@ -200,16 +148,6 @@ booktree_dispose(GObject* object) {
 		g_object_unref(selfp->pixbufs->pixbuf_doc);
 		selfp->pixbufs->pixbuf_doc = NULL;
 	}
-
-        if(selfp->filter_model) {
-                g_object_unref (selfp->filter_model);
-                selfp->filter_model = NULL;
-        }
-
-        if (selfp->filter_string) {
-                g_free (selfp->filter_string);
-                selfp->filter_string = NULL;
-        }
 }
 
 static void
@@ -382,7 +320,7 @@ booktree_selection_changed_cb(GtkTreeSelection *selection, BookTree *self)
         Link *link;
 
         if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
-                gtk_tree_model_get(GTK_TREE_MODEL (selfp->filter_model),
+                gtk_tree_model_get(GTK_TREE_MODEL (selfp->store),
                                    &iter, COL_LINK, &link, -1);
 
                 g_debug("book tree emiting '%s'\n", link->uri);
@@ -414,7 +352,8 @@ void booktree_set_model(BookTree* self, GNode* model) {
 			GDK_TYPE_PIXBUF,
 			G_TYPE_STRING,
 			G_TYPE_POINTER);
-        apply_filter_model (self);
+	gtk_tree_view_set_model(GTK_TREE_VIEW (self),
+			GTK_TREE_MODEL (selfp->store));
 
 
 	selfp->link_tree = model;
@@ -532,10 +471,3 @@ gboolean booktree_select_link_by_name(BookTree* self, const gchar* name) {
     return TRUE;
 }
 
-void
-booktree_set_filter_string (BookTree *self,
-                            const gchar *string)
-{
-    selfp->filter_string = g_strdup (string);
-    gtk_tree_model_filter_refilter (selfp->filter_model);
-}

@@ -88,8 +88,6 @@ struct _ChmseeUiChmfilePrivate {
 
     GtkWidget* html_notebook;
 
-    GtkWidget* input;
-
     GtkActionGroup* action_group;
     GtkUIManager* ui_manager;
 
@@ -130,8 +128,6 @@ static void chmsee_ui_chmfile_get_property(GObject* self,
 		guint property_id,
 		GValue* value,
 		GParamSpec* pspec);
-
-static void chmsee_ui_chmfile_html_changed(ChmseeUiChmfile* self, ChmseeIhtml* html);
 
 static void chmsee_set_context_menu_link(ChmseeUiChmfile* self, const gchar* link);
 
@@ -184,15 +180,15 @@ static const GtkRadioActionEntry radio_entries[] = {
 static const char *ui_description =
 		"<ui>"
 		" <popup name='HtmlContextLink'>"
-		"   <menuitem action='CopyLinkLocation'/>"
 		"   <menuitem action='OpenLinkInNewTab' name='OpenLinkInNewTab'/>"
+		"   <menuitem action='CopyLinkLocation'/>"
 		" </popup>"
 		" <popup name='HtmlContextNormal'>"
-		"   <menuitem action='CopyPageLocation'/>"
 		"   <menuitem action='Back'/>"
 		"   <menuitem action='Forward'/>"
 		"   <menuitem action='Copy'/>"
 		"   <menuitem action='SelectAll'/>"
+		"   <menuitem action='CopyPageLocation'/>"
 		" </popup>"
 		"<accelerator action='OnKeyboardControlEqual'/>"
 		"</ui>";
@@ -276,7 +272,10 @@ chmsee_ui_chmfile_init(ChmseeUiChmfile* self)
 
     /* Init gecko */
     chmsee_html_init_system();
+    chmsee_html_set_default_lang(selfp->lang);
+
     chmsee_ui_chmfile_populate_window(self);
+
 }
 
 static void
@@ -387,14 +386,14 @@ on_html_notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page, guint
   } else {
     gtk_window_set_title(GTK_WINDOW (self), "ChmseeUiChmfile");
   }
-  chmsee_ui_chmfile_html_changed(self, chmsee_ui_chmfile_get_active_html(self));
+  g_signal_emit(self, signals[HTML_CHANGED], 0, chmsee_ui_chmfile_get_active_html(self));
 }
 
 static void
 on_html_location_changed(ChmseeIhtml *html, const gchar *location, ChmseeUiChmfile* self)
 {
-	g_debug("%s:%d:html location changed cb: %s", __FILE__, __LINE__, location);
-	chmsee_ui_chmfile_html_changed(self, chmsee_ui_chmfile_get_active_html(self));
+  g_debug("%s:%d:html location changed cb: %s", __FILE__, __LINE__, location);
+  g_signal_emit(self, signals[HTML_CHANGED], 0, chmsee_ui_chmfile_get_active_html(self));
 }
 
 static gboolean
@@ -1084,22 +1083,8 @@ void chmsee_refresh_index(ChmseeUiChmfile* self) {
 	}
 }
 
-static void
-on_changed (GtkEntry *entry,
-            ChmseeUiChmfile *self)
-{
-    const gchar *text;
-
-    text = gtk_entry_get_text (entry);
-    chmsee_ui_index_set_filter_string (CHMSEE_UI_INDEX (selfp->ui_index), text);
-}
-
 static GtkWidget* chmsee_new_index_page(ChmseeUiChmfile* self) {
-        GtkWidget* vbox;
-        GtkWidget* input;
 	GtkWidget* booktree_sw = gtk_scrolled_window_new(NULL, NULL);
-
-
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (booktree_sw),
 			GTK_POLICY_NEVER,
 			GTK_POLICY_AUTOMATIC);
@@ -1107,16 +1092,8 @@ static GtkWidget* chmsee_new_index_page(ChmseeUiChmfile* self) {
 			GTK_SHADOW_IN);
 	gtk_container_set_border_width(GTK_CONTAINER (booktree_sw), 2);
 
-        vbox = gtk_vbox_new (FALSE, 0);
-        input = gtk_entry_new ();
-        g_signal_connect (input, "changed", G_CALLBACK (on_changed), self);
-        gtk_widget_show (input);
-
 	GtkWidget* uiIndex = chmsee_ui_index_new(NULL);
 	gtk_container_add(GTK_CONTAINER (booktree_sw), uiIndex);
-        gtk_box_pack_start (GTK_BOX (vbox), input, FALSE, TRUE, 0);
-        gtk_box_pack_start (GTK_BOX (vbox), booktree_sw, TRUE, TRUE, 0);
-
 	g_signal_connect_swapped(uiIndex,
 			"link-selected",
 			G_CALLBACK (on_ui_index_link_selected),
@@ -1124,8 +1101,7 @@ static GtkWidget* chmsee_new_index_page(ChmseeUiChmfile* self) {
 
 	selfp->index_page = booktree_sw;
 	selfp->ui_index = uiIndex;
-        selfp->input = input;
-	return GTK_WIDGET(vbox);
+	return GTK_WIDGET(booktree_sw);
 }
 
 void on_ui_index_link_selected(ChmseeUiChmfile* self, Link* link) {
@@ -1195,17 +1171,3 @@ void chmsee_ui_chmfile_get_property(GObject* object,
     break;
   }
 }
-
-void chmsee_ui_chmfile_html_changed(ChmseeUiChmfile* self, ChmseeIhtml* html)
-{
-	gtk_action_set_sensitive(
-			gtk_action_group_get_action(selfp->action_group, "Back"),
-			chmsee_ihtml_can_go_back(html)
-			);
-	gtk_action_set_sensitive(
-			gtk_action_group_get_action(selfp->action_group, "Forward"),
-			chmsee_ihtml_can_go_forward(html)
-			);
-	g_signal_emit(self, signals[HTML_CHANGED], 0, html);
-}
-

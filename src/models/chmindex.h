@@ -1,5 +1,5 @@
-#ifndef __CHMSEE_CHMINDEX_H__
-#define __CHMSEE_CHMINDEX_H__
+#ifndef CHMSEE_CHMINDEX_H
+#define CHMSEE_CHMINDEX_H
 
 #include <glib.h>
 #include <glib-object.h>

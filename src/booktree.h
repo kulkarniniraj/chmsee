@@ -61,7 +61,6 @@ void booktree_set_model(BookTree* self, GNode* model);
 
 void booktree_select_uri(BookTree *, const gchar *);
 const gchar *booktree_get_selected_book_title(BookTree *);
-void booktree_set_filter_string (BookTree *, const gchar *);
 
 /**
  * @return true if successful. else return false.

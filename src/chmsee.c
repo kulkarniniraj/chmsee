@@ -349,7 +349,7 @@ chmsee_init(ChmSee* self)
 
     /* Init gecko */
     chmsee_html_init_system();
-    //chmsee_html_set_default_lang(selfp->lang);
+    chmsee_html_set_default_lang(selfp->lang);
 
     populate_window(self);
     chmsee_load_config(self);
@@ -1172,7 +1172,6 @@ const gchar* chmsee_get_variable_font(ChmSee* self) {
 
 void chmsee_set_variable_font(ChmSee* self, const gchar* font_name) {
 	g_return_if_fail(selfp->book);
-    chmsee_ihtml_set_variable_font(get_active_html(self),font_name);
     chmsee_ichmfile_set_variable_font(selfp->book, font_name);
 }
 
@@ -1183,7 +1182,6 @@ const gchar* chmsee_get_fixed_font(ChmSee* self) {
 
 void chmsee_set_fixed_font(ChmSee* self, const gchar* font_name) {
 	g_return_if_fail(selfp->book);
-    chmsee_ihtml_set_fixed_font(get_active_html(self),font_name);
     chmsee_ichmfile_set_fixed_font(selfp->book, font_name);
 }
 
@@ -1192,7 +1190,6 @@ int chmsee_get_lang(ChmSee* self) {
 }
 void chmsee_set_lang(ChmSee* self, int lang) {
 	selfp->lang = lang;
-    chmsee_ihtml_set_lang(get_active_html(self),lang);
 }
 
 gboolean chmsee_has_book(ChmSee* self) {

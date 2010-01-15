@@ -23,9 +23,9 @@ link_directories(
   )
 
 set(CHMSEE_SRCS
-  booktree.c chmsee.c html.c
+  booktree.c chmsee.c gecko_utils.cpp html.c
   setup.c startup.c ui_bookmarks.c booktree.h chmsee.h
-  html.h setup.h startup.h ui_bookmarks.h
+  gecko_utils.h html.h setup.h startup.h ui_bookmarks.h
   marshal.h marshal.c
   ihtml.h ihtml.c
   html-factory.h html-factory.c
@@ -51,7 +51,7 @@ target_link_libraries(chmseelib
   ${CHMSEE_LIBRARIES}
   )
 
-add_executable(chmsee main.c)
+add_executable(chmsee main.cpp)
 target_link_libraries(chmsee
   chmseelib
   )
