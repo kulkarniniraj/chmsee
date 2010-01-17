@@ -8,13 +8,13 @@ add_definitions(
         )
 add_custom_command(
         OUTPUT marshal.h
-        COMMAND ${GLIB_GENMARSHAL} --prefix=marshal ${CMAKE_CURRENT_SOURCE_DIR}/marshal.list --header > ${CMAKE_CURRENT_SOURCE_DIR}/marshal.h
+        COMMAND ${GLIB_GENMARSHAL} --prefix=marshal ${CMAKE_CURRENT_SOURCE_DIR}/marshal.list --header > ${CMAKE_CURRENT_BINARY_DIR}/marshal.h
         DEPENDS marshal.list
         )
 
 add_custom_command(
         OUTPUT marshal.c
-        COMMAND ${GLIB_GENMARSHAL} --prefix=marshal ${CMAKE_CURRENT_SOURCE_DIR}/marshal.list --body > ${CMAKE_CURRENT_SOURCE_DIR}/marshal.c
+        COMMAND ${GLIB_GENMARSHAL} --prefix=marshal ${CMAKE_CURRENT_SOURCE_DIR}/marshal.list --body > ${CMAKE_CURRENT_BINARY_DIR}/marshal.c
         DEPENDS marshal.list
         )
 
@@ -26,7 +26,7 @@ set(CHMSEE_SRCS
         booktree.c chmsee.c gecko_utils.cpp html.c
         setup.c startup.c ui_bookmarks.c booktree.h chmsee.h
         gecko_utils.h html.h setup.h startup.h ui_bookmarks.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/marshal.h ${CMAKE_CURRENT_SOURCE_DIR}/marshal.c
+        ${CMAKE_CURRENT_BINARY_DIR}/marshal.h ${CMAKE_CURRENT_BINARY_DIR}/marshal.c
         ihtml.h ihtml.c
         html-factory.h html-factory.c
         ui_index.h ui_index.c

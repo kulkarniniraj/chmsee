@@ -1,6 +1,7 @@
 project(chmsee)
 cmake_minimum_required(VERSION 2.6.2 FATAL_ERROR)
 set(PACKAGE_VERSION "1.1.0" )
+
 find_package(PkgConfig)
 
 pkg_check_modules (CHMSEE REQUIRED gthread-2.0 glib-2.0 libxml-2.0 gtk+-2.0 nspr)
@@ -54,6 +55,11 @@ if(${LIBGCRYPT} STREQUAL "LIBGCRYPT-NOTFOUND")
         message(FATAL_ERROR "libgcrypt not found, you can find one in ftp://ftp.gnupg.org/gcrypt/libgcrypt/")
 endif()
 
+# Set RPATH for installing
+set(CMAKE_SKIP_BUILD_RPATH FALSE)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+set(CMAKE_INSTALL_RPATH ${CMAKE_SYSTEM_LIBRARY_PATH})
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 add_subdirectory(src)
 add_subdirectory(data)
