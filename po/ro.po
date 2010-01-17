@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2009-05-10 22:47+0800\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-01-17 11:55+0800\n"
 "PO-Revision-Date: 2009-06-16 19:30+0000\n"
 "Last-Translator: bitter <Unknown>\n"
 "Language-Team: Romanian <ro@li.org>\n"
@@ -17,35 +17,41 @@ msgstr ""
 "X-Launchpad-Export-Date: 2009-07-04 04:44+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
-#: ../data/chmsee.glade.h:1
+#: ../data/about-dialog.glade.h:1
+msgid "The HTML Help(CHM) viewer for Unix/Linux"
+msgstr "Program de vizualizare HTML Help(CHM) pentru Unix/Linux"
+
+#: ../data/about-dialog.glade.h:2
+msgid "http://code.google.com/p/chmsee"
+msgstr "http://code.google.com/p/chmsee"
+
+#: ../data/about-dialog.glade.h:3
+msgid "translator-credits"
+msgstr ""
+"Launchpad Contributions:\n"
+"  bitter https://launchpad.net/~hrdaniel03"
+
+#: ../data/openfile-dialog.glade.h:1
+msgid "Open File"
+msgstr "Deschide Fișier"
+
+#: ../data/setup-window.glade.h:1
 msgid "<b>Cache</b>"
 msgstr "<b>Cache</b>"
 
-#: ../data/chmsee.glade.h:2
+#: ../data/setup-window.glade.h:2
 msgid "<b>Charset</b>"
 msgstr "<b>Set de caractere</b>"
 
-#: ../data/chmsee.glade.h:3
+#: ../data/setup-window.glade.h:3
 msgid "<b>Font</b>"
 msgstr "<b>Font</b>"
 
-#: ../data/chmsee.glade.h:4
-msgid "About"
-msgstr "Despre"
-
-#: ../data/chmsee.glade.h:5
-msgid "About..."
-msgstr "Despre..."
-
-#: ../data/chmsee.glade.h:6
+#: ../data/setup-window.glade.h:4
 msgid "Auto-Detect:"
 msgstr "Auto-Detectare:"
 
-#: ../data/chmsee.glade.h:7
-msgid "Back"
-msgstr "Înapoi"
-
-#: ../data/chmsee.glade.h:8
+#: ../data/setup-window.glade.h:5
 msgid ""
 "CHM files extracted in this cache folder, you can press Clear button to free "
 "disk space.\n"
@@ -57,227 +63,238 @@ msgstr ""
 "Notă: Dacă vizualizați un fișier CHM, este necesară redeschiderea acestuia "
 "după curățenie."
 
-#: ../data/chmsee.glade.h:11 ../data/chmsee.desktop.in.h:1
-msgid "ChmSee"
-msgstr "ChmSee"
-
-#: ../data/chmsee.glade.h:12
-msgid "Copy Page _Location"
-msgstr "Copiază _Locația Paginii"
-
-#: ../data/chmsee.glade.h:13
+#: ../data/setup-window.glade.h:8
 msgid "Fixed Width:"
 msgstr "Reparat cu:"
 
-#: ../data/chmsee.glade.h:14
-msgid "Forward"
-msgstr "Înainte"
+#: ../data/setup-window.glade.h:9
+msgid "Japanese"
+msgstr ""
 
-#: ../data/chmsee.glade.h:15
-msgid "Home"
-msgstr "Acasă"
+#: ../data/setup-window.glade.h:10
+msgid "Korean"
+msgstr ""
 
-#: ../data/chmsee.glade.h:16
-msgid "Normal"
-msgstr "Normal"
+#: ../data/setup-window.glade.h:11
+msgid "Russian"
+msgstr ""
 
-#: ../data/chmsee.glade.h:17
-msgid "Open File"
-msgstr "Deschide Fișier"
-
-#: ../data/chmsee.glade.h:18
-msgid "Open Link in New _Tab"
-msgstr "Deschide Legătura în _Tab Nou"
-
-#: ../data/chmsee.glade.h:19
-msgid "Panel"
-msgstr "Panou"
-
-#: ../data/chmsee.glade.h:20
-msgid "Select _All"
-msgstr "Selectează _Tot"
-
-#: ../data/chmsee.glade.h:21
+#: ../data/setup-window.glade.h:12
 msgid "Setup"
 msgstr "Configurare"
 
-#: ../data/chmsee.glade.h:22
-msgid "Show/Hide Panel"
-msgstr "Arată/Ascunde Panoul"
-
-#: ../data/chmsee.glade.h:23
-msgid "Side _Pane"
-msgstr "_Panou Lateral"
-
-#: ../data/chmsee.glade.h:24
-msgid "The HTML Help(CHM) viewer for Unix/Linux"
-msgstr "Program de vizualizare HTML Help(CHM) pentru Unix/Linux"
-
-#: ../data/chmsee.glade.h:25
-msgid ""
-"Universal\n"
-"Simplified Chinese\n"
-"Tradtional Chinese\n"
-"Japanese\n"
-"Korean\n"
-"Russian\n"
-"Ukrainain"
+#: ../data/setup-window.glade.h:13
+msgid "Simplified Chinese"
 msgstr ""
-"Universal\n"
-"Chineză Simplificată\n"
-"Chineză Tradițională\n"
-"Japoneză\n"
-"Koreană\n"
-"Rusă\n"
-"Ucrainiană"
 
-#: ../data/chmsee.glade.h:32
+#: ../data/setup-window.glade.h:14
+msgid "Traditional Chinese"
+msgstr ""
+
+#: ../data/setup-window.glade.h:15
+msgid "Ukrainian"
+msgstr ""
+
+#: ../data/setup-window.glade.h:16
+msgid "Universal"
+msgstr ""
+
+#: ../data/setup-window.glade.h:17
 msgid "Variable Width:"
 msgstr "Lățime Variabilă"
 
-#: ../data/chmsee.glade.h:33
-msgid "Zoom In"
-msgstr "Mărește"
-
-#: ../data/chmsee.glade.h:34
-msgid "Zoom Out"
-msgstr "Micșorează"
-
-#: ../data/chmsee.glade.h:35
-msgid "_Back"
-msgstr "_Înapoi"
-
-#: ../data/chmsee.glade.h:36
-msgid "_Close Tab"
-msgstr "_Închide Tab"
-
-#: ../data/chmsee.glade.h:37
-msgid "_Copy"
-msgstr "_Copiază"
-
-#: ../data/chmsee.glade.h:38
-msgid "_Copy Link Location"
-msgstr "_Copiază Locația Legăturii"
-
-#: ../data/chmsee.glade.h:39
-msgid "_Edit"
-msgstr "_Editează"
-
-#: ../data/chmsee.glade.h:40
-msgid "_File"
-msgstr "_Fișier"
-
-#: ../data/chmsee.glade.h:41
-msgid "_Forward"
-msgstr "_Înainte"
-
-#: ../data/chmsee.glade.h:42
-msgid "_Full Screen"
-msgstr "_Tot Ecranul"
-
-#: ../data/chmsee.glade.h:43
-msgid "_Help"
-msgstr "_Ajutor"
-
-#: ../data/chmsee.glade.h:44
-msgid "_New Tab"
-msgstr "_Tab Nou"
-
-#: ../data/chmsee.glade.h:45
-msgid "_View"
-msgstr "_Vizualizează"
-
-#: ../data/chmsee.glade.h:46
-msgid "http://code.google.com/p/chmsee"
-msgstr "http://code.google.com/p/chmsee"
-
-#. TRANSLATORS: Replace this string with your names, one name per line.
-#: ../data/chmsee.glade.h:48
-msgid "translator-credits"
-msgstr ""
-"Launchpad Contributions:\n"
-"  bitter https://launchpad.net/~hrdaniel03"
+#: ../data/chmsee.desktop.in.h:1
+msgid "ChmSee"
+msgstr "ChmSee"
 
 #: ../data/chmsee.desktop.in.h:2
 msgid "HTML Help(CHM) viewer"
 msgstr "Program de vizualizare HTML Help(CHM)"
 
-#: ../src/chmsee.c:449
+#: ../src/chmsee.c:481 ../src/ui_chmfile.c:419
 #, c-format
 msgid "URI redirect: \"%s\" -> \"%s\""
 msgstr "URI redirectează: \"%s\" -> \"%s\""
 
-#: ../src/chmsee.c:610
+#: ../src/chmsee.c:554
 msgid "CHM Files"
 msgstr "Fișiere CHM"
 
-#: ../src/chmsee.c:615
+#: ../src/chmsee.c:559
 msgid "All Files"
 msgstr "Toate Fișierele"
 
-#: ../src/chmsee.c:1135
+#: ../src/chmsee.c:841
 msgid "Ready!"
 msgstr "Gata!"
 
-#: ../src/chmsee.c:1191
-msgid "Topics"
-msgstr "Subiecte"
-
-#: ../src/chmsee.c:1208
-msgid "Bookmarks"
-msgstr "Semne de carte"
-
-#. Custom label widget, with a close button
-#: ../src/chmsee.c:1370 ../src/chmsee.c:1545
-msgid "No Title"
-msgstr "Nici un Titlu"
-
-#: ../src/chmsee.c:1649
+#: ../src/chmsee.c:973
 #, c-format
 msgid "Error loading file '%s'"
 msgstr "Eroare la încărcarea fișierului '%s'"
-
-#: ../src/models/chmfile.c:239
-#, c-format
-msgid "cannot open chmfile: %s"
-msgstr "nu se paote deschide fișierul chm: %s"
-
-#: ../src/models/chmfile.c:246
-#, c-format
-msgid "Extract chmfile failed: %s"
-msgstr "Extragerea fișierului chm eșuată: %s"
-
-#: ../src/models/chmfile.c:272
-#, c-format
-msgid "open \"%s\" failed: %s"
-msgstr "deschidere \"%s\" eșuată: %s"
-
-#: ../src/models/chmfile.c:322
-#, c-format
-msgid "Can not open chm file %s."
-msgstr "Nu se poate deschide fișierul chm %s."
-
-#: ../src/models/chmfile.c:580
-msgid "Can't found hhc file."
-msgstr "Nu s-a găsit fișierul hhc."
 
 #: ../src/ui_bookmarks.c:315
 msgid "Bookmark"
 msgstr "Semn de carte"
 
-#: ../src/main.cpp:88
+#: ../src/ui_chmfile.c:665
+msgid "Topics"
+msgstr "Subiecte"
+
+#: ../src/ui_chmfile.c:674
+msgid "Index"
+msgstr ""
+
+#: ../src/ui_chmfile.c:680
+msgid "Bookmarks"
+msgstr "Semne de carte"
+
+#. Custom label widget, with a close button
+#: ../src/ui_chmfile.c:870 ../src/ui_chmfile.c:1003
+msgid "No Title"
+msgstr "Nici un Titlu"
+
+#: ../src/main.cpp:108
+msgid "Specify index"
+msgstr ""
+
+#: ../src/main.cpp:109
+msgid "INDEX"
+msgstr ""
+
+#: ../src/main.cpp:113
 msgid "Display the version and exit"
 msgstr "Afișare versiune și ieșire."
 
-#: ../src/main.cpp:93
+#: ../src/main.cpp:118
 msgid "be verbose, repeat 3 times to get all info"
 msgstr "fii guraliv, repetă de 3 ori pentru a obține toate informațiile"
 
-#: ../src/main.cpp:98
+#: ../src/main.cpp:123
 msgid "be quiet, repeat 2 times to disable all info"
 msgstr "fii tăcut, repetă de 2 ori pentru a elimina toate informațiile"
 
-#: ../src/main.cpp:135
+#: ../src/main.cpp:129
+msgid "PATH"
+msgstr ""
+
+#: ../src/main.cpp:160
 #, c-format
 msgid "more than 1 argument\n"
 msgstr "mai mult de 1 argument\n"
+
+#: ../src/models/chmfile.c:254
+#, c-format
+msgid "cannot open chmfile: %s"
+msgstr "nu se paote deschide fișierul chm: %s"
+
+#: ../src/models/chmfile.c:261
+#, c-format
+msgid "Extract chmfile failed: %s"
+msgstr "Extragerea fișierului chm eșuată: %s"
+
+#: ../src/models/chmfile.c:287
+#, c-format
+msgid "open \"%s\" failed: %s"
+msgstr "deschidere \"%s\" eșuată: %s"
+
+#: ../src/models/chmfile.c:337
+#, c-format
+msgid "Can not open chm file %s."
+msgstr "Nu se poate deschide fișierul chm %s."
+
+#: ../src/models/chmfile.c:595
+msgid "Can't found hhc file."
+msgstr "Nu s-a găsit fișierul hhc."
+
+#~ msgid "About"
+#~ msgstr "Despre"
+
+#~ msgid "About..."
+#~ msgstr "Despre..."
+
+#~ msgid "Back"
+#~ msgstr "Înapoi"
+
+#~ msgid "Copy Page _Location"
+#~ msgstr "Copiază _Locația Paginii"
+
+#~ msgid "Forward"
+#~ msgstr "Înainte"
+
+#~ msgid "Home"
+#~ msgstr "Acasă"
+
+#~ msgid "Normal"
+#~ msgstr "Normal"
+
+#~ msgid "Open Link in New _Tab"
+#~ msgstr "Deschide Legătura în _Tab Nou"
+
+#~ msgid "Panel"
+#~ msgstr "Panou"
+
+#~ msgid "Select _All"
+#~ msgstr "Selectează _Tot"
+
+#~ msgid "Show/Hide Panel"
+#~ msgstr "Arată/Ascunde Panoul"
+
+#~ msgid "Side _Pane"
+#~ msgstr "_Panou Lateral"
+
+#~ msgid ""
+#~ "Universal\n"
+#~ "Simplified Chinese\n"
+#~ "Tradtional Chinese\n"
+#~ "Japanese\n"
+#~ "Korean\n"
+#~ "Russian\n"
+#~ "Ukrainain"
+#~ msgstr ""
+#~ "Universal\n"
+#~ "Chineză Simplificată\n"
+#~ "Chineză Tradițională\n"
+#~ "Japoneză\n"
+#~ "Koreană\n"
+#~ "Rusă\n"
+#~ "Ucrainiană"
+
+#~ msgid "Zoom In"
+#~ msgstr "Mărește"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Micșorează"
+
+#~ msgid "_Back"
+#~ msgstr "_Înapoi"
+
+#~ msgid "_Close Tab"
+#~ msgstr "_Închide Tab"
+
+#~ msgid "_Copy"
+#~ msgstr "_Copiază"
+
+#~ msgid "_Copy Link Location"
+#~ msgstr "_Copiază Locația Legăturii"
+
+#~ msgid "_Edit"
+#~ msgstr "_Editează"
+
+#~ msgid "_File"
+#~ msgstr "_Fișier"
+
+#~ msgid "_Forward"
+#~ msgstr "_Înainte"
+
+#~ msgid "_Full Screen"
+#~ msgstr "_Tot Ecranul"
+
+#~ msgid "_Help"
+#~ msgstr "_Ajutor"
+
+#~ msgid "_New Tab"
+#~ msgstr "_Tab Nou"
+
+#~ msgid "_View"
+#~ msgstr "_Vizualizează"

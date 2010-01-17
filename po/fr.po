@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-10 22:47+0800\n"
+"POT-Creation-Date: 2010-01-17 11:55+0800\n"
 "PO-Revision-Date: 2009-04-13 22:36+0000\n"
 "Last-Translator: Pierre Slamich <pierre.slamich@gmail.com>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -17,35 +17,45 @@ msgstr ""
 "X-Launchpad-Export-Date: 2009-07-04 04:44+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
-#: ../data/chmsee.glade.h:1
+#: ../data/about-dialog.glade.h:1
+msgid "The HTML Help(CHM) viewer for Unix/Linux"
+msgstr "Le visualiseur de fichiers d'aide en HTML (CHM) pour Unix/Linux"
+
+#: ../data/about-dialog.glade.h:2
+msgid "http://code.google.com/p/chmsee"
+msgstr "http://code.google.com/p/chmsee"
+
+#: ../data/about-dialog.glade.h:3
+msgid "translator-credits"
+msgstr ""
+"Launchpad Contributions:\n"
+"  appzer0 https://launchpad.net/~appzer0\n"
+"\n"
+"Launchpad Contributions:\n"
+"  Pierre Slamich https://launchpad.net/~pierre-slamich\n"
+"  appzer0 https://launchpad.net/~appzer0"
+
+#: ../data/openfile-dialog.glade.h:1
+msgid "Open File"
+msgstr "Ouvrir un fichier"
+
+#: ../data/setup-window.glade.h:1
 msgid "<b>Cache</b>"
 msgstr "<b>Cache</b>"
 
-#: ../data/chmsee.glade.h:2
+#: ../data/setup-window.glade.h:2
 msgid "<b>Charset</b>"
 msgstr "<b>Encodage</b>"
 
-#: ../data/chmsee.glade.h:3
+#: ../data/setup-window.glade.h:3
 msgid "<b>Font</b>"
 msgstr "<b>Police</b>"
 
-#: ../data/chmsee.glade.h:4
-msgid "About"
-msgstr "À propos"
-
-#: ../data/chmsee.glade.h:5
-msgid "About..."
-msgstr "À propos..."
-
-#: ../data/chmsee.glade.h:6
+#: ../data/setup-window.glade.h:4
 msgid "Auto-Detect:"
 msgstr "Détection auto. :"
 
-#: ../data/chmsee.glade.h:7
-msgid "Back"
-msgstr "Retour"
-
-#: ../data/chmsee.glade.h:8
+#: ../data/setup-window.glade.h:5
 msgid ""
 "CHM files extracted in this cache folder, you can press Clear button to free "
 "disk space.\n"
@@ -58,237 +68,238 @@ msgstr ""
 "Note : si vous êtes en train de visualiser un fichier CHM, il vous faudra "
 "l'ouvrir à nouveau."
 
-#: ../data/chmsee.glade.h:11 ../data/chmsee.desktop.in.h:1
-msgid "ChmSee"
-msgstr "ChmSee"
-
-#: ../data/chmsee.glade.h:12
-msgid "Copy Page _Location"
-msgstr "Copier l'UR_L de la page"
-
-#: ../data/chmsee.glade.h:13
+#: ../data/setup-window.glade.h:8
 msgid "Fixed Width:"
 msgstr "Chasse fixe :"
 
-#: ../data/chmsee.glade.h:14
-msgid "Forward"
-msgstr "Suivant"
+#: ../data/setup-window.glade.h:9
+msgid "Japanese"
+msgstr ""
 
-#: ../data/chmsee.glade.h:15
-msgid "Home"
-msgstr "Accueil"
+#: ../data/setup-window.glade.h:10
+msgid "Korean"
+msgstr ""
 
-#: ../data/chmsee.glade.h:16
-msgid "Normal"
-msgstr "Normal"
+#: ../data/setup-window.glade.h:11
+msgid "Russian"
+msgstr ""
 
-#: ../data/chmsee.glade.h:17
-msgid "Open File"
-msgstr "Ouvrir un fichier"
-
-#: ../data/chmsee.glade.h:18
-msgid "Open Link in New _Tab"
-msgstr "Ouvrir le lien dans un nouvel ongle_t"
-
-#: ../data/chmsee.glade.h:19
-msgid "Panel"
-msgstr "Panneau"
-
-#: ../data/chmsee.glade.h:20
-msgid "Select _All"
-msgstr "Tout sélectionner"
-
-#: ../data/chmsee.glade.h:21
+#: ../data/setup-window.glade.h:12
 msgid "Setup"
 msgstr "Paramètres"
 
-#: ../data/chmsee.glade.h:22
-msgid "Show/Hide Panel"
-msgstr "Afficher/cacher le panneau"
-
-#: ../data/chmsee.glade.h:24
-msgid "The HTML Help(CHM) viewer for Unix/Linux"
-msgstr "Le visualiseur de fichiers d'aide en HTML (CHM) pour Unix/Linux"
-
-#: ../data/chmsee.glade.h:25
-msgid ""
-"Universal\n"
-"Simplified Chinese\n"
-"Tradtional Chinese\n"
-"Japanese\n"
-"Korean\n"
-"Russian\n"
-"Ukrainain"
+#: ../data/setup-window.glade.h:13
+msgid "Simplified Chinese"
 msgstr ""
-"Universel\n"
-"Chinois simplifié\n"
-"Chinois traditionnel\n"
-"Japonais\n"
-"Coréen\n"
-"Russe\n"
-"Ukrainien"
 
-#: ../data/chmsee.glade.h:33
-msgid "Zoom In"
-msgstr "Zoomer"
-
-#: ../data/chmsee.glade.h:34
-msgid "Zoom Out"
-msgstr "Dézoomer"
-
-#: ../data/chmsee.glade.h:35
-msgid "_Back"
-msgstr "Retour"
-
-#: ../data/chmsee.glade.h:36
-msgid "_Close Tab"
-msgstr "Fermer l'onglet"
-
-#: ../data/chmsee.glade.h:37
-msgid "_Copy"
-msgstr "_Copier"
-
-#: ../data/chmsee.glade.h:38
-msgid "_Copy Link Location"
-msgstr "_Copier l'adresse du lien"
-
-#: ../data/chmsee.glade.h:39
-msgid "_Edit"
-msgstr "Édit_er"
-
-#: ../data/chmsee.glade.h:40
-msgid "_File"
-msgstr "_Fichier"
-
-#: ../data/chmsee.glade.h:41
-msgid "_Forward"
-msgstr "Suivant"
-
-#: ../data/chmsee.glade.h:43
-msgid "_Help"
-msgstr "Aide"
-
-#: ../data/chmsee.glade.h:44
-msgid "_New Tab"
-msgstr "_Nouvel onglet"
-
-#: ../data/chmsee.glade.h:45
-msgid "_View"
-msgstr "_Visualiser"
-
-#: ../data/chmsee.glade.h:46
-msgid "http://code.google.com/p/chmsee"
-msgstr "http://code.google.com/p/chmsee"
-
-#. TRANSLATORS: Replace this string with your names, one name per line.
-#: ../data/chmsee.glade.h:48
-msgid "translator-credits"
+#: ../data/setup-window.glade.h:14
+msgid "Traditional Chinese"
 msgstr ""
-"Launchpad Contributions:\n"
-"  appzer0 https://launchpad.net/~appzer0\n"
-"\n"
-"Launchpad Contributions:\n"
-"  Pierre Slamich https://launchpad.net/~pierre-slamich\n"
-"  appzer0 https://launchpad.net/~appzer0"
+
+#: ../data/setup-window.glade.h:15
+msgid "Ukrainian"
+msgstr ""
+
+#: ../data/setup-window.glade.h:16
+msgid "Universal"
+msgstr ""
+
+#: ../data/setup-window.glade.h:17
+msgid "Variable Width:"
+msgstr ""
+
+#: ../data/chmsee.desktop.in.h:1
+msgid "ChmSee"
+msgstr "ChmSee"
 
 #: ../data/chmsee.desktop.in.h:2
 msgid "HTML Help(CHM) viewer"
 msgstr "Visualiseur d'aide HTML (CHM)"
 
-#: ../src/chmsee.c:610
+#: ../src/chmsee.c:481 ../src/ui_chmfile.c:419
+#, c-format
+msgid "URI redirect: \"%s\" -> \"%s\""
+msgstr ""
+
+#: ../src/chmsee.c:554
 msgid "CHM Files"
 msgstr "Fichiers CHM"
 
-#: ../src/chmsee.c:615
+#: ../src/chmsee.c:559
 msgid "All Files"
 msgstr "Tous les fichiers"
 
-#: ../src/chmsee.c:1135
+#: ../src/chmsee.c:841
 msgid "Ready!"
 msgstr "Prêt !"
 
-#: ../src/chmsee.c:1191
-msgid "Topics"
-msgstr "Rubriques"
-
-#: ../src/chmsee.c:1208
-msgid "Bookmarks"
-msgstr "Marque-pages"
-
-#. Custom label widget, with a close button
-#: ../src/chmsee.c:1370 ../src/chmsee.c:1545
-msgid "No Title"
-msgstr "Sans titre"
-
-#: ../src/chmsee.c:1649
+#: ../src/chmsee.c:973
 #, c-format
 msgid "Error loading file '%s'"
 msgstr "Erreur au chargement de '%s'"
 
-#: ../src/models/chmfile.c:239
+#: ../src/ui_bookmarks.c:315
+msgid "Bookmark"
+msgstr ""
+
+#: ../src/ui_chmfile.c:665
+msgid "Topics"
+msgstr "Rubriques"
+
+#: ../src/ui_chmfile.c:674
+msgid "Index"
+msgstr ""
+
+#: ../src/ui_chmfile.c:680
+msgid "Bookmarks"
+msgstr "Marque-pages"
+
+#. Custom label widget, with a close button
+#: ../src/ui_chmfile.c:870 ../src/ui_chmfile.c:1003
+msgid "No Title"
+msgstr "Sans titre"
+
+#: ../src/main.cpp:108
+msgid "Specify index"
+msgstr ""
+
+#: ../src/main.cpp:109
+msgid "INDEX"
+msgstr ""
+
+#: ../src/main.cpp:113
+msgid "Display the version and exit"
+msgstr "Afficher la version et quitter"
+
+#: ../src/main.cpp:118
+msgid "be verbose, repeat 3 times to get all info"
+msgstr ""
+
+#: ../src/main.cpp:123
+msgid "be quiet, repeat 2 times to disable all info"
+msgstr ""
+
+#: ../src/main.cpp:129
+msgid "PATH"
+msgstr ""
+
+#: ../src/main.cpp:160
+#, c-format
+msgid "more than 1 argument\n"
+msgstr "plus d'un argument\n"
+
+#: ../src/models/chmfile.c:254
 #, c-format
 msgid "cannot open chmfile: %s"
 msgstr "Impossible d'ouvrir le fichier CHM : '%s'"
 
-#: ../src/models/chmfile.c:246
+#: ../src/models/chmfile.c:261
 #, c-format
 msgid "Extract chmfile failed: %s"
 msgstr "Échec à l'extraction du fichier CHM : '%s'"
 
-#: ../src/models/chmfile.c:272
+#: ../src/models/chmfile.c:287
 #, c-format
 msgid "open \"%s\" failed: %s"
 msgstr "Échec à l'ouverture de '%s' : '%s'"
 
-#: ../src/models/chmfile.c:322
+#: ../src/models/chmfile.c:337
 #, c-format
 msgid "Can not open chm file %s."
 msgstr "Le fichier chm %s n'a pas pu être ouvert."
 
-#: ../src/models/chmfile.c:580
+#: ../src/models/chmfile.c:595
 msgid "Can't found hhc file."
 msgstr "Le fichier hhc est introuvable."
 
-#: ../src/main.cpp:88
-msgid "Display the version and exit"
-msgstr "Afficher la version et quitter"
+#~ msgid "About"
+#~ msgstr "À propos"
 
-#: ../src/main.cpp:135
-#, c-format
-msgid "more than 1 argument\n"
-msgstr "plus d'un argument\n"
+#~ msgid "About..."
+#~ msgstr "À propos..."
+
+#~ msgid "Back"
+#~ msgstr "Retour"
+
+#~ msgid "Copy Page _Location"
+#~ msgstr "Copier l'UR_L de la page"
+
+#~ msgid "Forward"
+#~ msgstr "Suivant"
+
+#~ msgid "Home"
+#~ msgstr "Accueil"
+
+#~ msgid "Normal"
+#~ msgstr "Normal"
+
+#~ msgid "Open Link in New _Tab"
+#~ msgstr "Ouvrir le lien dans un nouvel ongle_t"
+
+#~ msgid "Panel"
+#~ msgstr "Panneau"
+
+#~ msgid "Select _All"
+#~ msgstr "Tout sélectionner"
+
+#~ msgid "Show/Hide Panel"
+#~ msgstr "Afficher/cacher le panneau"
+
+#~ msgid ""
+#~ "Universal\n"
+#~ "Simplified Chinese\n"
+#~ "Tradtional Chinese\n"
+#~ "Japanese\n"
+#~ "Korean\n"
+#~ "Russian\n"
+#~ "Ukrainain"
+#~ msgstr ""
+#~ "Universel\n"
+#~ "Chinois simplifié\n"
+#~ "Chinois traditionnel\n"
+#~ "Japonais\n"
+#~ "Coréen\n"
+#~ "Russe\n"
+#~ "Ukrainien"
+
+#~ msgid "Zoom In"
+#~ msgstr "Zoomer"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Dézoomer"
+
+#~ msgid "_Back"
+#~ msgstr "Retour"
+
+#~ msgid "_Close Tab"
+#~ msgstr "Fermer l'onglet"
+
+#~ msgid "_Copy"
+#~ msgstr "_Copier"
+
+#~ msgid "_Copy Link Location"
+#~ msgstr "_Copier l'adresse du lien"
+
+#~ msgid "_Edit"
+#~ msgstr "Édit_er"
+
+#~ msgid "_File"
+#~ msgstr "_Fichier"
+
+#~ msgid "_Forward"
+#~ msgstr "Suivant"
+
+#~ msgid "_Help"
+#~ msgstr "Aide"
+
+#~ msgid "_New Tab"
+#~ msgstr "_Nouvel onglet"
+
+#~ msgid "_View"
+#~ msgstr "_Visualiser"
 
 #~ msgid "_Home"
 #~ msgstr "Accueil"
 
 #~ msgid "_Setup"
 #~ msgstr "Paramètre_s"
-
-#: ../data/chmsee.glade.h:23
-msgid "Side _Pane"
-msgstr ""
-
-#: ../data/chmsee.glade.h:32
-msgid "Variable Width:"
-msgstr ""
-
-#: ../data/chmsee.glade.h:42
-msgid "_Full Screen"
-msgstr ""
-
-#: ../src/chmsee.c:449
-#, c-format
-msgid "URI redirect: \"%s\" -> \"%s\""
-msgstr ""
-
-#: ../src/ui_bookmarks.c:315
-msgid "Bookmark"
-msgstr ""
-
-#: ../src/main.cpp:93
-msgid "be verbose, repeat 3 times to get all info"
-msgstr ""
-
-#: ../src/main.cpp:98
-msgid "be quiet, repeat 2 times to disable all info"
-msgstr ""

@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2009-05-10 22:47+0800\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-01-17 11:55+0800\n"
 "PO-Revision-Date: 2009-05-11 19:34+0000\n"
 "Last-Translator: Maor <Unknown>\n"
 "Language-Team: Slovak <sk@li.org>\n"
@@ -17,35 +17,41 @@ msgstr ""
 "X-Launchpad-Export-Date: 2009-07-04 04:44+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
-#: ../data/chmsee.glade.h:1
+#: ../data/about-dialog.glade.h:1
+msgid "The HTML Help(CHM) viewer for Unix/Linux"
+msgstr "Prehliadač HTML Nápovedy (CHM) pre Unix/Linux"
+
+#: ../data/about-dialog.glade.h:2
+msgid "http://code.google.com/p/chmsee"
+msgstr "http://code.google.com/p/chmsee"
+
+#: ../data/about-dialog.glade.h:3
+msgid "translator-credits"
+msgstr ""
+"Launchpad Contributions:\n"
+"  Maor https://launchpad.net/~martin336"
+
+#: ../data/openfile-dialog.glade.h:1
+msgid "Open File"
+msgstr "Otvoriť súbor"
+
+#: ../data/setup-window.glade.h:1
 msgid "<b>Cache</b>"
 msgstr "<b>Zásobník</b>"
 
-#: ../data/chmsee.glade.h:2
+#: ../data/setup-window.glade.h:2
 msgid "<b>Charset</b>"
 msgstr "<b>Znaková sada</b>"
 
-#: ../data/chmsee.glade.h:3
+#: ../data/setup-window.glade.h:3
 msgid "<b>Font</b>"
 msgstr "<b>Písmo</b>"
 
-#: ../data/chmsee.glade.h:4
-msgid "About"
-msgstr "O programe"
-
-#: ../data/chmsee.glade.h:5
-msgid "About..."
-msgstr "O programe..."
-
-#: ../data/chmsee.glade.h:6
+#: ../data/setup-window.glade.h:4
 msgid "Auto-Detect:"
 msgstr "Autodetekcia:"
 
-#: ../data/chmsee.glade.h:7
-msgid "Back"
-msgstr "Späť"
-
-#: ../data/chmsee.glade.h:8
+#: ../data/setup-window.glade.h:5
 msgid ""
 "CHM files extracted in this cache folder, you can press Clear button to free "
 "disk space.\n"
@@ -58,227 +64,235 @@ msgstr ""
 "UPOZORNENIE: Ak si prezeráte CHM súbor, je potrebné ho znovu otvoriť po "
 "vymazaní."
 
-#: ../data/chmsee.glade.h:11 ../data/chmsee.desktop.in.h:1
-msgid "ChmSee"
-msgstr "ChmSee"
-
-#: ../data/chmsee.glade.h:12
-msgid "Copy Page _Location"
-msgstr "_Kopírovať umiestnenie stránky"
-
-#: ../data/chmsee.glade.h:13
+#: ../data/setup-window.glade.h:8
 msgid "Fixed Width:"
 msgstr "Pevná šírka:"
 
-#: ../data/chmsee.glade.h:14
-msgid "Forward"
-msgstr "Dopredu"
+#: ../data/setup-window.glade.h:9
+msgid "Japanese"
+msgstr ""
 
-#: ../data/chmsee.glade.h:15
-msgid "Home"
-msgstr "Domov"
+#: ../data/setup-window.glade.h:10
+msgid "Korean"
+msgstr ""
 
-#: ../data/chmsee.glade.h:16
-msgid "Normal"
-msgstr "Normálne"
+#: ../data/setup-window.glade.h:11
+msgid "Russian"
+msgstr ""
 
-#: ../data/chmsee.glade.h:17
-msgid "Open File"
-msgstr "Otvoriť súbor"
-
-#: ../data/chmsee.glade.h:18
-msgid "Open Link in New _Tab"
-msgstr "Otvoriť odkaz na novej kar_te"
-
-#: ../data/chmsee.glade.h:19
-msgid "Panel"
-msgstr "Panel"
-
-#: ../data/chmsee.glade.h:20
-msgid "Select _All"
-msgstr "Vybr_ať všetko"
-
-#: ../data/chmsee.glade.h:21
+#: ../data/setup-window.glade.h:12
 msgid "Setup"
 msgstr "Nastavenie"
 
-#: ../data/chmsee.glade.h:22
-msgid "Show/Hide Panel"
-msgstr "Ukázať/Skryť Panel"
-
-#: ../data/chmsee.glade.h:24
-msgid "The HTML Help(CHM) viewer for Unix/Linux"
-msgstr "Prehliadač HTML Nápovedy (CHM) pre Unix/Linux"
-
-#: ../data/chmsee.glade.h:25
-msgid ""
-"Universal\n"
-"Simplified Chinese\n"
-"Tradtional Chinese\n"
-"Japanese\n"
-"Korean\n"
-"Russian\n"
-"Ukrainain"
+#: ../data/setup-window.glade.h:13
+msgid "Simplified Chinese"
 msgstr ""
-"Univerzálne\n"
-"Zjednodušená čínština\n"
-"Tradičná čínština\n"
-"Japonsky\n"
-"Kórejsky\n"
-"Rusky\n"
-"Ukrajinsky"
 
-#: ../data/chmsee.glade.h:32
+#: ../data/setup-window.glade.h:14
+msgid "Traditional Chinese"
+msgstr ""
+
+#: ../data/setup-window.glade.h:15
+msgid "Ukrainian"
+msgstr ""
+
+#: ../data/setup-window.glade.h:16
+msgid "Universal"
+msgstr ""
+
+#: ../data/setup-window.glade.h:17
 msgid "Variable Width:"
 msgstr "Premenlivá šírka:"
 
-#: ../data/chmsee.glade.h:33
-msgid "Zoom In"
-msgstr "Priblížiť"
-
-#: ../data/chmsee.glade.h:34
-msgid "Zoom Out"
-msgstr "Oddialiť"
-
-#: ../data/chmsee.glade.h:35
-msgid "_Back"
-msgstr "_Späť"
-
-#: ../data/chmsee.glade.h:36
-msgid "_Close Tab"
-msgstr "_Zatvoriť kartu"
-
-#: ../data/chmsee.glade.h:37
-msgid "_Copy"
-msgstr "_Kopírovať"
-
-#: ../data/chmsee.glade.h:38
-msgid "_Copy Link Location"
-msgstr "_Kopírovať adresu odkazu"
-
-#: ../data/chmsee.glade.h:39
-msgid "_Edit"
-msgstr "_Upraviť"
-
-#: ../data/chmsee.glade.h:40
-msgid "_File"
-msgstr "_Súbor"
-
-#: ../data/chmsee.glade.h:41
-msgid "_Forward"
-msgstr "_Dopredu"
-
-#: ../data/chmsee.glade.h:43
-msgid "_Help"
-msgstr "_Pomocník"
-
-#: ../data/chmsee.glade.h:44
-msgid "_New Tab"
-msgstr "_Nová karta"
-
-#: ../data/chmsee.glade.h:45
-msgid "_View"
-msgstr "_Zobraziť"
-
-#: ../data/chmsee.glade.h:46
-msgid "http://code.google.com/p/chmsee"
-msgstr "http://code.google.com/p/chmsee"
+#: ../data/chmsee.desktop.in.h:1
+msgid "ChmSee"
+msgstr "ChmSee"
 
 #: ../data/chmsee.desktop.in.h:2
 msgid "HTML Help(CHM) viewer"
 msgstr "Prehliadač HTML nápovedy (CHM)"
 
-#: ../src/chmsee.c:449
+#: ../src/chmsee.c:481 ../src/ui_chmfile.c:419
 #, c-format
 msgid "URI redirect: \"%s\" -> \"%s\""
 msgstr "URI presmerovanie: \"%s\" -> \"%s\""
 
-#: ../src/chmsee.c:610
+#: ../src/chmsee.c:554
 msgid "CHM Files"
 msgstr "CHM Súbory"
 
-#: ../src/chmsee.c:615
+#: ../src/chmsee.c:559
 msgid "All Files"
 msgstr "Všetky súbory"
 
-#: ../src/chmsee.c:1135
+#: ../src/chmsee.c:841
 msgid "Ready!"
 msgstr "Pripravený!"
 
-#: ../src/chmsee.c:1191
-msgid "Topics"
-msgstr "Témy"
-
-#: ../src/chmsee.c:1208
-msgid "Bookmarks"
-msgstr "Záložky"
-
-#. Custom label widget, with a close button
-#: ../src/chmsee.c:1370 ../src/chmsee.c:1545
-msgid "No Title"
-msgstr "Bez názvu"
-
-#: ../src/chmsee.c:1649
+#: ../src/chmsee.c:973
 #, c-format
 msgid "Error loading file '%s'"
 msgstr "Chyba pri načítaní suboru '%s'"
-
-#: ../src/models/chmfile.c:239
-#, c-format
-msgid "cannot open chmfile: %s"
-msgstr "Nemôžem otvoriť CHM súbor: %s"
-
-#: ../src/models/chmfile.c:246
-#, c-format
-msgid "Extract chmfile failed: %s"
-msgstr "Extrahovanie CHM súboru: %s"
-
-#: ../src/models/chmfile.c:272
-#, c-format
-msgid "open \"%s\" failed: %s"
-msgstr "otváranie \"%s\" zlyhalo: %s"
-
-#: ../src/models/chmfile.c:322
-#, c-format
-msgid "Can not open chm file %s."
-msgstr "Nemôžem otvoriť chm súbor %s."
-
-#: ../src/models/chmfile.c:580
-msgid "Can't found hhc file."
-msgstr "Nemôžem nájsť hhc súbor."
 
 #: ../src/ui_bookmarks.c:315
 msgid "Bookmark"
 msgstr "Záložka"
 
-#: ../src/main.cpp:88
+#: ../src/ui_chmfile.c:665
+msgid "Topics"
+msgstr "Témy"
+
+#: ../src/ui_chmfile.c:674
+msgid "Index"
+msgstr ""
+
+#: ../src/ui_chmfile.c:680
+msgid "Bookmarks"
+msgstr "Záložky"
+
+#. Custom label widget, with a close button
+#: ../src/ui_chmfile.c:870 ../src/ui_chmfile.c:1003
+msgid "No Title"
+msgstr "Bez názvu"
+
+#: ../src/main.cpp:108
+msgid "Specify index"
+msgstr ""
+
+#: ../src/main.cpp:109
+msgid "INDEX"
+msgstr ""
+
+#: ../src/main.cpp:113
 msgid "Display the version and exit"
 msgstr "Zobrazí verziu a skončí"
 
-#: ../src/main.cpp:135
+#: ../src/main.cpp:118
+msgid "be verbose, repeat 3 times to get all info"
+msgstr ""
+
+#: ../src/main.cpp:123
+msgid "be quiet, repeat 2 times to disable all info"
+msgstr ""
+
+#: ../src/main.cpp:129
+msgid "PATH"
+msgstr ""
+
+#: ../src/main.cpp:160
 #, c-format
 msgid "more than 1 argument\n"
 msgstr "viac než 1 argument\n"
 
-#: ../data/chmsee.glade.h:23
-msgid "Side _Pane"
-msgstr ""
+#: ../src/models/chmfile.c:254
+#, c-format
+msgid "cannot open chmfile: %s"
+msgstr "Nemôžem otvoriť CHM súbor: %s"
 
-#: ../data/chmsee.glade.h:42
-msgid "_Full Screen"
-msgstr "Na _celú obrazovku"
+#: ../src/models/chmfile.c:261
+#, c-format
+msgid "Extract chmfile failed: %s"
+msgstr "Extrahovanie CHM súboru: %s"
 
-#. TRANSLATORS: Replace this string with your names, one name per line.
-#: ../data/chmsee.glade.h:48
-msgid "translator-credits"
-msgstr ""
-"Launchpad Contributions:\n"
-"  Maor https://launchpad.net/~martin336"
+#: ../src/models/chmfile.c:287
+#, c-format
+msgid "open \"%s\" failed: %s"
+msgstr "otváranie \"%s\" zlyhalo: %s"
 
-#: ../src/main.cpp:93
-msgid "be verbose, repeat 3 times to get all info"
-msgstr ""
+#: ../src/models/chmfile.c:337
+#, c-format
+msgid "Can not open chm file %s."
+msgstr "Nemôžem otvoriť chm súbor %s."
 
-#: ../src/main.cpp:98
-msgid "be quiet, repeat 2 times to disable all info"
-msgstr ""
+#: ../src/models/chmfile.c:595
+msgid "Can't found hhc file."
+msgstr "Nemôžem nájsť hhc súbor."
+
+#~ msgid "About"
+#~ msgstr "O programe"
+
+#~ msgid "About..."
+#~ msgstr "O programe..."
+
+#~ msgid "Back"
+#~ msgstr "Späť"
+
+#~ msgid "Copy Page _Location"
+#~ msgstr "_Kopírovať umiestnenie stránky"
+
+#~ msgid "Forward"
+#~ msgstr "Dopredu"
+
+#~ msgid "Home"
+#~ msgstr "Domov"
+
+#~ msgid "Normal"
+#~ msgstr "Normálne"
+
+#~ msgid "Open Link in New _Tab"
+#~ msgstr "Otvoriť odkaz na novej kar_te"
+
+#~ msgid "Panel"
+#~ msgstr "Panel"
+
+#~ msgid "Select _All"
+#~ msgstr "Vybr_ať všetko"
+
+#~ msgid "Show/Hide Panel"
+#~ msgstr "Ukázať/Skryť Panel"
+
+#~ msgid ""
+#~ "Universal\n"
+#~ "Simplified Chinese\n"
+#~ "Tradtional Chinese\n"
+#~ "Japanese\n"
+#~ "Korean\n"
+#~ "Russian\n"
+#~ "Ukrainain"
+#~ msgstr ""
+#~ "Univerzálne\n"
+#~ "Zjednodušená čínština\n"
+#~ "Tradičná čínština\n"
+#~ "Japonsky\n"
+#~ "Kórejsky\n"
+#~ "Rusky\n"
+#~ "Ukrajinsky"
+
+#~ msgid "Zoom In"
+#~ msgstr "Priblížiť"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Oddialiť"
+
+#~ msgid "_Back"
+#~ msgstr "_Späť"
+
+#~ msgid "_Close Tab"
+#~ msgstr "_Zatvoriť kartu"
+
+#~ msgid "_Copy"
+#~ msgstr "_Kopírovať"
+
+#~ msgid "_Copy Link Location"
+#~ msgstr "_Kopírovať adresu odkazu"
+
+#~ msgid "_Edit"
+#~ msgstr "_Upraviť"
+
+#~ msgid "_File"
+#~ msgstr "_Súbor"
+
+#~ msgid "_Forward"
+#~ msgstr "_Dopredu"
+
+#~ msgid "_Help"
+#~ msgstr "_Pomocník"
+
+#~ msgid "_New Tab"
+#~ msgstr "_Nová karta"
+
+#~ msgid "_View"
+#~ msgstr "_Zobraziť"
+
+#~ msgid "_Full Screen"
+#~ msgstr "Na _celú obrazovku"

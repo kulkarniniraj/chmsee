@@ -12,7 +12,6 @@ Dependencies
 Compile ChmSee from source you need following packages:
  * cmake >= 2.6
  * libgtk2.0-dev >= 2.8
- * libglade2-dev >= 2.4
  * xulrunner-dev >= 1.9 < 1.9.1
  * libchm-dev
  * libgcrypt-dev
@@ -20,10 +19,12 @@ Compile ChmSee from source you need following packages:
 Installation
 ============
 
-$ cd chmsee-$VERSION
-$ cmake .
+$ tar xzf chmsee-$VERSION.tar.gz
+$ mkdir build
+$ cd build
+$ cmake ../chmsee-$VERSION
 $ make
-$ make install
+# make install
 
 Report bug
 ==========

@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2009-05-10 22:47+0800\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-01-17 11:55+0800\n"
 "PO-Revision-Date: 2009-06-28 17:47+0000\n"
 "Last-Translator: Auriza Akbar <auriza.akbar@gmail.com>\n"
 "Language-Team: Indonesian <id@li.org>\n"
@@ -17,35 +17,42 @@ msgstr ""
 "X-Launchpad-Export-Date: 2009-07-04 04:44+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
-#: ../data/chmsee.glade.h:1
+#: ../data/about-dialog.glade.h:1
+msgid "The HTML Help(CHM) viewer for Unix/Linux"
+msgstr "Pembuka HTML Help (CHM) untuk UNIX/Linux"
+
+#: ../data/about-dialog.glade.h:2
+msgid "http://code.google.com/p/chmsee"
+msgstr "http://code.google.com/p/chmsee"
+
+#: ../data/about-dialog.glade.h:3
+msgid "translator-credits"
+msgstr ""
+"Launchpad Contributions:\n"
+"  Auriza Akbar https://launchpad.net/~auriza.akbar\n"
+"  ekoyudhip https://launchpad.net/~ekoyudhiprastowo"
+
+#: ../data/openfile-dialog.glade.h:1
+msgid "Open File"
+msgstr "Buka Berkas"
+
+#: ../data/setup-window.glade.h:1
 msgid "<b>Cache</b>"
 msgstr "<b>Cache</b>"
 
-#: ../data/chmsee.glade.h:2
+#: ../data/setup-window.glade.h:2
 msgid "<b>Charset</b>"
 msgstr "<b>Set Karakter</b>"
 
-#: ../data/chmsee.glade.h:3
+#: ../data/setup-window.glade.h:3
 msgid "<b>Font</b>"
 msgstr "<b>Jenis Huruf</b>"
 
-#: ../data/chmsee.glade.h:4
-msgid "About"
-msgstr "Tentang"
-
-#: ../data/chmsee.glade.h:5
-msgid "About..."
-msgstr "Tentang..."
-
-#: ../data/chmsee.glade.h:6
+#: ../data/setup-window.glade.h:4
 msgid "Auto-Detect:"
 msgstr "Deteksi-Otomatis:"
 
-#: ../data/chmsee.glade.h:7
-msgid "Back"
-msgstr "Kembali"
-
-#: ../data/chmsee.glade.h:8
+#: ../data/setup-window.glade.h:5
 msgid ""
 "CHM files extracted in this cache folder, you can press Clear button to free "
 "disk space.\n"
@@ -57,228 +64,238 @@ msgstr ""
 "Catatan: Jika Anda sedang membuka file CHM, Anda harus membuka kembali "
 "berkas tersebut setelah pembersihan."
 
-#: ../data/chmsee.glade.h:11 ../data/chmsee.desktop.in.h:1
-msgid "ChmSee"
-msgstr "ChmSee"
-
-#: ../data/chmsee.glade.h:12
-msgid "Copy Page _Location"
-msgstr "Salin _Lokasi Halaman"
-
-#: ../data/chmsee.glade.h:13
+#: ../data/setup-window.glade.h:8
 msgid "Fixed Width:"
 msgstr "Lebar Tetap:"
 
-#: ../data/chmsee.glade.h:14
-msgid "Forward"
-msgstr "Lanjut"
+#: ../data/setup-window.glade.h:9
+msgid "Japanese"
+msgstr ""
 
-#: ../data/chmsee.glade.h:15
-msgid "Home"
-msgstr "Awal"
+#: ../data/setup-window.glade.h:10
+msgid "Korean"
+msgstr ""
 
-#: ../data/chmsee.glade.h:16
-msgid "Normal"
-msgstr "Normal"
+#: ../data/setup-window.glade.h:11
+msgid "Russian"
+msgstr ""
 
-#: ../data/chmsee.glade.h:17
-msgid "Open File"
-msgstr "Buka Berkas"
-
-#: ../data/chmsee.glade.h:18
-msgid "Open Link in New _Tab"
-msgstr "Buka Tautan pada _Tab Baru"
-
-#: ../data/chmsee.glade.h:19
-msgid "Panel"
-msgstr "Panel"
-
-#: ../data/chmsee.glade.h:20
-msgid "Select _All"
-msgstr "Pilih Semu_a"
-
-#: ../data/chmsee.glade.h:21
+#: ../data/setup-window.glade.h:12
 msgid "Setup"
 msgstr "Pengaturan"
 
-#: ../data/chmsee.glade.h:22
-msgid "Show/Hide Panel"
-msgstr "Tampilkan/Sembunyikan Panel"
-
-#: ../data/chmsee.glade.h:23
-msgid "Side _Pane"
-msgstr "_Panel Sisi"
-
-#: ../data/chmsee.glade.h:24
-msgid "The HTML Help(CHM) viewer for Unix/Linux"
-msgstr "Pembuka HTML Help (CHM) untuk UNIX/Linux"
-
-#: ../data/chmsee.glade.h:25
-msgid ""
-"Universal\n"
-"Simplified Chinese\n"
-"Tradtional Chinese\n"
-"Japanese\n"
-"Korean\n"
-"Russian\n"
-"Ukrainain"
+#: ../data/setup-window.glade.h:13
+msgid "Simplified Chinese"
 msgstr ""
-"Universal\n"
-"China Sederhana\n"
-"China Tradisional\n"
-"Jepang\n"
-"Korea\n"
-"Rusia\n"
-"Ukraina"
 
-#: ../data/chmsee.glade.h:32
+#: ../data/setup-window.glade.h:14
+msgid "Traditional Chinese"
+msgstr ""
+
+#: ../data/setup-window.glade.h:15
+msgid "Ukrainian"
+msgstr ""
+
+#: ../data/setup-window.glade.h:16
+msgid "Universal"
+msgstr ""
+
+#: ../data/setup-window.glade.h:17
 msgid "Variable Width:"
 msgstr "Lebar Variabel:"
 
-#: ../data/chmsee.glade.h:33
-msgid "Zoom In"
-msgstr "Perbesar"
-
-#: ../data/chmsee.glade.h:34
-msgid "Zoom Out"
-msgstr "Perkecil"
-
-#: ../data/chmsee.glade.h:35
-msgid "_Back"
-msgstr "_Kembali"
-
-#: ../data/chmsee.glade.h:36
-msgid "_Close Tab"
-msgstr "_Tutup Tab"
-
-#: ../data/chmsee.glade.h:37
-msgid "_Copy"
-msgstr "_Salin"
-
-#: ../data/chmsee.glade.h:38
-msgid "_Copy Link Location"
-msgstr "_Salin Lokasi Tautan"
-
-#: ../data/chmsee.glade.h:39
-msgid "_Edit"
-msgstr "_Sunting"
-
-#: ../data/chmsee.glade.h:40
-msgid "_File"
-msgstr "_Berkas"
-
-#: ../data/chmsee.glade.h:41
-msgid "_Forward"
-msgstr "_Teruskan"
-
-#: ../data/chmsee.glade.h:42
-msgid "_Full Screen"
-msgstr "_Layar Penuh"
-
-#: ../data/chmsee.glade.h:43
-msgid "_Help"
-msgstr "_Bantuan"
-
-#: ../data/chmsee.glade.h:44
-msgid "_New Tab"
-msgstr "_Tab Baru"
-
-#: ../data/chmsee.glade.h:45
-msgid "_View"
-msgstr "_Lihat"
-
-#: ../data/chmsee.glade.h:46
-msgid "http://code.google.com/p/chmsee"
-msgstr "http://code.google.com/p/chmsee"
-
-#. TRANSLATORS: Replace this string with your names, one name per line.
-#: ../data/chmsee.glade.h:48
-msgid "translator-credits"
-msgstr ""
-"Launchpad Contributions:\n"
-"  Auriza Akbar https://launchpad.net/~auriza.akbar\n"
-"  ekoyudhip https://launchpad.net/~ekoyudhiprastowo"
+#: ../data/chmsee.desktop.in.h:1
+msgid "ChmSee"
+msgstr "ChmSee"
 
 #: ../data/chmsee.desktop.in.h:2
 msgid "HTML Help(CHM) viewer"
 msgstr "Pembuka HTML Help (CHM)"
 
-#: ../src/chmsee.c:449
+#: ../src/chmsee.c:481 ../src/ui_chmfile.c:419
 #, c-format
 msgid "URI redirect: \"%s\" -> \"%s\""
 msgstr "Pengalihan URI: \"%s\" -> \"%s\""
 
-#: ../src/chmsee.c:610
+#: ../src/chmsee.c:554
 msgid "CHM Files"
 msgstr "Berkas CHM"
 
-#: ../src/chmsee.c:615
+#: ../src/chmsee.c:559
 msgid "All Files"
 msgstr "Semua Berkas"
 
-#: ../src/chmsee.c:1135
+#: ../src/chmsee.c:841
 msgid "Ready!"
 msgstr "Siap!"
 
-#: ../src/chmsee.c:1191
-msgid "Topics"
-msgstr "Topik"
-
-#: ../src/chmsee.c:1208
-msgid "Bookmarks"
-msgstr "Penanda"
-
-#. Custom label widget, with a close button
-#: ../src/chmsee.c:1370 ../src/chmsee.c:1545
-msgid "No Title"
-msgstr "Tanpa Judul"
-
-#: ../src/chmsee.c:1649
+#: ../src/chmsee.c:973
 #, c-format
 msgid "Error loading file '%s'"
 msgstr "Gagal memuat berkas '%s'"
-
-#: ../src/models/chmfile.c:239
-#, c-format
-msgid "cannot open chmfile: %s"
-msgstr "tidak dapat membuka berkas CHM: %s"
-
-#: ../src/models/chmfile.c:246
-#, c-format
-msgid "Extract chmfile failed: %s"
-msgstr "Pengekstrakan berkas CHM gagal: %s"
-
-#: ../src/models/chmfile.c:272
-#, c-format
-msgid "open \"%s\" failed: %s"
-msgstr "membuka \"%s\" gagal: %s"
-
-#: ../src/models/chmfile.c:322
-#, c-format
-msgid "Can not open chm file %s."
-msgstr "Tidak dapat membuka berkas chm %s."
-
-#: ../src/models/chmfile.c:580
-msgid "Can't found hhc file."
-msgstr "Tidak dapat menemukan berkas hhc."
 
 #: ../src/ui_bookmarks.c:315
 msgid "Bookmark"
 msgstr "Penanda"
 
-#: ../src/main.cpp:88
+#: ../src/ui_chmfile.c:665
+msgid "Topics"
+msgstr "Topik"
+
+#: ../src/ui_chmfile.c:674
+msgid "Index"
+msgstr ""
+
+#: ../src/ui_chmfile.c:680
+msgid "Bookmarks"
+msgstr "Penanda"
+
+#. Custom label widget, with a close button
+#: ../src/ui_chmfile.c:870 ../src/ui_chmfile.c:1003
+msgid "No Title"
+msgstr "Tanpa Judul"
+
+#: ../src/main.cpp:108
+msgid "Specify index"
+msgstr ""
+
+#: ../src/main.cpp:109
+msgid "INDEX"
+msgstr ""
+
+#: ../src/main.cpp:113
 msgid "Display the version and exit"
 msgstr "Tampilkan versi dan keluar"
 
-#: ../src/main.cpp:93
+#: ../src/main.cpp:118
 msgid "be verbose, repeat 3 times to get all info"
 msgstr "menjadi cerewet, ulangi 3 kali untuk mendapatkan semua info"
 
-#: ../src/main.cpp:98
+#: ../src/main.cpp:123
 msgid "be quiet, repeat 2 times to disable all info"
 msgstr "menjadi pendiam, ulangi 2 kali untuk mematikan semua info"
 
-#: ../src/main.cpp:135
+#: ../src/main.cpp:129
+msgid "PATH"
+msgstr ""
+
+#: ../src/main.cpp:160
 #, c-format
 msgid "more than 1 argument\n"
 msgstr "lebih dari 1 argumen\n"
+
+#: ../src/models/chmfile.c:254
+#, c-format
+msgid "cannot open chmfile: %s"
+msgstr "tidak dapat membuka berkas CHM: %s"
+
+#: ../src/models/chmfile.c:261
+#, c-format
+msgid "Extract chmfile failed: %s"
+msgstr "Pengekstrakan berkas CHM gagal: %s"
+
+#: ../src/models/chmfile.c:287
+#, c-format
+msgid "open \"%s\" failed: %s"
+msgstr "membuka \"%s\" gagal: %s"
+
+#: ../src/models/chmfile.c:337
+#, c-format
+msgid "Can not open chm file %s."
+msgstr "Tidak dapat membuka berkas chm %s."
+
+#: ../src/models/chmfile.c:595
+msgid "Can't found hhc file."
+msgstr "Tidak dapat menemukan berkas hhc."
+
+#~ msgid "About"
+#~ msgstr "Tentang"
+
+#~ msgid "About..."
+#~ msgstr "Tentang..."
+
+#~ msgid "Back"
+#~ msgstr "Kembali"
+
+#~ msgid "Copy Page _Location"
+#~ msgstr "Salin _Lokasi Halaman"
+
+#~ msgid "Forward"
+#~ msgstr "Lanjut"
+
+#~ msgid "Home"
+#~ msgstr "Awal"
+
+#~ msgid "Normal"
+#~ msgstr "Normal"
+
+#~ msgid "Open Link in New _Tab"
+#~ msgstr "Buka Tautan pada _Tab Baru"
+
+#~ msgid "Panel"
+#~ msgstr "Panel"
+
+#~ msgid "Select _All"
+#~ msgstr "Pilih Semu_a"
+
+#~ msgid "Show/Hide Panel"
+#~ msgstr "Tampilkan/Sembunyikan Panel"
+
+#~ msgid "Side _Pane"
+#~ msgstr "_Panel Sisi"
+
+#~ msgid ""
+#~ "Universal\n"
+#~ "Simplified Chinese\n"
+#~ "Tradtional Chinese\n"
+#~ "Japanese\n"
+#~ "Korean\n"
+#~ "Russian\n"
+#~ "Ukrainain"
+#~ msgstr ""
+#~ "Universal\n"
+#~ "China Sederhana\n"
+#~ "China Tradisional\n"
+#~ "Jepang\n"
+#~ "Korea\n"
+#~ "Rusia\n"
+#~ "Ukraina"
+
+#~ msgid "Zoom In"
+#~ msgstr "Perbesar"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Perkecil"
+
+#~ msgid "_Back"
+#~ msgstr "_Kembali"
+
+#~ msgid "_Close Tab"
+#~ msgstr "_Tutup Tab"
+
+#~ msgid "_Copy"
+#~ msgstr "_Salin"
+
+#~ msgid "_Copy Link Location"
+#~ msgstr "_Salin Lokasi Tautan"
+
+#~ msgid "_Edit"
+#~ msgstr "_Sunting"
+
+#~ msgid "_File"
+#~ msgstr "_Berkas"
+
+#~ msgid "_Forward"
+#~ msgstr "_Teruskan"
+
+#~ msgid "_Full Screen"
+#~ msgstr "_Layar Penuh"
+
+#~ msgid "_Help"
+#~ msgstr "_Bantuan"
+
+#~ msgid "_New Tab"
+#~ msgstr "_Tab Baru"
+
+#~ msgid "_View"
+#~ msgstr "_Lihat"

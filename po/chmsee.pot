@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-06 18:35+0800\n"
+"POT-Creation-Date: 2010-01-17 11:55+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,23 +16,39 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../data/chmsee.glade.h:1
+#: ../data/about-dialog.glade.h:1
+msgid "The HTML Help(CHM) viewer for Unix/Linux"
+msgstr ""
+
+#: ../data/about-dialog.glade.h:2
+msgid "http://code.google.com/p/chmsee"
+msgstr ""
+
+#: ../data/about-dialog.glade.h:3
+msgid "translator-credits"
+msgstr ""
+
+#: ../data/openfile-dialog.glade.h:1
+msgid "Open File"
+msgstr ""
+
+#: ../data/setup-window.glade.h:1
 msgid "<b>Cache</b>"
 msgstr ""
 
-#: ../data/chmsee.glade.h:2
+#: ../data/setup-window.glade.h:2
 msgid "<b>Charset</b>"
 msgstr ""
 
-#: ../data/chmsee.glade.h:3
+#: ../data/setup-window.glade.h:3
 msgid "<b>Font</b>"
 msgstr ""
 
-#: ../data/chmsee.glade.h:4
+#: ../data/setup-window.glade.h:4
 msgid "Auto-Detect:"
 msgstr ""
 
-#: ../data/chmsee.glade.h:5
+#: ../data/setup-window.glade.h:5
 msgid ""
 "CHM files extracted in this cache folder, you can press Clear button to free "
 "disk space.\n"
@@ -40,72 +56,72 @@ msgid ""
 "NOTE: If you are viewing a CHM file, you need reopen it after cleaning."
 msgstr ""
 
-#: ../data/chmsee.glade.h:8 ../data/chmsee.desktop.in.h:1
-msgid "ChmSee"
-msgstr ""
-
-#: ../data/chmsee.glade.h:9
+#: ../data/setup-window.glade.h:8
 msgid "Fixed Width:"
 msgstr ""
 
-#: ../data/chmsee.glade.h:10
-msgid "Open File"
+#: ../data/setup-window.glade.h:9
+msgid "Japanese"
 msgstr ""
 
-#: ../data/chmsee.glade.h:11
+#: ../data/setup-window.glade.h:10
+msgid "Korean"
+msgstr ""
+
+#: ../data/setup-window.glade.h:11
+msgid "Russian"
+msgstr ""
+
+#: ../data/setup-window.glade.h:12
 msgid "Setup"
 msgstr ""
 
-#: ../data/chmsee.glade.h:12
-msgid "The HTML Help(CHM) viewer for Unix/Linux"
+#: ../data/setup-window.glade.h:13
+msgid "Simplified Chinese"
 msgstr ""
 
-#: ../data/chmsee.glade.h:13
-msgid ""
-"Universal\n"
-"Simplified Chinese\n"
-"Traditional Chinese\n"
-"Japanese\n"
-"Korean\n"
-"Russian\n"
-"Ukrainian"
+#: ../data/setup-window.glade.h:14
+msgid "Traditional Chinese"
 msgstr ""
 
-#: ../data/chmsee.glade.h:20
+#: ../data/setup-window.glade.h:15
+msgid "Ukrainian"
+msgstr ""
+
+#: ../data/setup-window.glade.h:16
+msgid "Universal"
+msgstr ""
+
+#: ../data/setup-window.glade.h:17
 msgid "Variable Width:"
 msgstr ""
 
-#: ../data/chmsee.glade.h:21
-msgid "http://code.google.com/p/chmsee"
-msgstr ""
-
-#. TRANSLATORS: Replace this string with your names, one name per line.
-#: ../data/chmsee.glade.h:23
-msgid "translator-credits"
+#: ../data/chmsee.desktop.in.h:1
+msgid "ChmSee"
 msgstr ""
 
 #: ../data/chmsee.desktop.in.h:2
 msgid "HTML Help(CHM) viewer"
 msgstr ""
 
-#: ../src/chmsee.c:484 ../src/ui_chmfile.c:418
+#: ../src/chmsee.c:481 ../src/ui_chmfile.c:419
 #, c-format
 msgid "URI redirect: \"%s\" -> \"%s\""
 msgstr ""
 
-#: ../src/chmsee.c:555
+#: ../src/chmsee.c:554
 msgid "CHM Files"
 msgstr ""
 
-#: ../src/chmsee.c:560
+#: ../src/chmsee.c:559
 msgid "All Files"
 msgstr ""
 
-#: ../src/chmsee.c:839
+#: ../src/chmsee.c:841
 msgid "Ready!"
 msgstr ""
 
-#: ../src/chmsee.c:971
+#: ../src/chmsee.c:973
 #, c-format
 msgid "Error loading file '%s'"
 msgstr ""
@@ -114,20 +130,20 @@ msgstr ""
 msgid "Bookmark"
 msgstr ""
 
-#: ../src/ui_chmfile.c:664
+#: ../src/ui_chmfile.c:665
 msgid "Topics"
 msgstr ""
 
-#: ../src/ui_chmfile.c:673
+#: ../src/ui_chmfile.c:674
 msgid "Index"
 msgstr ""
 
-#: ../src/ui_chmfile.c:679
+#: ../src/ui_chmfile.c:680
 msgid "Bookmarks"
 msgstr ""
 
 #. Custom label widget, with a close button
-#: ../src/ui_chmfile.c:869 ../src/ui_chmfile.c:1002
+#: ../src/ui_chmfile.c:870 ../src/ui_chmfile.c:1003
 msgid "No Title"
 msgstr ""
 

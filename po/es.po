@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-14 21:48+0800\n"
+"POT-Creation-Date: 2010-01-17 11:55+0800\n"
 "PO-Revision-Date: 2009-08-14 00:51+0000\n"
 "Last-Translator: Mauro de Carvalho <mauro.dec@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -17,180 +17,15 @@ msgstr ""
 "X-Launchpad-Export-Date: 2009-09-06 10:48+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
-#: ../data/chmsee.glade.h:1
-msgid "<b>Cache</b>"
-msgstr "<b>Caché</b>"
-
-#: ../data/chmsee.glade.h:2
-msgid "<b>Charset</b>"
-msgstr "<b>Juego de caracteres</b>"
-
-#: ../data/chmsee.glade.h:3
-msgid "<b>Font</b>"
-msgstr "<b>Tipografía</b>"
-
-#: ../data/chmsee.glade.h:4
-msgid "About"
-msgstr "Acerca de"
-
-#: ../data/chmsee.glade.h:5
-msgid "About..."
-msgstr "Acerca de..."
-
-#: ../data/chmsee.glade.h:6
-msgid "Auto-Detect:"
-msgstr "Auto-detectar:"
-
-#: ../data/chmsee.glade.h:7
-msgid "Back"
-msgstr "Atrás"
-
-#: ../data/chmsee.glade.h:8
-msgid ""
-"CHM files extracted in this cache folder, you can press Clear button to free "
-"disk space.\n"
-"\n"
-"NOTE: If you are viewing a CHM file, you need reopen it after cleaning."
-msgstr ""
-"Los archivos CHM se extraen en la carpeta de caché, puedes pulsar el botón "
-"de Limpiar para liberar ese espacio de disco."
-
-#: ../data/chmsee.glade.h:11 ../data/chmsee.desktop.in.h:1
-msgid "ChmSee"
-msgstr "ChmSee"
-
-#: ../data/chmsee.glade.h:12
-msgid "Copy Page _Location"
-msgstr "Copiar _localización de página"
-
-#: ../data/chmsee.glade.h:13
-msgid "Fixed Width:"
-msgstr "Ancho fijo:"
-
-#: ../data/chmsee.glade.h:14
-msgid "Forward"
-msgstr "Adelante"
-
-#: ../data/chmsee.glade.h:15
-msgid "Home"
-msgstr "Inicio"
-
-#: ../data/chmsee.glade.h:16
-msgid "Normal"
-msgstr "Normal"
-
-#: ../data/chmsee.glade.h:17
-msgid "Open File"
-msgstr "Abrir archivo"
-
-#: ../data/chmsee.glade.h:18
-msgid "Open Link in New _Tab"
-msgstr "Abrir enlace en nueva _pestaña"
-
-#: ../data/chmsee.glade.h:19
-msgid "Panel"
-msgstr "Panel"
-
-#: ../data/chmsee.glade.h:20
-msgid "Select _All"
-msgstr "Seleccionar _todos"
-
-#: ../data/chmsee.glade.h:21
-msgid "Setup"
-msgstr "Configurar"
-
-#: ../data/chmsee.glade.h:22
-msgid "Show/Hide Panel"
-msgstr "Mostrar/Ocultar panel"
-
-#: ../data/chmsee.glade.h:23
-msgid "Side _Pane"
-msgstr "_Panel lateral"
-
-#: ../data/chmsee.glade.h:24
+#: ../data/about-dialog.glade.h:1
 msgid "The HTML Help(CHM) viewer for Unix/Linux"
 msgstr "El visor de Ayuda HTML (CHM) para Unix/Linux"
 
-#: ../data/chmsee.glade.h:25
-msgid ""
-"Universal\n"
-"Simplified Chinese\n"
-"Traditional Chinese\n"
-"Japanese\n"
-"Korean\n"
-"Russian\n"
-"Ukrainian"
-msgstr ""
-"Universal\n"
-"Chino Simplificado\n"
-"Chino Tradicional\n"
-"Japonés\n"
-"Coreano\n"
-"Ruso\n"
-"Ucraniano"
-
-#: ../data/chmsee.glade.h:32
-msgid "Variable Width:"
-msgstr "Ancho variable:"
-
-#: ../data/chmsee.glade.h:33
-msgid "Zoom In"
-msgstr "Aumentar"
-
-#: ../data/chmsee.glade.h:34
-msgid "Zoom Out"
-msgstr "Alejar"
-
-#: ../data/chmsee.glade.h:35
-msgid "_Back"
-msgstr "_Atrás"
-
-#: ../data/chmsee.glade.h:36
-msgid "_Close Tab"
-msgstr "_Cerrar pestaña"
-
-#: ../data/chmsee.glade.h:37
-msgid "_Copy"
-msgstr "_Copiar"
-
-#: ../data/chmsee.glade.h:38
-msgid "_Copy Link Location"
-msgstr "_Copiar destino de enlace"
-
-#: ../data/chmsee.glade.h:39
-msgid "_Edit"
-msgstr "_Editar"
-
-#: ../data/chmsee.glade.h:40
-msgid "_File"
-msgstr "_Archivo"
-
-#: ../data/chmsee.glade.h:41
-msgid "_Forward"
-msgstr "_Adelante"
-
-#: ../data/chmsee.glade.h:42
-msgid "_Full Screen"
-msgstr "_Pantalla completa"
-
-#: ../data/chmsee.glade.h:43
-msgid "_Help"
-msgstr "_Ayuda"
-
-#: ../data/chmsee.glade.h:44
-msgid "_New Tab"
-msgstr "_Nueva pestaña"
-
-#: ../data/chmsee.glade.h:45
-msgid "_View"
-msgstr "_Ver"
-
-#: ../data/chmsee.glade.h:46
+#: ../data/about-dialog.glade.h:2
 msgid "http://code.google.com/p/chmsee"
 msgstr "http://code.google.com/p/chmsee"
 
-#. TRANSLATORS: Replace this string with your names, one name per line.
-#: ../data/chmsee.glade.h:48
+#: ../data/about-dialog.glade.h:3
 msgid "translator-credits"
 msgstr ""
 "Launchpad Contributions:\n"
@@ -200,94 +35,271 @@ msgstr ""
 "  DiegoJ https://launchpad.net/~diegojromerolopez\n"
 "  Mauro de Carvalho https://launchpad.net/~mauro-dec"
 
+#: ../data/openfile-dialog.glade.h:1
+msgid "Open File"
+msgstr "Abrir archivo"
+
+#: ../data/setup-window.glade.h:1
+msgid "<b>Cache</b>"
+msgstr "<b>Caché</b>"
+
+#: ../data/setup-window.glade.h:2
+msgid "<b>Charset</b>"
+msgstr "<b>Juego de caracteres</b>"
+
+#: ../data/setup-window.glade.h:3
+msgid "<b>Font</b>"
+msgstr "<b>Tipografía</b>"
+
+#: ../data/setup-window.glade.h:4
+msgid "Auto-Detect:"
+msgstr "Auto-detectar:"
+
+#: ../data/setup-window.glade.h:5
+msgid ""
+"CHM files extracted in this cache folder, you can press Clear button to free "
+"disk space.\n"
+"\n"
+"NOTE: If you are viewing a CHM file, you need reopen it after cleaning."
+msgstr ""
+"Los archivos CHM se extraen en la carpeta de caché, puedes pulsar el botón "
+"de Limpiar para liberar ese espacio de disco."
+
+#: ../data/setup-window.glade.h:8
+msgid "Fixed Width:"
+msgstr "Ancho fijo:"
+
+#: ../data/setup-window.glade.h:9
+msgid "Japanese"
+msgstr ""
+
+#: ../data/setup-window.glade.h:10
+msgid "Korean"
+msgstr ""
+
+#: ../data/setup-window.glade.h:11
+msgid "Russian"
+msgstr ""
+
+#: ../data/setup-window.glade.h:12
+msgid "Setup"
+msgstr "Configurar"
+
+#: ../data/setup-window.glade.h:13
+msgid "Simplified Chinese"
+msgstr ""
+
+#: ../data/setup-window.glade.h:14
+msgid "Traditional Chinese"
+msgstr ""
+
+#: ../data/setup-window.glade.h:15
+msgid "Ukrainian"
+msgstr ""
+
+#: ../data/setup-window.glade.h:16
+msgid "Universal"
+msgstr ""
+
+#: ../data/setup-window.glade.h:17
+msgid "Variable Width:"
+msgstr "Ancho variable:"
+
+#: ../data/chmsee.desktop.in.h:1
+msgid "ChmSee"
+msgstr "ChmSee"
+
 #: ../data/chmsee.desktop.in.h:2
 msgid "HTML Help(CHM) viewer"
 msgstr "Visor de Ayuda HTML (CHM)"
 
-#: ../src/chmsee.c:506
+#: ../src/chmsee.c:481 ../src/ui_chmfile.c:419
 #, c-format
 msgid "URI redirect: \"%s\" -> \"%s\""
 msgstr "Redirección de URI: \"%s\" -> \"%s\""
 
-#: ../src/chmsee.c:671
+#: ../src/chmsee.c:554
 msgid "CHM Files"
 msgstr "Archivos CHM"
 
-#: ../src/chmsee.c:676
+#: ../src/chmsee.c:559
 msgid "All Files"
 msgstr "Todos los archivos"
 
-#: ../src/chmsee.c:1196
+#: ../src/chmsee.c:841
 msgid "Ready!"
 msgstr "¡Listo!"
 
-#: ../src/chmsee.c:1253
-msgid "Topics"
-msgstr "Temas"
-
-#: ../src/chmsee.c:1267
-msgid "Index"
-msgstr "Índice"
-
-#: ../src/chmsee.c:1276
-msgid "Bookmarks"
-msgstr "Marcadores"
-
-#. Custom label widget, with a close button
-#: ../src/chmsee.c:1440 ../src/chmsee.c:1615
-msgid "No Title"
-msgstr "Sin título"
-
-#: ../src/chmsee.c:1719
+#: ../src/chmsee.c:973
 #, c-format
 msgid "Error loading file '%s'"
 msgstr "Error cargando el archivo '%s'"
-
-#: ../src/models/chmfile.c:253
-#, c-format
-msgid "cannot open chmfile: %s"
-msgstr "no se puede abrir el archivo CHM: %s"
-
-#: ../src/models/chmfile.c:260
-#, c-format
-msgid "Extract chmfile failed: %s"
-msgstr "Ha fallado la extracción del archivo CHM: %s"
-
-#: ../src/models/chmfile.c:286
-#, c-format
-msgid "open \"%s\" failed: %s"
-msgstr "la apertura de \"%s\" ha fallado: %s"
-
-#: ../src/models/chmfile.c:336
-#, c-format
-msgid "Can not open chm file %s."
-msgstr "No se puede abrir el archivo chm %s."
-
-#: ../src/models/chmfile.c:594
-msgid "Can't found hhc file."
-msgstr "No se encontró el archivo hhc"
 
 #: ../src/ui_bookmarks.c:315
 msgid "Bookmark"
 msgstr "Marcador"
 
-#: ../src/main.cpp:107
+#: ../src/ui_chmfile.c:665
+msgid "Topics"
+msgstr "Temas"
+
+#: ../src/ui_chmfile.c:674
+msgid "Index"
+msgstr "Índice"
+
+#: ../src/ui_chmfile.c:680
+msgid "Bookmarks"
+msgstr "Marcadores"
+
+#. Custom label widget, with a close button
+#: ../src/ui_chmfile.c:870 ../src/ui_chmfile.c:1003
+msgid "No Title"
+msgstr "Sin título"
+
+#: ../src/main.cpp:108
+msgid "Specify index"
+msgstr ""
+
+#: ../src/main.cpp:109
+msgid "INDEX"
+msgstr ""
+
+#: ../src/main.cpp:113
 msgid "Display the version and exit"
 msgstr "Mostrar la versión y salir"
 
-#: ../src/main.cpp:112
+#: ../src/main.cpp:118
 msgid "be verbose, repeat 3 times to get all info"
 msgstr "ser más explícito, repítalo 3 veces para obtener toda la información"
 
-#: ../src/main.cpp:117
+#: ../src/main.cpp:123
 msgid "be quiet, repeat 2 times to disable all info"
-msgstr ""
-"ser silencioso, repítalo 2 veces para deshabilitar toda la información"
+msgstr "ser silencioso, repítalo 2 veces para deshabilitar toda la información"
 
-#: ../src/main.cpp:154
+#: ../src/main.cpp:129
+msgid "PATH"
+msgstr ""
+
+#: ../src/main.cpp:160
 #, c-format
 msgid "more than 1 argument\n"
 msgstr "más de un argumento\n"
+
+#: ../src/models/chmfile.c:254
+#, c-format
+msgid "cannot open chmfile: %s"
+msgstr "no se puede abrir el archivo CHM: %s"
+
+#: ../src/models/chmfile.c:261
+#, c-format
+msgid "Extract chmfile failed: %s"
+msgstr "Ha fallado la extracción del archivo CHM: %s"
+
+#: ../src/models/chmfile.c:287
+#, c-format
+msgid "open \"%s\" failed: %s"
+msgstr "la apertura de \"%s\" ha fallado: %s"
+
+#: ../src/models/chmfile.c:337
+#, c-format
+msgid "Can not open chm file %s."
+msgstr "No se puede abrir el archivo chm %s."
+
+#: ../src/models/chmfile.c:595
+msgid "Can't found hhc file."
+msgstr "No se encontró el archivo hhc"
+
+#~ msgid "About"
+#~ msgstr "Acerca de"
+
+#~ msgid "About..."
+#~ msgstr "Acerca de..."
+
+#~ msgid "Back"
+#~ msgstr "Atrás"
+
+#~ msgid "Copy Page _Location"
+#~ msgstr "Copiar _localización de página"
+
+#~ msgid "Forward"
+#~ msgstr "Adelante"
+
+#~ msgid "Home"
+#~ msgstr "Inicio"
+
+#~ msgid "Normal"
+#~ msgstr "Normal"
+
+#~ msgid "Open Link in New _Tab"
+#~ msgstr "Abrir enlace en nueva _pestaña"
+
+#~ msgid "Panel"
+#~ msgstr "Panel"
+
+#~ msgid "Select _All"
+#~ msgstr "Seleccionar _todos"
+
+#~ msgid "Show/Hide Panel"
+#~ msgstr "Mostrar/Ocultar panel"
+
+#~ msgid "Side _Pane"
+#~ msgstr "_Panel lateral"
+
+#~ msgid ""
+#~ "Universal\n"
+#~ "Simplified Chinese\n"
+#~ "Traditional Chinese\n"
+#~ "Japanese\n"
+#~ "Korean\n"
+#~ "Russian\n"
+#~ "Ukrainian"
+#~ msgstr ""
+#~ "Universal\n"
+#~ "Chino Simplificado\n"
+#~ "Chino Tradicional\n"
+#~ "Japonés\n"
+#~ "Coreano\n"
+#~ "Ruso\n"
+#~ "Ucraniano"
+
+#~ msgid "Zoom In"
+#~ msgstr "Aumentar"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Alejar"
+
+#~ msgid "_Back"
+#~ msgstr "_Atrás"
+
+#~ msgid "_Close Tab"
+#~ msgstr "_Cerrar pestaña"
+
+#~ msgid "_Copy"
+#~ msgstr "_Copiar"
+
+#~ msgid "_Copy Link Location"
+#~ msgstr "_Copiar destino de enlace"
+
+#~ msgid "_Edit"
+#~ msgstr "_Editar"
+
+#~ msgid "_File"
+#~ msgstr "_Archivo"
+
+#~ msgid "_Forward"
+#~ msgstr "_Adelante"
+
+#~ msgid "_Full Screen"
+#~ msgstr "_Pantalla completa"
+
+#~ msgid "_Help"
+#~ msgstr "_Ayuda"
+
+#~ msgid "_New Tab"
+#~ msgstr "_Nueva pestaña"
+
+#~ msgid "_View"
+#~ msgstr "_Ver"
 
 #~ msgid ""
 #~ "Universal\n"

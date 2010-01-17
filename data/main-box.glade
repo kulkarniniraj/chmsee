@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<interface>
+  <!-- interface-requires gtk+ 2.8 -->
+  <!-- interface-naming-policy toplevel-contextual -->
+  <object class="GtkVBox" id="main_vbox">
+    <property name="visible">True</property>
+    <child>
+      <object class="GtkStatusbar" id="statusbar">
+        <property name="visible">True</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
+        <property name="padding">2</property>
+        <property name="position">3</property>
+      </packing>
+    </child>
+  </object>
+</interface>

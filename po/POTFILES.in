@@ -1,6 +1,9 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
-data/chmsee.glade
+data/about-dialog.glade
+data/main-box.glade
+data/openfile-dialog.glade
+data/setup-window.glade
 data/chmsee.desktop.in
 src/booktree.c
 src/chmsee.c
