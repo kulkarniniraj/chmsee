@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006-2010 Ji YongGang <jungleji@gmail.com>
+ *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
  *  Copyright (C) 2009 LI Daobing <lidaobing@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
@@ -1122,7 +1122,7 @@ static GtkWidget* chmsee_new_index_page(ChmseeUiChmfile* self) {
                                  G_CALLBACK (on_ui_index_link_selected),
                                  self);
 
-        selfp->index_page = booktree_sw;
+        selfp->index_page = vbox;
         selfp->ui_index = uiIndex;
         selfp->input = input;
         return GTK_WIDGET(vbox);
