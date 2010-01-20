@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2006           Ji YongGang <jungle@soforge-studio.com>
+ *  Copyright (c) 2010 Ji YongGang <jungleji@gmail.com>
  *  Copyright (C) 2009 LI Daobing <lidaobing@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
@@ -51,11 +51,11 @@ static void dummy_log_handler (const gchar *log_domain,
 {}
 
 static void init_log(int log_level) {
-  if(log_level < 1) g_log_set_handler(NULL, G_LOG_LEVEL_CRITICAL, dummy_log_handler, NULL);
-  if(log_level < 2) g_log_set_handler(NULL, G_LOG_LEVEL_WARNING, dummy_log_handler, NULL);
-  if(log_level < 3) g_log_set_handler(NULL, G_LOG_LEVEL_MESSAGE, dummy_log_handler, NULL);
-  if(log_level < 4) g_log_set_handler(NULL, G_LOG_LEVEL_INFO, dummy_log_handler, NULL);
-  if(log_level < 5) g_log_set_handler(NULL, G_LOG_LEVEL_DEBUG, dummy_log_handler, NULL);
+        if(log_level < 1) g_log_set_handler(NULL, G_LOG_LEVEL_CRITICAL, dummy_log_handler, NULL);
+        if(log_level < 2) g_log_set_handler(NULL, G_LOG_LEVEL_WARNING, dummy_log_handler, NULL);
+        if(log_level < 3) g_log_set_handler(NULL, G_LOG_LEVEL_MESSAGE, dummy_log_handler, NULL);
+        if(log_level < 4) g_log_set_handler(NULL, G_LOG_LEVEL_INFO, dummy_log_handler, NULL);
+        if(log_level < 5) g_log_set_handler(NULL, G_LOG_LEVEL_DEBUG, dummy_log_handler, NULL);
 }
 
 static int log_level = 2; /* only show WARNING, CRITICAL, ERROR */
@@ -63,16 +63,16 @@ static gboolean callback_verbose(const gchar *option_name,
                                  const gchar *value,
                                  gpointer data,
                                  GError **error) {
-  log_level++;
-  return TRUE;
+        log_level++;
+        return TRUE;
 }
 
 static gboolean callback_quiet(const gchar *option_name,
                                const gchar *value,
                                gpointer data,
                                GError **error) {
-  log_level--;
-  return TRUE;
+        log_level--;
+        return TRUE;
 }
 
 #if defined(__linux__)
@@ -80,104 +80,101 @@ GCRY_THREAD_OPTION_PTHREAD_IMPL;
 #endif
 
 int
-main(int argc, char** argv)
+main(int argc, char* argv[])
 {
-  ChmSee *chmsee;
-  const gchar* filename = NULL;
-  const gchar* datadir = NULL;
-  const gchar* index = NULL;
-  GError* error = NULL;
-  gboolean option_version = FALSE;
+        ChmSee *chmsee;
+        const gchar* filename = NULL;
+        const gchar* datadir = NULL;
+        const gchar* index = NULL;
+        GError* error = NULL;
+        gboolean option_version = FALSE;
 
 #if defined(__linux__)
-  if (!gcry_check_version(NULL)) {
-    fprintf(stderr, "failed to initialize gcrypt\n");
-    exit(1);
-  }
-  gcry_control (GCRYCTL_SET_THREAD_CBS,&gcry_threads_pthread);
-  gcry_control (GCRYCTL_DISABLE_SECMEM, 0);
+        if (!gcry_check_version(NULL)) {
+                fprintf(stderr, "failed to initialize gcrypt\n");
+                exit(1);
+        }
+        gcry_control (GCRYCTL_SET_THREAD_CBS,&gcry_threads_pthread);
+        gcry_control (GCRYCTL_DISABLE_SECMEM, 0);
 #endif
 
-  if (!g_thread_supported())
-    g_thread_init(NULL);
+        if (!g_thread_supported())
+                g_thread_init(NULL);
 
+        GOptionEntry options[] = {
+                {"index", 'i',
+                 0, G_OPTION_ARG_STRING, &index,
+                 _("Specify index"),
+                 _("INDEX")
+                },
+                {"version", 0,
+                 0, G_OPTION_ARG_NONE, &option_version,
+                 _("Display the version and exit"),
+                 NULL
+                },
+                {"verbose", 'v',
+                 G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK, (void*)callback_verbose,
+                 _("be verbose, repeat 3 times to get all info"),
+                 NULL
+                },
+                {"quiet", 'q',
+                 G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK, (void*)callback_quiet,
+                 _("be quiet, repeat 2 times to disable all info"),
+                 NULL
+                },
+                {"datadir", 0,
+                 G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME, &datadir,
+                 "choose data dir, default is " CHMSEE_DATA_DIR_DEFAULT,
+                 _("PATH")
+                },
+                {NULL}
+        };
 
-  GOptionEntry options[] = {
-		  {"index", 'i',
-				  0, G_OPTION_ARG_STRING, &index,
-				  _("Specify index"),
-				  _("INDEX")
-		  },
-		  {"version", 0,
-				  0, G_OPTION_ARG_NONE, &option_version,
-				  _("Display the version and exit"),
-				  NULL
-		  },
-		  {"verbose", 'v',
-				  G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK, (void*)callback_verbose,
-				  _("be verbose, repeat 3 times to get all info"),
-				  NULL
-		  },
-		  {"quiet", 'q',
-				  G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK, (void*)callback_quiet,
-				  _("be quiet, repeat 2 times to disable all info"),
-				  NULL
-		  },
-		  {"datadir", 0,
-				  G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME, &datadir,
-				  "choose data dir, default is " CHMSEE_DATA_DIR_DEFAULT,
-				  _("PATH")
-		  },
-		  {NULL}
-  };
-  if(!gtk_init_with_args(&argc, &argv,
-                         "[chmfile]\n"
-                         "\n"
-                         "GTK+ based CHM file viewer\n"
-                         "Example: chmsee FreeBSD_Handbook.chm"
-                         ,
-                         options,
-                         g_strdup(GETTEXT_PACKAGE),
-                         &error))
-  {
-    g_printerr("%s\n", error->message);
-    return 1;
-  }
-  if(option_version) {
-    g_print("%s\n", PACKAGE_STRING);
-    return 0;
-  }
+        char params[] =
+                "[chmfile]\n"
+                "\n"
+                "GTK+ based CHM file viewer\n"
+                "Example: chmsee FreeBSD_Handbook.chm";
 
-  init_log(log_level);
-  if(datadir != NULL) {
-	  set_data_dir(datadir);
-  }
+        if(!gtk_init_with_args(&argc, &argv, params, options, g_strdup(GETTEXT_PACKAGE), &error)) {
+                g_printerr("%s\n", error->message);
+                return 1;
+        }
+        if(option_version) {
+                g_print("%s\n", PACKAGE_STRING);
+                return 0;
+        }
 
-  if(argc == 1) {
-  } else if(argc == 2) {
-    filename = argv[1];
-  } else {
-    g_printerr(_("more than 1 argument\n"));
-    return 1;
-  }
+        init_log(log_level);
+        if(datadir != NULL) {
+                set_data_dir(datadir);
+        }
 
-  /* i18n */
-  bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-  bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-  textdomain(GETTEXT_PACKAGE);
+        if(argc == 1) {
+        } else if(argc == 2) {
+                filename = argv[1];
+        } else {
+                g_printerr(_("more than 1 argument\n"));
+                return 1;
+        }
 
-  /* Show splash screen */
-  startup_popup_new();
+        /* i18n */
+        bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+        bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+        textdomain(GETTEXT_PACKAGE);
 
-  /* Create main window */
-  chmsee = chmsee_new(filename);
-  if(index != NULL) {
-	  chmsee_jump_index_by_name(chmsee, index);
-  }
+        /* Show splash screen */
+        startup_popup_new();
 
-  gtk_widget_show(GTK_WIDGET (chmsee));
+        /* Create main window */
+        chmsee = chmsee_new(filename);
+        if(index != NULL) {
+                chmsee_jump_index_by_name(chmsee, index);
+        }
 
-  gtk_main();
+        gtk_widget_show(GTK_WIDGET (chmsee));
 
-  return 0;
+        gtk_main();
+
+        return 0;
 }

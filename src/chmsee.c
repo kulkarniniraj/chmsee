@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006-2010 Ji YongGang <jungleji@gmail.com>
+ *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
  *  Copyright (C) 2009 LI Daobing <lidaobing@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
@@ -391,6 +391,10 @@ chmsee_finalize(GObject *object)
 static void chmsee_dispose(GObject* gobject)
 {
         ChmSee* self = CHMSEE(gobject);
+        GtkBuilder *builder;
+
+        builder = g_object_get_data(G_OBJECT (self), "builder");
+        g_object_unref(G_OBJECT (builder));
 
         if(selfp->book) {
                 g_object_unref(selfp->book);

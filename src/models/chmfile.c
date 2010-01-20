@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006 Ji YongGang <jungle@soforge-studio.com>
+ *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
  *  Copyright (C) 2009 LI Daobing <lidaobing@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
@@ -51,14 +51,14 @@
 
 
 struct _ChmFilePriv {
-	ChmIndex* index;
+        ChmIndex* index;
 };
 
 struct extract_context
 {
-  const char *base_path;
-  const char *hhc_file;
-  const char *hhk_file;
+        const char *base_path;
+        const char *hhc_file;
+        const char *hhk_file;
 };
 
 static GObjectClass *parent_class = NULL;
@@ -89,88 +89,88 @@ G_DEFINE_TYPE_WITH_CODE (ChmFile, chmfile, G_TYPE_OBJECT,
 static void
 chmfile_class_init(ChmFileClass *klass)
 {
-	g_type_class_add_private(klass, sizeof(ChmFilePriv));
+        g_type_class_add_private(klass, sizeof(ChmFilePriv));
 
-  GObjectClass *object_class;
+        GObjectClass *object_class;
 
-  parent_class = g_type_class_peek_parent(klass);
-  object_class = G_OBJECT_CLASS(klass);
+        parent_class = g_type_class_peek_parent(klass);
+        object_class = G_OBJECT_CLASS(klass);
 
-  object_class->finalize = chmfile_finalize;
-  object_class->dispose = chmfile_dispose;
+        object_class->finalize = chmfile_finalize;
+        object_class->dispose = chmfile_dispose;
 }
 
 static void
 chmfile_init(ChmFile *self)
 {
-	self->filename = NULL;
-	self->home = NULL;
-	self->hhc = NULL;
-	self->hhk = NULL;
-	self->title = NULL;
-	self->encoding = g_strdup("UTF-8");
-	self->variable_font = g_strdup("Sans 12");
-	self->fixed_font = g_strdup("Monospace 12");
-	self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self, TYPE_CHMFILE, ChmFilePriv);
-	selfp->index = NULL;
+        self->filename = NULL;
+        self->home = NULL;
+        self->hhc = NULL;
+        self->hhk = NULL;
+        self->title = NULL;
+        self->encoding = g_strdup("UTF-8");
+        self->variable_font = g_strdup("Sans 12");
+        self->fixed_font = g_strdup("Monospace 12");
+        self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self, TYPE_CHMFILE, ChmFilePriv);
+        selfp->index = NULL;
 }
 
 static void
 chmfile_finalize(GObject *object)
 {
-  ChmFile *self;
+        ChmFile *self;
 
-  self = CHMFILE (object);
+        self = CHMFILE (object);
 
-  g_message("chmfile finalize");
+        g_message("chmfile finalize");
 
-  save_fileinfo(self);
-  g_free(self->dir);
-  g_free(self->encoding);
-  g_free(self->filename);
-  g_free(self->hhc);
-  g_free(self->hhk);
-  g_free(self->home);
-  g_free(self->title);
-  g_free(self->variable_font);
-  g_free(self->fixed_font);
+        save_fileinfo(self);
+        g_free(self->dir);
+        g_free(self->encoding);
+        g_free(self->filename);
+        g_free(self->hhc);
+        g_free(self->hhk);
+        g_free(self->home);
+        g_free(self->title);
+        g_free(self->variable_font);
+        g_free(self->fixed_font);
 
-  if(self->link_tree) {
-    g_node_destroy(self->link_tree);
-  }
+        if(self->link_tree) {
+                g_node_destroy(self->link_tree);
+        }
 
-  G_OBJECT_CLASS (parent_class)->finalize (object);
+        G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static int
 dir_exists(const char *path)
 {
-  struct stat statbuf;
+        struct stat statbuf;
 
-  return stat(path, &statbuf) != -1 ? 1 : 0;
+        return stat(path, &statbuf) != -1 ? 1 : 0;
 }
 
 static int
 rmkdir(char *path)
 {
-  /*
-   * strip off trailing components unless we can stat the directory, or we
-   * have run out of components
-   */
+        /*
+         * strip off trailing components unless we can stat the directory, or we
+         * have run out of components
+         */
 
-  char *i = rindex(path, '/');
+        char *i = rindex(path, '/');
 
-  if (path[0] == '\0'  ||  dir_exists(path))
-    return 0;
+        if (path[0] == '\0'  ||  dir_exists(path))
+                return 0;
 
-  if (i != NULL) {
-    *i = '\0';
-    rmkdir(path);
-    *i = '/';
-    mkdir(path, 0777);
-  }
+        if (i != NULL) {
+                *i = '\0';
+                rmkdir(path);
+                *i = '/';
+                mkdir(path, 0777);
+        }
 
-  return dir_exists(path) ? 0 : -1;
+        return dir_exists(path) ? 0 : -1;
 }
 
 /*
@@ -179,611 +179,624 @@ rmkdir(char *path)
 static int
 _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
 {
-  gchar* fname = NULL;
-  char buffer[32768];
-  struct extract_context *ctx = (struct extract_context *)context;
-  char *i;
+        gchar* fname = NULL;
+        LONGUINT64 ui_path_len;
+        char buffer[32768];
+        struct extract_context *ctx = (struct extract_context *)context;
+        char *i;
 
-  if (ui->path[0] != '/') {
-    return CHM_ENUMERATOR_CONTINUE;
-  }
-
-  g_debug("ui->path = %s", ui->path);
-
-  fname = g_build_filename(ctx->base_path, ui->path+1, NULL);
-
-  if (ui->length != 0) {
-    FILE *fout;
-    LONGINT64 len, remain = ui->length;
-    LONGUINT64 offset = 0;
-
-    gchar *file_ext;
-
-    file_ext = g_strrstr(g_path_get_basename(ui->path), ".");
-    g_debug("file_ext = %s", file_ext);
-
-    if ((fout = fopen(fname, "wb")) == NULL) {
-      /* make sure that it isn't just a missing directory before we abort */
-      char newbuf[32768];
-      strcpy(newbuf, fname);
-      i = rindex(newbuf, '/');
-      *i = '\0';
-      rmkdir(newbuf);
-
-      if ((fout = fopen(fname, "wb")) == NULL) {
-        g_message("CHM_ENUMERATOR_FAILURE fopen");
-        return CHM_ENUMERATOR_FAILURE;
-      }
-    }
-
-    while (remain != 0) {
-      len = chm_retrieve_object(h, ui, (unsigned char *)buffer, offset, 32768);
-      if (len > 0) {
-        if(fwrite(buffer, 1, (size_t)len, fout) != len) {
-          g_message("CHM_ENUMERATOR_FAILURE fwrite");
-          return CHM_ENUMERATOR_FAILURE;
+        if (ui->path[0] != '/') {
+                return CHM_ENUMERATOR_CONTINUE;
         }
-        offset += len;
-        remain -= len;
-      } else {
-        break;
-      }
-    }
 
-    fclose(fout);
-    extract_post_file_write(fname);
-  } else {
-    if (rmkdir(fname) == -1) {
-      g_message("CHM_ENUMERATOR_FAILURE rmkdir");
-      return CHM_ENUMERATOR_FAILURE;
-    }
-  }
-  g_free(fname);
-  return CHM_ENUMERATOR_CONTINUE;
+        if (strstr(ui->path, "/../") != NULL) {
+                return CHM_ENUMERATOR_CONTINUE;
+        }
+
+        if (snprintf(buffer, sizeof(buffer), "%s%s", ctx->base_path, ui->path) > 1024) {
+                return CHM_ENUMERATOR_FAILURE;
+        }
+
+        g_debug("ui->path = %s", ui->path);
+
+        fname = g_build_filename(ctx->base_path, ui->path+1, NULL);
+
+        ui_path_len = strlen(ui->path)-1;
+
+        /* Distinguish between files and dirs */
+        if (ui->path[ui_path_len] != '/' ) {
+                FILE *fout;
+                LONGINT64 len, remain = ui->length;
+                LONGUINT64 offset = 0;
+
+                gchar *file_ext;
+
+                file_ext = g_strrstr(g_path_get_basename(ui->path), ".");
+                g_debug("file_ext = %s", file_ext);
+
+                if ((fout = fopen(fname, "wb")) == NULL) {
+                        /* make sure that it isn't just a missing directory before we abort */
+                        char newbuf[32768];
+                        strcpy(newbuf, fname);
+                        i = rindex(newbuf, '/');
+                        *i = '\0';
+                        rmkdir(newbuf);
+
+                        if ((fout = fopen(fname, "wb")) == NULL) {
+                                g_message("CHM_ENUMERATOR_FAILURE fopen");
+                                return CHM_ENUMERATOR_FAILURE;
+                        }
+                }
+
+                while (remain != 0) {
+                        len = chm_retrieve_object(h, ui, (unsigned char *)buffer, offset, 32768);
+                        if (len > 0) {
+                                if(fwrite(buffer, 1, (size_t)len, fout) != len) {
+                                        g_message("CHM_ENUMERATOR_FAILURE fwrite");
+                                        return CHM_ENUMERATOR_FAILURE;
+                                }
+                                offset += len;
+                                remain -= len;
+                        } else {
+                                break;
+                        }
+                }
+
+                fclose(fout);
+                extract_post_file_write(fname);
+        } else {
+                if (rmkdir(fname) == -1) {
+                        g_message("CHM_ENUMERATOR_FAILURE rmkdir");
+                        return CHM_ENUMERATOR_FAILURE;
+                }
+        }
+        g_free(fname);
+        return CHM_ENUMERATOR_CONTINUE;
 }
 
 static gboolean
 extract_chm(const gchar *filename, ChmFile *chmfile)
 {
-  struct chmFile *handle;
-  struct extract_context ec;
+        struct chmFile *handle;
+        struct extract_context ec;
 
-  handle = chm_open(filename);
+        handle = chm_open(filename);
 
-  if (handle == NULL) {
-    g_message(_("cannot open chmfile: %s"), filename);
-    return FALSE;
-  }
+        if (handle == NULL) {
+                g_message(_("cannot open chmfile: %s"), filename);
+                return FALSE;
+        }
 
-  ec.base_path = (const char *)chmfile->dir;
+        ec.base_path = (const char *)chmfile->dir;
 
-  if (!chm_enumerate(handle, CHM_ENUMERATE_NORMAL, _extract_callback, (void *)&ec)) {
-    g_message(_("Extract chmfile failed: %s"), filename);
-    return FALSE;
-  }
+        if (!chm_enumerate(handle, CHM_ENUMERATE_NORMAL | CHM_ENUMERATE_SPECIAL,
+                           _extract_callback, (void *)&ec)) {
+                g_message(_("Extract chmfile failed: %s"), filename);
+                return FALSE;
+        }
 
-  chm_close(handle);
+        chm_close(handle);
 
-  return TRUE;
+        return TRUE;
 }
 
 #if defined(__linux__)
 static char *
 MD5File(const char *filename, char *buf)
 {
-  unsigned char buffer[1024];
-  unsigned char* digest;
-  static const char hex[]="0123456789abcdef";
+        unsigned char buffer[1024];
+        unsigned char* digest;
+        static const char hex[]="0123456789abcdef";
 
-  gcry_md_hd_t hd;
-  int f, i;
+        gcry_md_hd_t hd;
+        int f, i;
 
-  if(filename == NULL)
-    return NULL;
+        if(filename == NULL)
+                return NULL;
 
-  gcry_md_open(&hd, GCRY_MD_MD5, 0);
-  f = open(filename, O_RDONLY);
-  if (f < 0) {
-    g_message(_("open \"%s\" failed: %s"), filename, strerror(errno));
-    return NULL;
-  }
+        gcry_md_open(&hd, GCRY_MD_MD5, 0);
+        f = open(filename, O_RDONLY);
+        if (f < 0) {
+                g_message(_("open \"%s\" failed: %s"), filename, strerror(errno));
+                return NULL;
+        }
 
-  while ((i = read(f, buffer, sizeof(buffer))) > 0)
-    gcry_md_write(hd, buffer, i);
+        while ((i = read(f, buffer, sizeof(buffer))) > 0)
+                gcry_md_write(hd, buffer, i);
 
-  close(f);
+        close(f);
 
-  if (i < 0)
-    return NULL;
+        if (i < 0)
+                return NULL;
 
-  if (buf == NULL)
-    buf = malloc(33);
-  if (buf == NULL)
-    return (NULL);
+        if (buf == NULL)
+                buf = malloc(33);
+        if (buf == NULL)
+                return (NULL);
 
-  digest = (unsigned char*)gcry_md_read(hd, 0);
+        digest = (unsigned char*)gcry_md_read(hd, 0);
 
-  for (i = 0; i < 16; i++) {
-    buf[i+i] = hex[(u_int32_t)digest[i] >> 4];
-    buf[i+i+1] = hex[digest[i] & 0x0f];
-  }
+        for (i = 0; i < 16; i++) {
+                buf[i+i] = hex[(u_int32_t)digest[i] >> 4];
+                buf[i+i+1] = hex[digest[i] & 0x0f];
+        }
 
-  buf[i+i] = '\0';
-  return (buf);
+        buf[i+i] = '\0';
+        return (buf);
 }
 #endif
 
 static u_int32_t
 get_dword(const unsigned char *buf)
 {
-  u_int32_t result;
+        u_int32_t result;
 
-  result = buf[0] + (buf[1] << 8) + (buf[2] << 16) + (buf[3] << 24);
+        result = buf[0] + (buf[1] << 8) + (buf[2] << 16) + (buf[3] << 24);
 
-  if (result == 0xFFFFFFFF)
-    result = 0;
+        if (result == 0xFFFFFFFF)
+                result = 0;
 
-  return result;
+        return result;
 }
 
 static void
 chmfile_file_info(ChmFile *chmfile)
 {
-  struct chmFile *cfd;
+        struct chmFile *cfd;
 
-  cfd = chm_open(chmfile->filename);
+        cfd = chm_open(chmfile->filename);
 
-  if (cfd == NULL) {
-    g_error(_("Can not open chm file %s."), chmfile->filename);
-    return;
-  }
+        if (cfd == NULL) {
+                g_error(_("Can not open chm file %s."), chmfile->filename);
+                return;
+        }
 
-  chmfile_system_info(cfd, chmfile);
-  chmfile_windows_info(cfd, chmfile);
+        chmfile_system_info(cfd, chmfile);
+        chmfile_windows_info(cfd, chmfile);
 
-  /* Convert book title to UTF-8 */
-  if (chmfile->title != NULL && chmfile->encoding != NULL) {
-    gchar *title_utf8;
+        /* Convert book title to UTF-8 */
+        if (chmfile->title != NULL && chmfile->encoding != NULL) {
+                gchar *title_utf8;
 
-    title_utf8 = g_convert(chmfile->title, -1, "UTF-8",
-                           chmfile->encoding,
-                           NULL, NULL, NULL);
-    g_free(chmfile->title);
-    chmfile->title = title_utf8;
-  }
+                title_utf8 = g_convert(chmfile->title, -1, "UTF-8",
+                                       chmfile->encoding,
+                                       NULL, NULL, NULL);
+                g_free(chmfile->title);
+                chmfile->title = title_utf8;
+        }
 
-  /* Convert filename to UTF-8 */
-  if (chmfile->hhc != NULL && chmfile->encoding != NULL) {
-    gchar *filename_utf8;
+        /* Convert filename to UTF-8 */
+        if (chmfile->hhc != NULL && chmfile->encoding != NULL) {
+                gchar *filename_utf8;
 
-    filename_utf8 = convert_filename_to_utf8(chmfile->hhc, chmfile->encoding);
-    g_free(chmfile->hhc);
-    chmfile->hhc = filename_utf8;
-  }
+                filename_utf8 = convert_filename_to_utf8(chmfile->hhc, chmfile->encoding);
+                g_free(chmfile->hhc);
+                chmfile->hhc = filename_utf8;
+        }
 
-  if (chmfile->hhk != NULL && chmfile->encoding != NULL) {
-    gchar *filename_utf8;
+        if (chmfile->hhk != NULL && chmfile->encoding != NULL) {
+                gchar *filename_utf8;
 
-    filename_utf8 = convert_filename_to_utf8(chmfile->hhk, chmfile->encoding);
-    g_free(chmfile->hhk);
-    chmfile->hhk = filename_utf8;
-  }
+                filename_utf8 = convert_filename_to_utf8(chmfile->hhk, chmfile->encoding);
+                g_free(chmfile->hhk);
+                chmfile->hhk = filename_utf8;
+        }
 
-  chm_close(cfd);
+        chm_close(cfd);
 }
 
 static void
 chmfile_windows_info(struct chmFile *cfd, ChmFile *chmfile)
 {
-  struct chmUnitInfo ui;
-  unsigned char buffer[4096];
-  size_t size = 0;
-  u_int32_t entries, entry_size;
-  u_int32_t hhc, hhk, title, home;
+        struct chmUnitInfo ui;
+        unsigned char buffer[4096];
+        size_t size = 0;
+        u_int32_t entries, entry_size;
+        u_int32_t hhc, hhk, title, home;
 
-  if (chm_resolve_object(cfd, "/#WINDOWS", &ui) != CHM_RESOLVE_SUCCESS)
-    return;
+        if (chm_resolve_object(cfd, "/#WINDOWS", &ui) != CHM_RESOLVE_SUCCESS)
+                return;
 
-  size = chm_retrieve_object(cfd, &ui, buffer, 0L, 8);
+        size = chm_retrieve_object(cfd, &ui, buffer, 0L, 8);
 
-  if (size < 8)
-    return;
+        if (size < 8)
+                return;
 
-  entries = get_dword(buffer);
-  if (entries < 1)
-    return;
+        entries = get_dword(buffer);
+        if (entries < 1)
+                return;
 
-  entry_size = get_dword(buffer + 4);
-  size = chm_retrieve_object(cfd, &ui, buffer, 8L, entry_size);
-  if (size < entry_size)
-    return;
+        entry_size = get_dword(buffer + 4);
+        size = chm_retrieve_object(cfd, &ui, buffer, 8L, entry_size);
+        if (size < entry_size)
+                return;
 
-  hhc = get_dword(buffer + 0x60);
-  hhk = get_dword(buffer + 0x64);
-  home = get_dword(buffer + 0x68);
-  title = get_dword(buffer + 0x14);
+        hhc = get_dword(buffer + 0x60);
+        hhk = get_dword(buffer + 0x64);
+        home = get_dword(buffer + 0x68);
+        title = get_dword(buffer + 0x14);
 
-  if (chm_resolve_object(cfd, "/#STRINGS", &ui) != CHM_RESOLVE_SUCCESS)
-    return;
+        if (chm_resolve_object(cfd, "/#STRINGS", &ui) != CHM_RESOLVE_SUCCESS)
+                return;
 
-  size = chm_retrieve_object(cfd, &ui, buffer, 0L, 4096);
+        size = chm_retrieve_object(cfd, &ui, buffer, 0L, 4096);
 
-  if (!size)
-    return;
+        if (!size)
+                return;
 
-  if (chmfile->hhc == NULL && hhc)
-    chmfile->hhc = g_strdup_printf("/%s", buffer + hhc);
-  if (chmfile->hhk == NULL && hhk)
-    chmfile->hhk = g_strdup_printf("/%s", buffer + hhk);
-  if (chmfile->home == NULL && home)
-    chmfile->home = g_strdup_printf("/%s", buffer + home);
-  if (chmfile->title == NULL && title)
-    chmfile->title = g_strdup((char *)buffer + title);
+        if (chmfile->hhc == NULL && hhc)
+                chmfile->hhc = g_strdup_printf("/%s", buffer + hhc);
+        if (chmfile->hhk == NULL && hhk)
+                chmfile->hhk = g_strdup_printf("/%s", buffer + hhk);
+        if (chmfile->home == NULL && home)
+                chmfile->home = g_strdup_printf("/%s", buffer + home);
+        if (chmfile->title == NULL && title)
+                chmfile->title = g_strdup((char *)buffer + title);
 }
 
 static void
 chmfile_system_info(struct chmFile *cfd, ChmFile *chmfile)
 {
-  struct chmUnitInfo ui;
-  unsigned char buffer[4096];
+        struct chmUnitInfo ui;
+        unsigned char buffer[4096];
 
-  int index = 0;
-  unsigned char* cursor = NULL;
-  u_int16_t value = 0;
-  u_int32_t lcid = 0;
-  size_t size = 0;
+        int index = 0;
+        unsigned char* cursor = NULL;
+        u_int16_t value = 0;
+        u_int32_t lcid = 0;
+        size_t size = 0;
 
-  if (chm_resolve_object(cfd, "/#SYSTEM", &ui) != CHM_RESOLVE_SUCCESS)
-    return;
+        if (chm_resolve_object(cfd, "/#SYSTEM", &ui) != CHM_RESOLVE_SUCCESS)
+                return;
 
-  size = chm_retrieve_object(cfd, &ui, buffer, 4L, 4096);
+        size = chm_retrieve_object(cfd, &ui, buffer, 4L, 4096);
 
-  if (!size)
-    return;
+        if (!size)
+                return;
 
-  buffer[size - 1] = 0;
+        buffer[size - 1] = 0;
 
-  for(;;) {
-    // This condition won't hold if I process anything
-    // except NUL-terminated strings!
-    if(index > size - 1 - (long)sizeof(u_int16_t))
-      break;
+        for(;;) {
+                // This condition won't hold if I process anything
+                // except NUL-terminated strings!
+                if(index > size - 1 - (long)sizeof(u_int16_t))
+                        break;
 
-    cursor = buffer + index;
-    value = UINT16ARRAY(cursor);
-    g_debug("system value = %d", value);
-    switch(value) {
-    case 0:
-      index += 2;
-      cursor = buffer + index;
+                cursor = buffer + index;
+                value = UINT16ARRAY(cursor);
+                g_debug("system value = %d", value);
+                switch(value) {
+                case 0:
+                        index += 2;
+                        cursor = buffer + index;
 
-      chmfile->hhc = g_strdup_printf("/%s", buffer + index + 2);
-      g_debug("hhc %s", chmfile->hhc);
+                        chmfile->hhc = g_strdup_printf("/%s", buffer + index + 2);
+                        g_debug("hhc %s", chmfile->hhc);
 
-      break;
-    case 1:
-      index += 2;
-      cursor = buffer + index;
+                        break;
+                case 1:
+                        index += 2;
+                        cursor = buffer + index;
 
-      chmfile->hhk = g_strdup_printf("/%s", buffer + index + 2);
-      g_debug("hhk %s", chmfile->hhk);
+                        chmfile->hhk = g_strdup_printf("/%s", buffer + index + 2);
+                        g_debug("hhk %s", chmfile->hhk);
 
-      break;
-    case 2:
-      index += 2;
-      cursor = buffer + index;
+                        break;
+                case 2:
+                        index += 2;
+                        cursor = buffer + index;
 
-      chmfile->home = g_strdup_printf("/%s", buffer + index + 2);
-      g_debug("home %s", chmfile->home);
+                        chmfile->home = g_strdup_printf("/%s", buffer + index + 2);
+                        g_debug("home %s", chmfile->home);
 
-      break;
-    case 3:
-      index += 2;
-      cursor = buffer + index;
+                        break;
+                case 3:
+                        index += 2;
+                        cursor = buffer + index;
 
-      chmfile->title = g_strdup((char *)buffer + index + 2);
-      g_debug("title %s", chmfile->title);
+                        chmfile->title = g_strdup((char *)buffer + index + 2);
+                        g_debug("title %s", chmfile->title);
 
-      break;
-    case 4: // LCID stuff
-      index += 2;
-      cursor = buffer + index;
+                        break;
+                case 4: // LCID stuff
+                        index += 2;
+                        cursor = buffer + index;
 
-      lcid = UINT32ARRAY(buffer + index + 2);
-      g_debug("lcid %x", lcid);
-      chmfile_set_encoding(chmfile, get_encoding_by_lcid(lcid));
-      break;
+                        lcid = UINT32ARRAY(buffer + index + 2);
+                        g_debug("lcid %x", lcid);
+                        chmfile_set_encoding(chmfile, get_encoding_by_lcid(lcid));
+                        break;
 
-    case 6:
-      index += 2;
-      cursor = buffer + index;
+                case 6:
+                        index += 2;
+                        cursor = buffer + index;
 
-      if(!chmfile->hhc) {
-        char *hhc, *hhk;
+                        if(!chmfile->hhc) {
+                                char *hhc, *hhk;
 
-        hhc = g_strdup_printf("/%s.hhc", buffer + index + 2);
-        hhk = g_strdup_printf("/%s.hhk", buffer + index + 2);
+                                hhc = g_strdup_printf("/%s.hhc", buffer + index + 2);
+                                hhk = g_strdup_printf("/%s.hhk", buffer + index + 2);
 
-        if (chm_resolve_object(cfd, hhc, &ui) == CHM_RESOLVE_SUCCESS)
-          chmfile->hhc = hhc;
+                                if (chm_resolve_object(cfd, hhc, &ui) == CHM_RESOLVE_SUCCESS)
+                                        chmfile->hhc = hhc;
 
-        if (chm_resolve_object(cfd, hhk, &ui) == CHM_RESOLVE_SUCCESS)
-          chmfile->hhk = hhk;
-      }
+                                if (chm_resolve_object(cfd, hhk, &ui) == CHM_RESOLVE_SUCCESS)
+                                        chmfile->hhk = hhk;
+                        }
 
-      break;
-    case 16:
-      index += 2;
-      cursor = buffer + index;
+                        break;
+                case 16:
+                        index += 2;
+                        cursor = buffer + index;
 
-      g_debug("font %s", buffer + index + 2);
-      break;
+                        g_debug("font %s", buffer + index + 2);
+                        break;
 
-    default:
-      index += 2;
-      cursor = buffer + index;
-    }
+                default:
+                        index += 2;
+                        cursor = buffer + index;
+                }
 
-    value = UINT16ARRAY(cursor);
-    index += value + 2;
-  }
+                value = UINT16ARRAY(cursor);
+                index += value + 2;
+        }
 }
 
 ChmFile *
 chmfile_new(const gchar *filename)
 {
-  ChmFile *self;
-  gchar *bookmark_file;
-  gchar *md5;
+        ChmFile *self;
+        gchar *bookmark_file;
+        gchar *md5;
 
-  /* Use chmfile MD5 as book folder name */
-  md5 = MD5File(filename, NULL);
-  if(!md5) {
-    return NULL;
-  }
+        /* Use chmfile MD5 as book folder name */
+        md5 = MD5File(filename, NULL);
+        if(!md5) {
+                return NULL;
+        }
 
-  self = g_object_new(TYPE_CHMFILE, NULL);
-  self->filename = g_strdup(filename);
+        self = g_object_new(TYPE_CHMFILE, NULL);
+        self->filename = g_strdup(filename);
 
 
-  self->dir = g_build_filename(g_getenv("HOME"),
-                                  ".chmsee",
-                                  "bookshelf",
-                                  md5,
-                                  NULL);
-  g_debug("book dir = %s", self->dir);
+        self->dir = g_build_filename(g_getenv("HOME"),
+                                     ".chmsee",
+                                     "bookshelf",
+                                     md5,
+                                     NULL);
+        g_debug("book dir = %s", self->dir);
 
-  /* If this chm file extracted before, load it's bookinfo */
-  if (!g_file_test(self->dir, G_FILE_TEST_IS_DIR)) {
-    if (!extract_chm(filename, self)) {
-      g_debug("extract_chm failed: %s", filename);
-      return NULL;
-    }
+        /* If this chm file extracted before, load it's bookinfo */
+        if (!g_file_test(self->dir, G_FILE_TEST_IS_DIR)) {
+                if (!extract_chm(filename, self)) {
+                        g_debug("extract_chm failed: %s", filename);
+                        return NULL;
+                }
 
-    g_debug("chmfile->filename = %s", self->filename);
+                g_debug("chmfile->filename = %s", self->filename);
 
-    chmfile_file_info(self);
-    save_fileinfo(self);
-  } else {
-    load_fileinfo(self);
-  }
+                chmfile_file_info(self);
+                save_fileinfo(self);
+        } else {
+                load_fileinfo(self);
+        }
 
-  g_debug("chmfile->hhc = %s", self->hhc);
-  g_debug("chmfile->hhk = %s", self->hhk);
-  g_debug("chmfile->home = %s", self->home);
-  g_debug("chmfile->title = %s", self->title);
-  g_debug("chmfile->endcoding = %s", self->encoding);
+        g_debug("chmfile->hhc = %s", self->hhc);
+        g_debug("chmfile->hhk = %s", self->hhk);
+        g_debug("chmfile->home = %s", self->home);
+        g_debug("chmfile->title = %s", self->title);
+        g_debug("chmfile->endcoding = %s", self->encoding);
 
-  /* Parse hhc and store result to tree view */
-  if (self->hhc != NULL && g_ascii_strcasecmp(self->hhc, "(null)") != 0) {
-    gchar *hhc;
+        /* Parse hhc and store result to tree view */
+        if (self->hhc != NULL && g_ascii_strcasecmp(self->hhc, "(null)") != 0) {
+                gchar *hhc;
 
-    hhc = g_strdup_printf("%s%s", self->dir, self->hhc);
+                hhc = g_strdup_printf("%s%s", self->dir, self->hhc);
 
-    if (g_file_test(hhc, G_FILE_TEST_EXISTS)) {
-      self->link_tree = hhc_load(hhc, self->encoding);
-    } else {
-      gchar *hhc_ncase;
+                if (g_file_test(hhc, G_FILE_TEST_EXISTS)) {
+                        self->link_tree = hhc_load(hhc, self->encoding);
+                } else {
+                        gchar *hhc_ncase;
 
-      hhc_ncase = file_exist_ncase(hhc);
-      self->link_tree = hhc_load(hhc_ncase, self->encoding);
-      g_free(hhc_ncase);
-    }
+                        hhc_ncase = file_exist_ncase(hhc);
+                        self->link_tree = hhc_load(hhc_ncase, self->encoding);
+                        g_free(hhc_ncase);
+                }
 
-    g_free(hhc);
-  } else {
-    g_message(_("Can't found hhc file."));
-  }
+                g_free(hhc);
+        } else {
+                g_message(_("Can't found hhc file."));
+        }
 
-  /* Load bookmarks */
-  bookmark_file = g_build_filename(self->dir, CHMSEE_BOOKMARK_FILE, NULL);
-  self->bookmarks_list = bookmarks_load(bookmark_file);
-  g_free(bookmark_file);
-  g_free(md5);
+        /* Load bookmarks */
+        bookmark_file = g_build_filename(self->dir, CHMSEE_BOOKMARK_FILE, NULL);
+        self->bookmarks_list = bookmarks_load(bookmark_file);
+        g_free(bookmark_file);
+        g_free(md5);
 
-  return self;
+        return self;
 }
 void
 load_fileinfo(ChmFile *book)
 {
-  GList *pairs, *list;
-  gchar *path;
+        GList *pairs, *list;
+        gchar *path;
 
-  path = g_strdup_printf("%s/%s", book->dir, CHMSEE_BOOKINFO_FILE);
+        path = g_strdup_printf("%s/%s", book->dir, CHMSEE_BOOKINFO_FILE);
 
-  g_debug("bookinfo path = %s", path);
+        g_debug("bookinfo path = %s", path);
 
-  pairs = parse_config_file("bookinfo", path);
+        pairs = parse_config_file("bookinfo", path);
 
-  for (list = pairs; list; list = list->next) {
-    Item *item;
+        for (list = pairs; list; list = list->next) {
+                Item *item;
 
-    item = list->data;
+                item = list->data;
 
-    if (strstr(item->id, "hhc")) {
-      book->hhc = g_strdup(item->value);
-      continue;
-    }
+                if (strstr(item->id, "hhc")) {
+                        book->hhc = g_strdup(item->value);
+                        continue;
+                }
 
-    if (strstr(item->id, "hhk")) {
-      book->hhk = g_strdup(item->value);
-      continue;
-    }
+                if (strstr(item->id, "hhk")) {
+                        book->hhk = g_strdup(item->value);
+                        continue;
+                }
 
-    if (strstr(item->id, "home")) {
-      book->home = g_strdup(item->value);
-      continue;
-    }
+                if (strstr(item->id, "home")) {
+                        book->home = g_strdup(item->value);
+                        continue;
+                }
 
-    if (strstr(item->id, "title")) {
-      book->title = g_strdup(item->value);
-      continue;
-    }
+                if (strstr(item->id, "title")) {
+                        book->title = g_strdup(item->value);
+                        continue;
+                }
 
-    if (strstr(item->id, "encoding")) {
-      book->encoding = g_strdup(item->value);
-      continue;
-    }
+                if (strstr(item->id, "encoding")) {
+                        book->encoding = g_strdup(item->value);
+                        continue;
+                }
 
-    if (strstr(item->id, "variable_font")) {
-      book->variable_font = g_strdup(item->value);
-      continue;
-    }
+                if (strstr(item->id, "variable_font")) {
+                        book->variable_font = g_strdup(item->value);
+                        continue;
+                }
 
-    if (strstr(item->id, "fixed_font")) {
-      book->fixed_font = g_strdup(item->value);
-      continue;
-    }
-  }
+                if (strstr(item->id, "fixed_font")) {
+                        book->fixed_font = g_strdup(item->value);
+                        continue;
+                }
+        }
 
-  free_config_list(pairs);
-  g_free(path);
+        free_config_list(pairs);
+        g_free(path);
 }
 
 void
 save_fileinfo(ChmFile *book)
 {
-  FILE *fd;
-  gchar *path;
+        FILE *fd;
+        gchar *path;
 
-  path = g_build_filename(book->dir, CHMSEE_BOOKINFO_FILE, NULL);
+        path = g_build_filename(book->dir, CHMSEE_BOOKINFO_FILE, NULL);
 
-  g_debug("save bookinfo path = %s", path);
+        g_debug("save bookinfo path = %s", path);
 
-  fd = fopen(path, "w");
+        fd = fopen(path, "w");
 
-  if (!fd) {
-    g_print("Faild to open bookinfo file: %s", path);
-  } else {
-    save_option(fd, "hhc", book->hhc);
-    save_option(fd, "hhk", book->hhk);
-    save_option(fd, "home", book->home);
-    save_option(fd, "title", book->title);
-    save_option(fd, "encoding", book->encoding);
-    save_option(fd, "variable_font", book->variable_font);
-    save_option(fd, "fixed_font", book->fixed_font);
+        if (!fd) {
+                g_print("Faild to open bookinfo file: %s", path);
+        } else {
+                save_option(fd, "hhc", book->hhc);
+                save_option(fd, "hhk", book->hhk);
+                save_option(fd, "home", book->home);
+                save_option(fd, "title", book->title);
+                save_option(fd, "encoding", book->encoding);
+                save_option(fd, "variable_font", book->variable_font);
+                save_option(fd, "fixed_font", book->fixed_font);
 
-    fclose(fd);
-  }
-  g_free(path);
+                fclose(fd);
+        }
+        g_free(path);
 }
 
 /* see http://code.google.com/p/chmsee/issues/detail?id=12 */
 void extract_post_file_write(const gchar* fname) {
-  gchar* basename = g_path_get_basename(fname);
-  gchar* pos = strchr(basename, ';');
-  if(pos) {
-    gchar* dirname = g_path_get_dirname(fname);
-    *pos = '\0';
-    gchar* newfname = g_build_filename(dirname, basename, NULL);
-    if(g_rename(fname, newfname) != 0) {
-      g_error("rename \"%s\" to \"%s\" failed: %s", fname, newfname, strerror(errno));
-    }
-    g_free(dirname);
-    g_free(newfname);
-  }
-  g_free(basename);
+        gchar* basename = g_path_get_basename(fname);
+        gchar* pos = strchr(basename, ';');
+        if(pos) {
+                gchar* dirname = g_path_get_dirname(fname);
+                *pos = '\0';
+                gchar* newfname = g_build_filename(dirname, basename, NULL);
+                if(g_rename(fname, newfname) != 0) {
+                        g_error("rename \"%s\" to \"%s\" failed: %s", fname, newfname, strerror(errno));
+                }
+                g_free(dirname);
+                g_free(newfname);
+        }
+        g_free(basename);
 }
 
 static const gchar* chmfile_get_dir(ChmFile* self) {
-  return self->dir;
+        return self->dir;
 }
 
 static const gchar* chmfile_get_home(ChmFile* self) {
-  return self->home;
+        return self->home;
 }
 
 static const gchar* chmfile_get_title(ChmFile* self) {
-  return self->title;
+        return self->title;
 }
 
 static const gchar* chmfile_get_fixed_font(ChmFile* self) {
-  return self->fixed_font;
+        return self->fixed_font;
 }
 static const gchar* chmfile_get_variable_font(ChmFile* self) {
-  return self->variable_font;
+        return self->variable_font;
 }
 
 static const gchar* chmfile_get_filename(ChmseeIchmfile* self_) {
-	ChmFile* self = CHMFILE(self_);
-	return self->filename;
+        ChmFile* self = CHMFILE(self_);
+        return self->filename;
 }
 
 static Hhc* chmfile_get_link_tree(ChmFile* self) {
-  return self->link_tree;
+        return self->link_tree;
 }
 
 static Bookmarks* chmfile_get_bookmarks_list(ChmFile* self){
-  return self->bookmarks_list;
+        return self->bookmarks_list;
 }
 
 static void chmfile_set_fixed_font(ChmFile* self, const gchar* font) {
-  g_free(self->fixed_font);
-  self->fixed_font = g_strdup(font);
+        g_free(self->fixed_font);
+        self->fixed_font = g_strdup(font);
 }
 
 static void chmfile_set_variable_font(ChmFile* self, const gchar* font) {
-  g_free(self->variable_font);
-  self->variable_font = g_strdup(font);
+        g_free(self->variable_font);
+        self->variable_font = g_strdup(font);
 }
 
 static void chmsee_ichmfile_interface_init (ChmseeIchmfileInterface* iface)
 {
-  iface->get_dir = chmfile_get_dir;
-  iface->get_home = chmfile_get_home;
-  iface->get_title = chmfile_get_title;
-  iface->get_fixed_font = chmfile_get_fixed_font;
-  iface->get_variable_font = chmfile_get_variable_font;
-  iface->get_link_tree = chmfile_get_link_tree;
-  iface->get_bookmarks_list = chmfile_get_bookmarks_list;
-  iface->set_fixed_font = chmfile_set_fixed_font;
-  iface->set_variable_font = chmfile_set_variable_font;
-  iface->get_index = chmfile_get_index;
-  iface->get_filename = chmfile_get_filename;
+        iface->get_dir = chmfile_get_dir;
+        iface->get_home = chmfile_get_home;
+        iface->get_title = chmfile_get_title;
+        iface->get_fixed_font = chmfile_get_fixed_font;
+        iface->get_variable_font = chmfile_get_variable_font;
+        iface->get_link_tree = chmfile_get_link_tree;
+        iface->get_bookmarks_list = chmfile_get_bookmarks_list;
+        iface->set_fixed_font = chmfile_set_fixed_font;
+        iface->set_variable_font = chmfile_set_variable_font;
+        iface->get_index = chmfile_get_index;
+        iface->get_filename = chmfile_get_filename;
 }
 
 void chmfile_set_encoding(ChmFile* self, const char* encoding) {
-	if(self->encoding) {
-		g_free(self->encoding);
-	}
-	self->encoding = g_strdup(encoding);
+        if(self->encoding) {
+                g_free(self->encoding);
+        }
+        self->encoding = g_strdup(encoding);
 }
 
 void chmfile_dispose(GObject* object) {
-	ChmFile* self = CHMFILE(object);
-	if(selfp->index) {
-		g_object_unref(selfp->index);
-		selfp->index = NULL;
-	}
+        ChmFile* self = CHMFILE(object);
+        if(selfp->index) {
+                g_object_unref(selfp->index);
+                selfp->index = NULL;
+        }
 }
 
 ChmIndex* chmfile_get_index(ChmFile* self) {
-	if(selfp->index == NULL && self->hhk != NULL) {
-		gchar* path = g_strconcat(self->dir, self->hhk, NULL);
-		gchar* path2 = correct_filename(path);
-		selfp->index = chmindex_new(path2, self->encoding);
-		g_free(path);
-		g_free(path2);
-	}
-	return selfp->index;
+        if(selfp->index == NULL && self->hhk != NULL) {
+                gchar* path = g_strconcat(self->dir, self->hhk, NULL);
+                gchar* path2 = correct_filename(path);
+                selfp->index = chmindex_new(path2, self->encoding);
+                g_free(path);
+                g_free(path2);
+        }
+        return selfp->index;
 }

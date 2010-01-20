@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006 Ji YongGang <jungle@soforge-studio.com>
+ *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
  *  Copyright (C) 2009 LI Daobing <lidaobing@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
@@ -32,17 +32,17 @@ typedef struct _ChmFile       ChmFile;
 typedef struct _ChmFileClass  ChmFileClass;
 typedef struct _ChmFilePriv   ChmFilePriv;
 
-#define TYPE_CHMFILE \
+#define TYPE_CHMFILE                            \
         (chmfile_get_type ())
-#define CHMFILE(o) \
+#define CHMFILE(o)                                                      \
         (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_CHMFILE, ChmFile))
-#define CHMFILE_CLASS(k) \
+#define CHMFILE_CLASS(k)                                                \
         (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_CHMFILE, ChmFileClass))
-#define IS_CHMFILE(o) \
+#define IS_CHMFILE(o)                                           \
         (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_CHMFILE))
-#define IS_CHMFILE_CLASS(k) \
+#define IS_CHMFILE_CLASS(k)                             \
         (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_CHMFILE))
-#define CHMFILE_GET_CLASS(o) \
+#define CHMFILE_GET_CLASS(o)                                            \
         (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_CHMFILE, ChmFileClass))
 
 struct _ChmFile
@@ -55,7 +55,7 @@ struct _ChmFile
         gchar          *hhc;
         gchar          *hhk;
         gchar          *title;
-        gchar    	   *encoding;
+        gchar          *encoding;
         gchar          *variable_font;
         gchar          *fixed_font;
 
@@ -66,7 +66,7 @@ struct _ChmFile
 
 struct _ChmFileClass
 {
-	GObjectClass parent_class;
+        GObjectClass parent_class;
 };
 
 GType chmfile_get_type(void);
