@@ -812,6 +812,7 @@ populate_window(ChmSee *self)
         gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
         GtkWidget* ui_chmfile = chmsee_ui_chmfile_new();
+        gtk_widget_set_sensitive(ui_chmfile, FALSE);
         selfp->ui_chmfile = ui_chmfile;
         gtk_box_pack_start(GTK_BOX(vbox), ui_chmfile, TRUE, TRUE, 0);
         gtk_container_set_focus_child(GTK_CONTAINER(vbox), ui_chmfile);
@@ -858,6 +859,7 @@ chmsee_set_model(ChmSee* self, ChmseeIchmfile *book)
 
         selfp->book = g_object_ref(book);
         chmsee_ui_chmfile_set_model(CHMSEE_UI_CHMFILE(selfp->ui_chmfile), book);
+        gtk_widget_set_sensitive(selfp->ui_chmfile, TRUE);
 
         /* Window title */
         gchar *window_title;
