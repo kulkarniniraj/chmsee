@@ -24,28 +24,28 @@
 
 typedef GList Bookmarks;
 
-/** 
+/**
  * load bookmarks from file.
- * 
+ *
  * @param fname file path.
- * 
+ *
  * @return Bookmarks* if success
  * @return NULL if failed
  */
 Bookmarks* bookmarks_load(const gchar* fname);
 
-/** 
+/**
  * save bookmarks to file
- * 
+ *
  * @param bookmarks
  * @param ofname output file name
  */
 void bookmarks_save(Bookmarks* bookmarks, const gchar* ofname);
 
-/** 
+/**
  * free bookmarks
- * 
- * @param bookmarks 
+ *
+ * @param bookmarks
  */
 void bookmarks_free(Bookmarks* bookmarks);
 

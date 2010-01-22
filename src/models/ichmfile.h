@@ -36,20 +36,20 @@ typedef struct _ChmseeIchmfileInterface ChmseeIchmfileInterface;
 
 struct _ChmseeIchmfileInterface
 {
-  GTypeInterface parent_iface;
+        GTypeInterface parent_iface;
 
-  const gchar* (*get_dir) (ChmseeIchmfile* self);
-  const gchar* (*get_home) (ChmseeIchmfile* self);
-  const gchar* (*get_title) (ChmseeIchmfile* self);
-  const gchar* (*get_variable_font) (ChmseeIchmfile* self);
-  const gchar* (*get_fixed_font) (ChmseeIchmfile* self);
-  const gchar* (*get_filename) (ChmseeIchmfile* self);
-  Hhc* (*get_link_tree) (ChmseeIchmfile* self);
-  Bookmarks* (*get_bookmarks_list) (ChmseeIchmfile* self);
-  ChmIndex* (*get_index) (ChmseeIchmfile* self);
+        const gchar* (*get_dir) (ChmseeIchmfile* self);
+        const gchar* (*get_home) (ChmseeIchmfile* self);
+        const gchar* (*get_title) (ChmseeIchmfile* self);
+        const gchar* (*get_variable_font) (ChmseeIchmfile* self);
+        const gchar* (*get_fixed_font) (ChmseeIchmfile* self);
+        const gchar* (*get_filename) (ChmseeIchmfile* self);
+        Hhc* (*get_link_tree) (ChmseeIchmfile* self);
+        Bookmarks* (*get_bookmarks_list) (ChmseeIchmfile* self);
+        ChmIndex* (*get_index) (ChmseeIchmfile* self);
 
-  void (*set_variable_font) (ChmseeIchmfile* self, const gchar* font);
-  void (*set_fixed_font) (ChmseeIchmfile* self, const gchar* font);
+        void (*set_variable_font) (ChmseeIchmfile* self, const gchar* font);
+        void (*set_fixed_font) (ChmseeIchmfile* self, const gchar* font);
 };
 
 GType chmsee_ichmfile_get_type(void);

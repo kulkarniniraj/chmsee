@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2006           Ji YongGang <jungle@soforge-studio.com>
+ *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,20 +25,20 @@
 
 typedef GNode Hhc;
 
-/** 
+/**
  * load Hhc from file
- * 
- * @param filename 
- * @param encoding 
- * 
- * @return 
+ *
+ * @param filename
+ * @param encoding
+ *
+ * @return
  */
 Hhc* hhc_load(const gchar* filename, const gchar* encoding);
 
-/** 
+/**
  * free Hhc
- * 
- * @param self 
+ *
+ * @param self
  */
 void hhc_free(Hhc* self);
 

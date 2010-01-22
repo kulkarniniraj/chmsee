@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2006           Ji YongGang <jungle@soforge-studio.com>
+ *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -373,8 +373,8 @@ ui_bookmarks_new(GList *links)
 }
 
 void ui_bookmarks_set_model(UiBookmarks* self, GList* model) {
-	self->links = model;
-	update_bookmarks_treeview(self, NULL);
+        self->links = model;
+        update_bookmarks_treeview(self, NULL);
 }
 
 

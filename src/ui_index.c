@@ -34,7 +34,7 @@ enum {
 static gint              signals[LAST_SIGNAL] = { 0 };
 
 struct _ChmseeUiIndexPrivate {
-	ChmIndex* chmIndex;
+        ChmIndex* chmIndex;
         GtkWidget *booktree;
 };
 
@@ -48,27 +48,27 @@ static void chmsee_ui_index_on_link_selected(ChmseeUiIndex* self, Link* link);
 
 static void
 chmsee_ui_index_class_init(ChmseeUiIndexClass* klass) {
-	g_type_class_add_private(klass, sizeof(ChmseeUiIndexPrivate));
-	G_OBJECT_CLASS(klass)->dispose = chmsee_ui_index_dispose;
-	G_OBJECT_CLASS(klass)->finalize = chmsee_ui_index_finalize;
+        g_type_class_add_private(klass, sizeof(ChmseeUiIndexPrivate));
+        G_OBJECT_CLASS(klass)->dispose = chmsee_ui_index_dispose;
+        G_OBJECT_CLASS(klass)->finalize = chmsee_ui_index_finalize;
 
-    signals[LINK_SELECTED] =
-            g_signal_new ("link_selected",
-                          G_TYPE_FROM_CLASS (klass),
-                          G_SIGNAL_RUN_LAST,
-                          G_STRUCT_OFFSET (ChmseeUiIndexClass, link_selected),
-                          NULL,
-                          NULL,
-                          g_cclosure_marshal_VOID__POINTER,
-                          G_TYPE_NONE,
-                          1,
-                          G_TYPE_POINTER);
+        signals[LINK_SELECTED] =
+                g_signal_new ("link_selected",
+                              G_TYPE_FROM_CLASS (klass),
+                              G_SIGNAL_RUN_LAST,
+                              G_STRUCT_OFFSET (ChmseeUiIndexClass, link_selected),
+                              NULL,
+                              NULL,
+                              g_cclosure_marshal_VOID__POINTER,
+                              G_TYPE_NONE,
+                              1,
+                              G_TYPE_POINTER);
 }
 
 static void
 chmsee_ui_index_init(ChmseeUiIndex* self) {
-	self->priv = CHMSEE_UI_INDEX_GET_PRIVATE(self);
-	selfp->chmIndex = NULL;
+        self->priv = CHMSEE_UI_INDEX_GET_PRIVATE(self);
+        selfp->chmIndex = NULL;
         GtkWidget* widget = booktree_new(NULL);
 
         gtk_container_add(GTK_CONTAINER(self),
@@ -81,66 +81,66 @@ chmsee_ui_index_init(ChmseeUiIndex* self) {
 }
 
 GtkWidget* chmsee_ui_index_new(ChmIndex* chmIndex) {
-	ChmseeUiIndex* self = CHMSEE_UI_INDEX(g_object_new(CHMSEE_TYPE_UI_INDEX, NULL));
-	chmsee_ui_index_set_model(self, chmIndex);
-	return GTK_WIDGET(self);
+        ChmseeUiIndex* self = CHMSEE_UI_INDEX(g_object_new(CHMSEE_TYPE_UI_INDEX, NULL));
+        chmsee_ui_index_set_model(self, chmIndex);
+        return GTK_WIDGET(self);
 }
 
 static void chmsee_ui_index_dispose(GObject* object) {
-	ChmseeUiIndex* self = CHMSEE_UI_INDEX(object);
-	if(selfp->chmIndex) {
-		g_object_unref(selfp->chmIndex);
-		selfp->chmIndex = NULL;
-	}
-	G_OBJECT_CLASS(chmsee_ui_index_parent_class)->dispose(object);
+        ChmseeUiIndex* self = CHMSEE_UI_INDEX(object);
+        if(selfp->chmIndex) {
+                g_object_unref(selfp->chmIndex);
+                selfp->chmIndex = NULL;
+        }
+        G_OBJECT_CLASS(chmsee_ui_index_parent_class)->dispose(object);
 }
 
 static void chmsee_ui_index_finalize(GObject* object) {
-	G_OBJECT_CLASS(chmsee_ui_index_parent_class)->finalize(object);
+        G_OBJECT_CLASS(chmsee_ui_index_parent_class)->finalize(object);
 }
 
 void chmsee_ui_index_set_model(ChmseeUiIndex* self, ChmIndex* chmIndex) {
-	if(selfp->chmIndex) {
-		g_object_unref(selfp->chmIndex);
-		selfp->chmIndex = NULL;
-	}
+        if(selfp->chmIndex) {
+                g_object_unref(selfp->chmIndex);
+                selfp->chmIndex = NULL;
+        }
 
-	if(chmIndex != NULL) {
-		selfp->chmIndex = g_object_ref(chmIndex);
-	}
+        if(chmIndex != NULL) {
+                selfp->chmIndex = g_object_ref(chmIndex);
+        }
 
-	chmsee_ui_index_refresh(self);
+        chmsee_ui_index_refresh(self);
 }
 
 
 void chmsee_ui_index_refresh(ChmseeUiIndex* self) {
-  GNode* node = NULL;
+        GNode* node = NULL;
 
-  if(selfp->chmIndex != NULL) {
-    node = chmindex_get_data(selfp->chmIndex);
-  }
+        if(selfp->chmIndex != NULL) {
+                node = chmindex_get_data(selfp->chmIndex);
+        }
 
-  booktree_set_model(BOOKTREE(self->priv->booktree),
-                     node);
+        booktree_set_model(BOOKTREE(self->priv->booktree),
+                           node);
 }
 
 void chmsee_ui_index_on_link_selected(ChmseeUiIndex* self, Link* link) {
-	g_signal_emit(self, signals[LINK_SELECTED], 0, link);
+        g_signal_emit(self, signals[LINK_SELECTED], 0, link);
 }
 
 gboolean chmsee_ui_index_select_link_by_name(ChmseeUiIndex* self, const gchar* name) {
-	GtkWidget* child = self->priv->booktree;
-	if(!IS_BOOKTREE(child)) {
-		return FALSE;
-	}
+        GtkWidget* child = self->priv->booktree;
+        if(!IS_BOOKTREE(child)) {
+                return FALSE;
+        }
 
-	return booktree_select_link_by_name(BOOKTREE(child), name);
+        return booktree_select_link_by_name(BOOKTREE(child), name);
 }
 
 void
 chmsee_ui_index_set_filter_string (ChmseeUiIndex *self, const gchar *key)
 {
-    g_return_if_fail (CHMSEE_IS_UI_INDEX (self));
+        g_return_if_fail (CHMSEE_IS_UI_INDEX (self));
 
-    booktree_set_filter_string (BOOKTREE(selfp->booktree), key);
+        booktree_set_filter_string (BOOKTREE(selfp->booktree), key);
 }

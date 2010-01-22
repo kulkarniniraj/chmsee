@@ -33,28 +33,28 @@ typedef struct _ChmseeIhtmlInterface ChmseeIhtmlInterface;
 
 struct _ChmseeIhtmlInterface
 {
-  GTypeInterface parent_iface;
+        GTypeInterface parent_iface;
 
-  const gchar* (*get_title) (ChmseeIhtml* self);
-  const gchar* (*get_location) (ChmseeIhtml* self);
-  gboolean (*can_go_back) (ChmseeIhtml* self);
-  gboolean (*can_go_forward) (ChmseeIhtml* self);
-  
+        const gchar* (*get_title) (ChmseeIhtml* self);
+        const gchar* (*get_location) (ChmseeIhtml* self);
+        gboolean (*can_go_back) (ChmseeIhtml* self);
+        gboolean (*can_go_forward) (ChmseeIhtml* self);
 
-  void (*open_uri) (ChmseeIhtml* self, const gchar* uri);
-  void (*copy_selection) (ChmseeIhtml* self);
-  void (*select_all) (ChmseeIhtml* self);
-  void (*go_back) (ChmseeIhtml* self);
-  void (*go_forward) (ChmseeIhtml* self);
-  void (*increase_size) (ChmseeIhtml* self);
-  void (*decrease_size) (ChmseeIhtml* self);
-  void (*reset_size) (ChmseeIhtml* self);
-  void (*set_variable_font) (ChmseeIhtml* self, const gchar* font);
-  void (*set_fixed_font) (ChmseeIhtml* self, const gchar* font);
-  void (*clear) (ChmseeIhtml* self);
-  void (*shutdown) (ChmseeIhtml* self);
 
-  GtkWidget* (*get_widget) (ChmseeIhtml* self);
+        void (*open_uri) (ChmseeIhtml* self, const gchar* uri);
+        void (*copy_selection) (ChmseeIhtml* self);
+        void (*select_all) (ChmseeIhtml* self);
+        void (*go_back) (ChmseeIhtml* self);
+        void (*go_forward) (ChmseeIhtml* self);
+        void (*increase_size) (ChmseeIhtml* self);
+        void (*decrease_size) (ChmseeIhtml* self);
+        void (*reset_size) (ChmseeIhtml* self);
+        void (*set_variable_font) (ChmseeIhtml* self, const gchar* font);
+        void (*set_fixed_font) (ChmseeIhtml* self, const gchar* font);
+        void (*clear) (ChmseeIhtml* self);
+        void (*shutdown) (ChmseeIhtml* self);
+
+        GtkWidget* (*get_widget) (ChmseeIhtml* self);
 };
 
 GType chmsee_ihtml_get_type(void);

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2006           Ji YongGang <jungle@soforge-studio.com>
+ *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -46,8 +46,8 @@
 G_BEGIN_DECLS
 
 enum {
-	GECKO_PREF_FONT_VARIABLE,
-	GECKO_PREF_FONT_FIXED
+        GECKO_PREF_FONT_VARIABLE,
+        GECKO_PREF_FONT_FIXED
 };
 
 void gecko_utils_init(void);

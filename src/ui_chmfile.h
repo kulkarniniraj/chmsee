@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2006           Ji YongGang <jungle@soforge-studio.com>
+ *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
  *  Copyright (C) 2009 LI Daobing <lidaobing@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
@@ -53,12 +53,12 @@ typedef struct _ChmseeUiChmfileClass		ChmseeUiChmfileClass;
 
 
 struct _ChmseeUiChmfile {
-	GtkHPaned parent;
-	ChmseeUiChmfilePrivate* priv;
+        GtkHPaned parent;
+        ChmseeUiChmfilePrivate* priv;
 };
 
 struct _ChmseeUiChmfileClass {
-	GtkHPanedClass parent_class;
+        GtkHPanedClass parent_class;
 };
 
 GType chmsee_ui_chmfile_get_type(void);

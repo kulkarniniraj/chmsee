@@ -28,49 +28,49 @@
 Bookmarks *
 bookmarks_load(const gchar *path)
 {
-  Bookmarks* links = NULL;
-  GList *pairs, *list;
+        Bookmarks* links = NULL;
+        GList *pairs, *list;
 
-  g_debug("bookmarks path = %s", path);
+        g_debug("bookmarks path = %s", path);
 
-  pairs = parse_config_file("bookmarks", path);
+        pairs = parse_config_file("bookmarks", path);
 
-  for (list = pairs; list; list = list->next) {
-    Link *link;
-    Item *item;
+        for (list = pairs; list; list = list->next) {
+                Link *link;
+                Item *item;
 
-    item = list->data;
-    link = link_new(LINK_TYPE_PAGE, item->id, item->value);
+                item = list->data;
+                link = link_new(LINK_TYPE_PAGE, item->id, item->value);
 
-    links = g_list_prepend(links, link);
-  }
+                links = g_list_prepend(links, link);
+        }
 
-  free_config_list(pairs);
+        free_config_list(pairs);
 
-  return links;
+        return links;
 }
 
 static void
 save_bookmark(Link *link, FILE *fd)
 {
-  save_option(fd, link->name, link->uri);
+        save_option(fd, link->name, link->uri);
 }
 
 void
 bookmarks_save(Bookmarks* links, const gchar* path)
 {
-  FILE *fd;
-        
-  g_debug("save bookmarks path = %s", path);
+        FILE *fd;
 
-  fd = fopen(path, "w");
+        g_debug("save bookmarks path = %s", path);
 
-  if (!fd) {
-    g_print("Faild to open bookmarks file: %s", path);
-    return;
-  }
+        fd = fopen(path, "w");
 
-  g_list_foreach(links, (GFunc)save_bookmark, fd);
+        if (!fd) {
+                g_print("Faild to open bookmarks file: %s", path);
+                return;
+        }
 
-  fclose(fd);
+        g_list_foreach(links, (GFunc)save_bookmark, fd);
+
+        fclose(fd);
 }

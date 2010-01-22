@@ -23,16 +23,13 @@
 #include "html.h"
 
 ChmseeIhtml* chmsee_html_new() {
-  return CHMSEE_IHTML(html_new());
+        return CHMSEE_IHTML(html_new());
 }
 
 void chmsee_html_init_system() {
-  html_init_system();
+        html_init_system();
 }
 
 void chmsee_html_set_default_lang(int lang) {
-  html_set_default_lang(lang);
+        html_set_default_lang(lang);
 }
-
-
-

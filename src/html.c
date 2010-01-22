@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2006           Ji YongGang <jungle@soforge-studio.com>
+ *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -311,21 +311,21 @@ html_clear(Html *html)
 void
 html_open_uri(Html *self, const gchar *str_uri)
 {
-	gchar *full_uri;
+        gchar *full_uri;
 
-	g_return_if_fail(IS_HTML (self));
-	g_return_if_fail(str_uri != NULL);
+        g_return_if_fail(IS_HTML (self));
+        g_return_if_fail(str_uri != NULL);
 
-	if (str_uri[0] == '/')
-		full_uri = g_strdup_printf("file://%s", str_uri);
-	else
-		full_uri = g_strdup(str_uri);
+        if (str_uri[0] == '/')
+                full_uri = g_strdup_printf("file://%s", str_uri);
+        else
+                full_uri = g_strdup(str_uri);
 
-	if(g_strcmp0(full_uri, html_get_location(self)) != 0) {
-		g_debug("Open uri %s", full_uri);
-		gtk_moz_embed_load_url(self->gecko, full_uri);
-	}
-	g_free(full_uri);
+        if(g_strcmp0(full_uri, html_get_location(self)) != 0) {
+                g_debug("Open uri %s", full_uri);
+                gtk_moz_embed_load_url(self->gecko, full_uri);
+        }
+        g_free(full_uri);
 }
 
 GtkWidget *
@@ -435,43 +435,43 @@ html_decrease_size(Html *html)
 }
 
 void html_shutdown(Html* html) {
-  gecko_utils_shutdown();
+        gecko_utils_shutdown();
 }
 
 void html_init_system(void) {
-  gecko_utils_init();
+        gecko_utils_init();
 }
 
 void html_set_default_lang(gint lang) {
-  gecko_utils_set_default_lang(lang);
+        gecko_utils_set_default_lang(lang);
 }
 
 void html_set_variable_font(Html* html, const gchar* font) {
-  gecko_utils_set_font(GECKO_PREF_FONT_VARIABLE, font);
+        gecko_utils_set_font(GECKO_PREF_FONT_VARIABLE, font);
 }
 
 void html_set_fixed_font(Html* html, const gchar* font) {
-  gecko_utils_set_font(GECKO_PREF_FONT_FIXED, font);
+        gecko_utils_set_font(GECKO_PREF_FONT_FIXED, font);
 }
 
 
 void chmsee_ihtml_interface_init (ChmseeIhtmlInterface *iface) {
-  iface->get_title = html_get_title;
-  iface->get_location = html_get_location;
-  iface->can_go_back = html_can_go_back;
-  iface->can_go_forward = html_can_go_forward;
+        iface->get_title = html_get_title;
+        iface->get_location = html_get_location;
+        iface->can_go_back = html_can_go_back;
+        iface->can_go_forward = html_can_go_forward;
 
-  iface->open_uri = html_open_uri;
-  iface->copy_selection = html_copy_selection;
-  iface->select_all = html_select_all;
-  iface->go_back = html_go_back;
-  iface->go_forward = html_go_forward;
-  iface->increase_size = html_increase_size;
-  iface->decrease_size = html_decrease_size;
-  iface->reset_size = html_reset_size;
-  iface->set_variable_font = html_set_variable_font;
-  iface->set_fixed_font = html_set_fixed_font;
-  iface->clear = html_clear;
-  iface->shutdown = html_shutdown;
-  iface->get_widget = html_get_widget;
+        iface->open_uri = html_open_uri;
+        iface->copy_selection = html_copy_selection;
+        iface->select_all = html_select_all;
+        iface->go_back = html_go_back;
+        iface->go_forward = html_go_forward;
+        iface->increase_size = html_increase_size;
+        iface->decrease_size = html_decrease_size;
+        iface->reset_size = html_reset_size;
+        iface->set_variable_font = html_set_variable_font;
+        iface->set_fixed_font = html_set_fixed_font;
+        iface->clear = html_clear;
+        iface->shutdown = html_shutdown;
+        iface->get_widget = html_get_widget;
 }

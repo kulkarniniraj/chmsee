@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2006           Ji YongGang <jungle@soforge-studio.com>
+ *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
  *  Copyright (C) 2009 LI Daobing <lidaobing@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
@@ -54,11 +54,11 @@ typedef struct {
 } FindURIData;
 
 struct _BookTreePrivate {
-    GtkTreeStore    *store;
-    GtkTreeModelFilter *filter_model;
-    BookTreePixbufs *pixbufs;
-    Hhc             *link_tree;
-    gchar           *filter_string;
+        GtkTreeStore    *store;
+        GtkTreeModelFilter *filter_model;
+        BookTreePixbufs *pixbufs;
+        Hhc             *link_tree;
+        gchar           *filter_string;
 };
 
 /* Signals */
@@ -110,96 +110,96 @@ booktree_visible_func (GtkTreeModel *model,
                        GtkTreeIter  *iter,
                        gpointer     data)
 {
-    BookTree *self;
-    gboolean ret = FALSE;
-    gchar *text;
-    gchar *key;
-    gchar *normalized_string;
-    gchar *case_normalized_string;
+        BookTree *self;
+        gboolean ret = FALSE;
+        gchar *text;
+        gchar *key;
+        gchar *normalized_string;
+        gchar *case_normalized_string;
 
-    self = BOOKTREE (data);
+        self = BOOKTREE (data);
 
-    gtk_tree_model_get (model, iter,
-                        COL_TITLE, &text, -1);
+        gtk_tree_model_get (model, iter,
+                            COL_TITLE, &text, -1);
 
-    if (selfp->filter_string == NULL)
-        return TRUE;
+        if (selfp->filter_string == NULL)
+                return TRUE;
 
-    key = selfp->filter_string;
+        key = selfp->filter_string;
 
-    if (text) {
-        normalized_string = g_utf8_normalize (text, -1, G_NORMALIZE_ALL);
-        case_normalized_string = g_utf8_casefold (normalized_string, -1);
+        if (text) {
+                normalized_string = g_utf8_normalize (text, -1, G_NORMALIZE_ALL);
+                case_normalized_string = g_utf8_casefold (normalized_string, -1);
 
-        if (!strncasecmp (key, case_normalized_string, strlen (key)))
-            ret = TRUE;
+                if (!strncasecmp (key, case_normalized_string, strlen (key)))
+                        ret = TRUE;
 
-        g_free (text);
-        g_free (normalized_string);
-        g_free (case_normalized_string);
-    }
+                g_free (text);
+                g_free (normalized_string);
+                g_free (case_normalized_string);
+        }
 
-    return ret;
+        return ret;
 }
 
 static void
 apply_filter_model (BookTree *self)
 {
-    selfp->filter_model = GTK_TREE_MODEL_FILTER (gtk_tree_model_filter_new (GTK_TREE_MODEL(selfp->store), NULL));
-    gtk_tree_model_filter_set_visible_func (selfp->filter_model,
-                                            booktree_visible_func,
-                                            self,
-                                            NULL);
-    gtk_tree_view_set_model(GTK_TREE_VIEW (self),
-			    GTK_TREE_MODEL (selfp->filter_model));
+        selfp->filter_model = GTK_TREE_MODEL_FILTER (gtk_tree_model_filter_new (GTK_TREE_MODEL(selfp->store), NULL));
+        gtk_tree_model_filter_set_visible_func (selfp->filter_model,
+                                                booktree_visible_func,
+                                                self,
+                                                NULL);
+        gtk_tree_view_set_model(GTK_TREE_VIEW (self),
+                                GTK_TREE_MODEL (selfp->filter_model));
 }
 
 static void
 booktree_init(BookTree *self)
 {
-	self->priv = GET_PRIVATE(self);
-	selfp->store = gtk_tree_store_new(N_COLUMNS,
-			GDK_TYPE_PIXBUF,
-			GDK_TYPE_PIXBUF,
-			G_TYPE_STRING,
-			G_TYPE_POINTER);
+        self->priv = GET_PRIVATE(self);
+        selfp->store = gtk_tree_store_new(N_COLUMNS,
+                                          GDK_TYPE_PIXBUF,
+                                          GDK_TYPE_PIXBUF,
+                                          G_TYPE_STRING,
+                                          G_TYPE_POINTER);
         apply_filter_model (self);
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW (self), FALSE);
-	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(self), TRUE);
+        gtk_tree_view_set_headers_visible(GTK_TREE_VIEW (self), FALSE);
+        gtk_tree_view_set_enable_search(GTK_TREE_VIEW(self), TRUE);
 
-	booktree_create_pixbufs(self);
-	booktree_add_columns(self);
-	booktree_setup_selection(self);
+        booktree_create_pixbufs(self);
+        booktree_add_columns(self);
+        booktree_setup_selection(self);
 
-	g_signal_connect(G_OBJECT(self),
-			"row-activated",
-			G_CALLBACK(on_row_activated),
-			NULL);
+        g_signal_connect(G_OBJECT(self),
+                         "row-activated",
+                         G_CALLBACK(on_row_activated),
+                         NULL);
 }
 
 static void
 booktree_dispose(GObject* object) {
-	BookTree* self = BOOKTREE(object);
+        BookTree* self = BOOKTREE(object);
 
-	if(selfp->store) {
-		g_object_unref(selfp->store);
-		selfp->store = NULL;
-	}
+        if(selfp->store) {
+                g_object_unref(selfp->store);
+                selfp->store = NULL;
+        }
 
-	if(selfp->pixbufs->pixbuf_opened) {
-		g_object_unref(selfp->pixbufs->pixbuf_opened);
-		selfp->pixbufs->pixbuf_opened = NULL;
-	}
+        if(selfp->pixbufs->pixbuf_opened) {
+                g_object_unref(selfp->pixbufs->pixbuf_opened);
+                selfp->pixbufs->pixbuf_opened = NULL;
+        }
 
-	if(selfp->pixbufs->pixbuf_closed) {
-		g_object_unref(selfp->pixbufs->pixbuf_closed);
-		selfp->pixbufs->pixbuf_closed = NULL;
-	}
+        if(selfp->pixbufs->pixbuf_closed) {
+                g_object_unref(selfp->pixbufs->pixbuf_closed);
+                selfp->pixbufs->pixbuf_closed = NULL;
+        }
 
-	if(selfp->pixbufs->pixbuf_doc) {
-		g_object_unref(selfp->pixbufs->pixbuf_doc);
-		selfp->pixbufs->pixbuf_doc = NULL;
-	}
+        if(selfp->pixbufs->pixbuf_doc) {
+                g_object_unref(selfp->pixbufs->pixbuf_doc);
+                selfp->pixbufs->pixbuf_doc = NULL;
+        }
 
         if(selfp->filter_model) {
                 g_object_unref (selfp->filter_model);
@@ -408,17 +408,17 @@ booktree_new(GNode *link_tree)
 }
 
 void booktree_set_model(BookTree* self, GNode* model) {
-	g_object_unref(selfp->store);
-	selfp->store = gtk_tree_store_new(N_COLUMNS,
-			GDK_TYPE_PIXBUF,
-			GDK_TYPE_PIXBUF,
-			G_TYPE_STRING,
-			G_TYPE_POINTER);
+        g_object_unref(selfp->store);
+        selfp->store = gtk_tree_store_new(N_COLUMNS,
+                                          GDK_TYPE_PIXBUF,
+                                          GDK_TYPE_PIXBUF,
+                                          G_TYPE_STRING,
+                                          G_TYPE_POINTER);
         apply_filter_model (self);
 
 
-	selfp->link_tree = model;
-	booktree_populate_tree(self);
+        selfp->link_tree = model;
+        booktree_populate_tree(self);
 }
 
 
@@ -496,46 +496,46 @@ booktree_get_selected_book_title(BookTree *tree)
 }
 
 void on_row_activated(BookTree* self, GtkTreePath* path) {
-	g_return_if_fail(IS_BOOKTREE(self));
-	if(gtk_tree_view_row_expanded(GTK_TREE_VIEW(self), path)) {
-		gtk_tree_view_collapse_row(GTK_TREE_VIEW(self), path);
-	} else {
-		gtk_tree_view_expand_row(GTK_TREE_VIEW(self), path, FALSE);
-	}
+        g_return_if_fail(IS_BOOKTREE(self));
+        if(gtk_tree_view_row_expanded(GTK_TREE_VIEW(self), path)) {
+                gtk_tree_view_collapse_row(GTK_TREE_VIEW(self), path);
+        } else {
+                gtk_tree_view_expand_row(GTK_TREE_VIEW(self), path, FALSE);
+        }
 }
 
 gboolean booktree_select_link_by_name(BookTree* self, const gchar* name) {
-    GtkTreeSelection *selection;
-    FindURIData data;
+        GtkTreeSelection *selection;
+        FindURIData data;
 
-    g_return_val_if_fail(IS_BOOKTREE (self), FALSE);
+        g_return_val_if_fail(IS_BOOKTREE (self), FALSE);
 
-    data.found = FALSE;
-    data.uri = name;
+        data.found = FALSE;
+        data.uri = name;
 
-    gtk_tree_model_foreach(GTK_TREE_MODEL (selfp->store),
-                           (GtkTreeModelForeachFunc) booktree_find_name_foreach,
-                           &data);
+        gtk_tree_model_foreach(GTK_TREE_MODEL (selfp->store),
+                               (GtkTreeModelForeachFunc) booktree_find_name_foreach,
+                               &data);
 
-    if (!data.found) {
-            g_debug("booktree select uri: cannot found data");
-            return FALSE;
-    }
+        if (!data.found) {
+                g_debug("booktree select uri: cannot found data");
+                return FALSE;
+        }
 
-    selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (self));
+        selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (self));
 
-    gtk_tree_view_expand_to_path(GTK_TREE_VIEW (self), data.path);
-    gtk_tree_selection_select_iter(selection, &data.iter);
-    gtk_tree_view_set_cursor(GTK_TREE_VIEW (self), data.path, NULL, 0);
+        gtk_tree_view_expand_to_path(GTK_TREE_VIEW (self), data.path);
+        gtk_tree_selection_select_iter(selection, &data.iter);
+        gtk_tree_view_set_cursor(GTK_TREE_VIEW (self), data.path, NULL, 0);
 
-    gtk_tree_path_free(data.path);
-    return TRUE;
+        gtk_tree_path_free(data.path);
+        return TRUE;
 }
 
 void
 booktree_set_filter_string (BookTree *self,
                             const gchar *string)
 {
-    selfp->filter_string = g_strdup (string);
-    gtk_tree_model_filter_refilter (selfp->filter_model);
+        selfp->filter_string = g_strdup (string);
+        gtk_tree_model_filter_refilter (selfp->filter_model);
 }

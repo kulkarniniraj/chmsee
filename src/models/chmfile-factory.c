@@ -23,6 +23,5 @@
 #include "models/chmfile.h"
 
 ChmseeIchmfile* chmsee_chmfile_new(const gchar* fname) {
-  return CHMSEE_ICHMFILE(chmfile_new(fname));
+        return CHMSEE_ICHMFILE(chmfile_new(fname));
 }
-

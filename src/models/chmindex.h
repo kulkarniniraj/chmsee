@@ -23,13 +23,13 @@ typedef struct _ChmIndexPriv   ChmIndexPriv;
 
 struct _ChmIndex
 {
-        GObject         parent;
+        GObject       parent;
         ChmIndexPriv* priv;
 };
 
 struct _ChmIndexClass
 {
-	GObjectClass parent_class;
+        GObjectClass parent_class;
 };
 
 GType chmindex_get_type(void);

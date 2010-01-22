@@ -34,14 +34,14 @@ typedef struct _ChmseeUiIndexClass ChmseeUiIndexClass;
 typedef struct _ChmseeUiIndexPrivate ChmseeUiIndexPrivate;
 
 struct _ChmseeUiIndex {
-	GtkViewport parent_instance;
-	ChmseeUiIndexPrivate* priv;
+        GtkViewport parent_instance;
+        ChmseeUiIndexPrivate* priv;
 };
 
 struct _ChmseeUiIndexClass {
-	GtkViewportClass parent_class;
-    /* Signals */
-    void (*link_selected) (ChmseeUiIndex* self, Link *link);
+        GtkViewportClass parent_class;
+        /* Signals */
+        void (*link_selected) (ChmseeUiIndex* self, Link *link);
 };
 
 GType chmsee_ui_index_get_type(void);
