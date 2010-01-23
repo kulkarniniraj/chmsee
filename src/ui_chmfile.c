@@ -786,7 +786,8 @@ chmsee_ui_chmfile_set_model2(ChmseeUiChmfile* self, ChmseeIchmfile *book)
 void
 chmsee_ui_chmfile_set_model(ChmseeUiChmfile* self, ChmseeIchmfile *book)
 {
-        chmsee_ui_chmfile_set_model2(self, book);
+        if(book != NULL)
+                chmsee_ui_chmfile_set_model2(self, book);
         g_signal_emit(self, signals[MODEL_CHANGED], 0, book);
 }
 

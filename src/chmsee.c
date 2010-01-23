@@ -859,7 +859,6 @@ chmsee_set_model(ChmSee* self, ChmseeIchmfile *book)
 
         selfp->book = g_object_ref(book);
         chmsee_ui_chmfile_set_model(CHMSEE_UI_CHMFILE(selfp->ui_chmfile), book);
-        gtk_widget_set_sensitive(selfp->ui_chmfile, TRUE);
 
         /* Window title */
         gchar *window_title;
@@ -1196,12 +1195,24 @@ void chmsee_set_fixed_font(ChmSee* self, const gchar* font_name) {
 int chmsee_get_lang(ChmSee* self) {
         return selfp->lang;
 }
+
 void chmsee_set_lang(ChmSee* self, int lang) {
         selfp->lang = lang;
 }
 
 gboolean chmsee_has_book(ChmSee* self) {
         return selfp->book != NULL;
+}
+
+void chmsee_close_book(ChmSee *self) {
+        if (selfp->book) {
+                g_object_unref(selfp->book);
+        }
+
+        chmsee_ui_chmfile_set_model(CHMSEE_UI_CHMFILE(selfp->ui_chmfile), NULL);
+
+        gtk_window_set_title(GTK_WINDOW (self), "ChmSee");
+        selfp->state = CHMSEE_STATE_NORMAL;
 }
 
 void
@@ -1343,6 +1354,9 @@ void on_ui_chmfile_model_changed(ChmSee* self, ChmseeIchmfile* chm_file) {
         gtk_action_set_sensitive(gtk_action_group_get_action(selfp->action_group, "ZoomIn"), has_model);
         gtk_action_set_sensitive(gtk_action_group_get_action(selfp->action_group, "ZoomOut"), has_model);
         gtk_action_set_sensitive(gtk_action_group_get_action(selfp->action_group, "ZoomReset"), has_model);
+        gtk_action_set_sensitive(gtk_action_group_get_action(selfp->action_group, "Back"), has_model);
+        gtk_action_set_sensitive(gtk_action_group_get_action(selfp->action_group, "Forward"), has_model);
+        gtk_widget_set_sensitive(selfp->ui_chmfile, has_model);
 }
 
 void on_ui_chmfile_html_changed(ChmSee* self, ChmseeIhtml* html) {
@@ -1352,7 +1366,6 @@ void on_ui_chmfile_html_changed(ChmSee* self, ChmseeIhtml* html) {
 
         back_state = chmsee_ihtml_can_go_back(html);
         forward_state = chmsee_ihtml_can_go_forward(html);
-
 
         gtk_action_set_sensitive(gtk_action_group_get_action(selfp->action_group, "Back"), back_state);
         gtk_action_set_sensitive(gtk_action_group_get_action(selfp->action_group, "Forward"), forward_state);

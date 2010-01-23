@@ -84,6 +84,7 @@ int chmsee_get_lang(ChmSee* self);
 void chmsee_set_lang(ChmSee* self, int lang);
 
 gboolean chmsee_has_book(ChmSee* self);
+void chmsee_close_book(ChmSee *self);
 
 G_END_DECLS
 

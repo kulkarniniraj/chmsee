@@ -45,8 +45,10 @@ typedef struct
 static void
 on_cache_clear(GtkWidget *widget, ChmSee *chmsee)
 {
-        command_delete_tmpdir(
-                chmsee_get_cache_dir(chmsee));
+        if(chmsee_has_book(chmsee))
+                chmsee_close_book(chmsee);
+
+        command_delete_tmpdir(chmsee_get_cache_dir(chmsee));
 }
 
 static void
