@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
 <interface>
+  <requires lib="gtk+" version="2.16"/>
+  <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkListStore" id="model1">
     <columns>
+      <!-- column-name gchararray -->
       <column type="gchararray"/>
     </columns>
     <data>
@@ -28,8 +31,6 @@
       </row>
     </data>
   </object>
-  <!-- interface-requires gtk+ 2.8 -->
-  <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkWindow" id="setup_window">
     <property name="visible">True</property>
     <property name="border_width">5</property>
@@ -38,6 +39,7 @@
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
+        <property name="orientation">vertical</property>
         <child>
           <object class="GtkFrame" id="frame1">
             <property name="visible">True</property>
@@ -50,6 +52,7 @@
                 <child>
                   <object class="GtkVBox" id="vbox2">
                     <property name="visible">True</property>
+                    <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkHBox" id="hbox1">
                         <property name="visible">True</property>
