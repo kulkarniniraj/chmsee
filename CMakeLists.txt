@@ -2,10 +2,12 @@ project(chmsee)
 cmake_minimum_required(VERSION 2.6.2 FATAL_ERROR)
 set(PACKAGE_VERSION "1.1.0" )
 
+set(CMAKE_BUILD_TYPE Debug)
+
 find_package(PkgConfig)
 
 pkg_check_modules (CHMSEE REQUIRED gthread-2.0 glib-2.0 libxml-2.0 gtk+-2.0 nspr)
-pkg_search_module(XULRUNNER REQUIRED libxul-embedding-unstable>=1.9 xulrunner-gtkmozembed>=1.8)
+pkg_search_module(XULRUNNER REQUIRED libxul-embedding-unstable>=1.9 mozilla-gtkmozembed-embedding>=1.9.2 xulrunner-gtkmozembed>=1.9)
 set(CHMSEE_INCLUDE_DIRS ${CHMSEE_INCLUDE_DIRS} ${XULRUNNER_INCLUDE_DIRS})
 set(CHMSEE_CFLAGS_OTHER ${CHMSEE_CFLAGS_OTHER} ${XULRUNNER_CFLAGS_OTHER} -Wall)
 set(CHMSEE_LIBRARY_DIRS ${CHMSEE_LIBRARY_DIRS} ${XULRUNNER_LIBRARY_DIRS})
@@ -15,9 +17,6 @@ if(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
         set(CHMSEE_LIBRARIES ${CHMSEE_LIBRARIES} md)
 endif()
 
-if(XULRUNNER_VERSION MATCHES "1\\.8\\..*")
-        set(XULRUNNER18 1)
-endif()
 if(XULRUNNER_VERSION MATCHES "1\\.9\\..*")
         set(XULRUNNER19 1)
 endif()
@@ -26,6 +25,9 @@ if(XULRUNNER_VERSION MATCHES "1\\.9\\.0\\..*")
 endif()
 if(XULRUNNER_VERSION MATCHES "1\\.9\\.1\\..*")
         set(XULRUNNER191 1)
+endif()
+if(XULRUNNER_VERSION MATCHES "1\\.9\\.2\\..*")
+        set(XULRUNNER192 1)
 endif()
 
 set(CHMSEE_BOOKMARK_FILE "chmsee_bookmarks")
@@ -65,6 +67,7 @@ add_subdirectory(src)
 add_subdirectory(data)
 add_subdirectory(po)
 add_subdirectory(test)
+add_subdirectory(gtkmoz)
 add_custom_target(report
         COMMAND gtester -o gtester.xml test/test
         COMMAND gtester-report gtester.xml > report.html

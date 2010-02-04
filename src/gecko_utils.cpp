@@ -42,10 +42,7 @@
 #include "gecko_utils.h"
 #include <stdlib.h>
 
-#ifdef XPCOM_GLUE
 #include <gtkmozembed_glue.cpp>
-#endif
-
 #include <gtkmozembed.h>
 #include <gtkmozembed_internal.h>
 
@@ -53,13 +50,9 @@
 #include <nsMemory.h>
 #include <nsEmbedString.h>
 #include <nsIPrefService.h>
-#if XULRUNNER18
-#include <commandhandler/nsICommandManager.h>
-#include <locale/nsILocaleService.h>
-#else
 #include <nsICommandManager.h>
 #include <nsILocaleService.h>
-#endif
+
 #include <nsIInterfaceRequestorUtils.h>
 #include <nsIDOMWindow.h>
 
@@ -129,23 +122,22 @@ util_split_font_string(const gchar *font_name, gchar **name, gint *size)
         return retval;
 }
 
-/*
-  static gboolean
-  gecko_prefs_set_bool(const gchar *key, gboolean value)
-  {
-  nsresult rv;
-  nsCOMPtr<nsIPrefService> prefService(do_GetService(NS_PREFSERVICE_CONTRACTID, &rv));
-  NS_ENSURE_SUCCESS (rv, FALSE);
 
-  nsCOMPtr<nsIPrefBranch> pref;
-  rv = prefService->GetBranch("", getter_AddRefs(pref));
-  NS_ENSURE_SUCCESS (rv, FALSE);
+static gboolean
+gecko_prefs_set_bool(const gchar *key, gboolean value)
+{
+        nsresult rv;
+        nsCOMPtr<nsIPrefService> prefService(do_GetService(NS_PREFSERVICE_CONTRACTID, &rv));
+        NS_ENSURE_SUCCESS (rv, FALSE);
 
-  rv = pref->SetBoolPref(key, value);
+        nsCOMPtr<nsIPrefBranch> pref;
+        rv = prefService->GetBranch("", getter_AddRefs(pref));
+        NS_ENSURE_SUCCESS (rv, FALSE);
 
-  return NS_SUCCEEDED (rv) != PR_FALSE;
-  }
-*/
+        rv = pref->SetBoolPref(key, value);
+
+        return NS_SUCCEEDED (rv) != PR_FALSE;
+}
 
 static gboolean
 gecko_prefs_set_string(const gchar *key, const gchar *value)
@@ -199,7 +191,7 @@ gecko_utils_init_prefs(void)
         return rv;
 }
 
-extern "C" void
+extern "C" gboolean
 gecko_utils_init(void)
 {
         if (!g_thread_supported())
@@ -207,49 +199,54 @@ gecko_utils_init(void)
 
         nsresult rv;
 
-#ifdef XPCOM_GLUE
         NS_LogInit();
 
-#if XULRUNNER191
-        static const GREVersionRange greVersion = {
-                "1.9.1", PR_TRUE,
-                "1.9.2", PR_FALSE
-        };
-#else
         static const GREVersionRange greVersion = {
                 "1.9a", PR_TRUE,
-                "1.9.1", PR_FALSE
+                "2", PR_TRUE
         };
-#endif
+// #if XULRUNNER191 || XULRUNNER192
+//         static const GREVersionRange greVersion = {
+//                 "1.9.1", PR_TRUE,
+//                 "1.9.2", PR_TRUE
+//         };
+// #else
+//         static const GREVersionRange greVersion = {
+//                 "1.9a", PR_TRUE,
+//                 "1.9.1", PR_FALSE
+//         };
+// #endif
 
-        char xpcomLocation[4096];
-        rv = GRE_GetGREPathWithProperties(&greVersion, 1, nsnull, 0, xpcomLocation, 4096);
+        char xpcomLocation[PATH_MAX];
+
+        rv = GRE_GetGREPathWithProperties(&greVersion, 1, nsnull, 0, 
+                                          xpcomLocation, sizeof(xpcomLocation));
         if (NS_FAILED (rv))
         {
-                g_warning ("Could not determine locale!\n");
-                return;
+                g_warning ("Couldn't find a compatible GRE!\n");
+                return FALSE;
         }
 
         // Startup the XPCOM Glue that links us up with XPCOM.
         rv = XPCOMGlueStartup(xpcomLocation);
         if (NS_FAILED (rv))
         {
-                g_warning ("Could not determine locale!\n");
-                return;
+                g_warning ("Couldn't start XPCOM!\n");
+                return FALSE;
         }
 
         rv = GTKEmbedGlueStartup();
         if (NS_FAILED (rv))
         {
-                g_warning ("Could not startup embed glue!\n");
-                return;
+                g_warning ("Couldn't find GTKMozEmbed symbols!\n");
+                return FALSE;
         }
 
         rv = GTKEmbedGlueStartupInternal();
         if (NS_FAILED (rv))
         {
                 g_warning ("Could not startup embed glue (internal)!\n");
-                return;
+                return FALSE;
         }
 
         char *lastSlash = strrchr(xpcomLocation, '/');
@@ -257,9 +254,6 @@ gecko_utils_init(void)
                 *lastSlash = '\0';
 
         gtk_moz_embed_set_path(xpcomLocation);
-#else
-        gtk_moz_embed_set_comp_path(GECKO_LIB_ROOT);
-#endif
 
         gchar *profile_dir = g_build_filename(g_get_home_dir(),
                                               ".chmsee",
@@ -271,6 +265,8 @@ gecko_utils_init(void)
         gtk_moz_embed_push_startup();
 
         gecko_utils_init_prefs();
+
+        return TRUE;
 }
 
 extern "C" void
@@ -278,9 +274,7 @@ gecko_utils_shutdown(void)
 {
         gtk_moz_embed_pop_startup();
 
-#ifdef XPCOM_GLUE
         NS_LogTerm();
-#endif
 }
 
 extern "C" gint

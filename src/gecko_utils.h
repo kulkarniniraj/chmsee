@@ -50,7 +50,7 @@ enum {
         GECKO_PREF_FONT_FIXED
 };
 
-void gecko_utils_init(void);
+gboolean gecko_utils_init(void);
 void gecko_utils_shutdown(void);
 gint gecko_utils_get_mouse_event_button(gpointer);
 gint gecko_utils_get_mouse_event_modifiers(gpointer);
