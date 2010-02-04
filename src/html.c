@@ -439,7 +439,9 @@ void html_shutdown(Html* html) {
 }
 
 void html_init_system(void) {
-        gecko_utils_init();
+        if(!gecko_utils_init()){
+                g_error("Failed initial gecko render!");
+        }
 }
 
 void html_set_default_lang(gint lang) {
