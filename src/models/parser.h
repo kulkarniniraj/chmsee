@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2009 LI Daobing <lidaobing@gmail.com>
+ *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,11 +17,12 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#include "config.h"
-#include "chmfile-factory.h"
 
-#include "models/chmfile.h"
+#ifndef __CS_PARSER_H__
+#define __CS_PARSER_H__
 
-ChmseeIchmfile* chmsee_chmfile_new(const gchar* fname) {
-        return CHMSEE_ICHMFILE(chmfile_new(fname));
-}
+#include <glib.h>
+
+GNode *cs_parse_file(const gchar *, const gchar *);
+
+#endif /* !__CS_PARSER_H__ */

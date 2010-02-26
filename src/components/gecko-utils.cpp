@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010 Ji YongGang <jungleji@gmaile.com>
+ *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -38,37 +38,33 @@
  *
  */
 
-#include "config.h"
-#include "gecko_utils.h"
 #include <stdlib.h>
 
-#include <gtkmozembed_glue.cpp>
 #include <gtkmozembed.h>
+#include <gtkmozembed_glue.cpp>
 #include <gtkmozembed_internal.h>
 
 #include <nsCOMPtr.h>
-#include <nsMemory.h>
-#include <nsEmbedString.h>
-#include <nsIPrefService.h>
-#include <nsICommandManager.h>
-#include <nsILocaleService.h>
-
-#include <nsIInterfaceRequestorUtils.h>
-#include <nsIDOMWindow.h>
-
-#define MOZILLA_INTERNAL_API
-#include <nsIServiceManager.h>
-#undef MOZILLA_INTERNAL_API
-
-#include <nsISupportsPrimitives.h>
-#include <nsILocalFile.h>
-#include <nsIDOMMouseEvent.h>
-#include <nsIWebBrowserFind.h>
 #include <nsStringAPI.h>
+#include <nsILocalFile.h>
+#include <nsIPrefService.h>
+#include <nsIDOMMouseEvent.h>
 
+// For zoom
+#include <nsIDOMWindow.h>
+// For copy and selectAll
+#include <nsIClipboardCommands.h>
+// For find
+#include <nsIWebBrowserFind.h>
+
+#include <nsServiceManagerUtils.h>
+#include <nsIInterfaceRequestorUtils.h>
+
+#include "config.h"
+#include "gecko_utils.h"
 #include "utils/utils.h"
 
-#define LANG_TYPES_NUM          7
+#define LANG_TYPES_NUM 7
 
 static const gchar *lang[] = {
         "universal_charset_detector",
@@ -79,19 +75,6 @@ static const gchar *lang[] = {
         "ruprob",
         "ukprob"
 };
-
-static nsresult
-do_command(GtkMozEmbed *embed, const char *command)
-{
-        nsCOMPtr<nsIWebBrowser>     webBrowser;
-        nsCOMPtr<nsICommandManager> cmdManager;
-
-        gtk_moz_embed_get_nsIWebBrowser(embed, getter_AddRefs(webBrowser));
-
-        cmdManager = do_GetInterface(webBrowser);
-
-        return cmdManager->DoCommand(command, nsnull, nsnull);
-}
 
 static gboolean
 util_split_font_string(const gchar *font_name, gchar **name, gint *size)
@@ -180,7 +163,7 @@ gecko_utils_init_prefs(void)
         NS_ENSURE_SUCCESS (rv, rv);
 
         nsCOMPtr<nsILocalFile> file;
-        rv = NS_NewNativeLocalFile(nsEmbedCString(get_resource_path("default-prefs.js")),
+        rv = NS_NewNativeLocalFile(nsDependentCString(get_resource_path("default-prefs.js")),
                                    PR_TRUE, getter_AddRefs(file));
         NS_ENSURE_SUCCESS (rv, rv);
 
@@ -199,23 +182,10 @@ gecko_utils_init(void)
 
         nsresult rv;
 
-        NS_LogInit();
-
         static const GREVersionRange greVersion = {
                 "1.9a", PR_TRUE,
                 "2", PR_TRUE
         };
-// #if XULRUNNER191 || XULRUNNER192
-//         static const GREVersionRange greVersion = {
-//                 "1.9.1", PR_TRUE,
-//                 "1.9.2", PR_TRUE
-//         };
-// #else
-//         static const GREVersionRange greVersion = {
-//                 "1.9a", PR_TRUE,
-//                 "1.9.1", PR_FALSE
-//         };
-// #endif
 
         char xpcomLocation[PATH_MAX];
 
@@ -273,8 +243,6 @@ extern "C" void
 gecko_utils_shutdown(void)
 {
         gtk_moz_embed_pop_startup();
-
-        NS_LogTerm();
 }
 
 extern "C" gint
@@ -348,20 +316,47 @@ gecko_utils_set_font(gint type, const gchar *fontname)
 extern "C" void
 gecko_utils_set_default_lang(gint type)
 {
-        if (type < LANG_TYPES_NUM )
+        if (type < LANG_TYPES_NUM)
                 gecko_prefs_set_string("intl.charset.detector", lang[type]);
 }
 
 extern "C" void
 gecko_utils_select_all(GtkMozEmbed *embed)
 {
-        do_command(embed, "cmd_selectAll");
+        nsCOMPtr<nsIWebBrowser> webBrowser;
+        gtk_moz_embed_get_nsIWebBrowser(embed, getter_AddRefs(webBrowser));
+
+        // nsCOMPtr<nsIClipboardCommands> clipboard = do_GetInterface(webBrowser);
+
+        // if (!clipboard)
+        //         g_warning("could not get ClipboardCommands Interface.");
+        // else
+        //         clipboard->SelectAll();
+
+        nsCOMPtr<nsIWebBrowserFind> finder = do_GetInterface(webBrowser);
+        if (finder) {
+                // nsString sstr;
+                // sstr.Assign(NS_LITERAL_STRING("emacs"));
+                // NS_NAMED_LITERAL_STRING(sstr, "emacs");
+                // finder->SetSearchString(PromiseFlatString(sstr).get());
+                finder->SetSearchString(NS_LITERAL_STRING("emacs").get());
+                PRBool rv;
+                finder->FindNext(&rv);
+        }
 }
 
 extern "C" void
 gecko_utils_copy_selection(GtkMozEmbed *embed)
 {
-        do_command(embed, "cmd_copy");
+        nsCOMPtr<nsIWebBrowser> webBrowser;
+        gtk_moz_embed_get_nsIWebBrowser(embed, getter_AddRefs(webBrowser));
+
+        nsCOMPtr<nsIClipboardCommands> clipboard = do_GetInterface(webBrowser);
+
+        if (!clipboard)
+                g_warning("could not get ClipboardCommands Interface.");
+        else
+                clipboard->CopySelection();
 }
 
 extern "C" gfloat

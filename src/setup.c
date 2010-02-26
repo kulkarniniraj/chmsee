@@ -28,13 +28,16 @@
  ***************************************************************************/
 
 #include "config.h"
-#include "setup.h"
 
-#include "utils/utils.h"
-#include "gecko_utils.h"
+#include "setup.h"
+#include "utils.h"
 
 static void on_cache_clear(GtkWidget *, ChmSee *);
 static void on_window_close(GtkButton *, ChmSee *);
+
+static void variable_font_set_cb(GtkFontButton *, ChmSee *);
+static void fixed_font_set_cb(GtkFontButton *, ChmSee *);
+static void cmb_lang_changed_cb(GtkWidget *, ChmSee *);
 
 typedef struct
 {
@@ -49,6 +52,12 @@ on_cache_clear(GtkWidget *widget, ChmSee *chmsee)
                 chmsee_close_book(chmsee);
 
         command_delete_tmpdir(chmsee_get_cache_dir(chmsee));
+}
+
+static void
+on_window_close(GtkButton *button, ChmSee *chmsee)
+{
+        gtk_widget_destroy(gtk_widget_get_toplevel (GTK_WIDGET(button)));
 }
 
 static void
@@ -95,14 +104,8 @@ cmb_lang_changed_cb(GtkWidget *widget, ChmSee *chmsee)
         }
 }
 
-static void
-on_window_close(GtkButton *button, ChmSee *chmsee)
-{
-        gtk_widget_destroy(gtk_widget_get_toplevel (GTK_WIDGET(button)));
-}
-
 void
-setup_window_new(ChmSee *chmsee)
+cs_setup_window_new(ChmSee *chmsee)
 {
         GtkBuilder *builder;
 
@@ -116,7 +119,7 @@ setup_window_new(ChmSee *chmsee)
 
         /* create setup window */
         builder = gtk_builder_new();
-        gtk_builder_add_from_file(builder, get_resource_path("setup-window.glade"), NULL);
+        gtk_builder_add_from_file(builder, get_resource_path("setup-window.ui"), NULL);
         setup_window = GTK_WIDGET (gtk_builder_get_object(builder, "setup_window"));
 
         g_signal_connect_swapped((gpointer) setup_window,

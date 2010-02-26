@@ -1,4 +1,5 @@
 /*
+ *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
  *  Copyright (C) 2009 LI Daobing <lidaobing@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
@@ -17,13 +18,18 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef __CHMSEE_HTML_FACTORY_H__
-#define __CHMSEE_HTML_FACTORY_H__
+#ifndef __CS_HTML_FACTORY_H__
+#define __CS_HTML_FACTORY_H__
 
 #include "ihtml.h"
 
-ChmseeIhtml* chmsee_html_new();
-void chmsee_html_init_system();
-void chmsee_html_set_default_lang(int lang);
+G_BEGIN_DECLS
+
+CsIhtml *cs_html_new(void);
+gboolean cs_html_init_system(void);
+void     cs_html_shutdown_system(void);
+void     cs_html_set_default_lang(int lang);
+
+G_END_DECLS
 
 #endif

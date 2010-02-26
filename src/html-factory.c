@@ -1,4 +1,5 @@
 /*
+ *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
  *  Copyright (C) 2009 LI Daobing <lidaobing@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
@@ -18,18 +19,30 @@
  */
 
 #include "config.h"
+
 #include "html-factory.h"
+#include "components/html-gecko.h"
 
-#include "html.h"
-
-ChmseeIhtml* chmsee_html_new() {
-        return CHMSEE_IHTML(html_new());
+CsIhtml *
+cs_html_new()
+{
+        return CS_IHTML(cs_html_gecko_new());
 }
 
-void chmsee_html_init_system() {
-        html_init_system();
+gboolean
+cs_html_init_system()
+{
+        return cs_html_gecko_init_system();
 }
 
-void chmsee_html_set_default_lang(int lang) {
-        html_set_default_lang(lang);
+void
+cs_html_shutdown_system()
+{
+        return cs_html_gecko_shutdown_system();
+}
+
+void
+cs_html_set_default_lang(int lang)
+{
+        cs_html_gecko_set_default_lang(lang);
 }

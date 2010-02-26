@@ -6,7 +6,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 find_package(PkgConfig)
 
-pkg_check_modules (CHMSEE REQUIRED gthread-2.0 glib-2.0 libxml-2.0 gtk+-2.0 nspr)
+pkg_check_modules (CHMSEE REQUIRED gthread-2.0 glib-2.0 libxml-2.0 gtk+-2.0>2.12 nspr)
 pkg_search_module(XULRUNNER REQUIRED mozilla-gtkmozembed-embedding>=1.9 xulrunner-gtkmozembed>=1.9)
 set(CHMSEE_INCLUDE_DIRS ${CHMSEE_INCLUDE_DIRS} ${XULRUNNER_INCLUDE_DIRS})
 set(CHMSEE_CFLAGS_OTHER ${CHMSEE_CFLAGS_OTHER} ${XULRUNNER_CFLAGS_OTHER} -Wall)
@@ -30,7 +30,7 @@ if(XULRUNNER_VERSION MATCHES "1\\.9\\.2\\..*")
         set(XULRUNNER192 1)
 endif()
 
-set(CHMSEE_BOOKMARK_FILE "chmsee_bookmarks")
+set(CHMSEE_BOOKMARKS_FILE "chmsee_bookmarks")
 set(CHMSEE_BOOKINFO_FILE "chmsee_bookinfo")
 set(CHMSEE_NO_LINK "chmsee_no_link")
 set(CHMSEE_DATA_DIR "${CMAKE_INSTALL_PREFIX}/share/chmsee")

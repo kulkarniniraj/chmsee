@@ -19,7 +19,6 @@
  */
 
 #include "config.h"
-#include "chmfile.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,29 +28,31 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#if defined(__linux__)
-#include <fcntl.h>
-#include <gcrypt.h>
-#else
-#include <md5.h>
-#endif
-
 #include <glib/gstdio.h>
 #include <chm_lib.h>
 
-#include "utils/utils.h"
-#include "models/hhc.h"
-#include "models/ichmfile.h"
-#include "models/chmindex.h"
+#include "chmfile.h"
+#include "utils.h"
+#include "models/bookmarksfile.h"
+#include "models/parser.h"
 
-#define UINT16ARRAY(x) ((unsigned char)(x)[0] | ((u_int16_t)(x)[1] << 8))
-#define UINT32ARRAY(x) (UINT16ARRAY(x) | ((u_int32_t)(x)[2] << 16)      \
-                        | ((u_int32_t)(x)[3] << 24))
-#define selfp self->priv
+typedef struct _CsChmfilePrivate CsChmfilePrivate;
 
+struct _CsChmfilePrivate {
+        GNode       *toc_tree;
+        GList       *index_list;
+        GList       *bookmarks_list;
 
-struct _ChmFilePriv {
-        ChmIndex* index;
+        gchar       *hhc;
+        gchar       *hhk;
+        gchar       *bookfolder;
+        gchar       *filename;
+
+        gchar       *bookname;
+        gchar       *homepage;
+        gchar       *encoding;
+        gchar       *variable_font;
+        gchar       *fixed_font;
 };
 
 struct extract_context
@@ -61,86 +62,115 @@ struct extract_context
         const char *hhk_file;
 };
 
-static GObjectClass *parent_class = NULL;
+#define CS_CHMFILE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), CS_TYPE_CHMFILE, CsChmfilePrivate))
 
-static void chmfile_class_init(ChmFileClass *);
-static void chmfile_init(ChmFile *);
-static void chmfile_dispose(GObject *);
-static void chmfile_finalize(GObject *);
-static void chmfile_file_info(ChmFile *);
-static void chmfile_system_info(struct chmFile *, ChmFile *);
-static void chmfile_windows_info(struct chmFile *, ChmFile *);
-static void chmfile_set_encoding(ChmFile* self, const char* encoding);
+#define UINT16ARRAY(x) ((unsigned char)(x)[0] | ((u_int16_t)(x)[1] << 8))
+#define UINT32ARRAY(x) (UINT16ARRAY(x) | ((u_int32_t)(x)[2] << 16)      \
+                        | ((u_int32_t)(x)[3] << 24))
+
+static void cs_chmfile_class_init(CsChmfileClass *);
+static void cs_chmfile_init(CsChmfile *);
+static void cs_chmfile_dispose(GObject *);
+static void cs_chmfile_finalize(GObject *);
+
+static void chmfile_file_info(CsChmfile *);
+static void chmfile_system_info(struct chmFile *, CsChmfile *);
+static void chmfile_windows_info(struct chmFile *, CsChmfile *);
+static void chmfile_set_encoding(CsChmfile *, const char *);
 
 static int dir_exists(const char *);
 static int rmkdir(char *);
 static int _extract_callback(struct chmFile *, struct chmUnitInfo *, void *);
-static gboolean extract_chm(const gchar *, ChmFile *);
-static void load_fileinfo(ChmFile* self);
-static void save_fileinfo(ChmFile* self);
-static void extract_post_file_write(const gchar* fname);
 
-static void chmsee_ichmfile_interface_init (ChmseeIchmfileInterface* iface);
+static gboolean extract_chm(const gchar *, CsChmfile *);
+static void load_bookinfo(CsChmfile *);
+static void save_bookinfo(CsChmfile *);
+static void extract_post_file_write(const gchar *);
 
-G_DEFINE_TYPE_WITH_CODE (ChmFile, chmfile, G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (CHMSEE_TYPE_ICHMFILE,
-                                                chmsee_ichmfile_interface_init));
+static GNode *parse_hhc_file(const gchar *, const gchar*);
+static GList *parse_hhk_file(const gchar *, const gchar*);
+
+/* GObject functions */
+
+G_DEFINE_TYPE (CsChmfile, chmfile, GTK_TYPE_OBJECT);
 
 static void
-chmfile_class_init(ChmFileClass *klass)
+cs_chmfile_class_init(CsChmfileClass *klass)
 {
-        g_type_class_add_private(klass, sizeof(ChmFilePriv));
+        g_type_class_add_private(klass, sizeof(CsChmfilePrivate));
 
-        GObjectClass *object_class;
+        GObjectClass *object_class = G_OBJECT_CLASS(klass);
 
-        parent_class = g_type_class_peek_parent(klass);
-        object_class = G_OBJECT_CLASS(klass);
-
-        object_class->finalize = chmfile_finalize;
-        object_class->dispose = chmfile_dispose;
+        object_class->dispose  = cs_chmfile_dispose;
+        object_class->finalize = cs_chmfile_finalize;
 }
 
 static void
-chmfile_init(ChmFile *self)
+cs_chmfile_init(CsChmfile *self)
 {
-        self->filename = NULL;
-        self->home = NULL;
-        self->hhc = NULL;
-        self->hhk = NULL;
-        self->title = NULL;
-        self->encoding = g_strdup("UTF-8");
-        self->variable_font = g_strdup("Sans 12");
-        self->fixed_font = g_strdup("Monospace 12");
-        self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self, TYPE_CHMFILE, ChmFilePriv);
-        selfp->index = NULL;
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+
+        priv->toc_tree       = NULL;
+        priv->index_list     = NULL;
+        priv->bookmarks_list = NULL;
+
+        priv->hhc            = NULL;
+        priv->hhk            = NULL;
+        priv->bookfolder     = NULL;
+        priv->filename       = NULL;
+
+        priv->bookname       = NULL;
+        priv->homepage       = NULL;
+
+        priv->encoding       = g_strdup("UTF-8");
+        priv->variable_font  = g_strdup("Sans 12");
+        priv->fixed_font     = g_strdup("Monospace 12");
 }
 
 static void
-chmfile_finalize(GObject *object)
+cs_chmfile_dispose(GObject* object)
 {
-        ChmFile *self;
+        CsChmfile* self = CHMFILE(object);
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+        if(priv->index) {
+                g_object_unref(priv->index);
+                priv->index = NULL;
+        }
+}
 
-        self = CHMFILE (object);
+static void
+cs_chmfile_finalize(GObject *object)
+{
+        CsChmfile        *self = CS_CHMFILE (object);
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
-        g_message("chmfile finalize");
+        g_message("CS_CHMFILE: finalize");
 
-        save_fileinfo(self);
-        g_free(self->dir);
-        g_free(self->encoding);
-        g_free(self->filename);
-        g_free(self->hhc);
-        g_free(self->hhk);
-        g_free(self->home);
-        g_free(self->title);
-        g_free(self->variable_font);
-        g_free(self->fixed_font);
+        save_bookinfo(self);
 
-        if(self->link_tree) {
-                g_node_destroy(self->link_tree);
+        gchar *bookmarks_file = g_build_filename(priv->bookfolder, CHMSEE_BOOKMARKS_FILE, NULL);
+        cs_bookmarks_file_save(priv->bookmarks_list, priv->bookmarks_file);
+        g_free(bookmars_file);
+
+        g_free(priv->hhc);
+        g_free(priv->hhk);
+        g_free(priv->bookfolder);
+        g_free(priv->filename);
+
+        g_free(priv->bookname);
+        g_free(priv->homepage);
+        g_free(priv->encoding);
+        g_free(priv->variable_font);
+        g_free(priv->fixed_font);
+
+        if (priv->toc_tree) {
+                g_node_destroy(priv->toc_tree);
         }
 
-        G_OBJECT_CLASS (parent_class)->finalize (object);
+        G_OBJECT_CLASS (cs_chmfile_parent_class)->finalize (object);
 }
+
+/* Internal functions */
 
 static int
 dir_exists(const char *path)
@@ -179,11 +209,12 @@ rmkdir(char *path)
 static int
 _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
 {
-        gchar* fname = NULL;
+        gchar *fname = NULL;
         LONGUINT64 ui_path_len;
         char buffer[32768];
-        struct extract_context *ctx = (struct extract_context *)context;
         char *i;
+
+        struct extract_context *ctx = (struct extract_context *)context;
 
         if (ui->path[0] != '/') {
                 return CHM_ENUMERATOR_CONTINUE;
@@ -197,7 +228,7 @@ _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
                 return CHM_ENUMERATOR_FAILURE;
         }
 
-        g_debug("ui->path = %s", ui->path);
+        g_debug("CS_CHMFILE: ui->path = %s", ui->path);
 
         fname = g_build_filename(ctx->base_path, ui->path+1, NULL);
 
@@ -251,11 +282,12 @@ _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
                 }
         }
         g_free(fname);
+
         return CHM_ENUMERATOR_CONTINUE;
 }
 
 static gboolean
-extract_chm(const gchar *filename, ChmFile *chmfile)
+extract_chm(const gchar *filename, const gchar *base_path)
 {
         struct chmFile *handle;
         struct extract_context ec;
@@ -267,10 +299,12 @@ extract_chm(const gchar *filename, ChmFile *chmfile)
                 return FALSE;
         }
 
-        ec.base_path = (const char *)chmfile->dir;
+        ec.base_path = base_path
 
-        if (!chm_enumerate(handle, CHM_ENUMERATE_NORMAL | CHM_ENUMERATE_SPECIAL,
-                           _extract_callback, (void *)&ec)) {
+        if (!chm_enumerate(handle,
+                           CHM_ENUMERATE_NORMAL | CHM_ENUMERATE_SPECIAL,
+                           _extract_callback,
+                           (void *)&ec)) {
                 g_message(_("Extract chmfile failed: %s"), filename);
                 return FALSE;
         }
@@ -280,7 +314,6 @@ extract_chm(const gchar *filename, ChmFile *chmfile)
         return TRUE;
 }
 
-#if defined(__linux__)
 static char *
 MD5File(const char *filename, char *buf)
 {
@@ -324,7 +357,6 @@ MD5File(const char *filename, char *buf)
         buf[i+i] = '\0';
         return (buf);
 }
-#endif
 
 static u_int32_t
 get_dword(const unsigned char *buf)
@@ -340,59 +372,61 @@ get_dword(const unsigned char *buf)
 }
 
 static void
-chmfile_file_info(ChmFile *chmfile)
+chmfile_file_info(CsChmfile *self)
 {
-        struct chmFile *cfd;
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
-        cfd = chm_open(chmfile->filename);
+        struct chmFile    *cfd = chm_open(priv->filename);
 
         if (cfd == NULL) {
-                g_error(_("Can not open chm file %s."), chmfile->filename);
+                g_error(_("Can not open chm file %s."), priv->filename);
                 return;
         }
 
         chmfile_system_info(cfd, chmfile);
         chmfile_windows_info(cfd, chmfile);
 
-        /* Convert book title to UTF-8 */
-        if (chmfile->title != NULL && chmfile->encoding != NULL) {
-                gchar *title_utf8;
+        /* convert bookname to UTF-8 */
+        if (priv->bookname != NULL && priv->encoding != NULL) {
+                gchar *bookname_utf8;
 
-                title_utf8 = g_convert(chmfile->title, -1, "UTF-8",
-                                       chmfile->encoding,
+                bookname_utf8 = g_convert(priv->bookname, -1, "UTF-8",
+                                       priv->encoding,
                                        NULL, NULL, NULL);
-                g_free(chmfile->title);
-                chmfile->title = title_utf8;
+                g_free(priv->bookname);
+                priv->bookname = bookname_utf8;
         }
 
-        /* Convert filename to UTF-8 */
-        if (chmfile->hhc != NULL && chmfile->encoding != NULL) {
+        /* convert filename to UTF-8 */
+        if (priv->hhc != NULL && priv->encoding != NULL) {
                 gchar *filename_utf8;
 
-                filename_utf8 = convert_filename_to_utf8(chmfile->hhc, chmfile->encoding);
-                g_free(chmfile->hhc);
-                chmfile->hhc = filename_utf8;
+                filename_utf8 = convert_filename_to_utf8(priv->hhc, priv->encoding);
+                g_free(priv->hhc);
+                priv->hhc = filename_utf8;
         }
 
-        if (chmfile->hhk != NULL && chmfile->encoding != NULL) {
+        if (priv->hhk != NULL && priv->encoding != NULL) {
                 gchar *filename_utf8;
 
-                filename_utf8 = convert_filename_to_utf8(chmfile->hhk, chmfile->encoding);
-                g_free(chmfile->hhk);
-                chmfile->hhk = filename_utf8;
+                filename_utf8 = convert_filename_to_utf8(priv->hhk, priv->encoding);
+                g_free(priv->hhk);
+                priv->hhk = filename_utf8;
         }
 
         chm_close(cfd);
 }
 
 static void
-chmfile_windows_info(struct chmFile *cfd, ChmFile *chmfile)
+chmfile_windows_info(struct chmFile *cfd, CsChmfile *self)
 {
         struct chmUnitInfo ui;
         unsigned char buffer[4096];
         size_t size = 0;
         u_int32_t entries, entry_size;
-        u_int32_t hhc, hhk, title, home;
+        u_int32_t hhc, hhk, bookname, homepage;
+
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
         if (chm_resolve_object(cfd, "/#WINDOWS", &ui) != CHM_RESOLVE_SUCCESS)
                 return;
@@ -413,8 +447,8 @@ chmfile_windows_info(struct chmFile *cfd, ChmFile *chmfile)
 
         hhc = get_dword(buffer + 0x60);
         hhk = get_dword(buffer + 0x64);
-        home = get_dword(buffer + 0x68);
-        title = get_dword(buffer + 0x14);
+        homepage = get_dword(buffer + 0x68);
+        bookname = get_dword(buffer + 0x14);
 
         if (chm_resolve_object(cfd, "/#STRINGS", &ui) != CHM_RESOLVE_SUCCESS)
                 return;
@@ -424,18 +458,23 @@ chmfile_windows_info(struct chmFile *cfd, ChmFile *chmfile)
         if (!size)
                 return;
 
-        if (chmfile->hhc == NULL && hhc)
-                chmfile->hhc = g_strdup_printf("/%s", buffer + hhc);
-        if (chmfile->hhk == NULL && hhk)
-                chmfile->hhk = g_strdup_printf("/%s", buffer + hhk);
-        if (chmfile->home == NULL && home)
-                chmfile->home = g_strdup_printf("/%s", buffer + home);
-        if (chmfile->title == NULL && title)
-                chmfile->title = g_strdup((char *)buffer + title);
+        if (priv->hhc == NULL && hhc)
+                priv->hhc = g_strdup_printf("/%s", buffer + hhc);
+        if (priv->hhk == NULL && hhk)
+                priv->hhk = g_strdup_printf("/%s", buffer + hhk);
+        if (priv->homepage == NULL && homepage)
+                priv->homepage = g_strdup_printf("/%s", buffer + homepage);
+
+        if (priv->bookname == NULL) {
+                if (bookname)
+                        priv->bookname = g_strdup((char *)buffer + bookname);
+                else
+                        priv->bookname = g_strdup(g_path_get_basename(priv->filename));
+        }
 }
 
 static void
-chmfile_system_info(struct chmFile *cfd, ChmFile *chmfile)
+chmfile_system_info(struct chmFile *cfd, CsChmfile *self)
 {
         struct chmUnitInfo ui;
         unsigned char buffer[4096];
@@ -445,6 +484,8 @@ chmfile_system_info(struct chmFile *cfd, ChmFile *chmfile)
         u_int16_t value = 0;
         u_int32_t lcid = 0;
         size_t size = 0;
+
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
         if (chm_resolve_object(cfd, "/#SYSTEM", &ui) != CHM_RESOLVE_SUCCESS)
                 return;
@@ -470,32 +511,32 @@ chmfile_system_info(struct chmFile *cfd, ChmFile *chmfile)
                         index += 2;
                         cursor = buffer + index;
 
-                        chmfile->hhc = g_strdup_printf("/%s", buffer + index + 2);
-                        g_debug("hhc %s", chmfile->hhc);
+                        priv->hhc = g_strdup_printf("/%s", buffer + index + 2);
+                        g_debug("CS_CHMFILE: hhc %s", priv->hhc);
 
                         break;
                 case 1:
                         index += 2;
                         cursor = buffer + index;
 
-                        chmfile->hhk = g_strdup_printf("/%s", buffer + index + 2);
-                        g_debug("hhk %s", chmfile->hhk);
+                        priv->hhk = g_strdup_printf("/%s", buffer + index + 2);
+                        g_debug("CS_CHMFILE: hhk %s", priv->hhk);
 
                         break;
                 case 2:
                         index += 2;
                         cursor = buffer + index;
 
-                        chmfile->home = g_strdup_printf("/%s", buffer + index + 2);
-                        g_debug("home %s", chmfile->home);
+                        priv->homepage = g_strdup_printf("/%s", buffer + index + 2);
+                        g_debug("CS_CHMFILE: homepage %s", priv->homepage);
 
                         break;
                 case 3:
                         index += 2;
                         cursor = buffer + index;
 
-                        chmfile->title = g_strdup((char *)buffer + index + 2);
-                        g_debug("title %s", chmfile->title);
+                        priv->bookname = g_strdup((char *)buffer + index + 2);
+                        g_debug("CS_CHMFILE: bookname %s", priv->bookname);
 
                         break;
                 case 4: // LCID stuff
@@ -511,17 +552,17 @@ chmfile_system_info(struct chmFile *cfd, ChmFile *chmfile)
                         index += 2;
                         cursor = buffer + index;
 
-                        if(!chmfile->hhc) {
+                        if(!priv->hhc) {
                                 char *hhc, *hhk;
 
                                 hhc = g_strdup_printf("/%s.hhc", buffer + index + 2);
                                 hhk = g_strdup_printf("/%s.hhk", buffer + index + 2);
 
                                 if (chm_resolve_object(cfd, hhc, &ui) == CHM_RESOLVE_SUCCESS)
-                                        chmfile->hhc = hhc;
+                                        priv->hhc = hhc;
 
                                 if (chm_resolve_object(cfd, hhk, &ui) == CHM_RESOLVE_SUCCESS)
-                                        chmfile->hhk = hhk;
+                                        priv->hhk = hhk;
                         }
 
                         break;
@@ -529,7 +570,7 @@ chmfile_system_info(struct chmFile *cfd, ChmFile *chmfile)
                         index += 2;
                         cursor = buffer + index;
 
-                        g_debug("font %s", buffer + index + 2);
+                        g_debug("CS_CHMFILE: font %s", buffer + index + 2);
                         break;
 
                 default:
@@ -542,163 +583,151 @@ chmfile_system_info(struct chmFile *cfd, ChmFile *chmfile)
         }
 }
 
-ChmFile *
-chmfile_new(const gchar *filename)
+static GNode *
+parse_hhc_file(const gchar *file, const gchar *encoding)
 {
-        ChmFile *self;
-        gchar *bookmark_file;
-        gchar *md5;
+        return cs_parse_file(file, encoding);
+}
 
-        /* Use chmfile MD5 as book folder name */
-        md5 = MD5File(filename, NULL);
+static GList *
+parse_hhk_file(const gchar *file, const gchar *encoding)
+{
+        GNode *tree;
+        GList *list;
+        
+        tree = cs_parse_file(file, encoding);
+        /* convert GNode to GList */ // FIXME
+
+        return list;
+}
+
+static void
+load_bookinfo(CsChmfile *self)
+{
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+
+        gchar *bookinfo_file = g_build_filename(priv->dir, CHMSEE_BOOKINFO_FILE, NULL);
+
+        g_debug("CS_CHMFILE: read bookinfo file = %s", bookinfo_file);
+
+        GError     *error = NULL;
+        GKeyFile *keyfile = g_key_file_new();
+
+        gboolean rv = g_key_file_load_from_file(keyfile, bookinfo_file, G_KEY_FILE_NONE, NULL);
+
+        if (rv) {
+                priv->hhc          = g_key_file_get_string(keyfile, "Bookinfo", "hhc", &error);
+                priv->hhk          = g_key_file_get_string(keyfile, "Bookinfo", "hhk", &error);
+                priv->homepage     = g_key_file_get_string(keyfile, "Bookinfo", "homepage", &error);
+                priv->bookname     = g_key_file_get_string(keyfile, "Bookinfo", "bookname", &error);
+                priv->encoding     = g_key_file_get_string(keyfile, "Bookinfo", "encoding", &error);
+                priv->varible_font = g_key_file_get_string(keyfile, "Bookinfo", "varible_font", &error);
+                priv->fixed_font   = g_key_file_get_string(keyfile, "Bookinfo", "fixed_font", &error);
+        }
+
+        g_key_file_free(keyfile);
+        g_free(bookinfo_file);
+}
+
+static void
+save_bookinfo(CsChmfile *self)
+{
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+
+        gchar *bookinfo_file = g_build_filename(priv->bookfolder, CHMSEE_BOOKINFO_FILE, NULL);
+
+        g_debug("CS_CHMFILE: save bookinfo file = %s", bookinfo_file);
+
+        GKeyFile *keyfile = g_key_file_new();
+
+        g_key_file_set_string(keyfile, "Bookinfo", "hhc", priv->hhc);
+        g_key_file_set_string(keyfile, "Bookinfo", "hhk", priv->hhk);
+        g_key_file_set_string(keyfile, "Bookinfo", "homepage", priv->homepage);
+        g_key_file_set_string(keyfile, "Bookinfo", "bookname", priv->bookname);
+        g_key_file_set_string(keyfile, "Bookinfo", "encoding", priv->encoding);
+        g_key_file_set_string(keyfile, "Bookinfo", "variable_font", priv->varible_font);
+        g_key_file_set_string(keyfile, "Bookinfo", "fixed_font", priv->fixed_font);
+
+        gsize    length = 0;
+        GError   *error = NULL;
+        gchar *contents = g_key_file_to_data(keyfile, &length, &error);
+        g_file_set_contents(bookinfo_file, contents, length, &error);
+
+        g_key_file_free(keyfile);
+        g_free(contents);
+        g_free(bookinfo_file);
+}
+
+/* External functions */
+
+CsChmfile *
+cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
+{
+        CsChmfile        *self = g_object_new(CS_TYPE_CHMFILE, NULL);
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+
+        /* use chm file's MD5 as folder name */
+        gchar *md5 = MD5File(filename, NULL);
         if(!md5) {
+                g_warning("CS_CHMFILE: Oops, cannot calculate chmfile's MD5 value.");
                 return NULL;
         }
 
-        self = g_object_new(TYPE_CHMFILE, NULL);
-        self->filename = g_strdup(filename);
+        priv->filename = g_strdup(filename);
+        priv->bookfolder = g_build_filename(bookshelf, md5, NULL);
+        g_debug("CS_CHMFILE: book folder = %s", priv->bookfolder);
+        g_debug("CS_CHMFILE: filename = %s", priv->filename);
 
-
-        self->dir = g_build_filename(g_getenv("HOME"),
-                                     ".chmsee",
-                                     "bookshelf",
-                                     md5,
-                                     NULL);
-        g_debug("book dir = %s", self->dir);
-
-        /* If this chm file extracted before, load it's bookinfo */
-        if (!g_file_test(self->dir, G_FILE_TEST_IS_DIR)) {
+        /* if this chmfile already exists in bookshelf, load it's bookinfo */
+        if (g_file_test(priv->bookfolder, G_FILE_TEST_IS_DIR)) {
+                load_bookinfo(self);
+        } else {
                 if (!extract_chm(filename, self)) {
-                        g_debug("extract_chm failed: %s", filename);
+                        g_warning("CS_CHMFILE: extract_chm failed: %s", filename);
                         return NULL;
                 }
 
-                g_debug("chmfile->filename = %s", self->filename);
-
                 chmfile_file_info(self);
-                save_fileinfo(self);
-        } else {
-                load_fileinfo(self);
+                save_bookinfo(self);
         }
 
-        g_debug("chmfile->hhc = %s", self->hhc);
-        g_debug("chmfile->hhk = %s", self->hhk);
-        g_debug("chmfile->home = %s", self->home);
-        g_debug("chmfile->title = %s", self->title);
-        g_debug("chmfile->endcoding = %s", self->encoding);
+        g_debug("CS_CHMFILE: priv->hhc = %s", priv->hhc);
+        g_debug("CS_CHMFILE: priv->hhk = %s", priv->hhk);
+        g_debug("CS_CHMFILE: priv->homepage = %s", priv->homepage);
+        g_debug("CS_CHMFILE: priv->bookname = %s", priv->bookname);
+        g_debug("CS_CHMFILE: priv->endcoding = %s", priv->encoding);
 
-        /* Parse hhc and store result to tree view */
-        if (self->hhc != NULL && g_ascii_strcasecmp(self->hhc, "(null)") != 0) {
-                gchar *hhc;
+        /* parse hhc file */
+        if (priv->hhc != NULL && g_ascii_strcasecmp(priv->hhc, "(null)") != 0) {
+                gchar *hhcfile = g_build_filename(priv->dir, priv->hhc, NULL);
 
-                hhc = g_strdup_printf("%s%s", self->dir, self->hhc);
-
-                if (g_file_test(hhc, G_FILE_TEST_EXISTS)) {
-                        self->link_tree = hhc_load(hhc, self->encoding);
-                } else {
-                        gchar *hhc_ncase;
-
-                        hhc_ncase = file_exist_ncase(hhc);
-                        self->link_tree = hhc_load(hhc_ncase, self->encoding);
-                        g_free(hhc_ncase);
+                if (!g_file_test(hhcfile, G_FILE_TEST_EXISTS)) {
+                        hhcfile = file_exist_ncase(hhcfile); // FIXME: g_free(hhcfile)
                 }
 
-                g_free(hhc);
-        } else {
-                g_message(_("Can't found hhc file."));
+                priv->toc_tree = parse_hhc(hhcfile, priv->encoding);
+                g_free(hhcfile);
+        }
+
+        /* parse hhk file */
+        if (priv->hhk != NULL && priv->index == NULL) {
+                gchar* path = g_build_filename(priv->dir, priv->hhk, NULL);
+                gchar* path2 = correct_filename(path);
+
+                priv->index_list = parse_hhk(path2, priv->encoding);
+
+                g_free(path);
+                g_free(path2);
         }
 
         /* Load bookmarks */
-        bookmark_file = g_build_filename(self->dir, CHMSEE_BOOKMARK_FILE, NULL);
-        self->bookmarks_list = bookmarks_load(bookmark_file);
-        g_free(bookmark_file);
+        gchar *bookmarks_file = g_build_filename(priv->bookfolder, CHMSEE_BOOKMARKS_FILE, NULL);
+        priv->bookmarks_list = cs_bookmarks_file_load(bookmarks_file);
+
+        g_free(bookmarks_file);
         g_free(md5);
 
         return self;
-}
-void
-load_fileinfo(ChmFile *book)
-{
-        GList *pairs, *list;
-        gchar *path;
-
-        path = g_strdup_printf("%s/%s", book->dir, CHMSEE_BOOKINFO_FILE);
-
-        g_debug("bookinfo path = %s", path);
-
-        pairs = parse_config_file("bookinfo", path);
-
-        for (list = pairs; list; list = list->next) {
-                Item *item;
-
-                item = list->data;
-
-                if (strstr(item->id, "hhc")) {
-                        book->hhc = g_strdup(item->value);
-                        continue;
-                }
-
-                if (strstr(item->id, "hhk")) {
-                        book->hhk = g_strdup(item->value);
-                        continue;
-                }
-
-                if (strstr(item->id, "home")) {
-                        book->home = g_strdup(item->value);
-                        continue;
-                }
-
-                if (strstr(item->id, "title")) {
-                        book->title = g_strdup(item->value);
-                        continue;
-                }
-
-                if (strstr(item->id, "encoding")) {
-                        book->encoding = g_strdup(item->value);
-                        continue;
-                }
-
-                if (strstr(item->id, "variable_font")) {
-                        book->variable_font = g_strdup(item->value);
-                        continue;
-                }
-
-                if (strstr(item->id, "fixed_font")) {
-                        book->fixed_font = g_strdup(item->value);
-                        continue;
-                }
-        }
-
-        free_config_list(pairs);
-        g_free(path);
-}
-
-void
-save_fileinfo(ChmFile *book)
-{
-        FILE *fd;
-        gchar *path;
-
-        path = g_build_filename(book->dir, CHMSEE_BOOKINFO_FILE, NULL);
-
-        g_debug("save bookinfo path = %s", path);
-
-        fd = fopen(path, "w");
-
-        if (!fd) {
-                g_print("Faild to open bookinfo file: %s", path);
-        } else {
-                save_option(fd, "hhc", book->hhc);
-                save_option(fd, "hhk", book->hhk);
-                save_option(fd, "home", book->home);
-                save_option(fd, "title", book->title);
-                save_option(fd, "encoding", book->encoding);
-                save_option(fd, "variable_font", book->variable_font);
-                save_option(fd, "fixed_font", book->fixed_font);
-
-                fclose(fd);
-        }
-        g_free(path);
 }
 
 /* see http://code.google.com/p/chmsee/issues/detail?id=12 */
@@ -718,85 +747,81 @@ void extract_post_file_write(const gchar* fname) {
         g_free(basename);
 }
 
-static const gchar* chmfile_get_dir(ChmFile* self) {
-        return self->dir;
-}
-
-static const gchar* chmfile_get_home(ChmFile* self) {
-        return self->home;
-}
-
-static const gchar* chmfile_get_title(ChmFile* self) {
-        return self->title;
-}
-
-static const gchar* chmfile_get_fixed_font(ChmFile* self) {
-        return self->fixed_font;
-}
-static const gchar* chmfile_get_variable_font(ChmFile* self) {
-        return self->variable_font;
-}
-
-static const gchar* chmfile_get_filename(ChmseeIchmfile* self_) {
-        ChmFile* self = CHMFILE(self_);
-        return self->filename;
-}
-
-static Hhc* chmfile_get_link_tree(ChmFile* self) {
-        return self->link_tree;
-}
-
-static Bookmarks* chmfile_get_bookmarks_list(ChmFile* self){
-        return self->bookmarks_list;
-}
-
-static void chmfile_set_fixed_font(ChmFile* self, const gchar* font) {
-        g_free(self->fixed_font);
-        self->fixed_font = g_strdup(font);
-}
-
-static void chmfile_set_variable_font(ChmFile* self, const gchar* font) {
-        g_free(self->variable_font);
-        self->variable_font = g_strdup(font);
-}
-
-static void chmsee_ichmfile_interface_init (ChmseeIchmfileInterface* iface)
+static const gchar *
+chmfile_get_dir(CsChmfile* self)
 {
-        iface->get_dir = chmfile_get_dir;
-        iface->get_home = chmfile_get_home;
-        iface->get_title = chmfile_get_title;
-        iface->get_fixed_font = chmfile_get_fixed_font;
-        iface->get_variable_font = chmfile_get_variable_font;
-        iface->get_link_tree = chmfile_get_link_tree;
-        iface->get_bookmarks_list = chmfile_get_bookmarks_list;
-        iface->set_fixed_font = chmfile_set_fixed_font;
-        iface->set_variable_font = chmfile_set_variable_font;
-        iface->get_index = chmfile_get_index;
-        iface->get_filename = chmfile_get_filename;
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+        return priv->dir;
 }
 
-void chmfile_set_encoding(ChmFile* self, const char* encoding) {
-        if(self->encoding) {
-                g_free(self->encoding);
-        }
-        self->encoding = g_strdup(encoding);
+static const gchar *
+chmfile_get_fixed_font(CsChmfile* self)
+{
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+        return priv->fixed_font;
 }
 
-void chmfile_dispose(GObject* object) {
-        ChmFile* self = CHMFILE(object);
-        if(selfp->index) {
-                g_object_unref(selfp->index);
-                selfp->index = NULL;
-        }
+static const gchar *
+chmfile_get_variable_font(CsChmfile* self)
+{
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+        return priv->variable_font;
 }
 
-ChmIndex* chmfile_get_index(ChmFile* self) {
-        if(selfp->index == NULL && self->hhk != NULL) {
-                gchar* path = g_strconcat(self->dir, self->hhk, NULL);
-                gchar* path2 = correct_filename(path);
-                selfp->index = chmindex_new(path2, self->encoding);
-                g_free(path);
-                g_free(path2);
+static GNode *
+chmfile_get_toc_tree(CsChmfile* self)
+{
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+        return priv->toc_tree;
+}
+
+static Bookmarks *
+chmfile_get_bookmarks_list(CsChmfile* self)
+{
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+        return priv->bookmarks_list;
+}
+
+static void
+chmfile_set_fixed_font(CsChmfile* self, const gchar* font)
+{
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+        g_free(priv->fixed_font);
+        priv->fixed_font = g_strdup(font);
+}
+
+static void
+chmfile_set_variable_font(CsChmfile* self, const gchar* font)
+{
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+        g_free(priv->variable_font);
+        priv->variable_font = g_strdup(font);
+}
+
+void
+chmfile_set_encoding(CsChmfile* self, const char* encoding)
+{
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+        if(priv->encoding) {
+                g_free(priv->encoding);
         }
-        return selfp->index;
+        priv->encoding = g_strdup(encoding);
+}
+
+const gchar *
+cs_chmfile_get_filename(CsChmfile *self)
+{
+        return CS_CHMFILE_GET_PRIVATE (self)->filename;
+}
+
+const gchar *
+cs_chmfile_get_bookname(CsChmfile* self)
+{
+        return CS_CHMFILE_GET_PRIVATE (self)->bookname;
+}
+
+const gchar *
+cs_chmfile_get_homepage(CsChmfile *self)
+{
+        return CS_CHMFILE_GET_PRIVATE (self)->homepage;
 }

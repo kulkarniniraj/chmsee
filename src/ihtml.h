@@ -1,4 +1,5 @@
 /*
+ *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
  *  Copyright (C) 2009 LI Daobing <lidaobing@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
@@ -17,65 +18,94 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef __CHMSEE_IHTML_H__
-#define __CHMSEE_IHTML_H__
+#ifndef __CS_IHTML_H__
+#define __CS_IHTML_H__
 
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
-#define CHMSEE_TYPE_IHTML (chmsee_ihtml_get_type())
-#define CHMSEE_IHTML(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), CHMSEE_TYPE_IHTML, ChmseeIhtml))
-#define CHMSEE_IS_IHTML(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), CHMSEE_TYPE_IHTML))
-#define CHMSEE_IHTML_GET_INTERFACE(inst) (G_TYPE_INSTANCE_GET_INTERFACE((inst), CHMSEE_TYPE_IHTML, ChmseeIhtmlInterface))
+G_BEGIN_DECLS
 
-typedef struct _ChmseeIhtml ChmseeIhtml; /* dummy */
-typedef struct _ChmseeIhtmlInterface ChmseeIhtmlInterface;
+#define CS_TYPE_IHTML             (cs_ihtml_get_type())
+#define CS_IHTML(o)               (G_TYPE_CHECK_INSTANCE_CAST((o), CS_TYPE_IHTML, CsIhtml))
+#define CS_IS_IHTML(o)            (G_TYPE_CHECK_INSTANCE_TYPE((o), CS_TYPE_IHTML))
+#define CS_IHTML_GET_INTERFACE(i) (G_TYPE_INSTANCE_GET_INTERFACE((i), CS_TYPE_IHTML, CsIhtmlInterface))
 
-struct _ChmseeIhtmlInterface
+typedef struct _CsIhtml           CsIhtml;
+typedef struct _CsIhtmlInterface  CsIhtmlInterface;
+
+struct _CsIhtmlInterface
 {
-        GTypeInterface parent_iface;
+        GTypeInterface g_iface;
+        
+        /* Signals */
+        void         (* title_changed)    (CsIhtml *html, const gchar *title);
+        void         (* location_changed) (CsIhtml *html, const gchar *location);
+        gboolean     (* open_uri)         (CsIhtml *html, const gchar *uri);
+        void         (* context_normal)   (CsIhtml *html);
+        void         (* context_link)     (CsIhtml *html, const gchar *link);
+        void         (* open_new_tab)     (CsIhtml *html, const gchar *uri);
+        void         (* link_message)     (CsIhtml *html, const gchar *link);
+        
+        /* Virtual Table */
+        GtkWidget*   (*get_widget)        (CsIhtml* html);
+        void         (*open_uri)          (CsIhtml* html, const gchar* uri);
 
-        const gchar* (*get_title) (ChmseeIhtml* self);
-        const gchar* (*get_location) (ChmseeIhtml* self);
-        gboolean (*can_go_back) (ChmseeIhtml* self);
-        gboolean (*can_go_forward) (ChmseeIhtml* self);
+        const gchar* (*get_title)         (CsIhtml* html);
+        const gchar* (*get_location)      (CsIhtml* html);
 
+        gboolean     (*can_go_back)       (CsIhtml* html);
+        gboolean     (*can_go_forward)    (CsIhtml* html);
+        void         (*go_back)           (CsIhtml* html);
+        void         (*go_forward)        (CsIhtml* html);
 
-        void (*open_uri) (ChmseeIhtml* self, const gchar* uri);
-        void (*copy_selection) (ChmseeIhtml* self);
-        void (*select_all) (ChmseeIhtml* self);
-        void (*go_back) (ChmseeIhtml* self);
-        void (*go_forward) (ChmseeIhtml* self);
-        void (*increase_size) (ChmseeIhtml* self);
-        void (*decrease_size) (ChmseeIhtml* self);
-        void (*reset_size) (ChmseeIhtml* self);
-        void (*set_variable_font) (ChmseeIhtml* self, const gchar* font);
-        void (*set_fixed_font) (ChmseeIhtml* self, const gchar* font);
-        void (*clear) (ChmseeIhtml* self);
-        void (*shutdown) (ChmseeIhtml* self);
+        void         (*copy_selection)    (CsIhtml* html);
+        void         (*select_all)        (CsIhtml* html);
 
-        GtkWidget* (*get_widget) (ChmseeIhtml* self);
+        void         (*increase_size)     (CsIhtml* html);
+        void         (*decrease_size)     (CsIhtml* html);
+        void         (*reset_size)        (CsIhtml* html);
+
+        void         (*set_variable_font) (CsIhtml* html, const gchar* font);
+        void         (*set_fixed_font)    (CsIhtml* html, const gchar* font);
+
+        void         (*clear)             (CsIhtml* html);
 };
 
-GType chmsee_ihtml_get_type(void);
+GType        cs_ihtml_get_type(void);
 
-const gchar* chmsee_ihtml_get_title(ChmseeIhtml* self);
-const gchar* chmsee_ihtml_get_location(ChmseeIhtml* self);
-gboolean chmsee_ihtml_can_go_back(ChmseeIhtml* self);
-gboolean chmsee_ihtml_can_go_forward(ChmseeIhtml* self);
+GtkWidget*   cs_ihtml_get_widget(CsIhtml *);
+void         cs_ihtml_open_uri(CsIhtml *, const gchar *);
 
-void chmsee_ihtml_open_uri(ChmseeIhtml* self, const gchar* uri);
-void chmsee_ihtml_copy_selection(ChmseeIhtml* self);
-void chmsee_ihtml_select_all(ChmseeIhtml* self);
-void chmsee_ihtml_go_back(ChmseeIhtml* self);
-void chmsee_ihtml_go_forward(ChmseeIhtml* self);
-void chmsee_ihtml_increase_size(ChmseeIhtml* self);
-void chmsee_ihtml_reset_size(ChmseeIhtml* self);
-void chmsee_ihtml_decrease_size(ChmseeIhtml* self);
-void chmsee_ihtml_shutdown(ChmseeIhtml* self);
-void chmsee_ihtml_set_variable_font(ChmseeIhtml* self, const gchar* font);
-void chmsee_ihtml_set_fixed_font(ChmseeIhtml* self, const gchar* font);
-void chmsee_ihtml_clear(ChmseeIhtml* self);
-GtkWidget* chmsee_ihtml_get_widget(ChmseeIhtml* self);
+const gchar* cs_ihtml_get_title(CsIhtml *);
+const gchar* cs_ihtml_get_location(CsIhtml *);
 
-#endif
+gboolean     cs_ihtml_can_go_back(CsIhtml *);
+gboolean     cs_ihtml_can_go_forward(CsIhtml *);
+void         cs_ihtml_go_back(CsIhtml *);
+void         cs_ihtml_go_forward(CsIhtml *);
+
+void         cs_ihtml_copy_selection(CsIhtml *);
+void         cs_ihtml_select_all(CsIhtml *);
+
+void         cs_ihtml_increase_size(CsIhtml *);
+void         cs_ihtml_reset_size(CsIhtml *);
+void         cs_ihtml_decrease_size(CsIhtml *);
+
+void         cs_ihtml_set_variable_font(CsIhtml *, const gchar *);
+void         cs_ihtml_set_fixed_font   (CsIhtml *, const gchar *);
+
+void         cs_ihtml_clear(CsIhtml *);
+
+/* Signals */
+void         cs_ihtml_title_changed(CsIhtml *, const gchar *);
+void         cs_ihtml_location_changed(CsIhtml *, const gchar *);
+gboolean     cs_ihtml_open_uri(CsIhtml *, const gchar *);
+void         cs_ihtml_context_normal(CsIhtml *);
+void         cs_ihtml_context_link(CsIhtml *, const gchar *);
+void         cs_ihtml_open_new_tab(CsIhtml *, const gchar *);
+void         cs_ihtml_link_message(CsIhtml *, const gchar *);
+
+G_END_DECLS
+
+#endif /* !__CS_IHTML_H__ */

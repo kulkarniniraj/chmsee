@@ -18,10 +18,10 @@
  */
 
 #include "config.h"
-#include "link.h"
 
 #include <string.h>
 
+#include "link.h"
 #include "utils/utils.h"
 
 Link *

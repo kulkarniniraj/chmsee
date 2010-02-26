@@ -18,21 +18,21 @@
  */
 
 #include "config.h"
-#include "hhc.h"
 
 #include <libxml/parser.h>
 #include <libxml/HTMLparser.h>
 
+#include "parser.h"
 #include "models/link.h"
-#include "utils/utils.h"
+#include "utils.h"
 
-static gint depth = -1;
-static gint prev_depth = -1;
+static gint     depth = -1;
+static gint     prev_depth = -1;
 static gboolean tree_item = FALSE;
-static gchar *title = NULL;
-static gchar *local = NULL;
-static GNode *parent = NULL;
-static GNode *prev_node = NULL;
+static gchar   *title = NULL;
+static gchar   *local = NULL;
+static GNode   *parent = NULL;
+static GNode   *prev_node = NULL;
 
 static void startDocumentHH(void *);
 static void endDocumentHH(void *);
@@ -79,19 +79,19 @@ static xmlSAXHandlerPtr hhSAXHandler = &hhSAXHandlerStruct;
 static void
 startDocumentHH(void *ctx)
 {
-        g_debug("SAX.startDocument()");
+        g_debug("CS_PARSER: SAX.startDocument()");
 }
 
 static void
 endDocumentHH(void *ctx)
 {
-        g_debug("SAX.endDocument()");
+        g_debug("CS_PARSER: SAX.endDocument()");
 }
 
 static void
 startElementHH(void *ctx, const xmlChar *name_, const xmlChar **atts_)
 {
-        const gchar* name = (const gchar*) name_;
+        const gchar*  name = (const gchar*) name_;
         const gchar** atts = (const gchar**) atts_;
 
         /* g_debug("SAX.startElement(%s)", name); */
@@ -176,33 +176,32 @@ endElementHH(void *ctx, const xmlChar *name_)
         }
 }
 
-Hhc *
-hhc_load(const gchar *filename, const gchar *encoding)
+GNode *
+cs_parse_file(const gchar *filename, const gchar *encoding)
 {
         htmlDocPtr doc = NULL;
-        GNode *link_tree;
+        GNode    *tree = g_node_new(NULL);
 
-        link_tree = g_node_new(NULL);
-
-        g_debug("parse encoding = %s", encoding);
-        g_debug("filename = %s", filename);
+        g_debug("CS_PARSER: encoding = %s", encoding);
+        g_debug("CS_PARSER: filename = %s", filename);
 
         doc = htmlSAXParseFile(filename,
                                encoding,
                                hhSAXHandler,
-                               link_tree);
+                               tree);
 
         if (doc != NULL) {
-                g_warning("htmlSAXParseFile returned non-NULL");
+                g_warning("CS_PARSER: htmlSAXParseFile returned non-NULL");
                 xmlFreeDoc(doc);
         }
 
-        g_debug("Parsing hhc file finish.");
+        g_debug("CS_PARSER: Parsing hhc file finish.");
 
-        return link_tree;
+        return tree;
 }
 
 void
-hhc_free(Hhc* self) {
+cs_hhc_free(GNode* self)
+{
         g_node_destroy(self);
 }

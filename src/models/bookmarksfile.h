@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
+ *  Copyright (C) 2009 LI Daobing <lidaobing@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,29 +18,16 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-
-#ifndef __CHMSEE_MODELS_HHC_H__
-#define __CHMSEE_MODELS_HHC_H__
+#ifndef __CS_BOOKMARKS_FILE_H__
+#define __CS_BOOKMARKS_FILE_H__
 
 #include <glib.h>
 
-typedef GNode Hhc;
+G_BEGIN_DECLS
 
-/**
- * load Hhc from file
- *
- * @param filename
- * @param encoding
- *
- * @return
- */
-Hhc* hhc_load(const gchar* filename, const gchar* encoding);
+GList* cs_bookmarks_file_load(const gchar *);
+void cs_bookmarks_file_save(GList *, const gchar *);
 
-/**
- * free Hhc
- *
- * @param self
- */
-void hhc_free(Hhc* self);
+G_END_DECLS
 
-#endif /* !__PARSER_H__ */
+#endif /* !__CS_BOOKMARKS_FILE_H__ */

@@ -27,11 +27,15 @@
  *   (at your option) any later version.                                   *
  ***************************************************************************/
 
-#ifndef __CHMSEE_SETUP_H__
-#define __CHMSEE_SETUP_H__
+#ifndef __CS_SETUP_H__
+#define __CS_SETUP_H__
 
 #include "chmsee.h"
 
-void setup_window_new(ChmSee *);
+G_BEGIN_DECLS
 
-#endif /* !__SETUP_H__ */
+void cs_setup_window_new(ChmSee *);
+
+G_END_DECLS
+
+#endif /* !__CS_SETUP_H__ */

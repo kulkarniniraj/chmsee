@@ -17,6 +17,6 @@ install(FILES chmsee-icon.png DESTINATION share/pixmaps)
 install(FILES
         book-closed.png book-open.png chmsee-icon.png chmsee-splash.png
         helpdoc.png hide-pane.png show-pane.png
-        about-dialog.glade main-box.glade openfile-dialog.glade setup-window.glade
+        about-dialog.ui main-box.ui openfile-dialog.ui setup-window.ui
         ${CMAKE_CURRENT_BINARY_DIR}/default-prefs.js
         DESTINATION share/chmsee)
