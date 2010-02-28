@@ -27,10 +27,12 @@
  *   (at your option) any later version.                                   *
  ***************************************************************************/
 
+#include "config.h"
+
 #include <gtk/gtk.h>
 
 #include "startup.h"
-#include "utils/utils.h"
+#include "utils.h"
 
 static void
 startup_popup_cb(gpointer data)
@@ -49,7 +51,7 @@ startup_popup_new(void)
         /* following code stolen from StarDict <http://stardict.sourceforge.net> */
         gtk_window_set_auto_startup_notification(FALSE);
 
-        pixbuf = gdk_pixbuf_new_from_file(get_resource_path("chmsee-splash.png"), NULL);
+        pixbuf = gdk_pixbuf_new_from_file(RESOURCE_FILE ("chmsee-splash.png"), NULL);
 
         w = gdk_pixbuf_get_width(pixbuf);
         h = gdk_pixbuf_get_height(pixbuf);

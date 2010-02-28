@@ -28,7 +28,7 @@ G_BEGIN_DECLS
 
 #define CS_TYPE_IHTML             (cs_ihtml_get_type())
 #define CS_IHTML(o)               (G_TYPE_CHECK_INSTANCE_CAST((o), CS_TYPE_IHTML, CsIhtml))
-#define CS_IS_IHTML(o)            (G_TYPE_CHECK_INSTANCE_TYPE((o), CS_TYPE_IHTML))
+#define IS_CS_IHTML(o)            (G_TYPE_CHECK_INSTANCE_TYPE((o), CS_TYPE_IHTML))
 #define CS_IHTML_GET_INTERFACE(i) (G_TYPE_INSTANCE_GET_INTERFACE((i), CS_TYPE_IHTML, CsIhtmlInterface))
 
 typedef struct _CsIhtml           CsIhtml;
@@ -41,7 +41,7 @@ struct _CsIhtmlInterface
         /* Signals */
         void         (* title_changed)    (CsIhtml *html, const gchar *title);
         void         (* location_changed) (CsIhtml *html, const gchar *location);
-        gboolean     (* open_uri)         (CsIhtml *html, const gchar *uri);
+        gboolean     (* uri_opened)       (CsIhtml *html, const gchar *uri);
         void         (* context_normal)   (CsIhtml *html);
         void         (* context_link)     (CsIhtml *html, const gchar *link);
         void         (* open_new_tab)     (CsIhtml *html, const gchar *uri);
@@ -66,9 +66,6 @@ struct _CsIhtmlInterface
         void         (*decrease_size)     (CsIhtml* html);
         void         (*reset_size)        (CsIhtml* html);
 
-        void         (*set_variable_font) (CsIhtml* html, const gchar* font);
-        void         (*set_fixed_font)    (CsIhtml* html, const gchar* font);
-
         void         (*clear)             (CsIhtml* html);
 };
 
@@ -92,15 +89,12 @@ void         cs_ihtml_increase_size(CsIhtml *);
 void         cs_ihtml_reset_size(CsIhtml *);
 void         cs_ihtml_decrease_size(CsIhtml *);
 
-void         cs_ihtml_set_variable_font(CsIhtml *, const gchar *);
-void         cs_ihtml_set_fixed_font   (CsIhtml *, const gchar *);
-
 void         cs_ihtml_clear(CsIhtml *);
 
 /* Signals */
 void         cs_ihtml_title_changed(CsIhtml *, const gchar *);
 void         cs_ihtml_location_changed(CsIhtml *, const gchar *);
-gboolean     cs_ihtml_open_uri(CsIhtml *, const gchar *);
+gboolean     cs_ihtml_uri_opened(CsIhtml *, const gchar *);
 void         cs_ihtml_context_normal(CsIhtml *);
 void         cs_ihtml_context_link(CsIhtml *, const gchar *);
 void         cs_ihtml_open_new_tab(CsIhtml *, const gchar *);

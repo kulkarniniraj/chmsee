@@ -23,7 +23,7 @@
 #include <string.h>
 
 #include "toc.h"
-#include "models/hhc.h"
+#include "models/parser.h"
 #include "utils.h"
 
 typedef struct {
@@ -45,7 +45,7 @@ struct _CsTocPrivate {
         GtkTreeView        *treeview;
         GtkTreeStore       *store;
         TocPixbufs         *pixbufs;
-        Hhc                *link_tree;
+        GNode              *link_tree;
 };
 
 /* Signals */
@@ -67,13 +67,14 @@ static gint signals[LAST_SIGNAL] = { 0 };
 static void cs_toc_class_init(CsTocClass *);
 static void cs_toc_init(CsToc *);
 
-static void toc_dispose(GObject *);
-static void toc_finalize(GObject *);
+static void cs_toc_dispose(GObject *);
+static void cs_toc_finalize(GObject *);
 
 static void selection_changed_cb(GtkTreeSelection *, CsToc *);
 static void row_activated_cb(CsToc *, GtkTreePath *);
 
-static CsTocPixbufs *create_pixbufs(void);
+static TocPixbufs *create_pixbufs(void);
+static GtkTreeViewColumn *create_columns(void);
 static void insert_node(CsToc *, GNode *, GtkTreeIter *);
 
 static gboolean find_uri_foreach(GtkTreeModel *, GtkTreePath *, GtkTreeIter *, FindURIData *);
@@ -120,7 +121,7 @@ cs_toc_init(CsToc *self)
         gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW (toc_sw),
                                             GTK_SHADOW_IN);
 
-        priv->treeview = gtk_tree_view_new();
+        priv->treeview = GTK_TREE_VIEW (gtk_tree_view_new());
 
         priv->store = gtk_tree_store_new(N_COLUMNS,
                                          GDK_TYPE_PIXBUF,
@@ -149,7 +150,7 @@ cs_toc_init(CsToc *self)
                          G_CALLBACK(row_activated_cb),
                          NULL);
 
-        gtk_container_add(GTK_CONTAINER (toc_sw), priv->treeview);
+        gtk_container_add(GTK_CONTAINER (toc_sw), GTK_WIDGET (priv->treeview));
         gtk_box_pack_start(GTK_BOX (self), toc_sw, TRUE, TRUE, 0);
 
         gtk_widget_show_all(GTK_WIDGET (self));
@@ -214,21 +215,21 @@ row_activated_cb(CsToc* self, GtkTreePath* path)
 
 /* Internal functions */
 
-static CsTocPixbufs *
+static TocPixbufs *
 create_pixbufs(void)
 {
-        CsTocPixbufs *pixbufs;
+        TocPixbufs *pixbufs;
 
-        pixbufs = g_new0(CsTocPixbufs, 1);
+        pixbufs = g_new0(TocPixbufs, 1);
 
-        pixbufs->pixbuf_closed = gdk_pixbuf_new_from_file(get_resource_path("book-closed.png"), NULL);
-        pixbufs->pixbuf_opened = gdk_pixbuf_new_from_file(get_resource_path("book-open.png"), NULL);
-        pixbufs->pixbuf_doc    = gdk_pixbuf_new_from_file(get_resource_path("helpdoc.png"), NULL);
+        pixbufs->pixbuf_closed = gdk_pixbuf_new_from_file(RESOURCE_FILE ("book-closed.png"), NULL);
+        pixbufs->pixbuf_opened = gdk_pixbuf_new_from_file(RESOURCE_FILE ("book-open.png"), NULL);
+        pixbufs->pixbuf_doc    = gdk_pixbuf_new_from_file(RESOURCE_FILE ("helpdoc.png"), NULL);
 
-        retrun pixbufs;
+        return pixbufs;
 }
 
-static GtkTreeViewColum *
+static GtkTreeViewColumn *
 create_columns(void)
 {
         GtkCellRenderer   *cell;

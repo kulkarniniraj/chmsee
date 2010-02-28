@@ -27,9 +27,12 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <fcntl.h>
+#include <gcrypt.h>
 
 #include <glib/gstdio.h>
 #include <chm_lib.h>
+#include <gcrypt.h>
 
 #include "chmfile.h"
 #include "utils.h"
@@ -45,8 +48,8 @@ struct _CsChmfilePrivate {
 
         gchar       *hhc;
         gchar       *hhk;
-        gchar       *bookfolder;
-        gchar       *filename;
+        gchar       *bookfolder;     /* the folder CHM file extracted to */
+        gchar       *filename;       /* opened CHM file name */
 
         gchar       *bookname;
         gchar       *homepage;
@@ -76,13 +79,13 @@ static void cs_chmfile_finalize(GObject *);
 static void chmfile_file_info(CsChmfile *);
 static void chmfile_system_info(struct chmFile *, CsChmfile *);
 static void chmfile_windows_info(struct chmFile *, CsChmfile *);
-static void chmfile_set_encoding(CsChmfile *, const char *);
 
 static int dir_exists(const char *);
 static int rmkdir(char *);
 static int _extract_callback(struct chmFile *, struct chmUnitInfo *, void *);
+static const char *get_encoding_by_lcid(guint32);
 
-static gboolean extract_chm(const gchar *, CsChmfile *);
+static gboolean extract_chm(const gchar *, const gchar *);
 static void load_bookinfo(CsChmfile *);
 static void save_bookinfo(CsChmfile *);
 static void extract_post_file_write(const gchar *);
@@ -92,7 +95,7 @@ static GList *parse_hhk_file(const gchar *, const gchar*);
 
 /* GObject functions */
 
-G_DEFINE_TYPE (CsChmfile, chmfile, GTK_TYPE_OBJECT);
+G_DEFINE_TYPE (CsChmfile, cs_chmfile, G_TYPE_OBJECT);
 
 static void
 cs_chmfile_class_init(CsChmfileClass *klass)
@@ -130,12 +133,7 @@ cs_chmfile_init(CsChmfile *self)
 static void
 cs_chmfile_dispose(GObject* object)
 {
-        CsChmfile* self = CHMFILE(object);
-        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
-        if(priv->index) {
-                g_object_unref(priv->index);
-                priv->index = NULL;
-        }
+        /* g_object_unref(priv->index); */
 }
 
 static void
@@ -144,13 +142,13 @@ cs_chmfile_finalize(GObject *object)
         CsChmfile        *self = CS_CHMFILE (object);
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
-        g_message("CS_CHMFILE: finalize");
+        g_debug("CS_CHMFILE: finalize");
 
         save_bookinfo(self);
 
         gchar *bookmarks_file = g_build_filename(priv->bookfolder, CHMSEE_BOOKMARKS_FILE, NULL);
-        cs_bookmarks_file_save(priv->bookmarks_list, priv->bookmarks_file);
-        g_free(bookmars_file);
+        cs_bookmarks_file_save(priv->bookmarks_list, bookmarks_file);
+        g_free(bookmarks_file);
 
         g_free(priv->hhc);
         g_free(priv->hhk);
@@ -254,7 +252,7 @@ _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
                         rmkdir(newbuf);
 
                         if ((fout = fopen(fname, "wb")) == NULL) {
-                                g_message("CHM_ENUMERATOR_FAILURE fopen");
+                                g_debug("CS_CHMFILE: CHM_ENUMERATOR_FAILURE fopen");
                                 return CHM_ENUMERATOR_FAILURE;
                         }
                 }
@@ -263,7 +261,7 @@ _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
                         len = chm_retrieve_object(h, ui, (unsigned char *)buffer, offset, 32768);
                         if (len > 0) {
                                 if(fwrite(buffer, 1, (size_t)len, fout) != len) {
-                                        g_message("CHM_ENUMERATOR_FAILURE fwrite");
+                                        g_debug("CS_CHMFILE: CHM_ENUMERATOR_FAILURE fwrite");
                                         return CHM_ENUMERATOR_FAILURE;
                                 }
                                 offset += len;
@@ -277,7 +275,7 @@ _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
                 extract_post_file_write(fname);
         } else {
                 if (rmkdir(fname) == -1) {
-                        g_message("CHM_ENUMERATOR_FAILURE rmkdir");
+                        g_debug("CS_CHMFILE: CHM_ENUMERATOR_FAILURE rmkdir");
                         return CHM_ENUMERATOR_FAILURE;
                 }
         }
@@ -295,17 +293,17 @@ extract_chm(const gchar *filename, const gchar *base_path)
         handle = chm_open(filename);
 
         if (handle == NULL) {
-                g_message(_("cannot open chmfile: %s"), filename);
+                g_warning(_("CS_CHMFILE: cannot open chmfile: %s"), filename);
                 return FALSE;
         }
 
-        ec.base_path = base_path
+        ec.base_path = base_path;
 
         if (!chm_enumerate(handle,
                            CHM_ENUMERATE_NORMAL | CHM_ENUMERATE_SPECIAL,
                            _extract_callback,
                            (void *)&ec)) {
-                g_message(_("Extract chmfile failed: %s"), filename);
+                g_warning(_("Extract chmfile failed: %s"), filename);
                 return FALSE;
         }
 
@@ -330,7 +328,7 @@ MD5File(const char *filename, char *buf)
         gcry_md_open(&hd, GCRY_MD_MD5, 0);
         f = open(filename, O_RDONLY);
         if (f < 0) {
-                g_message(_("open \"%s\" failed: %s"), filename, strerror(errno));
+                g_warning(_("CS_CHMFILE: open \"%s\" failed: %s"), filename, strerror(errno));
                 return NULL;
         }
 
@@ -358,6 +356,160 @@ MD5File(const char *filename, char *buf)
         return (buf);
 }
 
+static const char *
+get_encoding_by_lcid(guint32 lcid)
+{
+        switch(lcid) {
+        case 0x0436:
+        case 0x042d:
+        case 0x0403:
+        case 0x0406:
+        case 0x0413:
+        case 0x0813:
+        case 0x0409:
+        case 0x0809:
+        case 0x0c09:
+        case 0x1009:
+        case 0x1409:
+        case 0x1809:
+        case 0x1c09:
+        case 0x2009:
+        case 0x2409:
+        case 0x2809:
+        case 0x2c09:
+        case 0x3009:
+        case 0x3409:
+        case 0x0438:
+        case 0x040b:
+        case 0x040c:
+        case 0x080c:
+        case 0x0c0c:
+        case 0x100c:
+        case 0x140c:
+        case 0x180c:
+        case 0x0407:
+        case 0x0807:
+        case 0x0c07:
+        case 0x1007:
+        case 0x1407:
+        case 0x040f:
+        case 0x0421:
+        case 0x0410:
+        case 0x0810:
+        case 0x043e:
+        case 0x0414:
+        case 0x0814:
+        case 0x0416:
+        case 0x0816:
+        case 0x040a:
+        case 0x080a:
+        case 0x0c0a:
+        case 0x100a:
+        case 0x140a:
+        case 0x180a:
+        case 0x1c0a:
+        case 0x200a:
+        case 0x240a:
+        case 0x280a:
+        case 0x2c0a:
+        case 0x300a:
+        case 0x340a:
+        case 0x380a:
+        case 0x3c0a:
+        case 0x400a:
+        case 0x440a:
+        case 0x480a:
+        case 0x4c0a:
+        case 0x500a:
+        case 0x0441:
+        case 0x041d:
+        case 0x081d:
+                return "ISO-8859-1";
+                break;
+        case 0x041c:
+        case 0x041a:
+        case 0x0405:
+        case 0x040e:
+        case 0x0418:
+        case 0x0815:
+        case 0x081a:
+        case 0x041b:
+        case 0x0424:
+                return "ISO-8859-2";
+                break;
+        case 0x0c01:
+                return "WINDOWS-1256";
+        case 0x0401:
+        case 0x0801:
+        case 0x1001:
+        case 0x1401:
+        case 0x1801:
+        case 0x1c01:
+        case 0x2001:
+        case 0x2401:
+        case 0x2801:
+        case 0x2c01:
+        case 0x3001:
+        case 0x3401:
+        case 0x3801:
+        case 0x3c01:
+        case 0x4001:
+        case 0x0429:
+        case 0x0420:
+                return "ISO-8859-6";
+                break;
+        case 0x0408:
+                return "ISO-8859-7";
+                break;
+        case 0x040d:
+                return "ISO-8859-8";
+                break;
+        case 0x042c:
+        case 0x041f:
+        case 0x0443:
+                return "ISO-8859-9";
+                break;
+        case 0x041e:
+                return "ISO-8859-11";
+                break;
+        case 0x0425:
+        case 0x0426:
+        case 0x0427:
+                return "ISO-8859-13";
+                break;
+        case 0x0411:
+                return "cp932";
+                break;
+        case 0x0804:
+        case 0x1004:
+                return "cp936";
+                break;
+        case 0x0412:
+                return "cp949";
+                break;
+        case 0x0404:
+        case 0x0c04:
+        case 0x1404:
+                return "cp950";
+                break;
+        case 0x082c:
+        case 0x0423:
+        case 0x0402:
+        case 0x043f:
+        case 0x042f:
+        case 0x0419:
+        case 0x0c1a:
+        case 0x0444:
+        case 0x0422:
+        case 0x0843:
+                return "cp1251";
+                break;
+        default:
+                return "";
+                break;
+        }
+}
+
 static u_int32_t
 get_dword(const unsigned char *buf)
 {
@@ -383,8 +535,8 @@ chmfile_file_info(CsChmfile *self)
                 return;
         }
 
-        chmfile_system_info(cfd, chmfile);
-        chmfile_windows_info(cfd, chmfile);
+        chmfile_system_info(cfd, self);
+        chmfile_windows_info(cfd, self);
 
         /* convert bookname to UTF-8 */
         if (priv->bookname != NULL && priv->encoding != NULL) {
@@ -545,7 +697,11 @@ chmfile_system_info(struct chmFile *cfd, CsChmfile *self)
 
                         lcid = UINT32ARRAY(buffer + index + 2);
                         g_debug("lcid %x", lcid);
-                        chmfile_set_encoding(chmfile, get_encoding_by_lcid(lcid));
+
+                        if(priv->encoding)
+                                g_free(priv->encoding);
+
+                        priv->encoding = g_strdup(get_encoding_by_lcid(lcid));
                         break;
 
                 case 6:
@@ -592,12 +748,12 @@ parse_hhc_file(const gchar *file, const gchar *encoding)
 static GList *
 parse_hhk_file(const gchar *file, const gchar *encoding)
 {
-        GNode *tree;
         GList *list;
         
-        tree = cs_parse_file(file, encoding);
+        GNode *tree = cs_parse_file(file, encoding);
         /* convert GNode to GList */ // FIXME
-
+        list = NULL;
+        
         return list;
 }
 
@@ -606,7 +762,7 @@ load_bookinfo(CsChmfile *self)
 {
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
-        gchar *bookinfo_file = g_build_filename(priv->dir, CHMSEE_BOOKINFO_FILE, NULL);
+        gchar *bookinfo_file = g_build_filename(priv->bookfolder, CHMSEE_BOOKINFO_FILE, NULL);
 
         g_debug("CS_CHMFILE: read bookinfo file = %s", bookinfo_file);
 
@@ -621,7 +777,7 @@ load_bookinfo(CsChmfile *self)
                 priv->homepage     = g_key_file_get_string(keyfile, "Bookinfo", "homepage", &error);
                 priv->bookname     = g_key_file_get_string(keyfile, "Bookinfo", "bookname", &error);
                 priv->encoding     = g_key_file_get_string(keyfile, "Bookinfo", "encoding", &error);
-                priv->varible_font = g_key_file_get_string(keyfile, "Bookinfo", "varible_font", &error);
+                priv->variable_font = g_key_file_get_string(keyfile, "Bookinfo", "variable_font", &error);
                 priv->fixed_font   = g_key_file_get_string(keyfile, "Bookinfo", "fixed_font", &error);
         }
 
@@ -645,7 +801,7 @@ save_bookinfo(CsChmfile *self)
         g_key_file_set_string(keyfile, "Bookinfo", "homepage", priv->homepage);
         g_key_file_set_string(keyfile, "Bookinfo", "bookname", priv->bookname);
         g_key_file_set_string(keyfile, "Bookinfo", "encoding", priv->encoding);
-        g_key_file_set_string(keyfile, "Bookinfo", "variable_font", priv->varible_font);
+        g_key_file_set_string(keyfile, "Bookinfo", "variable_font", priv->variable_font);
         g_key_file_set_string(keyfile, "Bookinfo", "fixed_font", priv->fixed_font);
 
         gsize    length = 0;
@@ -682,7 +838,7 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
         if (g_file_test(priv->bookfolder, G_FILE_TEST_IS_DIR)) {
                 load_bookinfo(self);
         } else {
-                if (!extract_chm(filename, self)) {
+                if (!extract_chm(filename, priv->bookfolder)) {
                         g_warning("CS_CHMFILE: extract_chm failed: %s", filename);
                         return NULL;
                 }
@@ -699,22 +855,22 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
 
         /* parse hhc file */
         if (priv->hhc != NULL && g_ascii_strcasecmp(priv->hhc, "(null)") != 0) {
-                gchar *hhcfile = g_build_filename(priv->dir, priv->hhc, NULL);
+                gchar *hhcfile = g_build_filename(priv->bookfolder, priv->hhc, NULL);
 
                 if (!g_file_test(hhcfile, G_FILE_TEST_EXISTS)) {
                         hhcfile = file_exist_ncase(hhcfile); // FIXME: g_free(hhcfile)
                 }
 
-                priv->toc_tree = parse_hhc(hhcfile, priv->encoding);
+                priv->toc_tree = parse_hhc_file(hhcfile, priv->encoding);
                 g_free(hhcfile);
         }
 
         /* parse hhk file */
-        if (priv->hhk != NULL && priv->index == NULL) {
-                gchar* path = g_build_filename(priv->dir, priv->hhk, NULL);
+        if (priv->hhk != NULL && priv->index_list == NULL) {
+                gchar* path = g_build_filename(priv->bookfolder, priv->hhk, NULL);
                 gchar* path2 = correct_filename(path);
 
-                priv->index_list = parse_hhk(path2, priv->encoding);
+                priv->index_list = parse_hhk_file(path2, priv->encoding);
 
                 g_free(path);
                 g_free(path2);
@@ -728,6 +884,80 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
         g_free(md5);
 
         return self;
+}
+
+GNode *
+cs_chmfile_get_toc_tree(CsChmfile *self)
+{
+        return CS_CHMFILE_GET_PRIVATE (self)->toc_tree;
+}
+
+GList *
+cs_chmfile_get_index_list(CsChmfile *self)
+{
+        return CS_CHMFILE_GET_PRIVATE (self)->index_list;
+}
+
+GList *
+cs_chmfile_get_bookmarks_list(CsChmfile *self)
+{
+        return CS_CHMFILE_GET_PRIVATE (self)->bookmarks_list;
+}
+
+const gchar *
+cs_chmfile_get_filename(CsChmfile *self)
+{
+        return CS_CHMFILE_GET_PRIVATE (self)->filename;
+}
+
+const gchar *
+cs_chmfile_get_bookfolder(CsChmfile *self)
+{
+        return CS_CHMFILE_GET_PRIVATE (self)->bookfolder;
+}
+
+const gchar *
+cs_chmfile_get_bookname(CsChmfile *self)
+{
+        return CS_CHMFILE_GET_PRIVATE (self)->bookname;
+}
+
+const gchar *
+cs_chmfile_get_homepage(CsChmfile *self)
+{
+        return CS_CHMFILE_GET_PRIVATE (self)->homepage;
+}
+
+const gchar *
+cs_chmfile_get_variable_font(CsChmfile *self)
+{
+        return CS_CHMFILE_GET_PRIVATE (self)->variable_font;
+}
+
+void
+cs_chmfile_set_variable_font(CsChmfile *self, const gchar *font_name)
+{
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+
+        g_free(priv->variable_font);
+        
+        priv->variable_font = g_strdup(font_name);
+}
+
+const gchar *
+cs_chmfile_get_fixed_font(CsChmfile *self)
+{
+        return CS_CHMFILE_GET_PRIVATE (self)->fixed_font;
+}
+
+void
+cs_chmfile_set_fixed_font(CsChmfile *self, const gchar *font_name)
+{
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+
+        g_free(priv->fixed_font);
+        
+        priv->fixed_font = g_strdup(font_name);
 }
 
 /* see http://code.google.com/p/chmsee/issues/detail?id=12 */
@@ -745,83 +975,4 @@ void extract_post_file_write(const gchar* fname) {
                 g_free(newfname);
         }
         g_free(basename);
-}
-
-static const gchar *
-chmfile_get_dir(CsChmfile* self)
-{
-        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
-        return priv->dir;
-}
-
-static const gchar *
-chmfile_get_fixed_font(CsChmfile* self)
-{
-        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
-        return priv->fixed_font;
-}
-
-static const gchar *
-chmfile_get_variable_font(CsChmfile* self)
-{
-        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
-        return priv->variable_font;
-}
-
-static GNode *
-chmfile_get_toc_tree(CsChmfile* self)
-{
-        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
-        return priv->toc_tree;
-}
-
-static Bookmarks *
-chmfile_get_bookmarks_list(CsChmfile* self)
-{
-        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
-        return priv->bookmarks_list;
-}
-
-static void
-chmfile_set_fixed_font(CsChmfile* self, const gchar* font)
-{
-        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
-        g_free(priv->fixed_font);
-        priv->fixed_font = g_strdup(font);
-}
-
-static void
-chmfile_set_variable_font(CsChmfile* self, const gchar* font)
-{
-        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
-        g_free(priv->variable_font);
-        priv->variable_font = g_strdup(font);
-}
-
-void
-chmfile_set_encoding(CsChmfile* self, const char* encoding)
-{
-        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
-        if(priv->encoding) {
-                g_free(priv->encoding);
-        }
-        priv->encoding = g_strdup(encoding);
-}
-
-const gchar *
-cs_chmfile_get_filename(CsChmfile *self)
-{
-        return CS_CHMFILE_GET_PRIVATE (self)->filename;
-}
-
-const gchar *
-cs_chmfile_get_bookname(CsChmfile* self)
-{
-        return CS_CHMFILE_GET_PRIVATE (self)->bookname;
-}
-
-const gchar *
-cs_chmfile_get_homepage(CsChmfile *self)
-{
-        return CS_CHMFILE_GET_PRIVATE (self)->homepage;
 }

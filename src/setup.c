@@ -32,133 +32,120 @@
 #include "setup.h"
 #include "utils.h"
 
-static void on_cache_clear(GtkWidget *, ChmSee *);
-static void on_window_close(GtkButton *, ChmSee *);
+static void on_bookshelf_clear(GtkWidget *, Chmsee *);
+static void on_window_close(GtkButton *, Chmsee *);
 
-static void variable_font_set_cb(GtkFontButton *, ChmSee *);
-static void fixed_font_set_cb(GtkFontButton *, ChmSee *);
-static void cmb_lang_changed_cb(GtkWidget *, ChmSee *);
-
-typedef struct
-{
-        const gchar    *cchar_number;
-        const gchar    *cchar_codeset;
-} ChmseeChar;
+static void variable_font_set_cb(GtkFontButton *, Chmsee *);
+static void fixed_font_set_cb(GtkFontButton *, Chmsee *);
+static void cmb_lang_changed_cb(GtkWidget *, Chmsee *);
 
 static void
-on_cache_clear(GtkWidget *widget, ChmSee *chmsee)
+on_bookshelf_clear(GtkWidget *widget, Chmsee *chmsee)
 {
-        if(chmsee_has_book(chmsee))
-                chmsee_close_book(chmsee);
+        char *argv[4];
+        gchar *bookshelf = g_strdup(chmsee_get_bookshelf(chmsee));
 
-        command_delete_tmpdir(chmsee_get_cache_dir(chmsee));
+        chmsee_close_book(chmsee);
+
+        g_return_if_fail(g_file_test(bookshelf, G_FILE_TEST_EXISTS));
+
+        argv[0] = "rm";
+        argv[1] = "-rf";
+        argv[2] = bookshelf;
+        argv[3] = NULL;
+
+        g_spawn_async(g_get_tmp_dir(), argv, NULL,
+                      G_SPAWN_SEARCH_PATH,
+                      NULL, NULL, NULL,
+                      NULL);
+        g_free(bookshelf);
 }
 
 static void
-on_window_close(GtkButton *button, ChmSee *chmsee)
+on_window_close(GtkButton *button, Chmsee *chmsee)
 {
         gtk_widget_destroy(gtk_widget_get_toplevel (GTK_WIDGET(button)));
 }
 
 static void
-variable_font_set_cb(GtkFontButton *button, ChmSee *chmsee)
+variable_font_set_cb(GtkFontButton *button, Chmsee *chmsee)
 {
-        gchar *font_name;
+        gchar *font_name = g_strdup(gtk_font_button_get_font_name(button));
 
-        font_name = g_strdup(gtk_font_button_get_font_name(button));
-
-        g_debug("variable font set: %s", font_name);
-
-        gecko_utils_set_font(GECKO_PREF_FONT_VARIABLE, font_name);
+        g_debug("SETUP: variable font set: %s", font_name);
 
         chmsee_set_variable_font(chmsee, font_name);
 }
 
 static void
-fixed_font_set_cb(GtkFontButton *button, ChmSee *chmsee)
+fixed_font_set_cb(GtkFontButton *button, Chmsee *chmsee)
 {
-        gchar *font_name;
+        gchar *font_name = g_strdup(gtk_font_button_get_font_name(button));
 
-        font_name = g_strdup(gtk_font_button_get_font_name(button));
-
-        g_debug("fixed font set: %s", font_name);
-
-        gecko_utils_set_font(GECKO_PREF_FONT_FIXED, font_name);
+        g_debug("SETUP: fixed font set: %s", font_name);
 
         chmsee_set_fixed_font(chmsee, font_name);
 }
 
 static void
-cmb_lang_changed_cb(GtkWidget *widget, ChmSee *chmsee)
+cmb_lang_changed_cb(GtkWidget *widget, Chmsee *chmsee)
 {
-        GtkComboBox *combobox;
-        gint index;
 
-        combobox = GTK_COMBO_BOX (widget);
-        index = gtk_combo_box_get_active(combobox);
+        GtkComboBox *combobox = GTK_COMBO_BOX (widget);
+        gint index = gtk_combo_box_get_active(combobox);
 
         if (index >= 0) {
-                g_debug("select lang: %d", index);
-                gecko_utils_set_default_lang(index);
+                g_debug("SETUP: select lang: %d", index);
                 chmsee_set_lang(chmsee, index);
         }
 }
 
 void
-cs_setup_window_new(ChmSee *chmsee)
+setup_window_new(Chmsee *chmsee)
 {
-        GtkBuilder *builder;
-
-        GtkWidget *setup_window;
-        GtkWidget *cache_entry;
-        GtkWidget *clear_button;
-        GtkWidget *variable_font_button;
-        GtkWidget *fixed_font_button;
-        GtkWidget *cmb_lang;
-        GtkWidget *close_button;
-
         /* create setup window */
-        builder = gtk_builder_new();
-        gtk_builder_add_from_file(builder, get_resource_path("setup-window.ui"), NULL);
-        setup_window = GTK_WIDGET (gtk_builder_get_object(builder, "setup_window"));
+        GtkBuilder *builder = gtk_builder_new();
+        gtk_builder_add_from_file(builder, RESOURCE_FILE ("setup-window.ui"), NULL);
+
+        GtkWidget *setup_window = BUILDER_WIDGET (builder, "setup_window");
 
         g_signal_connect_swapped((gpointer) setup_window,
                                  "destroy",
                                  G_CALLBACK (gtk_widget_destroy),
                                  GTK_OBJECT (setup_window));
 
-        /* cache directory */
-        cache_entry = GTK_WIDGET (gtk_builder_get_object(builder, "cache_dir_entry"));
-        gtk_entry_set_text(GTK_ENTRY(cache_entry), chmsee_get_cache_dir(chmsee));
+        /* bookshelf directory */
+        GtkWidget *bookshelf_entry = BUILDER_WIDGET (builder, "bookshelf_entry");
+        gtk_entry_set_text(GTK_ENTRY(bookshelf_entry), chmsee_get_bookshelf(chmsee));
 
-        clear_button = GTK_WIDGET (gtk_builder_get_object(builder, "setup_clear"));
+        GtkWidget *clear_button = BUILDER_WIDGET (builder, "setup_clear");
         g_signal_connect(G_OBJECT (clear_button),
                          "clicked",
-                         G_CALLBACK (on_cache_clear),
+                         G_CALLBACK (on_bookshelf_clear),
                          chmsee);
 
         /* font setting */
-        variable_font_button = GTK_WIDGET (gtk_builder_get_object(builder, "variable_fontbtn"));
+        GtkWidget *variable_font_button = BUILDER_WIDGET (builder, "variable_fontbtn");
         g_signal_connect(G_OBJECT (variable_font_button),
                          "font-set",
                          G_CALLBACK (variable_font_set_cb),
                          chmsee);
 
-        fixed_font_button = GTK_WIDGET (gtk_builder_get_object(builder, "fixed_fontbtn"));
+        GtkWidget *fixed_font_button = BUILDER_WIDGET (builder, "fixed_fontbtn");
         g_signal_connect(G_OBJECT (fixed_font_button),
                          "font-set",
                          G_CALLBACK (fixed_font_set_cb),
                          chmsee);
 
         /* default lang */
-        cmb_lang = GTK_WIDGET (gtk_builder_get_object(builder, "cmb_default_lang"));
+        GtkWidget *cmb_lang = BUILDER_WIDGET (builder, "cmb_default_lang");
         g_signal_connect(G_OBJECT (cmb_lang),
                          "changed",
                          G_CALLBACK (cmb_lang_changed_cb),
                          chmsee);
         gtk_combo_box_set_active(GTK_COMBO_BOX (cmb_lang), chmsee_get_lang(chmsee));
 
-        close_button = GTK_WIDGET (gtk_builder_get_object(builder, "setup_close"));
+        GtkWidget *close_button = BUILDER_WIDGET (builder, "setup_close");
         g_signal_connect(G_OBJECT (close_button),
                          "clicked",
                          G_CALLBACK (on_window_close),

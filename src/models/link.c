@@ -22,7 +22,7 @@
 #include <string.h>
 
 #include "link.h"
-#include "utils/utils.h"
+#include "utils.h"
 
 Link *
 link_new(LinkType type, const gchar *name, const gchar *uri)

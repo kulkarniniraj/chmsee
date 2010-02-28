@@ -20,10 +20,13 @@
 #include "config.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #include "bookmarksfile.h"
 #include "utils.h"
 #include "models/link.h"
+
+#define MAXLINE 1024
 
 static gchar *strip_string(gchar *);
 static gchar *escape_parse(gchar *);
@@ -192,7 +195,7 @@ cs_bookmarks_file_load(const gchar *path)
 
                 /* Parse lines */
                 if (parse_line(line, id, value)) {
-                        g_print("CS_BOOKMARKS_FILE: Syntax error in %s config file\n");
+                        g_debug("CS_BOOKMARKS_FILE: Syntax error in %s bookmarks file.", path);
                 }
 
                 Link *link = link_new(LINK_TYPE_PAGE, g_strdup(id), g_strdup(value));
@@ -205,7 +208,7 @@ cs_bookmarks_file_load(const gchar *path)
 }
 
 void
-cs_bookmarks_file_save(Glist *links, const gchar *path)
+cs_bookmarks_file_save(GList *links, const gchar *path)
 {
         FILE *fd;
 

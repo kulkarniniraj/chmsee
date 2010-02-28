@@ -65,15 +65,14 @@ void         cs_html_gecko_increase_size(CsHtmlGecko *);
 void         cs_html_gecko_decrease_size(CsHtmlGecko *);
 void         cs_html_gecko_reset_size(CsHtmlGecko *);
 
-void         cs_html_gecko_set_variable_font(Html*, const gchar*);
-void         cs_html_gecko_set_fixed_font(Html*, const gchar*);
-
 void         cs_html_gecko_clear(CsHtmlGecko *);
 
 gboolean     cs_html_gecko_init_system(void);
 void         cs_html_gecko_shutdown_system(void);
 
 void         cs_html_gecko_set_default_lang(gint);
+void         cs_html_gecko_set_variable_font(const gchar *);
+void         cs_html_gecko_set_fixed_font(const gchar *);
 
 G_END_DECLS
 

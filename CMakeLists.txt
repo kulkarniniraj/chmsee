@@ -6,7 +6,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 find_package(PkgConfig)
 
-pkg_check_modules (CHMSEE REQUIRED gthread-2.0 glib-2.0 libxml-2.0 gtk+-2.0>2.12 nspr)
+pkg_check_modules (CHMSEE REQUIRED gthread-2.0 glib-2.0 libxml-2.0 gtk+-2.0>=2.12 nspr)
 pkg_search_module(XULRUNNER REQUIRED mozilla-gtkmozembed-embedding>=1.9 xulrunner-gtkmozembed>=1.9)
 set(CHMSEE_INCLUDE_DIRS ${CHMSEE_INCLUDE_DIRS} ${XULRUNNER_INCLUDE_DIRS})
 set(CHMSEE_CFLAGS_OTHER ${CHMSEE_CFLAGS_OTHER} ${XULRUNNER_CFLAGS_OTHER} -Wall)
@@ -30,11 +30,16 @@ if(XULRUNNER_VERSION MATCHES "1\\.9\\.2\\..*")
         set(XULRUNNER192 1)
 endif()
 
+set(CHMSEE_CONFIG_FILE "config-1.1")
+set(CHMSEE_CONFIG_FILE-OLD "config")
 set(CHMSEE_BOOKMARKS_FILE "chmsee_bookmarks")
-set(CHMSEE_BOOKINFO_FILE "chmsee_bookinfo")
+set(CHMSEE_BOOKINFO_FILE "chmsee-1.1_bookinfo")
+set(CHMSEE_BOOKINFO_FILE_OLD "chmsee_bookinfo")
 set(CHMSEE_NO_LINK "chmsee_no_link")
 set(CHMSEE_DATA_DIR "${CMAKE_INSTALL_PREFIX}/share/chmsee")
+set(CHMSEE_BOOKSHELF_DEFAULT "bookshelf")
 set(GECKO_FLAVOUR "libxul")
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/config.h)
 
 find_program(INTLTOOL_MERGE intltool-merge)

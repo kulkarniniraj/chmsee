@@ -38,6 +38,8 @@
  *
  */
 
+#include "config.h"
+
 #include <stdlib.h>
 
 #include <gtkmozembed.h>
@@ -60,9 +62,8 @@
 #include <nsServiceManagerUtils.h>
 #include <nsIInterfaceRequestorUtils.h>
 
-#include "config.h"
-#include "gecko_utils.h"
-#include "utils/utils.h"
+#include "gecko-utils.h"
+#include "utils.h"
 
 #define LANG_TYPES_NUM 7
 
@@ -163,7 +164,7 @@ gecko_utils_init_prefs(void)
         NS_ENSURE_SUCCESS (rv, rv);
 
         nsCOMPtr<nsILocalFile> file;
-        rv = NS_NewNativeLocalFile(nsDependentCString(get_resource_path("default-prefs.js")),
+        rv = NS_NewNativeLocalFile(nsDependentCString(RESOURCE_FILE ("default-prefs.js")),
                                    PR_TRUE, getter_AddRefs(file));
         NS_ENSURE_SUCCESS (rv, rv);
 

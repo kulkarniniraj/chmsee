@@ -34,7 +34,7 @@
 
 G_BEGIN_DECLS
 
-void cs_setup_window_new(ChmSee *);
+void setup_window_new(Chmsee *);
 
 G_END_DECLS
 

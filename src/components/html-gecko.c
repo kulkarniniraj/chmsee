@@ -21,26 +21,25 @@
 
 #include "html-gecko.h"
 #include "ihtml.h"
-#include "marshal.h"
 #include "utils.h"
 #include "gecko-utils.h"
 
-static void cs_html_gecko_class_init(HtmlGeckoClass *);
-static void cs_html_gecko_init(HtmlGecko *);
+static void cs_html_gecko_class_init(CsHtmlGeckoClass *);
+static void cs_html_gecko_init(CsHtmlGecko *);
 
-static void gecko_title_cb(GtkMozEmbed *, HtmlGecko *);
-static void gecko_location_cb(GtkMozEmbed *, HtmlGecko *);
-static gboolean gecko_open_uri_cb(GtkMozEmbed *, const gchar *, HtmlGecko *);
-static gboolean gecko_mouse_click_cb(GtkMozEmbed *, gpointer, HtmlGecko *);
-static gboolean gecko_link_message_cb(GtkMozEmbed *, HtmlGecko *);
-static void gecko_child_add_cb(GtkMozEmbed *, GtkWidget *, HtmlGecko *);
-static void gecko_child_remove_cb(GtkMozEmbed *, GtkWidget *, HtmlGecko *);
-static void child_grab_focus_cb(GtkWidget *, HtmlGecko *);
+static void gecko_title_cb(GtkMozEmbed *, CsHtmlGecko *);
+static void gecko_location_cb(GtkMozEmbed *, CsHtmlGecko *);
+static gboolean gecko_open_uri_cb(GtkMozEmbed *, const gchar *, CsHtmlGecko *);
+static gboolean gecko_mouse_click_cb(GtkMozEmbed *, gpointer, CsHtmlGecko *);
+static gboolean gecko_link_message_cb(GtkMozEmbed *, CsHtmlGecko *);
+static void gecko_child_add_cb(GtkMozEmbed *, GtkWidget *, CsHtmlGecko *);
+static void gecko_child_remove_cb(GtkMozEmbed *, GtkWidget *, CsHtmlGecko *);
+static void gecko_child_grab_focus_cb(GtkWidget *, CsHtmlGecko *);
 
 /* The value of the URL under the mouse pointer, or NULL */
 static gchar *current_url = NULL;
 
-static void cs_ihtml_interface_init (CsIhtmlInterface *iface);
+static void cs_html_gecko_interface_init(CsIhtmlInterface *iface);
 
 /* GObject functions */
 
@@ -89,7 +88,7 @@ cs_html_gecko_init(CsHtmlGecko *html)
                          html);
 }
 
-void
+static void
 cs_html_gecko_interface_init(CsIhtmlInterface *iface)
 {
         iface->get_widget = (GtkWidget *(*) (CsIhtml* self)) cs_html_gecko_get_widget;
@@ -110,11 +109,7 @@ cs_html_gecko_interface_init(CsIhtmlInterface *iface)
         iface->decrease_size = (void (*) (CsIhtml* self)) cs_html_gecko_decrease_size;
         iface->reset_size    = (void (*) (CsIhtml* self)) cs_html_gecko_reset_size;
 
-        iface->set_variable_font = (void (*) (CsIhtml* self, const gchar* font)) cs_html_gecko_set_variable_font;
-        iface->set_fixed_font    = (void (*) (CsIhtml* self, const gchar* font)) cs_html_gecko_set_fixed_font;
-
         iface->clear    = (void (*) (CsIhtml* self)) cs_html_gecko_clear;
-        iface->shutdown = (void (*) (CsIhtml* self)) cs_html_gecko_shutdown;
 }
 
 /* Callbacks */
@@ -125,15 +120,15 @@ gecko_title_cb(GtkMozEmbed *embed, CsHtmlGecko *html)
         char *new_title;
 
         new_title = gtk_moz_embed_get_title(embed);
-        cs_ihtml_titled_changed(html, new_title);
+        cs_ihtml_title_changed(CS_IHTML (html), new_title);
         g_free(new_title);
 }
 
 static void
 gecko_location_cb(GtkMozEmbed *embed, CsHtmlGecko *html)
 {
-        char * location = gtk_moz_embed_get_location(embed);
-        cs_ihtml_location_changed(html, location);
+        char *location = gtk_moz_embed_get_location(embed);
+        cs_ihtml_location_changed(CS_IHTML (html), location);
         g_free(location);
 }
 
@@ -143,14 +138,14 @@ gecko_open_uri_cb(GtkMozEmbed *embed, const gchar *uri, CsHtmlGecko *html)
         gboolean ret_val = TRUE;
 
         /* g_signal_emit(html, signals[OPEN_URI], 0, uri, &ret_val); */ //FIXME: return value
-        cs_ihtml_open_uri(html, uri);
+        cs_ihtml_uri_opened(CS_IHTML (html), uri);
 
         /* reset current url */
         if (current_url != NULL) {
                 g_free(current_url);
                 current_url = NULL;
 
-                cs_ihtml_link_message(html, "");
+                cs_ihtml_link_message(CS_IHTML (html), "");
         }
 
         return ret_val;
@@ -164,14 +159,14 @@ gecko_mouse_click_cb(GtkMozEmbed *widget, gpointer dom_event, CsHtmlGecko *html)
 
         if (button == 2 || (button == 1 && mask & GDK_CONTROL_MASK)) {
                 if (current_url) {
-                        cs_ihtml_open_new_tab(html, current_url);
+                        cs_ihtml_open_new_tab(CS_IHTML (html), current_url);
                         return TRUE;
                 }
         } else if (button == 3) {
                 if (current_url)
-                        cs_ihtml_context_link(html, current_url);
+                        cs_ihtml_context_link(CS_IHTML (html), current_url);
                 else
-                        cs_ithml_context_normal(html);
+                        cs_ihtml_context_normal(CS_IHTML (html));
                 return TRUE;
         }
 
@@ -184,7 +179,7 @@ gecko_link_message_cb(GtkMozEmbed *widget, CsHtmlGecko *html)
         g_free(current_url);
 
         current_url = gtk_moz_embed_get_link_message(widget);
-        cs_ihtml_link_message(html, current_url);
+        cs_ihtml_link_message(CS_IHTML (html), current_url);
 
         if (current_url[0] == '\0') {
                 g_free(current_url);
@@ -199,14 +194,14 @@ gecko_child_add_cb(GtkMozEmbed *embed, GtkWidget *child, CsHtmlGecko *html)
 {
         g_signal_connect(G_OBJECT (child),
                          "grab-focus",
-                         G_CALLBACK (html_child_grab_focus_cb),
+                         G_CALLBACK (gecko_child_grab_focus_cb),
                          html);
 }
 
 static void
-gecko_html_child_remove_cb(GtkMozEmbed *embed, GtkWidget *child, CsHtmlGecko *html)
+gecko_child_remove_cb(GtkMozEmbed *embed, GtkWidget *child, CsHtmlGecko *html)
 {
-        g_signal_handlers_disconnect_by_func(child, html_child_grab_focus_cb, html);
+        g_signal_handlers_disconnect_by_func(child, gecko_child_grab_focus_cb, html);
 }
 
 static void
@@ -247,7 +242,7 @@ cs_html_gecko_open_uri(CsHtmlGecko *self, const gchar *str_uri)
 {
         gchar *full_uri;
 
-        g_return_if_fail(IS_HTML (self));
+        g_return_if_fail(IS_CS_IHTML (self));
         g_return_if_fail(str_uri != NULL);
 
         if (str_uri[0] == '/')
@@ -255,7 +250,7 @@ cs_html_gecko_open_uri(CsHtmlGecko *self, const gchar *str_uri)
         else
                 full_uri = g_strdup(str_uri);
 
-        if (g_strcmp0(full_uri, html_get_location(self)) != 0) {
+        if (g_strcmp0(full_uri, cs_html_gecko_get_location(self)) != 0) {
                 g_debug("Open uri %s", full_uri);
                 gtk_moz_embed_load_url(self->gecko, full_uri);
         }
@@ -361,7 +356,7 @@ cs_html_gecko_reset_size(CsHtmlGecko *html)
 }
 
 void
-cs_cs_html_gecko_gecko_clear(CsHtmlGecko *html)
+cs_html_gecko_clear(CsHtmlGecko *html)
 {
         static const char *data = "<html><body bgcolor=\"white\"></body></html>";
 
@@ -371,7 +366,7 @@ cs_cs_html_gecko_gecko_clear(CsHtmlGecko *html)
 }
 
 gboolean 
-cs_html_init_system(void)
+cs_html_gecko_init_system(void)
 {
         return gecko_utils_init();
 }
@@ -389,15 +384,14 @@ cs_html_gecko_set_default_lang(gint lang)
 }
 
 void
-cs_html_gecko_set_variable_font(CsHtmlGecko *html, const gchar* font)
+cs_html_gecko_set_variable_font(const gchar *font_name)
 {
-        gecko_utils_set_font(GECKO_PREF_FONT_VARIABLE, font);
+        gecko_utils_set_font(GECKO_PREF_FONT_VARIABLE, font_name);
 }
 
 void
-cs_html_gecko_set_fixed_font(CsHtmlGecko *html, const gchar* font)
+cs_html_gecko_set_fixed_font(const gchar *font_name)
 {
-        gecko_utils_set_font(GECKO_PREF_FONT_FIXED, font);
+        gecko_utils_set_font(GECKO_PREF_FONT_FIXED, font_name);
 }
-
 

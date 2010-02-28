@@ -29,6 +29,8 @@ CsIhtml *cs_html_new(void);
 gboolean cs_html_init_system(void);
 void     cs_html_shutdown_system(void);
 void     cs_html_set_default_lang(int lang);
+void     cs_html_set_variable_font(const gchar *);
+void     cs_html_set_fixed_font(const gchar *);
 
 G_END_DECLS
 

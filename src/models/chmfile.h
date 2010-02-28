@@ -45,12 +45,20 @@ struct _CsChmfileClass
 };
 
 GType       cs_chmfile_get_type(void);
-CsChmfile  *cs_chmfile_new(const gchar *);
+CsChmfile  *cs_chmfile_new(const gchar *, const gchar *);
 
-CsChmIndex *cs_chmfile_get_index(CsChmfile* self);
+GNode       *cs_chmfile_get_toc_tree(CsChmfile *);
+GList       *cs_chmfile_get_bookmarks_list(CsChmfile *);
+GList       *cs_chmfile_get_index_list(CsChmfile *);
 
+const gchar *cs_chmfile_get_bookfolder(CsChmfile *);
 const gchar *cs_chmfile_get_filename(CsChmfile *);
 const gchar *cs_chmfile_get_bookname(CsChmfile *);
 const gchar *cs_chmfile_get_homepage(CsChmfile *);
+
+const gchar *cs_chmfile_get_variable_font(CsChmfile *);
+void         cs_chmfile_set_variable_font(CsChmfile *, const gchar *);
+const gchar *cs_chmfile_get_fixed_font(CsChmfile *);
+void         cs_chmfile_set_fixed_font(CsChmfile *, const gchar *);
 
 #endif /* !__CS_CHMFILE_H__ */

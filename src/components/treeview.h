@@ -56,6 +56,9 @@ void       cs_tree_view_add_link(CsTreeView *, Link *);
 void       cs_tree_view_remove_link(CsTreeView *, Link *);
 void       cs_tree_view_select_link(CsTreeView *, Link *);
 
+Link      *cs_tree_view_get_selected_link(CsTreeView *);
+void       cs_tree_view_set_filter_string(CsTreeView *, const gchar *);
+
 G_END_DECLS
 
 #endif /* !__CS_TREE_VIEW_H__ */

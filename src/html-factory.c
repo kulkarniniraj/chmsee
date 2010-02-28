@@ -46,3 +46,15 @@ cs_html_set_default_lang(int lang)
 {
         cs_html_gecko_set_default_lang(lang);
 }
+
+void
+cs_html_set_variable_font(const gchar *font)
+{
+        cs_html_gecko_set_variable_font(font);
+}
+
+void
+cs_html_set_fixed_font(const gchar *font)
+{
+        cs_html_gecko_set_fixed_font(font);
+}

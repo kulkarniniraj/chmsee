@@ -162,7 +162,7 @@ static void
 link_selected_cb(CsBookmarks *self, Link *link)
 {
         if (link) {
-                g_debug("Emiting link_selected signal from CS_BOOKMARKS");
+                g_debug("CS_BOOKMARKS: Emiting link_selected signal");
                 g_signal_emit(self, signals[LINK_SELECTED], 0, link);
         }
 }
@@ -170,13 +170,15 @@ link_selected_cb(CsBookmarks *self, Link *link)
 static void
 entry_changed_cb(GtkEntry *entry, CsBookmarks *self)
 {
+        CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
+
         const gchar *name = gtk_entry_get_text(entry);
         gint       length = strlen(name);
 
         if (length >= 2)
-                gtk_widget_set_sensitive(self->add_button, TRUE);
+                gtk_widget_set_sensitive(priv->add_button, TRUE);
         else
-                gtk_widget_set_sensitive(self->add_button, FALSE);
+                gtk_widget_set_sensitive(priv->add_button, FALSE);
 }
 
 static void
@@ -188,28 +190,28 @@ on_bookmarks_add(CsBookmarks *self)
 
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
 
-        g_message("BOOKMARKS: add button clicked");
+        g_debug("CS_BOOKMARKS: add button clicked");
 
         name = g_strdup(gtk_entry_get_text(GTK_ENTRY (priv->entry)));
 
-        found_link = g_list_find_custom(self->links, priv->current_uri, link_uri_compare);
+        found_link = g_list_find_custom(priv->links, priv->current_uri, link_uri_compare);
 
         if (found_link) {
                 /* update exist bookmark name */
                 link = LINK (found_link->data);
                 if (ncase_compare_utf8_string(link->name, name) != 0) {
-                        cs_tree_view_remove_link(priv->treeview, link);
+                        cs_tree_view_remove_link(CS_TREE_VIEW (priv->treeview), link);
                         g_free(link->name);
 
                         link->name = g_strdup(name);
-                        cs_tree_view_add_link(priv->treeview, link);
+                        cs_tree_view_add_link(CS_TREE_VIEW (priv->treeview), link);
                 }
         } else {
                 /* new bookmark */
                 link = link_new(LINK_TYPE_PAGE, name, priv->current_uri);
                 priv->links = g_list_append(priv->links, link);
                 
-                cs_tree_view_add_link(priv->treeview, link);
+                cs_tree_view_add_link(CS_TREE_VIEW (priv->treeview), link);
         }
 
         g_free(name);
@@ -218,15 +220,12 @@ on_bookmarks_add(CsBookmarks *self)
 static void
 on_bookmarks_remove(CsBookmarks *self)
 {
-        GtkTreeIter iter;
-
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
-        GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview));
 
-        Link *link = cs_tree_view_get_selected_link(priv->treeview);
+        Link *link = cs_tree_view_get_selected_link(CS_TREE_VIEW (priv->treeview));
 
         if(g_list_find(priv->links, link)) {
-                cs_tree_view_remove_link(priv->treeview, link);
+                cs_tree_view_remove_link(CS_TREE_VIEW (priv->treeview), link);
 
                 priv->links = g_list_remove(priv->links, link);
                 link_free(link); //FIXME: right place?
@@ -244,7 +243,7 @@ link_uri_compare(gconstpointer a, gconstpointer b) //FIXME: move to link.c
 /* External functions */
 
 GtkWidget *
-cs_bookmarks_new(GList *links)
+cs_bookmarks_new(void)
 {
         CsBookmarks *self = g_object_new(CS_TYPE_BOOKMARKS, NULL);
 
@@ -263,7 +262,7 @@ cs_bookmarks_set_model(CsBookmarks* self, GList* model)
 GList *
 cs_bookmarks_get_model(CsBookmarks *self)
 {
-        g_return_if_fail(IS_CS_BOOKMARKS (self));
+        g_return_val_if_fail(IS_CS_BOOKMARKS (self), NULL);
 
         return CS_BOOKMARKS_GET_PRIVATE (self)->links;
 }
@@ -275,7 +274,7 @@ cs_bookmarks_set_current_link(CsBookmarks *self, Link *link)
 
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
 
-        g_debug("set bookmarks entry text: %s", link->name);
+        g_debug("CS_BOOKMARKS: set bookmarks entry text = %s", link->name);
         gtk_entry_set_text(GTK_ENTRY (priv->entry), link->name);
 
         gtk_editable_set_position(GTK_EDITABLE (priv->entry), -1);

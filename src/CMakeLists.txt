@@ -24,22 +24,22 @@ link_directories(
 
 set(CHMSEE_SRCS
         chmsee.h chmsee.c
-        setup.h setup.c
         startup.h startup.c
-        ${CMAKE_CURRENT_BINARY_DIR}/marshal.h ${CMAKE_CURRENT_BINARY_DIR}/marshal.c
+        setup.h setup.c
         ihtml.h ihtml.c
         html-factory.h html-factory.c
         utils.h utils.c
+        ${CMAKE_CURRENT_BINARY_DIR}/marshal.h ${CMAKE_CURRENT_BINARY_DIR}/marshal.c
         )
 set(CHMSEE_SRCS
         ${CHMSEE_SRCS}
-        components/treeview.h components/treeview.c
         components/book.h components/book.c
-        components/bookmarks.h components/bookmarks.c
-        components/gecko-utils.h components/gecko-utils.cpp
-        components/html-gecko.h components/html-gecko.c
-        components/index.h components/index.c
         components/toc.h components/toc.c
+        components/index.h components/index.c
+        components/bookmarks.h components/bookmarks.c
+        components/treeview.h components/treeview.c
+        components/html-gecko.h components/html-gecko.c
+        components/gecko-utils.h components/gecko-utils.cpp
         )
 set(CHMSEE_SRCS
         ${CHMSEE_SRCS}
@@ -47,9 +47,6 @@ set(CHMSEE_SRCS
         models/chmfile.h models/chmfile.c
         models/parser.h models/parser.c
         models/link.h models/link.c
-        models/ichmfile.h models/ichmfile.c
-        models/chmfile-factory.h models/chmfile-factory.c
-        models/chmindex.h models/chmindex.c
         )
 
 add_library(chmseelib STATIC ${CHMSEE_SRCS})

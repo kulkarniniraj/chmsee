@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include "treeview.h"
+#include "utils.h"
 
 /* Signals */
 enum {
@@ -95,7 +96,7 @@ cs_tree_view_init(CsTreeView *self)
                                          G_TYPE_STRING);
 
         priv->filter_string = NULL;
-        apply_filter_mode(self);
+        apply_filter_model(self);
 
         GtkCellRenderer *cell = gtk_cell_renderer_text_new();
         g_object_set(cell,
@@ -104,7 +105,7 @@ cs_tree_view_init(CsTreeView *self)
 
         gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW (self),
                                                     -1,
-                                                    _(""), cell,
+                                                    "", cell,
                                                     "text", 0,
                                                     NULL);
 
@@ -160,7 +161,7 @@ row_activated_cb(CsTreeView *self, GtkTreePath *path, GtkTreeViewColumn *column)
 static void
 selection_changed_cb(GtkTreeSelection *selection, CsTreeView *self)
 {
-        g_message("CsTreeView selection_changed");
+        g_debug("CS_TREE_VIEW: selection_changed");
 }
 
 /* Internal functions */
@@ -265,19 +266,19 @@ void
 cs_tree_view_remove_link(CsTreeView *self, Link *link)
 {
         GtkTreeIter        iter;
-        gchar             *uri;
+        gchar             *uri = NULL;
         CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
 
-        gtk_tree_model_get_iter_from_string(GTK_TREE_VIEW (self), &iter, "0");
+        gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL (priv->store), &iter, "0");
 
         do {
-                gtk_tree_model_get(GTK_TREE_VIEW (self), &iter, COL_URI, uri, -1);
+                gtk_tree_model_get(GTK_TREE_MODEL (priv->store), &iter, COL_URI, uri, -1);
 
                 if (ncase_compare_utf8_string(link->uri, uri) == 0) {
                         gtk_list_store_remove(priv->store, &iter);
                         break;
                 }
-        } while (gtk_tree_model_iter_next(GTK_TREE_VIEW (self), &iter))
+        } while (gtk_tree_model_iter_next(GTK_TREE_MODEL (priv->store), &iter));
 }
 
 Link *
@@ -306,7 +307,7 @@ void
 cs_tree_view_select_link(CsTreeView *self, Link *link)
 {
         GtkTreeIter        iter;
-        gchar             *uri;
+        gchar             *uri = NULL;
 
         g_return_if_fail(IS_CS_TREE_VIEW (self));
 
@@ -314,16 +315,16 @@ cs_tree_view_select_link(CsTreeView *self, Link *link)
 
         GtkTreeSelection  *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (self));
 
-        gtk_tree_model_get_iter_from_string(GTK_TREE_VIEW (self), &iter, "0");
+        gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL (priv->store), &iter, "0");
 
         do {
-                gtk_tree_model_get(GTK_TREE_VIEW (self), &iter, COL_URI, uri, -1);
+                gtk_tree_model_get(GTK_TREE_MODEL (priv->store), &iter, COL_URI, uri, -1);
 
                 if (ncase_compare_utf8_string(link->uri, uri) == 0) {
                         gtk_tree_selection_select_iter(selection, &iter);
                         break;
                 }
-        } while (gtk_tree_model_iter_next(GTK_TREE_VIEW (self), &iter))
+        } while (gtk_tree_model_iter_next(GTK_TREE_MODEL (priv->store), &iter));
 }
 
 void

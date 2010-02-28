@@ -19,25 +19,14 @@
  */
 
 #include "config.h"
-#include "utils.h"
 
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <unistd.h>  /* R_OK */
-
 #include <glib/gstdio.h>
 
-static gchar *
-strip_string(gchar *str);
-static gint
-parse_config_line(gchar *iline, gchar *id, gchar *value);
-static gchar *
-escape_parse(gchar *str);
-
-
-#define MAXLINE 1024
+#include "utils.h"
 
 gchar *
 convert_filename_to_utf8(const gchar *filename, const gchar *codeset)
@@ -183,24 +172,6 @@ url_decode(const char *encoded)
         return rv;
 }
 
-void
-command_delete_tmpdir(const gchar *s_path)
-{
-        char *argv[4];
-
-        g_return_if_fail(g_file_test(s_path, G_FILE_TEST_EXISTS));
-
-        argv[0] = "rm";
-        argv[1] = "-rf";
-        argv[2] = s_path;
-        argv[3] = NULL;
-
-        g_spawn_async(g_get_tmp_dir(), argv, NULL,
-                      G_SPAWN_SEARCH_PATH,
-                      NULL, NULL, NULL,
-                      NULL);
-}
-
 gchar *
 get_real_uri(const gchar *uri)
 {
@@ -217,7 +188,9 @@ get_real_uri(const gchar *uri)
         return real_uri;
 }
 
-char* correct_filename(const gchar* fname) {
+gchar *
+correct_filename(const gchar *fname)
+{
         if(g_access(fname, R_OK) == 0) {
                 return g_strdup(fname);
         }
@@ -247,198 +220,4 @@ char* correct_filename(const gchar* fname) {
         free(oldpath);
 
         return res;
-}
-
-
-/* Parse escape-chars in string -> e.g. translate \n to newline */
-const char *
-get_encoding_by_lcid(guint32 lcid)
-{
-        switch(lcid) {
-        case 0x0436:
-        case 0x042d:
-        case 0x0403:
-        case 0x0406:
-        case 0x0413:
-        case 0x0813:
-        case 0x0409:
-        case 0x0809:
-        case 0x0c09:
-        case 0x1009:
-        case 0x1409:
-        case 0x1809:
-        case 0x1c09:
-        case 0x2009:
-        case 0x2409:
-        case 0x2809:
-        case 0x2c09:
-        case 0x3009:
-        case 0x3409:
-        case 0x0438:
-        case 0x040b:
-        case 0x040c:
-        case 0x080c:
-        case 0x0c0c:
-        case 0x100c:
-        case 0x140c:
-        case 0x180c:
-        case 0x0407:
-        case 0x0807:
-        case 0x0c07:
-        case 0x1007:
-        case 0x1407:
-        case 0x040f:
-        case 0x0421:
-        case 0x0410:
-        case 0x0810:
-        case 0x043e:
-        case 0x0414:
-        case 0x0814:
-        case 0x0416:
-        case 0x0816:
-        case 0x040a:
-        case 0x080a:
-        case 0x0c0a:
-        case 0x100a:
-        case 0x140a:
-        case 0x180a:
-        case 0x1c0a:
-        case 0x200a:
-        case 0x240a:
-        case 0x280a:
-        case 0x2c0a:
-        case 0x300a:
-        case 0x340a:
-        case 0x380a:
-        case 0x3c0a:
-        case 0x400a:
-        case 0x440a:
-        case 0x480a:
-        case 0x4c0a:
-        case 0x500a:
-        case 0x0441:
-        case 0x041d:
-        case 0x081d:
-                return "ISO-8859-1";
-                break;
-        case 0x041c:
-        case 0x041a:
-        case 0x0405:
-        case 0x040e:
-        case 0x0418:
-        case 0x0815:
-        case 0x081a:
-        case 0x041b:
-        case 0x0424:
-                return "ISO-8859-2";
-                break;
-        case 0x0c01:
-                return "WINDOWS-1256";
-        case 0x0401:
-        case 0x0801:
-        case 0x1001:
-        case 0x1401:
-        case 0x1801:
-        case 0x1c01:
-        case 0x2001:
-        case 0x2401:
-        case 0x2801:
-        case 0x2c01:
-        case 0x3001:
-        case 0x3401:
-        case 0x3801:
-        case 0x3c01:
-        case 0x4001:
-        case 0x0429:
-        case 0x0420:
-                return "ISO-8859-6";
-                break;
-        case 0x0408:
-                return "ISO-8859-7";
-                break;
-        case 0x040d:
-                return "ISO-8859-8";
-                break;
-        case 0x042c:
-        case 0x041f:
-        case 0x0443:
-                return "ISO-8859-9";
-                break;
-        case 0x041e:
-                return "ISO-8859-11";
-                break;
-        case 0x0425:
-        case 0x0426:
-        case 0x0427:
-                return "ISO-8859-13";
-                break;
-        case 0x0411:
-                return "cp932";
-                break;
-        case 0x0804:
-        case 0x1004:
-                return "cp936";
-                break;
-        case 0x0412:
-                return "cp949";
-                break;
-        case 0x0404:
-        case 0x0c04:
-        case 0x1404:
-                return "cp950";
-                break;
-        case 0x082c:
-        case 0x0423:
-        case 0x0402:
-        case 0x043f:
-        case 0x042f:
-        case 0x0419:
-        case 0x0c1a:
-        case 0x0444:
-        case 0x0422:
-        case 0x0843:
-                return "cp1251";
-                break;
-        default:
-                return "";
-                break;
-        }
-}
-
-static gchar* data_dir = NULL;
-
-static void init_data_dir() {
-        data_dir = g_strdup(CHMSEE_DATA_DIR_DEFAULT);
-}
-
-const gchar* get_data_dir() {
-        if(data_dir == NULL) {
-                init_data_dir();
-        }
-        return data_dir;
-}
-
-
-const gchar* get_resource_path(const gchar* resouce_name) {
-        gchar* filename = g_build_filename(get_data_dir(), resouce_name, NULL);
-        const gchar* res = g_intern_string(filename);
-        g_free(filename);
-        return res;
-}
-
-void set_data_dir(const gchar* new_data_dir) {
-        if(data_dir != NULL) {
-                g_free(data_dir);
-        }
-        data_dir = g_strdup(new_data_dir);
-}
-
-const gchar* get_attr(const gchar** attrs, const gchar* key) {
-        while(*attrs) {
-                if(g_ascii_strcasecmp(*attrs, key) == 0) {
-                        return *(attrs+1);
-                }
-                attrs += 2;
-        }
-        return NULL;
 }

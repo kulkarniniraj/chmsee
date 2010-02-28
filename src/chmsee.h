@@ -75,6 +75,19 @@ struct _CsConfig {
 GType        chmsee_get_type(void);
 Chmsee      *chmsee_new(CsConfig *);
 void         chmsee_open_file(Chmsee *, const gchar *);
+void         chmsee_close_book(Chmsee *);
+
+int          chmsee_get_lang(Chmsee *);
+void         chmsee_set_lang(Chmsee *, int);
+
+const gchar *chmsee_get_variable_font(Chmsee *);
+void         chmsee_set_variable_font(Chmsee *, const gchar *);
+
+const gchar *chmsee_get_fixed_font(Chmsee *);
+void         chmsee_set_fixed_font(Chmsee *, const gchar *);
+
+gboolean     chmsee_has_book(Chmsee *);
+const gchar *chmsee_get_bookshelf(Chmsee *);
 
 G_END_DECLS
 

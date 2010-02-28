@@ -25,8 +25,8 @@
 #include <gtk/gtkwindow.h>
 #include <gtk/gtk.h>
 
-#include "models/ichmfile.h"
 #include "ihtml.h"
+#include "models/chmfile.h"
 
 G_BEGIN_DECLS
 
@@ -48,13 +48,29 @@ struct _CsBookClass {
 };
 
 GType      cs_book_get_type(void);
-GtkWidget *cs_book_new(void);
 
-void       cs_book_set_model(CsBook *, CsIchmfile *);
-CsIhtml   *cs_book_get_active_html(CsBook *);
-gboolean   cs_book_jump_index_by_name(CsBook *, const gchar *);
+GtkWidget *cs_book_new(void);
+void       cs_book_set_model(CsBook *, CsChmfile *);
+void       cs_book_close_book(CsBook *);
+
 void       cs_book_new_tab(CsBook *, const gchar *);
+void       cs_book_reload_current_page(CsBook *);
 void       cs_book_close_current_tab(CsBook *);
+
+void       cs_book_homepage(CsBook *);
+gboolean   cs_book_can_go_back(CsBook *);
+gboolean   cs_book_can_go_forward(CsBook *);
+void       cs_book_go_back(CsBook *);
+void       cs_book_go_forward(CsBook *);
+
+void       cs_book_zoom_in(CsBook *);
+void       cs_book_zoom_out(CsBook *);
+void       cs_book_zoom_reset(CsBook *);
+
+void       cs_book_copy(CsBook *);
+void       cs_book_select_all(CsBook *);
+
+const gchar *cs_book_get_location(CsBook *);
 
 G_END_DECLS
 

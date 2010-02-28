@@ -33,6 +33,8 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <libintl.h>
+#include <sys/stat.h>
+
 #include <glib.h>
 
 #include <errno.h>
@@ -84,8 +86,6 @@ callback_quiet(const gchar *option_name,
 CsConfig *
 load_config()
 {
-        GList *pairs, *list;
-        gchar *path;
         GError *error = NULL;
 
         CsConfig *config = g_new0(CsConfig, 1);
@@ -138,7 +138,7 @@ load_config()
 }
 
 void
-save_config(ScConfig *config)
+save_config(CsConfig *config)
 {
         gsize  length = 0;
         GError *error = NULL;
@@ -205,7 +205,7 @@ main(int argc, char* argv[])
                  NULL
                 },
                 {"bookshelf", 0,
-                 G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME, &datadir,
+                 G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME, &bookshelf,
                  "specify bookshelf directory, default is " CHMSEE_BOOKSHELF_DEFAULT,
                  _("Bookshelf")
                 },
@@ -246,10 +246,10 @@ main(int argc, char* argv[])
         /* Show splash screen */
         startup_popup_new();
 
-        ScConfig *config = load_config();
+        CsConfig *config = load_config();
 
         if (bookshelf != NULL) {
-                config->bookshelf = bookshelf;
+                config->bookshelf = g_strdup(bookshelf);
         }
 
         Chmsee *chmsee = chmsee_new(config);
