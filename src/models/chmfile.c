@@ -38,6 +38,7 @@
 #include "utils.h"
 #include "models/bookmarksfile.h"
 #include "models/parser.h"
+#include "models/link.h"
 
 typedef struct _CsChmfilePrivate CsChmfilePrivate;
 
@@ -73,7 +74,6 @@ struct extract_context
 
 static void cs_chmfile_class_init(CsChmfileClass *);
 static void cs_chmfile_init(CsChmfile *);
-static void cs_chmfile_dispose(GObject *);
 static void cs_chmfile_finalize(GObject *);
 
 static void chmfile_file_info(CsChmfile *);
@@ -92,6 +92,7 @@ static void extract_post_file_write(const gchar *);
 
 static GNode *parse_hhc_file(const gchar *, const gchar*);
 static GList *parse_hhk_file(const gchar *, const gchar*);
+static void tree_to_list_callback(GNode *, gpointer);
 
 /* GObject functions */
 
@@ -104,7 +105,6 @@ cs_chmfile_class_init(CsChmfileClass *klass)
 
         GObjectClass *object_class = G_OBJECT_CLASS(klass);
 
-        object_class->dispose  = cs_chmfile_dispose;
         object_class->finalize = cs_chmfile_finalize;
 }
 
@@ -131,23 +131,17 @@ cs_chmfile_init(CsChmfile *self)
 }
 
 static void
-cs_chmfile_dispose(GObject* object)
-{
-        /* g_object_unref(priv->index); */
-}
-
-static void
 cs_chmfile_finalize(GObject *object)
 {
+        g_debug("CS_CHMFILE >>> finalize");
         CsChmfile        *self = CS_CHMFILE (object);
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
-
-        g_debug("CS_CHMFILE: finalize");
 
         save_bookinfo(self);
 
         gchar *bookmarks_file = g_build_filename(priv->bookfolder, CHMSEE_BOOKMARKS_FILE, NULL);
         cs_bookmarks_file_save(priv->bookmarks_list, bookmarks_file);
+        g_debug("CS_CHMFILE >>> after save bookmarks bookmarks_list = %p", priv->bookmarks_list);
         g_free(bookmarks_file);
 
         g_free(priv->hhc);
@@ -160,6 +154,16 @@ cs_chmfile_finalize(GObject *object)
         g_free(priv->encoding);
         g_free(priv->variable_font);
         g_free(priv->fixed_font);
+
+        if (priv->index_list) {
+                GList *l;
+                
+                for (l = priv->index_list; l; l = priv->index_list->next) {
+                        Link *link = l->data;
+                        link_free(link);
+                }
+                g_list_free(priv->index_list);
+        }
 
         if (priv->toc_tree) {
                 g_node_destroy(priv->toc_tree);
@@ -226,7 +230,7 @@ _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
                 return CHM_ENUMERATOR_FAILURE;
         }
 
-        g_debug("CS_CHMFILE: ui->path = %s", ui->path);
+        g_debug("CS_CHMFILE >>> ui->path = %s", ui->path);
 
         fname = g_build_filename(ctx->base_path, ui->path+1, NULL);
 
@@ -241,7 +245,7 @@ _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
                 gchar *file_ext;
 
                 file_ext = g_strrstr(g_path_get_basename(ui->path), ".");
-                g_debug("file_ext = %s", file_ext);
+                g_debug("CS_CHMFILE >>> file_ext = %s", file_ext);
 
                 if ((fout = fopen(fname, "wb")) == NULL) {
                         /* make sure that it isn't just a missing directory before we abort */
@@ -275,7 +279,7 @@ _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
                 extract_post_file_write(fname);
         } else {
                 if (rmkdir(fname) == -1) {
-                        g_debug("CS_CHMFILE: CHM_ENUMERATOR_FAILURE rmkdir");
+                        g_debug("CS_CHMFILE >>> CHM_ENUMERATOR_FAILURE rmkdir");
                         return CHM_ENUMERATOR_FAILURE;
                 }
         }
@@ -293,7 +297,7 @@ extract_chm(const gchar *filename, const gchar *base_path)
         handle = chm_open(filename);
 
         if (handle == NULL) {
-                g_warning(_("CS_CHMFILE: cannot open chmfile: %s"), filename);
+                g_warning(_("CS_CHMFILE >>> cannot open chmfile: %s"), filename);
                 return FALSE;
         }
 
@@ -328,7 +332,7 @@ MD5File(const char *filename, char *buf)
         gcry_md_open(&hd, GCRY_MD_MD5, 0);
         f = open(filename, O_RDONLY);
         if (f < 0) {
-                g_warning(_("CS_CHMFILE: open \"%s\" failed: %s"), filename, strerror(errno));
+                g_warning(_("CS_CHMFILE >>> open \"%s\" failed: %s"), filename, strerror(errno));
                 return NULL;
         }
 
@@ -657,14 +661,14 @@ chmfile_system_info(struct chmFile *cfd, CsChmfile *self)
 
                 cursor = buffer + index;
                 value = UINT16ARRAY(cursor);
-                g_debug("system value = %d", value);
+                g_debug("CS_CHMFILE >>> system value = %d", value);
                 switch(value) {
                 case 0:
                         index += 2;
                         cursor = buffer + index;
 
                         priv->hhc = g_strdup_printf("/%s", buffer + index + 2);
-                        g_debug("CS_CHMFILE: hhc %s", priv->hhc);
+                        g_debug("CS_CHMFILE >>> hhc %s", priv->hhc);
 
                         break;
                 case 1:
@@ -672,7 +676,7 @@ chmfile_system_info(struct chmFile *cfd, CsChmfile *self)
                         cursor = buffer + index;
 
                         priv->hhk = g_strdup_printf("/%s", buffer + index + 2);
-                        g_debug("CS_CHMFILE: hhk %s", priv->hhk);
+                        g_debug("CS_CHMFILE >>> hhk %s", priv->hhk);
 
                         break;
                 case 2:
@@ -680,7 +684,7 @@ chmfile_system_info(struct chmFile *cfd, CsChmfile *self)
                         cursor = buffer + index;
 
                         priv->homepage = g_strdup_printf("/%s", buffer + index + 2);
-                        g_debug("CS_CHMFILE: homepage %s", priv->homepage);
+                        g_debug("CS_CHMFILE >>> homepage %s", priv->homepage);
 
                         break;
                 case 3:
@@ -688,7 +692,7 @@ chmfile_system_info(struct chmFile *cfd, CsChmfile *self)
                         cursor = buffer + index;
 
                         priv->bookname = g_strdup((char *)buffer + index + 2);
-                        g_debug("CS_CHMFILE: bookname %s", priv->bookname);
+                        g_debug("CS_CHMFILE >>> bookname %s", priv->bookname);
 
                         break;
                 case 4: // LCID stuff
@@ -696,7 +700,7 @@ chmfile_system_info(struct chmFile *cfd, CsChmfile *self)
                         cursor = buffer + index;
 
                         lcid = UINT32ARRAY(buffer + index + 2);
-                        g_debug("lcid %x", lcid);
+                        g_debug("CS_CHMFILE >>> lcid %x", lcid);
 
                         if(priv->encoding)
                                 g_free(priv->encoding);
@@ -726,7 +730,7 @@ chmfile_system_info(struct chmFile *cfd, CsChmfile *self)
                         index += 2;
                         cursor = buffer + index;
 
-                        g_debug("CS_CHMFILE: font %s", buffer + index + 2);
+                        g_debug("CS_CHMFILE >>> font %s", buffer + index + 2);
                         break;
 
                 default:
@@ -742,19 +746,30 @@ chmfile_system_info(struct chmFile *cfd, CsChmfile *self)
 static GNode *
 parse_hhc_file(const gchar *file, const gchar *encoding)
 {
+        g_debug("CS_CHMFILE >>> parse hhc file = %s, encoding = %s", file, encoding);
         return cs_parse_file(file, encoding);
 }
 
 static GList *
 parse_hhk_file(const gchar *file, const gchar *encoding)
 {
-        GList *list;
-        
+        g_debug("CHMFILE >>> parse hhk file = %s, encoding = %s", file, encoding);
+        GList *list = NULL;
+
         GNode *tree = cs_parse_file(file, encoding);
-        /* convert GNode to GList */ // FIXME
-        list = NULL;
+
+        /* convert GNode to GList */
+        g_node_children_foreach(tree, G_TRAVERSE_LEAVES, tree_to_list_callback, list);
+        g_node_destroy(tree);
         
         return list;
+}
+
+static void
+tree_to_list_callback(GNode *node, gpointer data)
+{
+        GList *list = (GList *)data;
+        list = g_list_append(list, node->data);
 }
 
 static void
@@ -764,7 +779,7 @@ load_bookinfo(CsChmfile *self)
 
         gchar *bookinfo_file = g_build_filename(priv->bookfolder, CHMSEE_BOOKINFO_FILE, NULL);
 
-        g_debug("CS_CHMFILE: read bookinfo file = %s", bookinfo_file);
+        g_debug("CS_CHMFILE >>> read bookinfo file = %s", bookinfo_file);
 
         GError     *error = NULL;
         GKeyFile *keyfile = g_key_file_new();
@@ -772,13 +787,13 @@ load_bookinfo(CsChmfile *self)
         gboolean rv = g_key_file_load_from_file(keyfile, bookinfo_file, G_KEY_FILE_NONE, NULL);
 
         if (rv) {
-                priv->hhc          = g_key_file_get_string(keyfile, "Bookinfo", "hhc", &error);
-                priv->hhk          = g_key_file_get_string(keyfile, "Bookinfo", "hhk", &error);
-                priv->homepage     = g_key_file_get_string(keyfile, "Bookinfo", "homepage", &error);
-                priv->bookname     = g_key_file_get_string(keyfile, "Bookinfo", "bookname", &error);
-                priv->encoding     = g_key_file_get_string(keyfile, "Bookinfo", "encoding", &error);
+                priv->hhc           = g_key_file_get_string(keyfile, "Bookinfo", "hhc", &error);
+                priv->hhk           = g_key_file_get_string(keyfile, "Bookinfo", "hhk", &error);
+                priv->homepage      = g_key_file_get_string(keyfile, "Bookinfo", "homepage", &error);
+                priv->bookname      = g_key_file_get_string(keyfile, "Bookinfo", "bookname", &error);
+                priv->encoding      = g_key_file_get_string(keyfile, "Bookinfo", "encoding", &error);
                 priv->variable_font = g_key_file_get_string(keyfile, "Bookinfo", "variable_font", &error);
-                priv->fixed_font   = g_key_file_get_string(keyfile, "Bookinfo", "fixed_font", &error);
+                priv->fixed_font    = g_key_file_get_string(keyfile, "Bookinfo", "fixed_font", &error);
         }
 
         g_key_file_free(keyfile);
@@ -792,7 +807,7 @@ save_bookinfo(CsChmfile *self)
 
         gchar *bookinfo_file = g_build_filename(priv->bookfolder, CHMSEE_BOOKINFO_FILE, NULL);
 
-        g_debug("CS_CHMFILE: save bookinfo file = %s", bookinfo_file);
+        g_debug("CS_CHMFILE >>> save bookinfo file = %s", bookinfo_file);
 
         GKeyFile *keyfile = g_key_file_new();
 
@@ -819,27 +834,27 @@ save_bookinfo(CsChmfile *self)
 CsChmfile *
 cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
 {
+        g_debug("CS_CHMFILE >>> create with file = %s, bookshelf = %s ", filename, bookshelf);
         CsChmfile        *self = g_object_new(CS_TYPE_CHMFILE, NULL);
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
         /* use chm file's MD5 as folder name */
         gchar *md5 = MD5File(filename, NULL);
         if(!md5) {
-                g_warning("CS_CHMFILE: Oops, cannot calculate chmfile's MD5 value.");
+                g_warning("CS_CHMFILE >>> Oops!! cannot calculate chmfile's MD5 value.");
                 return NULL;
         }
 
         priv->filename = g_strdup(filename);
         priv->bookfolder = g_build_filename(bookshelf, md5, NULL);
-        g_debug("CS_CHMFILE: book folder = %s", priv->bookfolder);
-        g_debug("CS_CHMFILE: filename = %s", priv->filename);
+        g_debug("CS_CHMFILE >>> book folder = %s", priv->bookfolder);
 
         /* if this chmfile already exists in bookshelf, load it's bookinfo */
         if (g_file_test(priv->bookfolder, G_FILE_TEST_IS_DIR)) {
                 load_bookinfo(self);
         } else {
                 if (!extract_chm(filename, priv->bookfolder)) {
-                        g_warning("CS_CHMFILE: extract_chm failed: %s", filename);
+                        g_warning("CS_CHMFILE >>> extract_chm failed: %s", filename);
                         return NULL;
                 }
 
@@ -847,11 +862,11 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
                 save_bookinfo(self);
         }
 
-        g_debug("CS_CHMFILE: priv->hhc = %s", priv->hhc);
-        g_debug("CS_CHMFILE: priv->hhk = %s", priv->hhk);
-        g_debug("CS_CHMFILE: priv->homepage = %s", priv->homepage);
-        g_debug("CS_CHMFILE: priv->bookname = %s", priv->bookname);
-        g_debug("CS_CHMFILE: priv->endcoding = %s", priv->encoding);
+        g_debug("CS_CHMFILE >>> priv->hhc = %s", priv->hhc);
+        g_debug("CS_CHMFILE >>> priv->hhk = %s", priv->hhk);
+        g_debug("CS_CHMFILE >>> priv->homepage = %s", priv->homepage);
+        g_debug("CS_CHMFILE >>> priv->bookname = %s", priv->bookname);
+        g_debug("CS_CHMFILE >>> priv->endcoding = %s", priv->encoding);
 
         /* parse hhc file */
         if (priv->hhc != NULL && g_ascii_strcasecmp(priv->hhc, "(null)") != 0) {
@@ -882,6 +897,7 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
 
         g_free(bookmarks_file);
         g_free(md5);
+        g_debug("CS_CHMFILE >>> created %p", self);
 
         return self;
 }
@@ -931,6 +947,7 @@ cs_chmfile_get_homepage(CsChmfile *self)
 const gchar *
 cs_chmfile_get_variable_font(CsChmfile *self)
 {
+        g_debug("CS_CHMFILE >>> get variable font");
         return CS_CHMFILE_GET_PRIVATE (self)->variable_font;
 }
 
@@ -947,6 +964,7 @@ cs_chmfile_set_variable_font(CsChmfile *self, const gchar *font_name)
 const gchar *
 cs_chmfile_get_fixed_font(CsChmfile *self)
 {
+        g_debug("CS_CHMFILE >>> get fixed font");
         return CS_CHMFILE_GET_PRIVATE (self)->fixed_font;
 }
 

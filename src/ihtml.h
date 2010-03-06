@@ -48,34 +48,36 @@ struct _CsIhtmlInterface
         void         (* link_message)     (CsIhtml *html, const gchar *link);
         
         /* Virtual Table */
-        GtkWidget*   (*get_widget)        (CsIhtml* html);
-        void         (*open_uri)          (CsIhtml* html, const gchar* uri);
+        const gchar *(*get_render_name)   (CsIhtml *html);
+        GtkWidget   *(*get_widget)        (CsIhtml *html);
+        void         (*open_uri)          (CsIhtml *html, const gchar *uri);
 
-        const gchar* (*get_title)         (CsIhtml* html);
-        const gchar* (*get_location)      (CsIhtml* html);
+        const gchar *(*get_title)         (CsIhtml *html);
+        const gchar *(*get_location)      (CsIhtml *html);
 
-        gboolean     (*can_go_back)       (CsIhtml* html);
-        gboolean     (*can_go_forward)    (CsIhtml* html);
-        void         (*go_back)           (CsIhtml* html);
-        void         (*go_forward)        (CsIhtml* html);
+        gboolean     (*can_go_back)       (CsIhtml *html);
+        gboolean     (*can_go_forward)    (CsIhtml *html);
+        void         (*go_back)           (CsIhtml *html);
+        void         (*go_forward)        (CsIhtml *html);
 
-        void         (*copy_selection)    (CsIhtml* html);
-        void         (*select_all)        (CsIhtml* html);
+        void         (*copy_selection)    (CsIhtml *html);
+        void         (*select_all)        (CsIhtml *html);
 
-        void         (*increase_size)     (CsIhtml* html);
-        void         (*decrease_size)     (CsIhtml* html);
-        void         (*reset_size)        (CsIhtml* html);
+        void         (*increase_size)     (CsIhtml *html);
+        void         (*decrease_size)     (CsIhtml *html);
+        void         (*reset_size)        (CsIhtml *html);
 
-        void         (*clear)             (CsIhtml* html);
+        void         (*clear)             (CsIhtml *html);
 };
 
 GType        cs_ihtml_get_type(void);
 
-GtkWidget*   cs_ihtml_get_widget(CsIhtml *);
+GtkWidget   *cs_ihtml_get_widget(CsIhtml *);
+const gchar *cs_ihtml_get_render_name(CsIhtml *);
 void         cs_ihtml_open_uri(CsIhtml *, const gchar *);
 
-const gchar* cs_ihtml_get_title(CsIhtml *);
-const gchar* cs_ihtml_get_location(CsIhtml *);
+const gchar *cs_ihtml_get_title(CsIhtml *);
+const gchar *cs_ihtml_get_location(CsIhtml *);
 
 gboolean     cs_ihtml_can_go_back(CsIhtml *);
 gboolean     cs_ihtml_can_go_forward(CsIhtml *);

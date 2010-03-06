@@ -21,12 +21,11 @@
 #include "config.h"
 
 #include "html-factory.h"
-#include "components/html-gecko.h"
 
-CsIhtml *
+CsHtmlGecko *
 cs_html_new()
 {
-        return CS_IHTML(cs_html_gecko_new());
+        return cs_html_gecko_new();
 }
 
 gboolean

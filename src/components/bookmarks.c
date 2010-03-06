@@ -102,7 +102,7 @@ cs_bookmarks_init(CsBookmarks *self)
                                        GTK_POLICY_NEVER,
                                        GTK_POLICY_AUTOMATIC);
 
-        priv->treeview = cs_tree_view_new();
+        priv->treeview = GTK_WIDGET (cs_tree_view_new());
 
         g_signal_connect_swapped(priv->treeview,
                                  "link_selected",
@@ -153,6 +153,12 @@ cs_bookmarks_init(CsBookmarks *self)
 static void
 cs_bookmarks_finalize(GObject *object)
 {
+        CsBookmarks        *self = CS_BOOKMARKS (object);
+        CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
+
+        g_free(priv->current_uri);
+        priv->links = NULL;
+
         G_OBJECT_CLASS (cs_bookmarks_parent_class)->finalize(object);
 }
 
@@ -245,6 +251,7 @@ link_uri_compare(gconstpointer a, gconstpointer b) //FIXME: move to link.c
 GtkWidget *
 cs_bookmarks_new(void)
 {
+        g_debug("CS_BOOKMARKS >>> create");
         CsBookmarks *self = g_object_new(CS_TYPE_BOOKMARKS, NULL);
 
         return GTK_WIDGET (self);
@@ -256,15 +263,8 @@ cs_bookmarks_set_model(CsBookmarks* self, GList* model)
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
 
         priv->links = model;
-        cs_tree_view_set_model(CS_TREE_VIEW (priv->treeview), priv->links);
-}
-
-GList *
-cs_bookmarks_get_model(CsBookmarks *self)
-{
-        g_return_val_if_fail(IS_CS_BOOKMARKS (self), NULL);
-
-        return CS_BOOKMARKS_GET_PRIVATE (self)->links;
+        cs_tree_view_set_model(CS_TREE_VIEW (priv->treeview), model);
+        gtk_entry_set_text(GTK_ENTRY (priv->entry), "");
 }
 
 void
@@ -274,7 +274,7 @@ cs_bookmarks_set_current_link(CsBookmarks *self, Link *link)
 
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
 
-        g_debug("CS_BOOKMARKS: set bookmarks entry text = %s", link->name);
+        g_debug("CS_BOOKMARKS >>> set bookmarks entry text = %s", link->name);
         gtk_entry_set_text(GTK_ENTRY (priv->entry), link->name);
 
         gtk_editable_set_position(GTK_EDITABLE (priv->entry), -1);

@@ -57,7 +57,7 @@
                       <object class="GtkHBox" id="hbox1">
                         <property name="visible">True</property>
                         <child>
-                          <object class="GtkEntry" id="cache_dir_entry">
+                          <object class="GtkEntry" id="bookshelf_entry">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="editable">False</property>

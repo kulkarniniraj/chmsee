@@ -50,7 +50,6 @@ struct _CsBookmarksClass {
 GType      cs_bookmarks_get_type(void);
 GtkWidget *cs_bookmarks_new(void);
 
-GList     *cs_bookmarks_get_model(CsBookmarks *);
 void       cs_bookmarks_set_model(CsBookmarks *, GList *);
 void       cs_bookmarks_set_current_link(CsBookmarks *, Link *);
 void       cs_bookmarks_grab_focus(CsBookmarks *);

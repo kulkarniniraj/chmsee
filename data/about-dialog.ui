@@ -11,7 +11,6 @@
     <property name="website_label" translatable="yes">http://code.google.com/p/chmsee</property>
     <property name="authors">Ji YongGang &lt;jungleji@gmail.com&gt;
 LI Daobing &lt;lidaobing@gmail.com&gt;
-rae l &lt;crquan@gmail.com&gt;
 zhong &lt;iam_zhong@yahoo.com.cn&gt;
 </property>
     <property name="translator_credits" translatable="yes" comments="TRANSLATORS: Replace this string with your names, one name per line.">translator-credits</property>

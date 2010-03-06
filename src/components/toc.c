@@ -45,7 +45,6 @@ struct _CsTocPrivate {
         GtkTreeView        *treeview;
         GtkTreeStore       *store;
         TocPixbufs         *pixbufs;
-        GNode              *link_tree;
 };
 
 /* Signals */
@@ -114,7 +113,7 @@ cs_toc_init(CsToc *self)
 {
         CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
 
-        GtkWidget* toc_sw = gtk_scrolled_window_new(NULL, NULL);
+        GtkWidget  *toc_sw = gtk_scrolled_window_new(NULL, NULL);
         gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (toc_sw),
                                        GTK_POLICY_NEVER,
                                        GTK_POLICY_AUTOMATIC);
@@ -149,8 +148,9 @@ cs_toc_init(CsToc *self)
                          "row-activated",
                          G_CALLBACK(row_activated_cb),
                          NULL);
-
+        /* put treeview into scrollwindow */
         gtk_container_add(GTK_CONTAINER (toc_sw), GTK_WIDGET (priv->treeview));
+        /* put scrollwindow into my vbox */
         gtk_box_pack_start(GTK_BOX (self), toc_sw, TRUE, TRUE, 0);
 
         gtk_widget_show_all(GTK_WIDGET (self));
@@ -162,11 +162,12 @@ cs_toc_dispose(GObject* object)
         CsToc        *self = CS_TOC (object);
         CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
 
-        g_object_unref(priv->treeview);
         g_object_unref(priv->store);
         g_object_unref(priv->pixbufs->pixbuf_opened);
         g_object_unref(priv->pixbufs->pixbuf_closed);
         g_object_unref(priv->pixbufs->pixbuf_doc);
+
+        G_OBJECT_CLASS (cs_toc_parent_class)->dispose(object);
 }
 
 static void
@@ -194,7 +195,7 @@ selection_changed_cb(GtkTreeSelection *selection, CsToc *self)
                 gtk_tree_model_get(GTK_TREE_MODEL (priv->store),
                                    &iter, COL_LINK, &link, -1);
 
-                g_debug("TOC: emiting link_selected signal '%s'\n", link->uri);
+                g_debug("CS_TOC >>> emiting link_selected signal '%s'\n", link->uri);
                 g_signal_emit(self, signals[LINK_SELECTED], 0, link);
         }
 }
@@ -275,8 +276,8 @@ insert_node(CsToc *self, GNode *node, GtkTreeIter *parent_iter)
 
         gtk_tree_store_append(priv->store, &iter, parent_iter);
 
-/*         d(g_debug("insert node::name = %s", link->name)); */
-/*         d(g_debug("insert node::uri = %s", link->uri)); */
+        /* g_debug("CS_TOC >>> insert node::name = %s", link->name); */
+        /* g_debug("CS_TOC >>> insert node::uri = %s", link->uri); */
 
         if (link->type == LINK_TYPE_BOOK) {
                 gtk_tree_store_set(priv->store, &iter,
@@ -309,8 +310,8 @@ find_uri_foreach(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, Find
         gtk_tree_model_get(model, iter, COL_LINK, &link, -1);
 
         if (g_str_has_suffix(data->uri, link->uri)) {
-                g_debug("data->uri: %s", data->uri);
-                g_debug("link->uri: %s", link->uri);
+                g_debug("CS_TOC >>> data->uri: %s", data->uri);
+                g_debug("CS_TOC >>> link->uri: %s", link->uri);
 
                 data->found = TRUE;
                 data->iter = *iter;
@@ -341,6 +342,7 @@ find_name_foreach(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, Fin
 GtkWidget *
 cs_toc_new(void)
 {
+        g_debug("CS_TOC >>> create");
         CsToc *self = g_object_new(CS_TYPE_TOC, NULL);
 
         return GTK_WIDGET (self);
@@ -352,17 +354,9 @@ cs_toc_set_model(CsToc *self, GNode *model)
         GNode        *node;
         CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
 
-        g_object_unref(priv->store);
+        gtk_tree_store_clear(priv->store);
 
-        priv->store = gtk_tree_store_new(N_COLUMNS,
-                                         GDK_TYPE_PIXBUF,
-                                         GDK_TYPE_PIXBUF,
-                                         G_TYPE_STRING,
-                                         G_TYPE_POINTER);
-
-        priv->link_tree = model;
-
-        for (node = g_node_first_child(priv->link_tree);
+        for (node = g_node_first_child(model);
              node;
              node = g_node_next_sibling(node)) {
                 insert_node(self, node, NULL);
@@ -372,15 +366,14 @@ cs_toc_set_model(CsToc *self, GNode *model)
 void
 cs_toc_select_uri(CsToc *self, const gchar *uri)
 {
-        GtkTreeSelection  *selection;
-        FindURIData        data;
-        gchar             *real_uri;
-        CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
-
+        g_debug("CS_TOC >>> select uri toc = %p, uri = %s", self, uri);
         g_return_if_fail(IS_CS_TOC (self));
 
-        real_uri = get_real_uri(uri);
+        CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
 
+        gchar *real_uri = get_real_uri(uri);
+
+        FindURIData data;
         data.found = FALSE;
         data.uri = real_uri;
 
@@ -393,7 +386,7 @@ cs_toc_select_uri(CsToc *self, const gchar *uri)
                 return;
         }
 
-        selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview));
+        GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview));
 
         g_signal_handlers_block_by_func(selection,
                                         selection_changed_cb,
@@ -414,12 +407,11 @@ cs_toc_select_uri(CsToc *self, const gchar *uri)
 gboolean
 cs_toc_select_link_by_name(CsToc* self, const gchar* name)
 {
-        GtkTreeSelection  *selection;
-        FindURIData        data;
-        CsTocPrivate      *priv = CS_TOC_GET_PRIVATE (self);
-
         g_return_val_if_fail(IS_CS_TOC (self), FALSE);
 
+        CsTocPrivate      *priv = CS_TOC_GET_PRIVATE (self);
+
+        FindURIData        data;
         data.found = FALSE;
         data.uri = name;
 
@@ -432,7 +424,7 @@ cs_toc_select_link_by_name(CsToc* self, const gchar* name)
                 return FALSE;
         }
 
-        selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview));
+        GtkTreeSelection  *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview));
 
         gtk_tree_view_expand_to_path(GTK_TREE_VIEW (priv->treeview), data.path);
         gtk_tree_selection_select_iter(selection, &data.iter);

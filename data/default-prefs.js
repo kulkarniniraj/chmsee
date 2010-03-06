@@ -74,3 +74,5 @@ pref("accessibility.typeaheadfind", false);
 // disable pings
 pref("browser.send_pings", false);
 
+pref("browser.display.use_document_colors", true);
+//pref("browser.display.use_system_colors", true);

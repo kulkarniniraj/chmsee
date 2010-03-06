@@ -57,7 +57,7 @@ cs_ihtml_get_type(void)
 
                 type = g_type_register_static(G_TYPE_INTERFACE, "CsIhtml", &info, 0);
 
-                g_type_interface_add_prerequisite(type, GTK_TYPE_OBJECT);
+                g_type_interface_add_prerequisite(type, G_TYPE_OBJECT);
         }
 
         return type;
@@ -67,9 +67,12 @@ static void
 cs_ihtml_base_init(gpointer g_class)
 {
         static gboolean is_initialized = FALSE;
+        
+        g_debug("CS_IHTML >>> base_init");
 
         if (!is_initialized)
         {
+                g_debug("CS_IHTML >>> base_init initialize");
                 /* signals to the interface */
                 signals[TITLE_CHANGED] =
                         g_signal_new("title-changed",
@@ -145,102 +148,105 @@ cs_ihtml_base_init(gpointer g_class)
         }
 }
 
-GtkWidget *
-cs_ihtml_get_widget(CsIhtml *self)
+const gchar *
+cs_ihtml_get_render_name(CsIhtml *html)
 {
-        g_return_val_if_fail(IS_CS_IHTML (self), NULL);
-        return CS_IHTML_GET_INTERFACE (self)->get_widget(self);
+        g_return_val_if_fail(IS_CS_IHTML (html), NULL);
+        
+        CsIhtmlInterface *iface = CS_IHTML_GET_INTERFACE (html);
+        return (* iface->get_render_name) (html);
 }
 
 void
-cs_ihtml_open_uri(CsIhtml *self, const gchar *uri)
+cs_ihtml_open_uri(CsIhtml *html, const gchar *uri)
 {
-        g_return_if_fail(IS_CS_IHTML (self));
-        g_debug("enter cs_ihtml_open_uri with self=%p, uri=%s", self, uri);
-        CS_IHTML_GET_INTERFACE (self)->open_uri(self, uri);
+        g_return_if_fail(IS_CS_IHTML (html));
+        CsIhtmlInterface *iface = CS_IHTML_GET_INTERFACE (html);
+        g_debug("CS_IHTML >>> enter cs_ihtml_open_uri with html=%p, uri=%s", html, uri);
+        (* iface->open_uri) (html, uri);
 }
 
 const gchar *
-cs_ihtml_get_title(CsIhtml *self)
+cs_ihtml_get_title(CsIhtml *html)
 {
-        g_return_val_if_fail(IS_CS_IHTML (self), NULL);
-        return CS_IHTML_GET_INTERFACE (self)->get_title(self);
+        g_return_val_if_fail(IS_CS_IHTML (html), NULL);
+        return CS_IHTML_GET_INTERFACE (html)->get_title(html);
 }
 
 const gchar *
-cs_ihtml_get_location(CsIhtml *self)
+cs_ihtml_get_location(CsIhtml *html)
 {
-        g_return_val_if_fail(IS_CS_IHTML (self), NULL);
-        return CS_IHTML_GET_INTERFACE (self)->get_location(self);
+        g_return_val_if_fail(IS_CS_IHTML (html), NULL);
+        return CS_IHTML_GET_INTERFACE (html)->get_location(html);
 }
 
 gboolean 
-cs_ihtml_can_go_back(CsIhtml *self)
+cs_ihtml_can_go_back(CsIhtml *html)
 {
-        g_return_val_if_fail(IS_CS_IHTML (self), FALSE);
-        return CS_IHTML_GET_INTERFACE (self)->can_go_back(self);
+        g_return_val_if_fail(IS_CS_IHTML (html), FALSE);
+        return CS_IHTML_GET_INTERFACE (html)->can_go_back(html);
 }
 
 void
-cs_ihtml_go_back(CsIhtml *self)
+cs_ihtml_go_back(CsIhtml *html)
 {
-        g_return_if_fail(IS_CS_IHTML (self));
-        CS_IHTML_GET_INTERFACE (self)->go_back(self);
+        g_return_if_fail(IS_CS_IHTML (html));
+        CS_IHTML_GET_INTERFACE (html)->go_back(html);
 }
 
 void
-cs_ihtml_go_forward(CsIhtml *self) {
-        g_return_if_fail(IS_CS_IHTML (self));
-        CS_IHTML_GET_INTERFACE (self)->go_forward(self);
+cs_ihtml_go_forward(CsIhtml *html) {
+        g_return_if_fail(IS_CS_IHTML (html));
+        CS_IHTML_GET_INTERFACE (html)->go_forward(html);
 }
 
 gboolean
-cs_ihtml_can_go_forward(CsIhtml *self)
+cs_ihtml_can_go_forward(CsIhtml *html)
 {
-        g_return_val_if_fail(IS_CS_IHTML (self), FALSE);
-        return CS_IHTML_GET_INTERFACE (self)->can_go_forward(self);
+        g_return_val_if_fail(IS_CS_IHTML (html), FALSE);
+        return CS_IHTML_GET_INTERFACE (html)->can_go_forward(html);
 }
 
 void
-cs_ihtml_copy_selection(CsIhtml *self)
+cs_ihtml_copy_selection(CsIhtml *html)
 {
-        g_return_if_fail(IS_CS_IHTML (self));
-        CS_IHTML_GET_INTERFACE (self)->copy_selection(self);
+        g_return_if_fail(IS_CS_IHTML (html));
+        CS_IHTML_GET_INTERFACE (html)->copy_selection(html);
 }
 
 void
-cs_ihtml_select_all(CsIhtml *self)
+cs_ihtml_select_all(CsIhtml *html)
 {
-        g_return_if_fail(IS_CS_IHTML (self));
-        CS_IHTML_GET_INTERFACE (self)->select_all(self);
+        g_return_if_fail(IS_CS_IHTML (html));
+        CS_IHTML_GET_INTERFACE (html)->select_all(html);
 }
 
 void
-cs_ihtml_increase_size(CsIhtml *self)
+cs_ihtml_increase_size(CsIhtml *html)
 {
-        g_return_if_fail(IS_CS_IHTML (self));
-        CS_IHTML_GET_INTERFACE (self)->increase_size(self);
+        g_return_if_fail(IS_CS_IHTML (html));
+        CS_IHTML_GET_INTERFACE (html)->increase_size(html);
 }
 
 void
-cs_ihtml_reset_size(CsIhtml *self)
+cs_ihtml_reset_size(CsIhtml *html)
 {
-        g_return_if_fail(IS_CS_IHTML (self));
-        CS_IHTML_GET_INTERFACE (self)->reset_size(self);
+        g_return_if_fail(IS_CS_IHTML (html));
+        CS_IHTML_GET_INTERFACE (html)->reset_size(html);
 }
 
 void
-cs_ihtml_decrease_size(CsIhtml *self)
+cs_ihtml_decrease_size(CsIhtml *html)
 {
-        g_return_if_fail(IS_CS_IHTML (self));
-        CS_IHTML_GET_INTERFACE (self)->decrease_size(self);
+        g_return_if_fail(IS_CS_IHTML (html));
+        CS_IHTML_GET_INTERFACE (html)->decrease_size(html);
 }
 
 void
-cs_ihtml_clear(CsIhtml *self)
+cs_ihtml_clear(CsIhtml *html)
 {
-        g_return_if_fail(IS_CS_IHTML (self));
-        CS_IHTML_GET_INTERFACE (self)->clear(self);
+        g_return_if_fail(IS_CS_IHTML (html));
+        CS_IHTML_GET_INTERFACE (html)->clear(html);
 }
 
 /* Emit signals */
@@ -293,4 +299,12 @@ cs_ihtml_link_message(CsIhtml *html, const gchar *uri)
 {
         g_return_if_fail(IS_CS_IHTML (html));
         g_signal_emit(html, signals[LINK_MESSAGE], 0, uri);
+}
+
+GtkWidget *
+cs_ihtml_get_widget(CsIhtml *html)
+{
+        g_return_val_if_fail(IS_CS_IHTML (html), NULL);
+        CsIhtmlInterface *iface = CS_IHTML_GET_INTERFACE (html);
+        return (* iface->get_widget) (html);       
 }

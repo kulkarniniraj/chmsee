@@ -237,6 +237,7 @@ gecko_utils_init(void)
 
         gecko_utils_init_prefs();
 
+        g_debug("GECKO_UTILS >>> initilize finished.");
         return TRUE;
 }
 
@@ -317,6 +318,7 @@ gecko_utils_set_font(gint type, const gchar *fontname)
 extern "C" void
 gecko_utils_set_default_lang(gint type)
 {
+        g_debug("GECKO_UTILS >>> set default lang");
         if (type < LANG_TYPES_NUM)
                 gecko_prefs_set_string("intl.charset.detector", lang[type]);
 }

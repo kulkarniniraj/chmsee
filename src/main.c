@@ -88,6 +88,7 @@ load_config()
 {
         GError *error = NULL;
 
+        g_debug("Main >>> load config");
         CsConfig *config = g_new0(CsConfig, 1);
         
         /* ChmSee HOME directory ~/.chmsee */
@@ -110,7 +111,7 @@ load_config()
 
         /* Read stored values from config file */ //FIXME: convert old version config file
         gchar *config_file = g_build_filename(config->home, CHMSEE_CONFIG_FILE, NULL);
-        g_debug("Main: chmsee config file path = %s", config_file);
+        g_debug("Main >>> chmsee config file path = %s", config_file);
         if (!g_file_test(config_file, G_FILE_TEST_EXISTS))
                 return config;
 
@@ -121,7 +122,7 @@ load_config()
                 config->lang     = g_key_file_get_integer(keyfile, "Base", "LANG", &error);
 
                 g_free(config->last_dir);
-                config->last_dir = g_key_file_get_string(keyfile, "Base", "LAST_DIR", &error);
+                config->last_dir = g_key_file_get_string (keyfile, "Base", "LAST_DIR", &error);
 
                 config->pos_x      = g_key_file_get_integer(keyfile, "Window", "POS_X", &error);
                 config->pos_y      = g_key_file_get_integer(keyfile, "Window", "POS_Y", &error);
@@ -143,11 +144,12 @@ save_config(CsConfig *config)
         gsize  length = 0;
         GError *error = NULL;
 
+        g_debug("Main >>> save config");
         gchar *config_file = g_build_filename(config->home, CHMSEE_CONFIG_FILE, NULL);
 
         GKeyFile *keyfile = g_key_file_new();
         g_key_file_set_integer(keyfile, "Base", "LANG", config->lang);
-        g_key_file_set_string(keyfile, "Base", "LAST_DIR", config->last_dir);
+        g_key_file_set_string (keyfile, "Base", "LAST_DIR", config->last_dir);
 
         g_key_file_set_integer(keyfile, "Window", "POS_X", config->pos_x);
         g_key_file_set_integer(keyfile, "Window", "POS_Y", config->pos_y);
@@ -258,8 +260,6 @@ main(int argc, char* argv[])
                 g_warning("Create chmsee main window failed!");
                 return 1;
         }
-
-        gtk_widget_show(GTK_WIDGET (chmsee));
 
         if (filename)
                 chmsee_open_file(chmsee, filename);

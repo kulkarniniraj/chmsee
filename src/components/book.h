@@ -40,37 +40,37 @@ typedef struct _CsBook			CsBook;
 typedef struct _CsBookClass		CsBookClass;
 
 struct _CsBook {
-        GtkHPaned hpaned;
+        GtkVBox      vbox;
 };
 
 struct _CsBookClass {
-        GtkHPanedClass parent_class;
+        GtkVBoxClass parent_class;
 };
 
-GType      cs_book_get_type(void);
+GType        cs_book_get_type(void);
 
-GtkWidget *cs_book_new(void);
-void       cs_book_set_model(CsBook *, CsChmfile *);
-void       cs_book_close_book(CsBook *);
+GtkWidget   *cs_book_new(void);
+void         cs_book_set_model(CsBook *, CsChmfile *);
 
-void       cs_book_new_tab(CsBook *, const gchar *);
-void       cs_book_reload_current_page(CsBook *);
-void       cs_book_close_current_tab(CsBook *);
+void         cs_book_new_tab(CsBook *, const gchar *);
+void         cs_book_close_current_tab(CsBook *);
+void         cs_book_reload_current_page(CsBook *);
 
-void       cs_book_homepage(CsBook *);
-gboolean   cs_book_can_go_back(CsBook *);
-gboolean   cs_book_can_go_forward(CsBook *);
-void       cs_book_go_back(CsBook *);
-void       cs_book_go_forward(CsBook *);
+void         cs_book_homepage(CsBook *);
+gboolean     cs_book_can_go_back(CsBook *);
+gboolean     cs_book_can_go_forward(CsBook *);
+void         cs_book_go_back(CsBook *);
+void         cs_book_go_forward(CsBook *);
 
-void       cs_book_zoom_in(CsBook *);
-void       cs_book_zoom_out(CsBook *);
-void       cs_book_zoom_reset(CsBook *);
+void         cs_book_zoom_in(CsBook *);
+void         cs_book_zoom_out(CsBook *);
+void         cs_book_zoom_reset(CsBook *);
 
-void       cs_book_copy(CsBook *);
-void       cs_book_select_all(CsBook *);
+void         cs_book_copy(CsBook *);
+void         cs_book_select_all(CsBook *);
 
 const gchar *cs_book_get_location(CsBook *);
+int          cs_book_get_hpaned_position(CsBook *);
 
 G_END_DECLS
 

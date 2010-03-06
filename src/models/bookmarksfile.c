@@ -165,6 +165,7 @@ static void
 save_bookmark(Link *link, FILE *fd)
 {
         fprintf(fd, "%s=%s\n", link->name, link->uri);
+        link_free(link);
 }
 
 /* External functions */
@@ -179,10 +180,10 @@ cs_bookmarks_file_load(const gchar *path)
         gchar id[MAXLINE];
         gchar value[MAXLINE];
 
-        g_debug("CS_BOOKMARKS_FILE: load bookmarks file = %s", path);
+        g_debug("CS_BOOKMARKS_FILE >>> load bookmarks file = %s", path);
 
         if ((fd = fopen(path, "r")) == NULL) {
-                g_debug("CS_BOOKMARKS_FILE: Failed to open bookmars file");
+                g_debug("CS_BOOKMARKS_FILE >>> Failed to open bookmars file");
                 return NULL;
         }
 
@@ -195,7 +196,7 @@ cs_bookmarks_file_load(const gchar *path)
 
                 /* Parse lines */
                 if (parse_line(line, id, value)) {
-                        g_debug("CS_BOOKMARKS_FILE: Syntax error in %s bookmarks file.", path);
+                        g_debug("CS_BOOKMARKS_FILE >>> Syntax error in %s bookmarks file.", path);
                 }
 
                 Link *link = link_new(LINK_TYPE_PAGE, g_strdup(id), g_strdup(value));
@@ -212,7 +213,7 @@ cs_bookmarks_file_save(GList *links, const gchar *path)
 {
         FILE *fd;
 
-        g_debug("CS_BOOKMARKS_FILE: save bookmarks file = %s", path);
+        g_debug("CS_BOOKMARKS_FILE >>> save bookmarks file = %s", path);
 
         fd = fopen(path, "w");
 
@@ -222,6 +223,7 @@ cs_bookmarks_file_save(GList *links, const gchar *path)
         }
 
         g_list_foreach(links, (GFunc)save_bookmark, fd);
+        g_list_free(links);
 
         fclose(fd);
 }

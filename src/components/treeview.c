@@ -50,6 +50,7 @@ static gint signals[LAST_SIGNAL] = { 0 };
 
 static void cs_tree_view_init(CsTreeView *);
 static void cs_tree_view_class_init(CsTreeViewClass *);
+static void cs_tree_view_dispose(GObject *);
 static void cs_tree_view_finalize(GObject *);
 
 static void row_activated_cb(CsTreeView *, GtkTreePath *, GtkTreeViewColumn *);
@@ -62,7 +63,7 @@ static void apply_filter_model(CsTreeView *);
 
 /* GObject functions */
 
-G_DEFINE_TYPE (CsTreeView, cs_tree_view, GTK_TYPE_VBOX);
+G_DEFINE_TYPE (CsTreeView, cs_tree_view, GTK_TYPE_TREE_VIEW);
 
 static void
 cs_tree_view_class_init(CsTreeViewClass *klass)
@@ -71,6 +72,7 @@ cs_tree_view_class_init(CsTreeViewClass *klass)
 
         g_type_class_add_private(klass, sizeof(CsTreeViewPrivate));
 
+        object_class->dispose  = cs_tree_view_dispose;
         object_class->finalize = cs_tree_view_finalize;
 
         signals[LINK_SELECTED] =
@@ -129,8 +131,25 @@ cs_tree_view_init(CsTreeView *self)
 }
 
 static void
+cs_tree_view_dispose(GObject *object)
+{
+        g_debug("CS_TREE_VIEW >>> dispose");
+        CsTreeView        *self = CS_TREE_VIEW (object);
+        CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
+        g_object_unref(priv->store);
+        g_object_unref(priv->filter_model);
+
+        G_OBJECT_CLASS (cs_tree_view_parent_class)->dispose(object);
+}
+
+static void
 cs_tree_view_finalize(GObject *object)
 {
+        g_debug("CS_TREE_VIEW >>> finalize");
+        CsTreeView        *self = CS_TREE_VIEW (object);
+        CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
+        g_free(priv->filter_string);
+
         G_OBJECT_CLASS (cs_tree_view_parent_class)->finalize(object);
 }
 
@@ -161,7 +180,7 @@ row_activated_cb(CsTreeView *self, GtkTreePath *path, GtkTreeViewColumn *column)
 static void
 selection_changed_cb(GtkTreeSelection *selection, CsTreeView *self)
 {
-        g_debug("CS_TREE_VIEW: selection_changed");
+        g_debug("CS_TREE_VIEW >>> selection_changed");
 }
 
 /* Internal functions */
@@ -221,9 +240,8 @@ apply_filter_model(CsTreeView *self)
 GtkWidget *
 cs_tree_view_new(void)
 {
-        CsTreeView *self = g_object_new(CS_TYPE_TREE_VIEW, NULL);
-
-        return GTK_WIDGET (self);
+        g_debug("CS_TREE_VIEW >>> create");
+        return GTK_WIDGET (g_object_new(CS_TYPE_TREE_VIEW, NULL));
 }
 
 void

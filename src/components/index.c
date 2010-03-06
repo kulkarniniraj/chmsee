@@ -35,14 +35,9 @@ typedef struct _CsIndexPrivate CsIndexPrivate;
 struct _CsIndexPrivate {
         GtkWidget *treeview;
         GtkEntry  *filter_entry;
-
-        GList     *index;
 };
 
 static gint signals[LAST_SIGNAL] = { 0 };
-
-static void cs_index_dispose(GObject *);
-static void cs_index_finalize(GObject *);
 
 static void link_selected_cb(CsIndex *, Link *);
 static void filter_changed_cb(GtkEntry *, CsIndex *);
@@ -55,9 +50,6 @@ static void
 cs_index_class_init(CsIndexClass* klass)
 {
         g_type_class_add_private(klass, sizeof(CsIndexPrivate));
-
-        G_OBJECT_CLASS (klass)->dispose = cs_index_dispose;
-        G_OBJECT_CLASS (klass)->finalize = cs_index_finalize;
 
         signals[LINK_SELECTED] =
                 g_signal_new("link_selected",
@@ -77,8 +69,6 @@ cs_index_init(CsIndex* self)
 {
         CsIndexPrivate *priv = CS_INDEX_GET_PRIVATE(self);
 
-        priv->index = NULL;
-
         priv->filter_entry = GTK_ENTRY (gtk_entry_new());
         g_signal_connect(priv->filter_entry,
                          "changed",
@@ -86,7 +76,7 @@ cs_index_init(CsIndex* self)
                          self);
         gtk_box_pack_start(GTK_BOX (self), GTK_WIDGET (priv->filter_entry), FALSE, FALSE, 0);
 
-        GtkWidget* index_sw = gtk_scrolled_window_new(NULL, NULL);
+        GtkWidget *index_sw = gtk_scrolled_window_new(NULL, NULL);
         gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (index_sw),
                                        GTK_POLICY_NEVER,
                                        GTK_POLICY_AUTOMATIC);
@@ -105,18 +95,6 @@ cs_index_init(CsIndex* self)
         gtk_widget_show_all(GTK_WIDGET (self));
 }
 
-static void
-cs_index_dispose(GObject* object)
-{
-        G_OBJECT_CLASS(cs_index_parent_class)->dispose(object);
-}
-
-static void
-cs_index_finalize(GObject* object)
-{
-        G_OBJECT_CLASS(cs_index_parent_class)->finalize(object);
-}
-
 /* Callbacks */
 
 static void
@@ -133,13 +111,12 @@ filter_changed_cb(GtkEntry *entry, CsIndex *self)
         cs_tree_view_set_filter_string(CS_TREE_VIEW (priv->treeview), gtk_entry_get_text(entry));
 }
 
-/* Internal functions */
-
 /* External functions */
 
 GtkWidget *
 cs_index_new(void)
 {
+        g_debug("CS_INDEX >>> create");
         CsIndex* self = CS_INDEX (g_object_new(CS_TYPE_INDEX, NULL));
 
         return GTK_WIDGET (self);
@@ -150,6 +127,6 @@ cs_index_set_model(CsIndex *self, GList *model)
 {
         CsIndexPrivate *priv = CS_INDEX_GET_PRIVATE (self);
 
-        priv->index = model; //FIXME: reset filter_string?
+        gtk_entry_set_text(priv->filter_entry, "");
         cs_tree_view_set_model(CS_TREE_VIEW (priv->treeview), model);
 }

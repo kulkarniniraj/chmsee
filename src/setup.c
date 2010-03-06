@@ -72,7 +72,7 @@ variable_font_set_cb(GtkFontButton *button, Chmsee *chmsee)
 {
         gchar *font_name = g_strdup(gtk_font_button_get_font_name(button));
 
-        g_debug("SETUP: variable font set: %s", font_name);
+        g_debug("SETUP >>> variable font set: %s", font_name);
 
         chmsee_set_variable_font(chmsee, font_name);
 }
@@ -82,7 +82,7 @@ fixed_font_set_cb(GtkFontButton *button, Chmsee *chmsee)
 {
         gchar *font_name = g_strdup(gtk_font_button_get_font_name(button));
 
-        g_debug("SETUP: fixed font set: %s", font_name);
+        g_debug("SETUP >>> fixed font set: %s", font_name);
 
         chmsee_set_fixed_font(chmsee, font_name);
 }
@@ -95,7 +95,7 @@ cmb_lang_changed_cb(GtkWidget *widget, Chmsee *chmsee)
         gint index = gtk_combo_box_get_active(combobox);
 
         if (index >= 0) {
-                g_debug("SETUP: select lang: %d", index);
+                g_debug("SETUP >>> select lang: %d", index);
                 chmsee_set_lang(chmsee, index);
         }
 }
@@ -103,6 +103,7 @@ cmb_lang_changed_cb(GtkWidget *widget, Chmsee *chmsee)
 void
 setup_window_new(Chmsee *chmsee)
 {
+        g_debug("SETUP >>> create setup window");
         /* create setup window */
         GtkBuilder *builder = gtk_builder_new();
         gtk_builder_add_from_file(builder, RESOURCE_FILE ("setup-window.ui"), NULL);
