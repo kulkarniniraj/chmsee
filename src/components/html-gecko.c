@@ -20,7 +20,6 @@
 #include <string.h>
 #include <gtkmozembed.h>
 
-#include "ihtml.h"
 #include "html-gecko.h"
 #include "marshal.h"
 #include "utils.h"
@@ -36,7 +35,6 @@ struct _CsHtmlGeckoPrivate {
 static void cs_html_gecko_class_init(CsHtmlGeckoClass *);
 static void cs_html_gecko_init(CsHtmlGecko *);
 static void cs_html_gecko_finalize(GObject *);
-static void cs_html_gecko_interface_init(CsIhtmlInterface *);
 
 static void gecko_title_cb(GtkMozEmbed *, CsHtmlGecko *);
 static void gecko_location_cb(GtkMozEmbed *, CsHtmlGecko *);
@@ -47,21 +45,19 @@ static void gecko_child_add_cb(GtkMozEmbed *, GtkWidget *, CsHtmlGecko *);
 static void gecko_child_remove_cb(GtkMozEmbed *, GtkWidget *, CsHtmlGecko *);
 static void gecko_child_grab_focus_cb(GtkWidget *, CsHtmlGecko *);
 
-static void         cs_html_gecko_clear(CsHtmlGecko *);
-static void         cs_html_gecko_open_uri(CsHtmlGecko *, const gchar *);
+/* Signals */
+enum {
+        TITLE_CHANGED,
+        LOCATION_CHANGED,
+        OPEN_URI,
+        CONTEXT_NORMAL,
+        CONTEXT_LINK,
+        OPEN_NEW_TAB,
+        LINK_MESSAGE,
+        LAST_SIGNAL
+};
 
-static GtkWidget   *cs_html_gecko_get_widget(CsHtmlGecko *);
-static gboolean     cs_html_gecko_can_go_forward(CsHtmlGecko *);
-static gboolean     cs_html_gecko_can_go_back(CsHtmlGecko *);
-static void         cs_html_gecko_go_forward(CsHtmlGecko *);
-static void         cs_html_gecko_go_back(CsHtmlGecko *);
-static gchar       *cs_html_gecko_get_title(CsHtmlGecko *);
-static gchar       *cs_html_gecko_get_location(CsHtmlGecko *);
-static void         cs_html_gecko_copy_selection(CsHtmlGecko *);
-static void         cs_html_gecko_select_all(CsHtmlGecko *);
-static void         cs_html_gecko_increase_size(CsHtmlGecko *);
-static void         cs_html_gecko_reset_size(CsHtmlGecko *);
-static void         cs_html_gecko_decrease_size(CsHtmlGecko *);
+static gint signals[LAST_SIGNAL] = { 0 };
 
 /* Has the value of the URL under the mouse pointer, otherwise NULL */
 static gchar *current_url = NULL;
@@ -70,15 +66,83 @@ static gchar *current_url = NULL;
 
 /* GObject functions */
 
-/* G_DEFINE_TYPE (CsHtmlGecko, cs_html_gecko, G_TYPE_OBJECT); */
-G_DEFINE_TYPE_WITH_CODE (CsHtmlGecko, cs_html_gecko, G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (CS_TYPE_IHTML, cs_html_gecko_interface_init));
+G_DEFINE_TYPE (CsHtmlGecko, cs_html_gecko, G_TYPE_OBJECT);
 
 static void
 cs_html_gecko_class_init(CsHtmlGeckoClass *klass)
 {
         G_OBJECT_CLASS (klass)->finalize = cs_html_gecko_finalize;
         g_type_class_add_private(klass, sizeof(CsHtmlGeckoPrivate));
+
+        signals[TITLE_CHANGED] = 
+                g_signal_new ("title-changed",
+                              G_TYPE_FROM_CLASS (klass),
+                              G_SIGNAL_RUN_LAST,
+                              0,
+                              NULL, NULL,
+                              marshal_VOID__STRING,
+                              G_TYPE_NONE,
+                              1, G_TYPE_STRING);
+
+        signals[LOCATION_CHANGED] =
+                g_signal_new("location-changed",
+                             G_TYPE_FROM_CLASS (klass),
+                             G_SIGNAL_RUN_LAST,
+                             0,
+                             NULL, NULL,
+                             marshal_VOID__STRING,
+                             G_TYPE_NONE,
+                             1, G_TYPE_STRING);
+
+        signals[OPEN_URI] =
+                g_signal_new("open-uri",
+                             G_TYPE_FROM_CLASS (klass),
+                             G_SIGNAL_RUN_LAST,
+                             0,
+                             NULL, NULL,
+                             marshal_BOOLEAN__STRING,
+                             G_TYPE_BOOLEAN,
+                             1, G_TYPE_STRING);
+
+        signals[CONTEXT_NORMAL] =
+                g_signal_new("context-normal",
+                             G_TYPE_FROM_CLASS (klass),
+                             G_SIGNAL_RUN_LAST,
+                             0,
+                             NULL, NULL,
+                             marshal_VOID__VOID,
+                             G_TYPE_NONE,
+                             0);
+
+        signals[CONTEXT_LINK] =
+                g_signal_new("context-link",
+                             G_TYPE_FROM_CLASS (klass),
+                             G_SIGNAL_RUN_LAST,
+                             0,
+                             NULL, NULL,
+                             marshal_VOID__STRING,
+                             G_TYPE_NONE,
+                             1, G_TYPE_STRING);
+
+        signals[OPEN_NEW_TAB] =
+                g_signal_new("open-new-tab",
+                             G_TYPE_FROM_CLASS (klass),
+                             G_SIGNAL_RUN_LAST,
+                             0,
+                             NULL, NULL,
+                             marshal_VOID__STRING,
+                             G_TYPE_NONE,
+                             1, G_TYPE_STRING);
+
+        signals[LINK_MESSAGE] = 
+                g_signal_new("link-message",
+                             G_TYPE_FROM_CLASS (klass),
+                             G_SIGNAL_RUN_LAST,
+                             0,
+                             NULL, NULL,
+                             marshal_VOID__STRING,
+                             G_TYPE_NONE,
+                             1, G_TYPE_STRING);
 }
 
 static void
@@ -128,32 +192,6 @@ cs_html_gecko_finalize(GObject *object)
         G_OBJECT_CLASS (cs_html_gecko_parent_class)->finalize(object);
 }
 
-static void
-cs_html_gecko_interface_init(CsIhtmlInterface *iface)
-{
-        g_debug("CS_HTML_GECKO >>> interface init");
-        iface->get_widget = (GtkWidget *(*) (CsIhtml *html)) cs_html_gecko_get_widget;
-
-        iface->open_uri = (void (*) (CsIhtml *html, const gchar* uri)) cs_html_gecko_open_uri;
-
-        iface->get_title    = (const gchar *(*) (CsIhtml *html)) cs_html_gecko_get_title;
-        iface->get_location = (const gchar *(*) (CsIhtml *html)) cs_html_gecko_get_location;
-
-        iface->can_go_back    = (gboolean (*) (CsIhtml *html)) cs_html_gecko_can_go_back;
-        iface->can_go_forward = (gboolean (*) (CsIhtml *html)) cs_html_gecko_can_go_forward;
-        iface->go_back        = (void (*) (CsIhtml *html)) cs_html_gecko_go_back;
-        iface->go_forward     = (void (*) (CsIhtml *html)) cs_html_gecko_go_forward;
-
-        iface->copy_selection = (void (*) (CsIhtml *html)) cs_html_gecko_copy_selection;
-        iface->select_all     = (void (*) (CsIhtml *html)) cs_html_gecko_select_all;
-
-        iface->increase_size = (void (*) (CsIhtml *html)) cs_html_gecko_increase_size;
-        iface->decrease_size = (void (*) (CsIhtml *html)) cs_html_gecko_decrease_size;
-        iface->reset_size    = (void (*) (CsIhtml *html)) cs_html_gecko_reset_size;
-
-        iface->clear    = (void (*) (CsIhtml *html)) cs_html_gecko_clear;
-}
-
 /* Callbacks */
 
 static void
@@ -162,8 +200,7 @@ gecko_title_cb(GtkMozEmbed *embed, CsHtmlGecko *html)
         char *new_title;
 
         new_title = gtk_moz_embed_get_title(embed);
-        cs_ihtml_title_changed(CS_IHTML (html), new_title);
-        /* g_signal_emit(html, signals[TITLE_CHANGED], 0, new_title); */
+        g_signal_emit(html, signals[TITLE_CHANGED], 0, new_title);
         g_free(new_title);
 }
 
@@ -173,8 +210,7 @@ gecko_location_cb(GtkMozEmbed *embed, CsHtmlGecko *html)
         char *location;
 
         location = gtk_moz_embed_get_location(embed);
-        cs_ihtml_location_changed(CS_IHTML (html), location);
-        /* g_signal_emit(html, signals[LOCATION_CHANGED], 0, location); */
+        g_signal_emit(html, signals[LOCATION_CHANGED], 0, location);
         g_free(location);
 }
 
@@ -185,16 +221,14 @@ gecko_open_uri_cb(GtkMozEmbed *embed, const gchar *uri, CsHtmlGecko *html)
 
         ret_val = TRUE;
 
-        cs_ihtml_uri_opened(CS_IHTML (html), uri);
-        /* g_signal_emit(html, signals[OPEN_URI], 0, uri, &ret_val); */
+        g_signal_emit(html, signals[OPEN_URI], 0, uri, &ret_val);
 
         /* Reset current url */
         if (current_url != NULL) {
                 g_free(current_url);
                 current_url = NULL;
 
-                cs_ihtml_link_message(CS_IHTML (html), "");
-                /* g_signal_emit(html, signals[LINK_MESSAGE], 0, ""); */
+                g_signal_emit(html, signals[LINK_MESSAGE], 0, "");
         }
 
         return ret_val;
@@ -211,18 +245,15 @@ gecko_mouse_click_cb(GtkMozEmbed *widget, gpointer dom_event, CsHtmlGecko *html)
 
         if (button == 2 || (button == 1 && mask & GDK_CONTROL_MASK)) {
                 if (current_url) {
-                        cs_ihtml_open_new_tab(CS_IHTML (html), current_url);
-                        /* g_signal_emit(html, signals[OPEN_NEW_TAB], 0, current_url); */
+                        g_signal_emit(html, signals[OPEN_NEW_TAB], 0, current_url);
 
                         return TRUE;
                 }
         } else if (button == 3) {
                 if (current_url)
-                        cs_ihtml_context_link(CS_IHTML (html), current_url);
-                        /* g_signal_emit(html, signals[CONTEXT_LINK], 0, current_url); */
+                        g_signal_emit(html, signals[CONTEXT_LINK], 0, current_url);
                 else
-                        cs_ihtml_context_normal(CS_IHTML (html));
-                        /* g_signal_emit(html, signals[CONTEXT_NORMAL], 0); */
+                        g_signal_emit(html, signals[CONTEXT_NORMAL], 0);
 
                 return TRUE;
         }
@@ -236,8 +267,7 @@ gecko_link_message_cb(GtkMozEmbed *widget, CsHtmlGecko *html)
         g_free(current_url);
 
         current_url = gtk_moz_embed_get_link_message(widget);
-        cs_ihtml_link_message(CS_IHTML (html), current_url);
-        /* g_signal_emit(html, signals[LINK_MESSAGE], 0, current_url); */
+        g_signal_emit(html, signals[LINK_MESSAGE], 0, current_url);
 
         if (current_url[0] == '\0') {
                 g_free(current_url);
@@ -275,9 +305,19 @@ gecko_child_grab_focus_cb(GtkWidget *widget, CsHtmlGecko *html)
                 gdk_event_free(event);
 }
 
+/* External functions */
 
-/* Interface functions */
-static void
+CsHtmlGecko *
+cs_html_gecko_new(void)
+{
+        CsHtmlGecko *html;
+
+        html = g_object_new(CS_TYPE_HTML_GECKO, NULL);
+
+        return html;
+}
+
+void
 cs_html_gecko_clear(CsHtmlGecko *html)
 {
         static const char *data = "<html><body bgcolor=\"white\"></body></html>";
@@ -288,13 +328,15 @@ cs_html_gecko_clear(CsHtmlGecko *html)
         gtk_moz_embed_render_data(priv->gecko, data, strlen(data), "file:///", "text/html");
 }
 
-static void
-cs_html_gecko_open_uri(CsHtmlGecko *html, const gchar *str_uri)
+void
+cs_html_gecko_load_url(CsHtmlGecko *html, const gchar *str_uri)
 {
         gchar *full_uri;
         
         g_return_if_fail(IS_CS_HTML_GECKO (html));
         g_return_if_fail(str_uri != NULL);
+
+        g_debug("CS_HTML_GECKO >>> load_url html = %p, uri = %s", html, str_uri);
 
         if (str_uri[0] == '/')
                 full_uri = g_strdup_printf("file://%s", str_uri);
@@ -303,10 +345,21 @@ cs_html_gecko_open_uri(CsHtmlGecko *html, const gchar *str_uri)
         
         CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
         gtk_moz_embed_load_url(priv->gecko, full_uri);
+        g_debug("CS_HTML_GECKO >>> moz embed full_uri %s", full_uri);
+
         g_free(full_uri);
 }
 
-static GtkWidget *
+void
+cs_html_gecko_reload(CsHtmlGecko *html)
+{
+        g_return_if_fail(IS_CS_HTML_GECKO (html));
+        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
+
+        gtk_moz_embed_reload(priv->gecko, GTK_MOZ_EMBED_FLAG_RELOADNORMAL);
+}
+
+GtkWidget *
 cs_html_gecko_get_widget(CsHtmlGecko *html)
 {
         g_return_val_if_fail(IS_CS_HTML_GECKO (html), NULL);
@@ -315,7 +368,7 @@ cs_html_gecko_get_widget(CsHtmlGecko *html)
         return GTK_WIDGET (priv->gecko);
 }
 
-static gboolean
+gboolean
 cs_html_gecko_can_go_forward(CsHtmlGecko *html)
 {
         g_return_val_if_fail(IS_CS_HTML_GECKO (html), FALSE);
@@ -324,7 +377,7 @@ cs_html_gecko_can_go_forward(CsHtmlGecko *html)
         return gtk_moz_embed_can_go_forward(priv->gecko);
 }
 
-static gboolean
+gboolean
 cs_html_gecko_can_go_back(CsHtmlGecko *html)
 {
         g_return_val_if_fail(IS_CS_HTML_GECKO (html), FALSE);
@@ -333,7 +386,7 @@ cs_html_gecko_can_go_back(CsHtmlGecko *html)
         return gtk_moz_embed_can_go_back(priv->gecko);
 }
 
-static void
+void
 cs_html_gecko_go_forward(CsHtmlGecko *html)
 {
         g_return_if_fail(IS_CS_HTML_GECKO (html));
@@ -342,7 +395,7 @@ cs_html_gecko_go_forward(CsHtmlGecko *html)
         gtk_moz_embed_go_forward(priv->gecko);
 }
 
-static void
+void
 cs_html_gecko_go_back(CsHtmlGecko *html)
 {
         g_return_if_fail(IS_CS_HTML_GECKO (html));
@@ -351,7 +404,7 @@ cs_html_gecko_go_back(CsHtmlGecko *html)
         gtk_moz_embed_go_back(priv->gecko);
 }
 
-static gchar *
+gchar *
 cs_html_gecko_get_title(CsHtmlGecko *html)
 {
         g_return_val_if_fail(IS_CS_HTML_GECKO (html), NULL);
@@ -360,7 +413,7 @@ cs_html_gecko_get_title(CsHtmlGecko *html)
         return gtk_moz_embed_get_title(priv->gecko);
 }
 
-static gchar *
+gchar *
 cs_html_gecko_get_location(CsHtmlGecko *html)
 {
         g_return_val_if_fail(IS_CS_HTML_GECKO (html), NULL);
@@ -369,7 +422,7 @@ cs_html_gecko_get_location(CsHtmlGecko *html)
         return gtk_moz_embed_get_location(priv->gecko);
 }
 
-static void
+void
 cs_html_gecko_copy_selection(CsHtmlGecko *html)
 {
         g_return_if_fail(IS_CS_HTML_GECKO (html));
@@ -378,7 +431,7 @@ cs_html_gecko_copy_selection(CsHtmlGecko *html)
         gecko_utils_copy_selection(priv->gecko);
 }
 
-static void
+void
 cs_html_gecko_select_all(CsHtmlGecko *html)
 {
         g_return_if_fail(IS_CS_HTML_GECKO (html));
@@ -387,7 +440,7 @@ cs_html_gecko_select_all(CsHtmlGecko *html)
         gecko_utils_select_all(priv->gecko);
 }
 
-static void
+void
 cs_html_gecko_increase_size(CsHtmlGecko *html)
 {
         gfloat zoom;
@@ -401,7 +454,7 @@ cs_html_gecko_increase_size(CsHtmlGecko *html)
         gecko_utils_set_zoom(priv->gecko, zoom);
 }
 
-static void
+void
 cs_html_gecko_reset_size(CsHtmlGecko *html)
 {
         g_return_if_fail(IS_CS_HTML_GECKO (html));
@@ -410,7 +463,7 @@ cs_html_gecko_reset_size(CsHtmlGecko *html)
         gecko_utils_set_zoom(priv->gecko, 1.0);
 }
 
-static void
+void
 cs_html_gecko_decrease_size(CsHtmlGecko *html)
 {
         gfloat zoom;
@@ -424,27 +477,17 @@ cs_html_gecko_decrease_size(CsHtmlGecko *html)
         gecko_utils_set_zoom(priv->gecko, zoom);
 }
 
-/* External functions */
-
-CsHtmlGecko *
-cs_html_gecko_new(void)
-{
-        CsHtmlGecko *html;
-
-        html = g_object_new(CS_TYPE_HTML_GECKO, NULL);
-
-        return html;
-}
-
 gboolean 
 cs_html_gecko_init_system(void)
 {
+        g_debug("CS_HTML_GECKO >>> init_system");
         return gecko_utils_init();
 }
 
 void
 cs_html_gecko_shutdown_system()
 {
+        g_debug("CS_HTML_GECKO >>> shutdown_system");
         gecko_utils_shutdown();
 }
 

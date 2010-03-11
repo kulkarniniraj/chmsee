@@ -26,8 +26,6 @@ set(CHMSEE_SRCS
         chmsee.h chmsee.c
         startup.h startup.c
         setup.h setup.c
-        ihtml.h ihtml.c
-        html-factory.h html-factory.c
         utils.h utils.c
         ${CMAKE_CURRENT_BINARY_DIR}/marshal.h ${CMAKE_CURRENT_BINARY_DIR}/marshal.c
         )

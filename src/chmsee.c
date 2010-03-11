@@ -40,11 +40,11 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "chmsee.h"
-#include "html-factory.h"
 #include "setup.h"
 #include "link.h"
 #include "utils.h"
 #include "components/book.h"
+#include "components/html-gecko.h"
 #include "models/chmfile.h"
 
 typedef struct _ChmseePrivate ChmseePrivate;
@@ -152,7 +152,7 @@ static void map_cb(Chmsee *);
 static gboolean window_state_event_cb(Chmsee *, GdkEventWindowState *);
 static gboolean configure_event_cb(GtkWidget *, GdkEventConfigure *, Chmsee *);
 static void book_model_changed_cb(Chmsee *, CsChmfile *);
-static void book_html_changed_cb(Chmsee *, CsIhtml *);
+static void book_html_changed_cb(Chmsee *, CsHtmlGecko *);
 static void book_html_link_message_notify_cb(Chmsee *, GParamSpec *, CsChmfile *);
 
 static void open_file_response_cb(GtkWidget *, gint, Chmsee *);
@@ -294,7 +294,7 @@ chmsee_init(Chmsee *self)
                          self);
 
         /* startup html render engine */
-        if(!cs_html_init_system()) {
+        if(!cs_html_gecko_init_system()) {
                 g_error("Initialize html render engine failed!");
                 exit(1);
         }
@@ -340,12 +340,14 @@ delete_cb(GtkWidget *widget, GdkEvent *event, Chmsee *self)
 static void
 destroy_cb(GtkWidget *widget, Chmsee *self)
 {
+        g_debug("Chmsee >>> window destroy");
         chmsee_quit(self);
 }
 
 static gboolean
 scroll_event_cb(Chmsee *self, GdkEventScroll *event)
 {
+        g_debug("Chmsee >>> scroll event");
         if(event->direction == GDK_SCROLL_UP && (event->state & GDK_CONTROL_MASK)) {
                 on_zoom_in(NULL, self);
                 return TRUE;
@@ -415,14 +417,19 @@ window_state_event_cb(Chmsee *self, GdkEventWindowState *event)
 static gboolean
 configure_event_cb(GtkWidget *widget, GdkEventConfigure *event, Chmsee *self)
 {
-        g_debug("Chmsee >>> configure event callback");
+        g_debug("Chmsee >>> configure event callback event = %p", event);
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
+        g_debug("Chmsee >>> configure event callback event->width = %d", event->width);
+        g_debug("Chmsee >>> configure event callback priv->config->width = %d", priv->config->width);
+        g_debug("Chmsee >>> configure event callback event->height = %d", event->height);
+        g_debug("Chmsee >>> configure event callback priv->cinfig->height = %d", priv->config->height);
         if (event->width != priv->config->width || event->height != priv->config->height) {
                 if (priv->chmfile)
                         cs_book_reload_current_page(CS_BOOK (priv->book));
         }
 
+        g_debug("Chmsee >>> configure event callback priv->config->fullscreen = %d", priv->config->fullscreen);
         if (!priv->config->fullscreen) {
                 priv->config->width  = event->width;
                 priv->config->height = event->height;
@@ -436,6 +443,7 @@ configure_event_cb(GtkWidget *widget, GdkEventConfigure *event, Chmsee *self)
 static void
 book_model_changed_cb(Chmsee *self, CsChmfile *chmfile)
 {
+        g_debug("Chmsee >>> receive book model changed callback");
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         gboolean has_model = (chmfile != NULL);
 
@@ -453,16 +461,18 @@ book_model_changed_cb(Chmsee *self, CsChmfile *chmfile)
 }
 
 static void
-book_html_changed_cb(Chmsee *self, CsIhtml *html)
+book_html_changed_cb(Chmsee *self, CsHtmlGecko *html)
 {
-        gboolean back_state, forward_state;
+        gboolean home_state, back_state, forward_state;
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
         g_debug("Chmsee >>> recieve html_changed signal from %p", html);
 
+        home_state = cs_book_has_homepage(CS_BOOK (priv->book));
         back_state = cs_book_can_go_back(CS_BOOK (priv->book));
         forward_state = cs_book_can_go_forward(CS_BOOK (priv->book));
 
+        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Home"), home_state);
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Back"), back_state);
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Forward"), forward_state);
 }
@@ -498,7 +508,7 @@ open_file_response_cb(GtkWidget *widget, gint response_id, Chmsee *chmsee)
 #if 0
 /* Popup html context menu */
 static void
-html_context_normal_cb(CsIhtml *html, Chmsee *self)
+html_context_normal_cb(CsHtmlGecko *html, Chmsee *self)
 {
         g_message("html context-normal event");
         gtk_menu_popup(GTK_MENU(gtk_ui_manager_get_widget(priv->ui_manager, "/HtmlContextNormal")),
@@ -507,7 +517,7 @@ html_context_normal_cb(CsIhtml *html, Chmsee *self)
 
 /* Popup html context menu when mouse over hyper link */
 static void
-html_context_link_cb(CsIhtml *html, const gchar *link, Chmsee *self)
+html_context_link_cb(CsHtmlGecko *html, const gchar *link, Chmsee *self)
 {
         g_debug("html context-link event: %s", link);
         chmsee_set_context_menu_link(self, link);
@@ -628,12 +638,14 @@ on_home(GtkWidget *widget, Chmsee *self)
 static void
 on_zoom_in(GtkWidget *widget, Chmsee *self)
 {
+        g_debug("Chmsee >>> On zoom in");
         cs_book_zoom_in(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
 static void
 on_zoom_out(GtkWidget *widget, Chmsee *self)
 {
+        g_debug("Chmsee >>> On zoom out");
         cs_book_zoom_out(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
@@ -673,8 +685,10 @@ static void
 on_open_new_tab(GtkWidget *widget, Chmsee *self)
 {
         g_debug("Chmsee >>> Open new tab");
+        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        cs_book_new_tab(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book), NULL);
+        cs_book_new_tab(CS_BOOK (priv->book));
+        cs_book_homepage(CS_BOOK (priv->book));
 }
 
 static void
@@ -684,13 +698,15 @@ on_context_new_tab(GtkWidget *widget, Chmsee *self)
         g_debug("Chmsee >>> On context open new tab: %s", priv->context_menu_link);
 
         if (priv->context_menu_link != NULL) {
-                cs_book_new_tab(CS_BOOK (priv->book), priv->context_menu_link);
+                cs_book_new_tab(CS_BOOK (priv->book));
+                cs_book_load_url(CS_BOOK (priv->book), priv->context_menu_link);
         }
 }
 
 static void
 on_close_current_tab(GtkWidget *widget, Chmsee *self)
 {
+        g_debug("Chmsee >>> close current tab");
         cs_book_close_current_tab(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
@@ -757,7 +773,7 @@ chmsee_quit(Chmsee *self)
 
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        cs_html_shutdown_system();
+        cs_html_gecko_shutdown_system();
         priv->config->hpaned_pos = cs_book_get_hpaned_position(CS_BOOK (priv->book));
         gtk_main_quit();
 }
@@ -860,6 +876,10 @@ populate_windows(Chmsee *self)
 
         priv->book = cs_book_new();
         gtk_box_pack_start(GTK_BOX(vbox), priv->book, TRUE, TRUE, 0);
+        g_signal_connect_swapped(priv->book,
+                                 "model-changed",
+                                 G_CALLBACK (book_model_changed_cb),
+                                 self);
 
         /* status bar */
         priv->statusbar = gtk_statusbar_new();
@@ -989,7 +1009,7 @@ chmsee_new(CsConfig *config)
 
         priv->config = config;
 
-        cs_html_set_default_lang(config->lang);
+        cs_html_gecko_set_default_lang(config->lang);
 
         if (config->pos_x >= 0 && config->pos_y >= 0)
                 gtk_window_move(GTK_WINDOW (self), config->pos_x, config->pos_y);
@@ -1035,8 +1055,8 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
         g_debug("Chmsee >>> file opened, chmfile = %p", priv->chmfile);
 
         if (priv->chmfile) {
-                cs_html_set_variable_font(cs_chmfile_get_variable_font(priv->chmfile)); //FIXME: let cs_book do this?
-                cs_html_set_fixed_font(cs_chmfile_get_fixed_font(priv->chmfile));
+                cs_html_gecko_set_variable_font(cs_chmfile_get_variable_font(priv->chmfile)); //FIXME: let cs_book do this?
+                cs_html_gecko_set_fixed_font(cs_chmfile_get_fixed_font(priv->chmfile));
 
                 priv->state = CHMSEE_STATE_LOADING;
                 
@@ -1045,11 +1065,7 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
                 gtk_container_set_focus_child(GTK_CONTAINER(self), priv->book); //FIXME: set focus
 
                 g_signal_connect_swapped(priv->book,
-                                         "model_changed",
-                                         G_CALLBACK (book_model_changed_cb),
-                                         self);
-                g_signal_connect_swapped(priv->book,
-                                         "html_changed",
+                                         "html-changed",
                                          G_CALLBACK (book_html_changed_cb),
                                          self);
                 g_signal_connect_swapped(priv->book,
@@ -1108,7 +1124,7 @@ chmsee_set_variable_font(Chmsee *self, const gchar *font_name)
 {
         g_debug("Chmsee >>> set variable font = %s", font_name);
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        cs_html_set_variable_font(font_name);
+        cs_html_gecko_set_variable_font(font_name);
         cs_chmfile_set_variable_font(priv->chmfile, font_name);
 }
 
@@ -1123,7 +1139,7 @@ void
 chmsee_set_fixed_font(Chmsee *self, const gchar *font_name)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        cs_html_set_fixed_font(font_name);
+        cs_html_gecko_set_fixed_font(font_name);
         cs_chmfile_set_fixed_font(priv->chmfile, font_name);
 }
 

@@ -40,10 +40,35 @@ struct _CsHtmlGecko {
 
 struct _CsHtmlGeckoClass {
         GObjectClass parent_class;
+
+        /* Signals */
+        void     (* title_changed)    (CsHtmlGecko *html, const gchar *title);
+        void     (* location_changed) (CsHtmlGecko *html, const gchar *location);
+        gboolean (* open_uri)         (CsHtmlGecko *html, const gchar *uri);
+        void     (* context_normal)   (CsHtmlGecko *html);
+        void     (* context_link)     (CsHtmlGecko *html, const gchar *link);
+        void     (* open_new_tab)     (CsHtmlGecko *html, const gchar *uri);
+        void     (* link_message)     (CsHtmlGecko *html, const gchar *link);
 };
 
 GType        cs_html_gecko_get_type(void);
 CsHtmlGecko *cs_html_gecko_new(void);
+void         cs_html_gecko_clear(CsHtmlGecko *);
+void         cs_html_gecko_load_url(CsHtmlGecko *, const gchar *);
+void         cs_html_gecko_reload(CsHtmlGecko *);
+
+GtkWidget   *cs_html_gecko_get_widget(CsHtmlGecko *);
+gboolean     cs_html_gecko_can_go_forward(CsHtmlGecko *);
+gboolean     cs_html_gecko_can_go_back(CsHtmlGecko *);
+void         cs_html_gecko_go_forward(CsHtmlGecko *);
+void         cs_html_gecko_go_back(CsHtmlGecko *);
+gchar       *cs_html_gecko_get_title(CsHtmlGecko *);
+gchar       *cs_html_gecko_get_location(CsHtmlGecko *);
+void         cs_html_gecko_copy_selection(CsHtmlGecko *);
+void         cs_html_gecko_select_all(CsHtmlGecko *);
+void         cs_html_gecko_increase_size(CsHtmlGecko *);
+void         cs_html_gecko_reset_size(CsHtmlGecko *);
+void         cs_html_gecko_decrease_size(CsHtmlGecko *);
 
 gboolean     cs_html_gecko_init_system(void);
 void         cs_html_gecko_shutdown_system(void);

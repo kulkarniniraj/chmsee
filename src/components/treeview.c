@@ -76,7 +76,7 @@ cs_tree_view_class_init(CsTreeViewClass *klass)
         object_class->finalize = cs_tree_view_finalize;
 
         signals[LINK_SELECTED] =
-                g_signal_new("link_selected",
+                g_signal_new("link-selected",
                              G_TYPE_FROM_CLASS (klass),
                              G_SIGNAL_RUN_LAST,
                              G_STRUCT_OFFSET (CsTreeViewClass, link_selected),

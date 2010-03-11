@@ -73,7 +73,7 @@ cs_bookmarks_class_init(CsBookmarksClass *klass)
         object_class->finalize = cs_bookmarks_finalize;
 
         signals[LINK_SELECTED] =
-                g_signal_new("link_selected",
+                g_signal_new("link-selected",
                              G_TYPE_FROM_CLASS (klass),
                              G_SIGNAL_RUN_LAST,
                              G_STRUCT_OFFSET (CsBookmarksClass, link_selected),
@@ -105,7 +105,7 @@ cs_bookmarks_init(CsBookmarks *self)
         priv->treeview = GTK_WIDGET (cs_tree_view_new());
 
         g_signal_connect_swapped(priv->treeview,
-                                 "link_selected",
+                                 "link-selected",
                                  G_CALLBACK (link_selected_cb),
                                  self);
 
@@ -168,7 +168,7 @@ static void
 link_selected_cb(CsBookmarks *self, Link *link)
 {
         if (link) {
-                g_debug("CS_BOOKMARKS: Emiting link_selected signal");
+                g_debug("CS_BOOKMARKS: Emiting link-selected signal");
                 g_signal_emit(self, signals[LINK_SELECTED], 0, link);
         }
 }

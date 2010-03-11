@@ -25,7 +25,6 @@
 #include <gtk/gtkwindow.h>
 #include <gtk/gtk.h>
 
-#include "ihtml.h"
 #include "models/chmfile.h"
 
 G_BEGIN_DECLS
@@ -52,10 +51,12 @@ GType        cs_book_get_type(void);
 GtkWidget   *cs_book_new(void);
 void         cs_book_set_model(CsBook *, CsChmfile *);
 
-void         cs_book_new_tab(CsBook *, const gchar *);
+void         cs_book_new_tab(CsBook *);
+void         cs_book_load_url(CsBook *, const gchar *);
 void         cs_book_close_current_tab(CsBook *);
 void         cs_book_reload_current_page(CsBook *);
 
+gboolean     cs_book_has_homepage(CsBook *);
 void         cs_book_homepage(CsBook *);
 gboolean     cs_book_can_go_back(CsBook *);
 gboolean     cs_book_can_go_forward(CsBook *);

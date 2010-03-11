@@ -941,6 +941,8 @@ cs_chmfile_get_bookname(CsChmfile *self)
 const gchar *
 cs_chmfile_get_homepage(CsChmfile *self)
 {
+        g_return_val_if_fail(IS_CS_CHMFILE (self), NULL);
+
         return CS_CHMFILE_GET_PRIVATE (self)->homepage;
 }
 

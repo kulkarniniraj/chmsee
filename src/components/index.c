@@ -52,7 +52,7 @@ cs_index_class_init(CsIndexClass* klass)
         g_type_class_add_private(klass, sizeof(CsIndexPrivate));
 
         signals[LINK_SELECTED] =
-                g_signal_new("link_selected",
+                g_signal_new("link-selected",
                              G_TYPE_FROM_CLASS (klass),
                              G_SIGNAL_RUN_LAST,
                              G_STRUCT_OFFSET (CsIndexClass, link_selected),
@@ -85,7 +85,7 @@ cs_index_init(CsIndex* self)
 
         priv->treeview = cs_tree_view_new();
         g_signal_connect_swapped(priv->treeview,
-                                 "link_selected",
+                                 "link-selected",
                                  G_CALLBACK(link_selected_cb),
                                  self);
 

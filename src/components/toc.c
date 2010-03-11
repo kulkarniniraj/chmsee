@@ -96,7 +96,7 @@ cs_toc_class_init(CsTocClass *klass)
         object_class->finalize = cs_toc_finalize;
 
         signals[LINK_SELECTED] =
-                g_signal_new ("link_selected",
+                g_signal_new ("link-selected",
                               G_TYPE_FROM_CLASS (klass),
                               G_SIGNAL_RUN_LAST,
                               G_STRUCT_OFFSET (CsTocClass, link_selected),
@@ -195,7 +195,7 @@ selection_changed_cb(GtkTreeSelection *selection, CsToc *self)
                 gtk_tree_model_get(GTK_TREE_MODEL (priv->store),
                                    &iter, COL_LINK, &link, -1);
 
-                g_debug("CS_TOC >>> emiting link_selected signal '%s'\n", link->uri);
+                g_debug("CS_TOC >>> emiting link-selected signal '%s'\n", link->uri);
                 g_signal_emit(self, signals[LINK_SELECTED], 0, link);
         }
 }
