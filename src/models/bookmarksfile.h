@@ -25,7 +25,7 @@
 
 G_BEGIN_DECLS
 
-GList* cs_bookmarks_file_load(const gchar *);
+GList *cs_bookmarks_file_load(const gchar *);
 void cs_bookmarks_file_save(GList *, const gchar *);
 
 G_END_DECLS

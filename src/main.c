@@ -88,7 +88,7 @@ load_config()
 {
         GError *error = NULL;
 
-        g_debug("Main >>> load config");
+        g_message("Main >>> load config");
         CsConfig *config = g_new0(CsConfig, 1);
         
         /* ChmSee HOME directory ~/.chmsee */
@@ -100,12 +100,12 @@ load_config()
         if (!g_file_test(config->bookshelf, G_FILE_TEST_IS_DIR))
                 mkdir(config->bookshelf, 0755);
 
-        config->lang = 0;
-        config->last_dir = g_strdup(g_get_home_dir());
-        config->pos_x = -100;
-        config->pos_y = -100;
-        config->width = 0;
-        config->height = 0;
+        config->lang       = 0;
+        config->last_dir   = g_strdup(g_get_home_dir());
+        config->pos_x      = -100;
+        config->pos_y      = -100;
+        config->width      = 0;
+        config->height     = 0;
         config->hpaned_pos = -1;
         config->fullscreen = FALSE;
 
@@ -128,7 +128,7 @@ load_config()
                 config->pos_y      = g_key_file_get_integer(keyfile, "Window", "POS_Y", &error);
                 config->width      = g_key_file_get_integer(keyfile, "Window", "WIDTH", &error);
                 config->height     = g_key_file_get_integer(keyfile, "Window", "HEIGHT", &error);
-                config->hpaned_pos = g_key_file_get_integer(keyfile, "Window", "HPANED_POSTION", &error);
+                config->hpaned_pos = g_key_file_get_integer(keyfile, "Window", "HPANED_POSITION", &error);
                 config->fullscreen = g_key_file_get_boolean(keyfile, "Window", "FULLSCREEN", &error);
         }
 
@@ -144,7 +144,7 @@ save_config(CsConfig *config)
         gsize  length = 0;
         GError *error = NULL;
 
-        g_debug("Main >>> save config");
+        g_message("Main >>> save config");
         gchar *config_file = g_build_filename(config->home, CHMSEE_CONFIG_FILE, NULL);
 
         GKeyFile *keyfile = g_key_file_new();
@@ -155,7 +155,7 @@ save_config(CsConfig *config)
         g_key_file_set_integer(keyfile, "Window", "POS_Y", config->pos_y);
         g_key_file_set_integer(keyfile, "Window", "WIDTH", config->width);
         g_key_file_set_integer(keyfile, "Window", "HEIGHT", config->height);
-        g_key_file_set_integer(keyfile, "Window", "HPANDED_POSTION", config->hpaned_pos);
+        g_key_file_set_integer(keyfile, "Window", "HPANED_POSITION", config->hpaned_pos);
         g_key_file_set_boolean(keyfile, "Window", "FULLSCREEN", config->fullscreen);
 
         gchar *contents = g_key_file_to_data(keyfile, &length, &error);
@@ -173,24 +173,18 @@ save_config(CsConfig *config)
 }
 
 int
-main(int argc, char* argv[])
+main(int argc, char *argv[])
 {
-        const gchar* filename = NULL;
-        const gchar* bookshelf = NULL;
-        const gchar* index = NULL;
+        const gchar *filename = NULL;
+        const gchar *bookshelf = NULL;
 
-        GError* error = NULL;
+        GError *error = NULL;
         gboolean option_version = FALSE;
 
         if (!g_thread_supported())
                 g_thread_init(NULL);
 
         GOptionEntry options[] = {
-                {"index", 'i',
-                 0, G_OPTION_ARG_STRING, &index,
-                 _("Specify index"),
-                 _("INDEX")
-                },
                 {"version", 0,
                  0, G_OPTION_ARG_NONE, &option_version,
                  _("Display the version and exit"),
@@ -265,10 +259,6 @@ main(int argc, char* argv[])
                 chmsee_open_file(chmsee, filename);
 
         gtk_main();
-
-        // if (index != NULL) {
-        //         chmsee_jump_index_by_name(chmsee, index);
-        // }
 
         save_config(config);
 

@@ -51,7 +51,8 @@ GType      cs_bookmarks_get_type(void);
 GtkWidget *cs_bookmarks_new(void);
 
 void       cs_bookmarks_set_model(CsBookmarks *, GList *);
-void       cs_bookmarks_set_current_link(CsBookmarks *, Link *);
+GList     *cs_bookmarks_get_model(CsBookmarks *);
+void       cs_bookmarks_set_current_link(CsBookmarks *, const Link *);
 void       cs_bookmarks_grab_focus(CsBookmarks *);
 
 G_END_DECLS

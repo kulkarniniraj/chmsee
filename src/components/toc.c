@@ -159,13 +159,17 @@ cs_toc_init(CsToc *self)
 static void
 cs_toc_dispose(GObject* object)
 {
+        g_debug("CS_TOC >>> dispose");
         CsToc        *self = CS_TOC (object);
         CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
 
-        g_object_unref(priv->store);
-        g_object_unref(priv->pixbufs->pixbuf_opened);
-        g_object_unref(priv->pixbufs->pixbuf_closed);
-        g_object_unref(priv->pixbufs->pixbuf_doc);
+        if (priv->store) {
+                g_object_unref(priv->store);
+                g_object_unref(priv->pixbufs->pixbuf_opened);
+                g_object_unref(priv->pixbufs->pixbuf_closed);
+                g_object_unref(priv->pixbufs->pixbuf_doc);
+                priv->store = NULL;
+        }
 
         G_OBJECT_CLASS (cs_toc_parent_class)->dispose(object);
 }
@@ -173,6 +177,7 @@ cs_toc_dispose(GObject* object)
 static void
 cs_toc_finalize(GObject *object)
 {
+        g_debug("CS_TOC >>> finalize");
         CsToc        *self = CS_TOC (object);
         CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
 
@@ -351,8 +356,10 @@ cs_toc_new(void)
 void
 cs_toc_set_model(CsToc *self, GNode *model)
 {
-        GNode        *node;
+        g_return_if_fail(IS_CS_TOC (self));
+
         CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
+        GNode        *node;
 
         gtk_tree_store_clear(priv->store);
 
@@ -382,7 +389,7 @@ cs_toc_select_uri(CsToc *self, const gchar *uri)
                                &data);
 
         if (!data.found) {
-                g_debug("toc select uri: cannot found data");
+                g_debug("CS_TOC >>> select uri: cannot found data");
                 return;
         }
 

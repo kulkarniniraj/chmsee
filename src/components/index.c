@@ -83,7 +83,7 @@ cs_index_init(CsIndex* self)
         gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW (index_sw),
                                             GTK_SHADOW_IN);
 
-        priv->treeview = cs_tree_view_new();
+        priv->treeview = cs_tree_view_new(TRUE);
         g_signal_connect_swapped(priv->treeview,
                                  "link-selected",
                                  G_CALLBACK(link_selected_cb),
@@ -125,6 +125,9 @@ cs_index_new(void)
 void
 cs_index_set_model(CsIndex *self, GList *model)
 {
+        g_debug("CS_INDEX >>> set model");
+        g_return_if_fail(IS_CS_INDEX (self));
+
         CsIndexPrivate *priv = CS_INDEX_GET_PRIVATE (self);
 
         gtk_entry_set_text(priv->filter_entry, "");

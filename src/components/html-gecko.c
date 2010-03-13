@@ -210,6 +210,7 @@ gecko_location_cb(GtkMozEmbed *embed, CsHtmlGecko *html)
         char *location;
 
         location = gtk_moz_embed_get_location(embed);
+        g_debug("CS_HTML_GECKO >>> send location changed signal");
         g_signal_emit(html, signals[LOCATION_CHANGED], 0, location);
         g_free(location);
 }
@@ -217,10 +218,9 @@ gecko_location_cb(GtkMozEmbed *embed, CsHtmlGecko *html)
 static gboolean
 gecko_open_uri_cb(GtkMozEmbed *embed, const gchar *uri, CsHtmlGecko *html)
 {
-        gboolean ret_val;
+        gboolean ret_val = TRUE;
 
-        ret_val = TRUE;
-
+        g_debug("CS_HTML_GECKO >>> send open-uri signal");
         g_signal_emit(html, signals[OPEN_URI], 0, uri, &ret_val);
 
         /* Reset current url */

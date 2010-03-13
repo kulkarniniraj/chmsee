@@ -102,7 +102,7 @@ cs_bookmarks_init(CsBookmarks *self)
                                        GTK_POLICY_NEVER,
                                        GTK_POLICY_AUTOMATIC);
 
-        priv->treeview = GTK_WIDGET (cs_tree_view_new());
+        priv->treeview = GTK_WIDGET (cs_tree_view_new(FALSE));
 
         g_signal_connect_swapped(priv->treeview,
                                  "link-selected",
@@ -140,7 +140,7 @@ cs_bookmarks_init(CsBookmarks *self)
 
         gtk_box_pack_end(GTK_BOX (hbox), priv->add_button, TRUE, TRUE, 0);
         gtk_box_pack_end(GTK_BOX (hbox), priv->remove_button, TRUE, TRUE, 0);
-        //gtk_widget_set_sensitive(self->add_button, TRUE); FIXME: set sensitive
+        /* gtk_widget_set_sensitive(priv->remove_button, FALSE); */ // FIXME: set sensitive
 
         gtk_box_pack_start(GTK_BOX (self), hbox, FALSE, FALSE, 2);
 
@@ -153,6 +153,7 @@ cs_bookmarks_init(CsBookmarks *self)
 static void
 cs_bookmarks_finalize(GObject *object)
 {
+        g_debug("CS_BOOKMARKS >>> finalize");
         CsBookmarks        *self = CS_BOOKMARKS (object);
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
 
@@ -168,7 +169,7 @@ static void
 link_selected_cb(CsBookmarks *self, Link *link)
 {
         if (link) {
-                g_debug("CS_BOOKMARKS: Emiting link-selected signal");
+                g_debug("CS_BOOKMARKS >>> Emiting link-selected signal");
                 g_signal_emit(self, signals[LINK_SELECTED], 0, link);
         }
 }
@@ -190,17 +191,14 @@ entry_changed_cb(GtkEntry *entry, CsBookmarks *self)
 static void
 on_bookmarks_add(CsBookmarks *self)
 {
-        gchar *name;
-        GList *found_link;
-        Link  *link;
-
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
 
-        g_debug("CS_BOOKMARKS: add button clicked");
+        g_debug("CS_BOOKMARKS >>> add button clicked");
 
-        name = g_strdup(gtk_entry_get_text(GTK_ENTRY (priv->entry)));
+        gchar *name = g_strdup(gtk_entry_get_text(GTK_ENTRY (priv->entry)));
+        GList *found_link = g_list_find_custom(priv->links, priv->current_uri, link_uri_compare);
 
-        found_link = g_list_find_custom(priv->links, priv->current_uri, link_uri_compare);
+        Link  *link;
 
         if (found_link) {
                 /* update exist bookmark name */
@@ -216,7 +214,7 @@ on_bookmarks_add(CsBookmarks *self)
                 /* new bookmark */
                 link = link_new(LINK_TYPE_PAGE, name, priv->current_uri);
                 priv->links = g_list_append(priv->links, link);
-                
+
                 cs_tree_view_add_link(CS_TREE_VIEW (priv->treeview), link);
         }
 
@@ -229,13 +227,19 @@ on_bookmarks_remove(CsBookmarks *self)
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
 
         Link *link = cs_tree_view_get_selected_link(CS_TREE_VIEW (priv->treeview));
+        if (!link)
+                return;
 
-        if(g_list_find(priv->links, link)) {
-                cs_tree_view_remove_link(CS_TREE_VIEW (priv->treeview), link);
+        cs_tree_view_remove_link(CS_TREE_VIEW (priv->treeview), link);
 
-                priv->links = g_list_remove(priv->links, link);
-                link_free(link); //FIXME: right place?
+        GList *list = g_list_find_custom(priv->links, link->uri, link_uri_compare);
+        Link *found_link = (Link *)list->data;
+
+        if (found_link) {
+                priv->links = g_list_remove(priv->links, found_link);
+                link_free(found_link); //FIXME: right place?
         }
+        link_free(link);
 }
 
 /* Internal functions */
@@ -251,7 +255,7 @@ link_uri_compare(gconstpointer a, gconstpointer b) //FIXME: move to link.c
 GtkWidget *
 cs_bookmarks_new(void)
 {
-        g_debug("CS_BOOKMARKS >>> create");
+        g_message("CS_BOOKMARKS >>> create");
         CsBookmarks *self = g_object_new(CS_TYPE_BOOKMARKS, NULL);
 
         return GTK_WIDGET (self);
@@ -260,6 +264,9 @@ cs_bookmarks_new(void)
 void
 cs_bookmarks_set_model(CsBookmarks* self, GList* model)
 {
+        g_debug("CS_BOOKMARKS >>> set model");
+        g_return_if_fail(IS_CS_BOOKMARKS (self));
+
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
 
         priv->links = model;
@@ -267,8 +274,16 @@ cs_bookmarks_set_model(CsBookmarks* self, GList* model)
         gtk_entry_set_text(GTK_ENTRY (priv->entry), "");
 }
 
+GList *
+cs_bookmarks_get_model(CsBookmarks *self)
+{
+        g_return_val_if_fail(IS_CS_BOOKMARKS (self), NULL);
+
+        return CS_BOOKMARKS_GET_PRIVATE (self)->links;
+}
+
 void
-cs_bookmarks_set_current_link(CsBookmarks *self, Link *link)
+cs_bookmarks_set_current_link(CsBookmarks *self, const Link *link)
 {
         g_return_if_fail(IS_CS_BOOKMARKS (self));
 
@@ -282,6 +297,7 @@ cs_bookmarks_set_current_link(CsBookmarks *self, Link *link)
 
         g_free(priv->current_uri);
 
+        g_debug("CS_BOOKMARKS >>> set current link = %s", link->uri);
         priv->current_uri = g_strdup(link->uri);
 }
 
@@ -292,4 +308,3 @@ cs_bookmarks_grab_focus(CsBookmarks *self)
 
         gtk_widget_grab_focus(CS_BOOKMARKS_GET_PRIVATE (self)->entry);
 }
-

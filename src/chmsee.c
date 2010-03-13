@@ -92,6 +92,7 @@ static const char *ui_description =
         "      <menuitem action='SelectAll'/>"
         "      <menuitem action='Copy'/>"
         "      <separator/>"
+        "      <menuitem action='Find'/>"
         "      <menuitem action='Preferences'/>"
         "    </menu>"
         "    <menu action='ViewMenu'>"
@@ -148,7 +149,6 @@ static void chmsee_dispose(GObject *);
 static gboolean delete_cb(GtkWidget *, GdkEvent *, Chmsee *);
 static void destroy_cb(GtkWidget *, Chmsee *);
 static gboolean scroll_event_cb(Chmsee *, GdkEventScroll *);
-static void map_cb(Chmsee *);
 static gboolean window_state_event_cb(Chmsee *, GdkEventWindowState *);
 static gboolean configure_event_cb(GtkWidget *, GdkEventConfigure *, Chmsee *);
 static void book_model_changed_cb(Chmsee *, CsChmfile *);
@@ -174,6 +174,7 @@ static void on_about(GtkWidget *);
 static void on_copy(GtkWidget *, Chmsee *);
 static void on_copy_page_location(GtkWidget*, Chmsee*);
 static void on_select_all(GtkWidget *, Chmsee *);
+static void on_find(GtkWidget *, Chmsee *);
 static void on_context_copy_link(GtkWidget *, Chmsee *);
 static void on_keyboard_escape(GtkWidget *, Chmsee *);
 static void on_fullscreen_toggled(GtkWidget *, Chmsee *);
@@ -189,7 +190,6 @@ static void chmsee_open_draged_file(Chmsee *, const gchar *);
 static void chmsee_drag_data_received(GtkWidget *, GdkDragContext *, gint, gint,
                                       GtkSelectionData *, guint, guint);
 static void update_status_bar(Chmsee *, const gchar *);
-static int  get_hpaned_position(Chmsee *);
 static void fullscreen(Chmsee *);
 static void unfullscreen(Chmsee *);
 
@@ -206,13 +206,15 @@ static const GtkActionEntry entries[] = {
         { "Exit", GTK_STOCK_QUIT, "E_xit", "<control>Q", "Exit the program", G_CALLBACK(destroy_cb)},
 
         { "Copy", GTK_STOCK_COPY, "_Copy", "<control>C", NULL, G_CALLBACK(on_copy)},
-        { "Preferences", GTK_STOCK_PREFERENCES, "_Preferences", NULL, NULL, G_CALLBACK(on_setup)},
+        { "Find", GTK_STOCK_FIND, "_Find", "<control>F", NULL, G_CALLBACK(on_find)},
+
+        { "Preferences", GTK_STOCK_PREFERENCES, "_Preferences", NULL, "Preferences", G_CALLBACK(on_setup)},
 
         { "Home", GTK_STOCK_HOME, "_Home", NULL, NULL, G_CALLBACK(on_home)},
         { "Back", GTK_STOCK_GO_BACK, "_Back", "<alt>Left", NULL, G_CALLBACK(on_back)},
         { "Forward", GTK_STOCK_GO_FORWARD, "_Forward", "<alt>Right", NULL, G_CALLBACK(on_forward)},
 
-        { "About", GTK_STOCK_ABOUT, "_About", NULL, NULL, G_CALLBACK(on_about)},
+        { "About", GTK_STOCK_ABOUT, "_About", NULL, "About", G_CALLBACK(on_about)},
 
         { "ZoomIn", GTK_STOCK_ZOOM_IN, "Zoom _In", "<control>plus", NULL, G_CALLBACK(on_zoom_in)},
         { "ZoomReset", GTK_STOCK_ZOOM_100, "Normal Size", "<control>0", NULL, G_CALLBACK(on_zoom_reset)},
@@ -230,7 +232,7 @@ static const GtkActionEntry entries[] = {
 /* Toggle items */
 static const GtkToggleActionEntry toggle_entries[] = {
         { "FullScreen", NULL, "_Full Screen", "F11", "Switch between full screen and windowed mode", G_CALLBACK(on_fullscreen_toggled), FALSE },
-        { "SidePane", NULL, "Side _Pane", "F9", NULL, G_CALLBACK(on_sidepane_toggled), TRUE }
+        { "SidePane", NULL, "Side _Pane", "F9", NULL, G_CALLBACK(on_sidepane_toggled), FALSE }
 };
 
 /* Radio items */
@@ -285,11 +287,11 @@ chmsee_init(Chmsee *self)
 
         /* quit event handle */
         g_signal_connect(G_OBJECT (self),
-                         "delete_event",
+                         "delete-event",
                          G_CALLBACK (delete_cb),
                          self);
         g_signal_connect(G_OBJECT (self),
-                         "destroy",
+                         "destroy-event",
                          G_CALLBACK (destroy_cb),
                          self);
 
@@ -309,9 +311,17 @@ chmsee_dispose(GObject *gobject)
         Chmsee        *self = CHMSEE(gobject);
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        g_object_unref(priv->chmfile);
-        g_object_unref(priv->action_group);
-        g_object_unref(priv->ui_manager);
+        if (priv->chmfile) {
+                g_object_unref(priv->chmfile);
+                priv->chmfile = NULL;
+        }
+
+        if (priv->action_group) {
+                g_object_unref(priv->action_group);
+                g_object_unref(priv->ui_manager);
+                priv->action_group = NULL;
+                priv->ui_manager = NULL;
+        }
 
         G_OBJECT_CLASS(chmsee_parent_class)->dispose(gobject);
 }
@@ -324,7 +334,7 @@ chmsee_finalize(GObject *object)
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
         g_free(priv->context_menu_link);
-        //FIXME: call chmsee_quit?
+
         G_OBJECT_CLASS (chmsee_parent_class)->finalize (object);
 }
 
@@ -334,6 +344,7 @@ static gboolean
 delete_cb(GtkWidget *widget, GdkEvent *event, Chmsee *self)
 {
         g_debug("Chmsee >>> window delete");
+        chmsee_quit(self);
         return FALSE;
 }
 
@@ -360,20 +371,6 @@ scroll_event_cb(Chmsee *self, GdkEventScroll *event)
         }
 
         return FALSE;
-}
-
-static void
-map_cb(Chmsee *self)
-{
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-
-        g_debug("Chmsee >>> before map_cb config = %p", priv->config);
-        if (priv->config->hpaned_pos >= 0 && priv->book) {
-                g_object_set(G_OBJECT (priv->book),
-                             "position", priv->config->hpaned_pos,
-                             NULL
-                        );
-        }
 }
 
 static gboolean
@@ -417,13 +414,8 @@ window_state_event_cb(Chmsee *self, GdkEventWindowState *event)
 static gboolean
 configure_event_cb(GtkWidget *widget, GdkEventConfigure *event, Chmsee *self)
 {
-        g_debug("Chmsee >>> configure event callback event = %p", event);
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        g_debug("Chmsee >>> configure event callback event->width = %d", event->width);
-        g_debug("Chmsee >>> configure event callback priv->config->width = %d", priv->config->width);
-        g_debug("Chmsee >>> configure event callback event->height = %d", event->height);
-        g_debug("Chmsee >>> configure event callback priv->cinfig->height = %d", priv->config->height);
         if (event->width != priv->config->width || event->height != priv->config->height) {
                 if (priv->chmfile)
                         cs_book_reload_current_page(CS_BOOK (priv->book));
@@ -450,6 +442,7 @@ book_model_changed_cb(Chmsee *self, CsChmfile *chmfile)
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "NewTab"), has_model);
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "CloseTab"), has_model);
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Home"), has_model);
+        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Find"), has_model);
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "SidePane"), has_model);
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "ZoomIn"), has_model);
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "ZoomOut"), has_model);
@@ -617,6 +610,7 @@ on_setup(GtkWidget *widget, Chmsee *self)
 static void
 on_back(GtkWidget *widget, Chmsee *self)
 {
+        g_debug("Chmsee >>> On back");
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_go_back(CS_BOOK (priv->book));
 }
@@ -624,6 +618,7 @@ on_back(GtkWidget *widget, Chmsee *self)
 static void
 on_forward(GtkWidget *widget, Chmsee *self)
 {
+        g_debug("Chmsee >>> On forward");
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_go_forward(CS_BOOK (priv->book));
 }
@@ -752,16 +747,25 @@ on_fullscreen_toggled(GtkWidget *menu, Chmsee *self)
 static void
 on_sidepane_toggled(GtkWidget *menu, Chmsee *self)
 {
-        g_return_if_fail(IS_CHMSEE(self));
+        g_return_if_fail(IS_CHMSEE (self));
+
         gboolean active;
-        g_object_get(G_OBJECT(menu),
+        g_object_get(G_OBJECT (menu),
                      "active", &active,
                      NULL);
-        if(active) {
+        if (active) {
                 show_sidepane(self);
         } else {
                 hide_sidepane(self);
         }
+}
+
+static void
+on_find(GtkWidget *widget, Chmsee *self)
+{
+        g_debug("Chmsee >>> On Find");
+        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
+        cs_book_findbar_show(CS_BOOK (priv->book));
 }
 
 /* internal functions */
@@ -769,12 +773,13 @@ on_sidepane_toggled(GtkWidget *menu, Chmsee *self)
 static void
 chmsee_quit(Chmsee *self)
 {
-        g_debug("Chmsee >>> chmsee quit");
+        g_message("Chmsee >>> quit");
 
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
         cs_html_gecko_shutdown_system();
         priv->config->hpaned_pos = cs_book_get_hpaned_position(CS_BOOK (priv->book));
+        gtk_widget_destroy(GTK_WIDGET (self));
         gtk_main_quit();
 }
 
@@ -837,6 +842,9 @@ populate_windows(Chmsee *self)
 
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "NewTab"), FALSE);
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "CloseTab"), FALSE);
+        gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "Copy"), FALSE);
+        gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "SelectAll"), FALSE);
+        gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "Find"), FALSE);
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "Home"), FALSE);
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "Back"), FALSE);
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "Forward"), FALSE);
@@ -869,7 +877,7 @@ populate_windows(Chmsee *self)
         priv->toolbar = toolbar;
         gtk_container_add(GTK_CONTAINER(toolbar), gtk_ui_manager_get_widget(ui_manager, "/toolbar"));
         gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
-
+        gtk_toolbar_set_style(GTK_TOOLBAR (gtk_ui_manager_get_widget(ui_manager, "/toolbar")), GTK_TOOLBAR_ICONS);
         gtk_tool_button_set_icon_widget(
                 GTK_TOOL_BUTTON(gtk_ui_manager_get_widget(ui_manager, "/toolbar/sidepane")),
                 gtk_image_new_from_file(RESOURCE_FILE ("show-pane.png")));
@@ -894,7 +902,7 @@ populate_windows(Chmsee *self)
         
         update_status_bar(self, _("Ready!"));
         gtk_widget_show_all(GTK_WIDGET (self));
-
+        cs_book_findbar_hide(CS_BOOK (priv->book));
         g_debug("Chmsee >>> populate window finished.");
 }
 
@@ -949,7 +957,7 @@ set_sidepane_state(Chmsee *self, gboolean state)
 };
 
 static void
-show_sidepane(Chmsee *self) //FIXME: toggle with config->hpanded_pos?
+show_sidepane(Chmsee *self) //FIXME: toggle with config->hpaned_pos?
 {
         set_sidepane_state(self, TRUE);
 }
@@ -975,7 +983,7 @@ fullscreen(Chmsee *self)
 static void
 unfullscreen(Chmsee *self)
 {
-        g_debug("Chmsee >>> enter unfullscreen");
+        g_message("Chmsee >>> enter unfullscreen");
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
         priv->config->fullscreen = FALSE;
@@ -984,28 +992,13 @@ unfullscreen(Chmsee *self)
         gtk_widget_show(priv->statusbar);
 }
 
-static int 
-get_hpaned_position(Chmsee *self)
-{
-        gint position;
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-
-        g_object_get(G_OBJECT(priv->book),
-                     "position", &position,
-                     NULL
-                );
-        return position;
-}
-
 /* External functions */
 
 Chmsee *
 chmsee_new(CsConfig *config)
 {
-        g_debug("Chmsee >>> create with config = %p", config);
         Chmsee        *self = g_object_new(CHMSEE_TYPE, NULL);
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        g_debug("Chmsee >>> after object new");
 
         priv->config = config;
 
@@ -1022,10 +1015,8 @@ chmsee_new(CsConfig *config)
         gtk_window_set_title(GTK_WINDOW (self), "ChmSee");
         gtk_window_set_icon_from_file(GTK_WINDOW (self), RESOURCE_FILE ("chmsee-icon.png"), NULL);
 
-        g_signal_connect(G_OBJECT (self),
-                         "map",
-                         G_CALLBACK (map_cb),
-                         NULL);
+        cs_book_set_hpaned_position(CS_BOOK (priv->book), config->hpaned_pos);
+        hide_sidepane(self);
 
         /* widget size changed event handle */
         g_signal_connect(G_OBJECT (self),
@@ -1033,7 +1024,7 @@ chmsee_new(CsConfig *config)
                          G_CALLBACK (configure_event_cb),
                          self);
 
-        g_debug("Chmsee >>> created");
+        g_message("Chmsee >>> created");
         return self;
 }
 
@@ -1062,6 +1053,7 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
                 
                 cs_book_set_model(CS_BOOK (priv->book), priv->chmfile);
 
+                gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON (gtk_ui_manager_get_widget(priv->ui_manager, "/toolbar/sidepane")), TRUE);
                 gtk_container_set_focus_child(GTK_CONTAINER(self), priv->book); //FIXME: set focus
 
                 g_signal_connect_swapped(priv->book,

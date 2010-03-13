@@ -11,6 +11,6 @@ install(FILES chmsee-icon.png DESTINATION share/pixmaps)
 install(FILES
         book-closed.png book-open.png chmsee-icon.png chmsee-splash.png
         helpdoc.png hide-pane.png show-pane.png
-        about-dialog.ui main-box.ui openfile-dialog.ui setup-window.ui
+        about-dialog.ui openfile-dialog.ui setup-window.ui
         default-prefs.js
         DESTINATION share/chmsee)

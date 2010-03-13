@@ -30,7 +30,7 @@ G_BEGIN_DECLS
 #define CS_TYPE_INDEX        (cs_index_get_type())
 #define CS_INDEX(o)          (G_TYPE_CHECK_INSTANCE_CAST ((o), CS_TYPE_INDEX, CsIndex))
 #define CS_INDEX_CLASS(k)    (G_TYPE_CHECK_CLASS_CAST    ((k), CS_TYPE_INDEX, CsIndexClass))
-#define CS_IS_INDEX(o)       (G_TYPE_CHECK_INSTANCE_TYPE ((o), CS_TYPE_INDEX))
+#define IS_CS_INDEX(o)       (G_TYPE_CHECK_INSTANCE_TYPE ((o), CS_TYPE_INDEX))
 #define IS_CS_INDEX_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE    ((k), CS_TYPE_INDEX))
 
 typedef struct _CsIndex      CsIndex;

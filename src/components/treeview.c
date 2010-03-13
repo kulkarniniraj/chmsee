@@ -93,12 +93,9 @@ cs_tree_view_init(CsTreeView *self)
 {
         CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
 
-        priv->store = gtk_list_store_new(N_COLUMNS,
-                                         G_TYPE_STRING,
-                                         G_TYPE_STRING);
-
+        priv->store = NULL;
+        priv->filter_model = NULL;
         priv->filter_string = NULL;
-        apply_filter_model(self);
 
         GtkCellRenderer *cell = gtk_cell_renderer_text_new();
         g_object_set(cell,
@@ -112,8 +109,8 @@ cs_tree_view_init(CsTreeView *self)
                                                     NULL);
 
         gtk_tree_view_set_headers_visible(GTK_TREE_VIEW (self), FALSE);
-        gtk_tree_view_set_enable_search(GTK_TREE_VIEW (self), TRUE);
-        gtk_tree_view_set_search_column(GTK_TREE_VIEW (self), TRUE);
+        gtk_tree_view_set_enable_search(GTK_TREE_VIEW (self), FALSE);
+        gtk_tree_view_set_search_column(GTK_TREE_VIEW (self), FALSE);
 
         GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (self));
         gtk_tree_selection_set_mode(selection, GTK_SELECTION_BROWSE);
@@ -136,8 +133,16 @@ cs_tree_view_dispose(GObject *object)
         g_debug("CS_TREE_VIEW >>> dispose");
         CsTreeView        *self = CS_TREE_VIEW (object);
         CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
-        g_object_unref(priv->store);
-        g_object_unref(priv->filter_model);
+
+        if (priv->store) {
+                g_object_unref(priv->store);
+                priv->store = NULL;
+        }
+
+        if (priv->filter_model) {
+                g_object_unref(priv->filter_model);
+                priv->filter_model = NULL;
+        }
 
         G_OBJECT_CLASS (cs_tree_view_parent_class)->dispose(object);
 }
@@ -148,7 +153,9 @@ cs_tree_view_finalize(GObject *object)
         g_debug("CS_TREE_VIEW >>> finalize");
         CsTreeView        *self = CS_TREE_VIEW (object);
         CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
-        g_free(priv->filter_string);
+
+        if (priv->filter_string)
+                g_free(priv->filter_string);
 
         G_OBJECT_CLASS (cs_tree_view_parent_class)->finalize(object);
 }
@@ -173,14 +180,14 @@ row_activated_cb(CsTreeView *self, GtkTreePath *path, GtkTreeViewColumn *column)
 
         Link *link = link_new(LINK_TYPE_PAGE, title, uri);
 
-        g_debug("Emiting signal from CS_TREE_VIEW with link: name = %s uri = %s\n", link->name, link->uri);
+        g_debug("CS_TREE_VIEW >>> row activated, link: name = %s uri = %s\n", link->name, link->uri);
         g_signal_emit(self, signals[LINK_SELECTED], 0, link);
 }
 
 static void
 selection_changed_cb(GtkTreeSelection *selection, CsTreeView *self)
 {
-        g_debug("CS_TREE_VIEW >>> selection_changed");
+        g_debug("CS_TREE_VIEW >>> selection changed");
 }
 
 /* Internal functions */
@@ -188,25 +195,22 @@ selection_changed_cb(GtkTreeSelection *selection, CsTreeView *self)
 static gboolean
 visible_func(GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
 {
-        gchar        *text;
-        gchar        *key;
-        gchar        *normalized_string;
-        gchar        *case_normalized_string;
-        gboolean      ret = FALSE;
-
         CsTreeView        *self = CS_TREE_VIEW (data);
         CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
 
         if (priv->filter_string == NULL)
                 return TRUE;
 
+        gchar *text;
+
         gtk_tree_model_get(model, iter, COL_TITLE, &text, -1);
 
-        key = priv->filter_string;
+        gboolean ret = FALSE;
+        gchar   *key = priv->filter_string;
 
         if (text) {
-                normalized_string = g_utf8_normalize(text, -1, G_NORMALIZE_ALL);
-                case_normalized_string = g_utf8_casefold(normalized_string, -1);
+                gchar *normalized_string = g_utf8_normalize(text, -1, G_NORMALIZE_ALL);
+                gchar *case_normalized_string = g_utf8_casefold(normalized_string, -1);
 
                 if (!strncasecmp(key, case_normalized_string, strlen(key)))
                         ret = TRUE;
@@ -222,6 +226,7 @@ visible_func(GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
 static void
 apply_filter_model(CsTreeView *self)
 {
+        g_debug("CS_TREEVIEW >>> apply filter model");
         CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
 
         priv->filter_model = GTK_TREE_MODEL_FILTER (gtk_tree_model_filter_new(GTK_TREE_MODEL (priv->store), NULL));
@@ -238,23 +243,36 @@ apply_filter_model(CsTreeView *self)
 /* External functions */
 
 GtkWidget *
-cs_tree_view_new(void)
+cs_tree_view_new(gboolean with_filter)
 {
         g_debug("CS_TREE_VIEW >>> create");
-        return GTK_WIDGET (g_object_new(CS_TYPE_TREE_VIEW, NULL));
+        CsTreeView *self = g_object_new(CS_TYPE_TREE_VIEW, NULL);
+        CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
+
+        priv->store = gtk_list_store_new(N_COLUMNS,
+                                         G_TYPE_STRING,
+                                         G_TYPE_STRING);
+        if (with_filter)
+                apply_filter_model(self);
+        else
+                gtk_tree_view_set_model(GTK_TREE_VIEW (self),
+                                        GTK_TREE_MODEL (priv->store));
+
+        return GTK_WIDGET (self);
 }
 
 void
 cs_tree_view_set_model(CsTreeView *self, GList *model)
 {
-        GtkTreeIter        iter;
-        GList             *l;
-
+        g_debug("CS_TREEVIEW >>> set model");
         g_return_if_fail(IS_CS_TREE_VIEW (self));
 
         CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
+        GtkTreeIter        iter;
+        GList             *l;
 
-        gtk_list_store_clear(priv->store);
+        if (priv->store)
+                gtk_list_store_clear(priv->store);
 
         for (l = model; l; l = l->next) {
                 Link *link = l->data;
@@ -270,6 +288,9 @@ cs_tree_view_set_model(CsTreeView *self, GList *model)
 void
 cs_tree_view_add_link(CsTreeView *self, Link *link)
 {
+        g_debug("CS_TREEVIEW >>> add link = %p", link);
+        g_return_if_fail(IS_CS_TREE_VIEW (self));
+
         GtkTreeIter        iter;
         CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
 
@@ -283,14 +304,17 @@ cs_tree_view_add_link(CsTreeView *self, Link *link)
 void
 cs_tree_view_remove_link(CsTreeView *self, Link *link)
 {
-        GtkTreeIter        iter;
-        gchar             *uri = NULL;
+        g_return_if_fail(IS_CS_TREE_VIEW (self));
+
         CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
+
+        GtkTreeIter        iter;
+        gchar             *uri;
 
         gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL (priv->store), &iter, "0");
 
         do {
-                gtk_tree_model_get(GTK_TREE_MODEL (priv->store), &iter, COL_URI, uri, -1);
+                gtk_tree_model_get(GTK_TREE_MODEL (priv->store), &iter, COL_URI, &uri, -1);
 
                 if (ncase_compare_utf8_string(link->uri, uri) == 0) {
                         gtk_list_store_remove(priv->store, &iter);
@@ -302,19 +326,23 @@ cs_tree_view_remove_link(CsTreeView *self, Link *link)
 Link *
 cs_tree_view_get_selected_link(CsTreeView *self)
 {
-        GtkTreeIter iter;
-        gchar *title, *uri;
-        Link *link = NULL;
+        g_return_val_if_fail(IS_CS_TREE_VIEW (self), NULL);
 
         CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
         GtkTreeSelection  *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (self));
 
+        GtkTreeIter iter;
+        Link *link = NULL;
+
         if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
+                gchar *title, *uri;
+
                 gtk_tree_model_get(GTK_TREE_MODEL (priv->store),
                                    &iter,
                                    COL_TITLE, &title,
                                    COL_URI, &uri,
                                    -1);
+
                 link = link_new(LINK_TYPE_PAGE, title, uri);
         }
 
@@ -324,19 +352,18 @@ cs_tree_view_get_selected_link(CsTreeView *self)
 void
 cs_tree_view_select_link(CsTreeView *self, Link *link)
 {
-        GtkTreeIter        iter;
-        gchar             *uri = NULL;
-
         g_return_if_fail(IS_CS_TREE_VIEW (self));
 
         CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
-
         GtkTreeSelection  *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (self));
+
+        GtkTreeIter        iter;
+        gchar             *uri;
 
         gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL (priv->store), &iter, "0");
 
         do {
-                gtk_tree_model_get(GTK_TREE_MODEL (priv->store), &iter, COL_URI, uri, -1);
+                gtk_tree_model_get(GTK_TREE_MODEL (priv->store), &iter, COL_URI, &uri, -1);
 
                 if (ncase_compare_utf8_string(link->uri, uri) == 0) {
                         gtk_tree_selection_select_iter(selection, &iter);
@@ -348,7 +375,13 @@ cs_tree_view_select_link(CsTreeView *self, Link *link)
 void
 cs_tree_view_set_filter_string(CsTreeView *self, const gchar *string)
 {
+        g_debug("CS_TREEVIEW >>> set filter string = %s", string);
+        g_return_if_fail(IS_CS_TREE_VIEW (self));
+
         CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
+
+        if (!priv->filter_model)
+                return;
 
         if (priv->filter_string) {
                 g_free(priv->filter_string);

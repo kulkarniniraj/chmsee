@@ -91,8 +91,9 @@ static void save_bookinfo(CsChmfile *);
 static void extract_post_file_write(const gchar *);
 
 static GNode *parse_hhc_file(const gchar *, const gchar*);
-static GList *parse_hhk_file(const gchar *, const gchar*);
+static void parse_hhk_file(CsChmfile *, const gchar *, const gchar*);
 static void tree_to_list_callback(GNode *, gpointer);
+static void free_list_data(gpointer, gpointer);
 
 /* GObject functions */
 
@@ -133,16 +134,12 @@ cs_chmfile_init(CsChmfile *self)
 static void
 cs_chmfile_finalize(GObject *object)
 {
-        g_debug("CS_CHMFILE >>> finalize");
+        g_message("CS_CHMFILE >>> finalize");
+
         CsChmfile        *self = CS_CHMFILE (object);
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
         save_bookinfo(self);
-
-        gchar *bookmarks_file = g_build_filename(priv->bookfolder, CHMSEE_BOOKMARKS_FILE, NULL);
-        cs_bookmarks_file_save(priv->bookmarks_list, bookmarks_file);
-        g_debug("CS_CHMFILE >>> after save bookmarks bookmarks_list = %p", priv->bookmarks_list);
-        g_free(bookmarks_file);
 
         g_free(priv->hhc);
         g_free(priv->hhk);
@@ -156,19 +153,19 @@ cs_chmfile_finalize(GObject *object)
         g_free(priv->fixed_font);
 
         if (priv->index_list) {
-                GList *l;
-                
-                for (l = priv->index_list; l; l = priv->index_list->next) {
-                        Link *link = l->data;
-                        link_free(link);
-                }
+                g_list_foreach(priv->index_list, (GFunc)free_list_data, NULL);
                 g_list_free(priv->index_list);
+
+                priv->index_list = NULL;
         }
 
         if (priv->toc_tree) {
                 g_node_destroy(priv->toc_tree);
+                priv->toc_tree = NULL;
         }
+        priv->bookmarks_list = NULL;
 
+        g_debug("CS_CHMFILE >>> finalized");
         G_OBJECT_CLASS (cs_chmfile_parent_class)->finalize (object);
 }
 
@@ -750,26 +747,33 @@ parse_hhc_file(const gchar *file, const gchar *encoding)
         return cs_parse_file(file, encoding);
 }
 
-static GList *
-parse_hhk_file(const gchar *file, const gchar *encoding)
+static void
+parse_hhk_file(CsChmfile *self, const gchar *file, const gchar *encoding)
 {
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+
         g_debug("CHMFILE >>> parse hhk file = %s, encoding = %s", file, encoding);
-        GList *list = NULL;
 
         GNode *tree = cs_parse_file(file, encoding);
+        g_debug("CHMFILE >>> parse hhk file tree = %p", tree);
 
         /* convert GNode to GList */
-        g_node_children_foreach(tree, G_TRAVERSE_LEAVES, tree_to_list_callback, list);
+        g_node_children_foreach(tree, G_TRAVERSE_LEAVES, tree_to_list_callback, priv);
         g_node_destroy(tree);
-        
-        return list;
 }
 
 static void
 tree_to_list_callback(GNode *node, gpointer data)
 {
-        GList *list = (GList *)data;
-        list = g_list_append(list, node->data);
+        CsChmfilePrivate *priv = (CsChmfilePrivate *)data;
+        priv->index_list = g_list_append(priv->index_list, node->data);
+}
+
+static void
+free_list_data(gpointer data, gpointer user_data)
+{
+        Link *link = (Link *)data;
+        link_free(link);
 }
 
 static void
@@ -811,10 +815,14 @@ save_bookinfo(CsChmfile *self)
 
         GKeyFile *keyfile = g_key_file_new();
 
-        g_key_file_set_string(keyfile, "Bookinfo", "hhc", priv->hhc);
-        g_key_file_set_string(keyfile, "Bookinfo", "hhk", priv->hhk);
-        g_key_file_set_string(keyfile, "Bookinfo", "homepage", priv->homepage);
-        g_key_file_set_string(keyfile, "Bookinfo", "bookname", priv->bookname);
+        if (priv->hhc)
+                g_key_file_set_string(keyfile, "Bookinfo", "hhc", priv->hhc);
+        if (priv->hhk)
+                g_key_file_set_string(keyfile, "Bookinfo", "hhk", priv->hhk);
+        if (priv->homepage)
+                g_key_file_set_string(keyfile, "Bookinfo", "homepage", priv->homepage);
+        if (priv->bookname)
+                g_key_file_set_string(keyfile, "Bookinfo", "bookname", priv->bookname);
         g_key_file_set_string(keyfile, "Bookinfo", "encoding", priv->encoding);
         g_key_file_set_string(keyfile, "Bookinfo", "variable_font", priv->variable_font);
         g_key_file_set_string(keyfile, "Bookinfo", "fixed_font", priv->fixed_font);
@@ -864,6 +872,7 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
 
         g_debug("CS_CHMFILE >>> priv->hhc = %s", priv->hhc);
         g_debug("CS_CHMFILE >>> priv->hhk = %s", priv->hhk);
+        g_debug("CS_CHMFILE >>> priv->hhk p= %p", priv->hhk);
         g_debug("CS_CHMFILE >>> priv->homepage = %s", priv->homepage);
         g_debug("CS_CHMFILE >>> priv->bookname = %s", priv->bookname);
         g_debug("CS_CHMFILE >>> priv->endcoding = %s", priv->encoding);
@@ -885,7 +894,8 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
                 gchar* path = g_build_filename(priv->bookfolder, priv->hhk, NULL);
                 gchar* path2 = correct_filename(path);
 
-                priv->index_list = parse_hhk_file(path2, priv->encoding);
+                parse_hhk_file(self, path2, priv->encoding);
+                g_debug("CS_CHMFILE >>> priv->index_list = %p", priv->index_list);
 
                 g_free(path);
                 g_free(path2);
@@ -897,7 +907,6 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
 
         g_free(bookmarks_file);
         g_free(md5);
-        g_debug("CS_CHMFILE >>> created %p", self);
 
         return self;
 }
@@ -919,6 +928,21 @@ cs_chmfile_get_bookmarks_list(CsChmfile *self)
 {
         return CS_CHMFILE_GET_PRIVATE (self)->bookmarks_list;
 }
+
+void
+cs_chmfile_update_bookmarks_list(CsChmfile *self, GList *links)
+{
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+        priv->bookmarks_list = links;
+
+        gchar *bookmarks_file = g_build_filename(priv->bookfolder, CHMSEE_BOOKMARKS_FILE, NULL);
+        guint length = g_list_length(priv->bookmarks_list);
+        g_debug("CS_CHMFILE >>> before save bookmarks bookmarks_list = %p, length = %d", priv->bookmarks_list, length);
+        cs_bookmarks_file_save(priv->bookmarks_list, bookmarks_file);
+        g_debug("CS_CHMFILE >>> after save bookmarks bookmarks_list = %p", priv->bookmarks_list);
+        g_free(bookmarks_file);
+}
+
 
 const gchar *
 cs_chmfile_get_filename(CsChmfile *self)

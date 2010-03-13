@@ -72,6 +72,10 @@ void         cs_book_select_all(CsBook *);
 
 const gchar *cs_book_get_location(CsBook *);
 int          cs_book_get_hpaned_position(CsBook *);
+void         cs_book_set_hpaned_position(CsBook *, gint);
+
+void         cs_book_findbar_show(CsBook *);
+void         cs_book_findbar_hide(CsBook *);
 
 G_END_DECLS
 

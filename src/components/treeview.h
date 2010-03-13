@@ -48,16 +48,15 @@ struct _CsTreeViewClass {
 };
 
 GType      cs_tree_view_get_type(void);
-GtkWidget *cs_tree_view_new(void);
+GtkWidget *cs_tree_view_new(gboolean);
 
 void       cs_tree_view_set_model(CsTreeView *, GList *);
+void       cs_tree_view_set_filter_string(CsTreeView *, const gchar *);
 
 void       cs_tree_view_add_link(CsTreeView *, Link *);
 void       cs_tree_view_remove_link(CsTreeView *, Link *);
 void       cs_tree_view_select_link(CsTreeView *, Link *);
-
 Link      *cs_tree_view_get_selected_link(CsTreeView *);
-void       cs_tree_view_set_filter_string(CsTreeView *, const gchar *);
 
 G_END_DECLS
 

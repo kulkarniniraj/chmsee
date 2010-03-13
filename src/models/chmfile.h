@@ -50,6 +50,7 @@ CsChmfile  *cs_chmfile_new(const gchar *, const gchar *);
 GNode       *cs_chmfile_get_toc_tree(CsChmfile *);
 GList       *cs_chmfile_get_bookmarks_list(CsChmfile *);
 GList       *cs_chmfile_get_index_list(CsChmfile *);
+void         cs_chmfile_update_bookmarks_list(CsChmfile *, GList *);
 
 const gchar *cs_chmfile_get_bookfolder(CsChmfile *);
 const gchar *cs_chmfile_get_filename(CsChmfile *);
