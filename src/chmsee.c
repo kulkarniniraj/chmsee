@@ -722,12 +722,14 @@ on_context_copy_link(GtkWidget *widget, Chmsee *self)
 static void
 on_keyboard_escape(GtkWidget *widget, Chmsee *self)
 {
+        g_debug("Chmsee >>> press ESC key");
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
         if (priv->config->fullscreen) {
                 chmsee_set_fullscreen(self, FALSE);
         } else {
-                gtk_window_iconify(GTK_WINDOW (self));
+                cs_book_findbar_hide(priv->book);
+                /* gtk_window_iconify(GTK_WINDOW (self)); */
         }
 }
 
@@ -1147,8 +1149,12 @@ chmsee_close_book(Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        gtk_window_set_title(GTK_WINDOW (self), "Chmsee");
-        gtk_widget_set_sensitive(priv->book, FALSE);
+        if (priv->chmfile) {
+                g_object_unref(priv->chmfile);
+                priv->chmfile = NULL;
+        }
+
+        book_model_changed_cb(self, NULL);
 
         priv->state = CHMSEE_STATE_NORMAL;
 }

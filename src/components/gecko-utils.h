@@ -60,6 +60,7 @@ void gecko_utils_select_all(GtkMozEmbed *);
 void gecko_utils_copy_selection(GtkMozEmbed *);
 gfloat gecko_utils_get_zoom(GtkMozEmbed *);
 void gecko_utils_set_zoom(GtkMozEmbed *, gfloat);
+gboolean gecko_utils_find(GtkMozEmbed *, const gchar *, gboolean, gboolean);
 
 G_END_DECLS
 

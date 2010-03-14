@@ -190,7 +190,7 @@ gecko_utils_init(void)
 
         char xpcomLocation[PATH_MAX];
 
-        rv = GRE_GetGREPathWithProperties(&greVersion, 1, nsnull, 0, 
+        rv = GRE_GetGREPathWithProperties(&greVersion, 1, nsnull, 0,
                                           xpcomLocation, sizeof(xpcomLocation));
         if (NS_FAILED (rv))
         {
@@ -323,29 +323,44 @@ gecko_utils_set_default_lang(gint type)
                 gecko_prefs_set_string("intl.charset.detector", lang[type]);
 }
 
+extern "C" gboolean
+gecko_utils_find(GtkMozEmbed *embed, const gchar *str, gboolean backward, gboolean match_case)
+{
+        g_debug("GECKO_UTILS >>> find string = %s", str);
+
+        nsCOMPtr<nsIWebBrowser> webBrowser;
+        gtk_moz_embed_get_nsIWebBrowser(embed, getter_AddRefs(webBrowser));
+
+        nsCOMPtr<nsIWebBrowserFind> finder = do_GetInterface(webBrowser);
+        if (finder) {
+                finder->SetFindBackwards(backward);
+                finder->SetMatchCase(match_case);
+                finder->SetWrapFind(PR_TRUE);
+
+                nsString sstr = NS_ConvertASCIItoUTF16(str);
+                finder->SetSearchString(PromiseFlatString(sstr).get());
+
+                PRBool rv;
+                finder->FindNext(&rv);
+                if (rv == PR_TRUE)
+                        return TRUE;
+        }
+
+        return FALSE;
+}
+
 extern "C" void
 gecko_utils_select_all(GtkMozEmbed *embed)
 {
         nsCOMPtr<nsIWebBrowser> webBrowser;
         gtk_moz_embed_get_nsIWebBrowser(embed, getter_AddRefs(webBrowser));
 
-        // nsCOMPtr<nsIClipboardCommands> clipboard = do_GetInterface(webBrowser);
+        nsCOMPtr<nsIClipboardCommands> clipboard = do_GetInterface(webBrowser);
 
-        // if (!clipboard)
-        //         g_warning("could not get ClipboardCommands Interface.");
-        // else
-        //         clipboard->SelectAll();
-
-        nsCOMPtr<nsIWebBrowserFind> finder = do_GetInterface(webBrowser);
-        if (finder) {
-                // nsString sstr;
-                // sstr.Assign(NS_LITERAL_STRING("emacs"));
-                // NS_NAMED_LITERAL_STRING(sstr, "emacs");
-                // finder->SetSearchString(PromiseFlatString(sstr).get());
-                finder->SetSearchString(NS_LITERAL_STRING("emacs").get());
-                PRBool rv;
-                finder->FindNext(&rv);
-        }
+        if (!clipboard)
+                g_warning("could not get ClipboardCommands Interface.");
+        else
+                clipboard->SelectAll();
 }
 
 extern "C" void

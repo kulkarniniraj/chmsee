@@ -66,7 +66,6 @@ typedef struct _CsBookPrivate CsBookPrivate;
 struct _CsBookPrivate {
         GtkWidget       *hpaned;
         GtkWidget       *findbar;
-        GtkWidget       *find_entry;
 
         GtkWidget       *control_notebook;
         GtkWidget       *html_notebook;
@@ -120,11 +119,14 @@ static void on_zoom_in(GtkWidget *, CsBook *);
 static void on_context_new_tab(GtkWidget *, CsBook *);
 static void on_context_copy_link(GtkWidget *, CsBook *);
 static void on_findbar_hide(GtkWidget *, CsBook *);
+static void on_findbar_back(GtkWidget *, CsBook *);
+static void on_findbar_forward(GtkWidget *, CsBook *);
 
 static GtkWidget *new_html_page(CsBook *);
 static GtkWidget *new_tab_label(CsBook *, const gchar *);
 static void update_tab_title(CsBook *, CsHtmlGecko *);
 static void set_context_menu_link(CsBook *, const gchar *);
+static void find_text(CsBook *, gboolean);
 
 static const GtkActionEntry entries[] = {
         { "Copy", GTK_STOCK_COPY, "_Copy", "<control>C", NULL, G_CALLBACK(on_copy)},
@@ -250,27 +252,33 @@ cs_book_init(CsBook *self)
         GtkWidget *find_label = gtk_label_new(_("Find:"));
         gtk_box_pack_start(GTK_BOX (priv->findbar), find_label, FALSE, FALSE, 0);
 
-        priv->find_entry = gtk_entry_new();
-        gtk_box_pack_start(GTK_BOX (priv->findbar), priv->find_entry, FALSE, FALSE, 0);
-        g_signal_connect(priv->find_entry,
+        GtkWidget *find_entry = gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX (priv->findbar), find_entry, FALSE, FALSE, 0);
+        g_object_set_data(G_OBJECT (priv->findbar), "find-entry", find_entry);
+        g_signal_connect(find_entry,
                          "changed",
                          G_CALLBACK (find_entry_changed_cb),
                          self);
 
         GtkWidget *find_back = gtk_button_new_from_stock(GTK_STOCK_GO_BACK);
+        g_signal_connect(G_OBJECT (find_back),
+                         "clicked",
+                         G_CALLBACK (on_findbar_back),
+                         self);
         gtk_box_pack_start(GTK_BOX (priv->findbar), find_back, FALSE, FALSE, 0);
         gtk_button_set_relief(GTK_BUTTON(find_back), GTK_RELIEF_NONE);
 
         GtkWidget *find_forward = gtk_button_new_from_stock(GTK_STOCK_GO_FORWARD);
+        g_signal_connect(G_OBJECT (find_forward),
+                         "clicked",
+                         G_CALLBACK (on_findbar_forward),
+                         self);
         gtk_box_pack_start(GTK_BOX (priv->findbar), find_forward, FALSE, FALSE, 0);
         gtk_button_set_relief(GTK_BUTTON(find_forward), GTK_RELIEF_NONE);
 
-        GtkWidget *find_highlight = gtk_toggle_button_new_with_label(_("Highlight"));
-        gtk_box_pack_start(GTK_BOX (priv->findbar), find_highlight, FALSE, FALSE, 0);
-        gtk_button_set_relief(GTK_BUTTON(find_highlight), GTK_RELIEF_NONE);
-
         GtkWidget *find_case = gtk_check_button_new_with_label(_("Match case"));
         gtk_box_pack_start(GTK_BOX (priv->findbar), find_case, FALSE, FALSE, 0);
+        g_object_set_data(G_OBJECT (priv->findbar), "find-case", find_case);
 
         gtk_box_pack_start(GTK_BOX (self), priv->findbar, FALSE, FALSE, 0);
 
@@ -344,14 +352,7 @@ cs_book_finalize(GObject *object)
 static void
 find_entry_changed_cb(GtkEntry *entry, CsBook *self)
 {
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
-
-        const gchar *name = gtk_entry_get_text(entry);
-        gint       length = strlen(name);
-
-        g_debug("CS_BOOK >>> find string = %s, length = %d", name, length);
-        /* if (length >= 2) */
-        /*         cs_html_gecko_find(name); */
+        find_text(self, FALSE);
 }
 
 static void
@@ -656,6 +657,18 @@ on_findbar_hide(GtkWidget *widget, CsBook *self)
         gtk_widget_hide(priv->findbar);
 }
 
+static void
+on_findbar_back(GtkWidget *widget, CsBook *self)
+{
+        find_text(self, TRUE);
+}
+
+static void
+on_findbar_forward(GtkWidget *widget, CsBook *self)
+{
+        find_text(self, FALSE);
+}
+
 /* Internal functions */
 
 static void
@@ -846,6 +859,22 @@ set_context_menu_link(CsBook *self, const gchar *link)
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         g_free(priv->context_menu_link);
         priv->context_menu_link = g_strdup(link);
+}
+
+static void
+find_text(CsBook *self, gboolean backward)
+{
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
+
+        GtkWidget *match_case = g_object_get_data(G_OBJECT (priv->findbar), "find-case");
+        gboolean mcase = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (match_case));
+
+        GtkWidget *find_entry = g_object_get_data(G_OBJECT (priv->findbar), "find-entry");
+        const gchar *text = gtk_entry_get_text(GTK_ENTRY (find_entry));
+        gint length = strlen(text);
+
+        g_debug("CS_BOOK >>> find string = %s, length = %d, backward = %d, match_case = %d", text, length, backward, mcase);
+        cs_html_gecko_find(priv->active_html, text, backward, mcase);
 }
 
 /* External functions*/
@@ -1055,7 +1084,8 @@ cs_book_reload_current_page(CsBook *self)
         g_debug("CS_BOOK >>> Reload current page");
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
-        cs_html_gecko_reload(priv->active_html);
+        if (priv->model)
+                cs_html_gecko_reload(priv->active_html);
 }
 
 void
@@ -1174,7 +1204,9 @@ cs_book_findbar_show(CsBook *self)
 {
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         gtk_widget_show(priv->findbar);
-        gtk_widget_grab_focus(priv->find_entry);
+
+        GtkWidget *find_entry = g_object_get_data(G_OBJECT (priv->findbar), "find-entry");
+        gtk_widget_grab_focus(find_entry);
 }
 
 void

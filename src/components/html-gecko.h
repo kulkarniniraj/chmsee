@@ -53,7 +53,6 @@ struct _CsHtmlGeckoClass {
 
 GType        cs_html_gecko_get_type(void);
 CsHtmlGecko *cs_html_gecko_new(void);
-void         cs_html_gecko_clear(CsHtmlGecko *);
 void         cs_html_gecko_load_url(CsHtmlGecko *, const gchar *);
 void         cs_html_gecko_reload(CsHtmlGecko *);
 
@@ -69,6 +68,7 @@ void         cs_html_gecko_select_all(CsHtmlGecko *);
 void         cs_html_gecko_increase_size(CsHtmlGecko *);
 void         cs_html_gecko_reset_size(CsHtmlGecko *);
 void         cs_html_gecko_decrease_size(CsHtmlGecko *);
+gboolean     cs_html_gecko_find(CsHtmlGecko *, const gchar *, gboolean, gboolean);
 
 gboolean     cs_html_gecko_init_system(void);
 void         cs_html_gecko_shutdown_system(void);

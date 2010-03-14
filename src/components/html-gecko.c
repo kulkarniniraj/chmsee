@@ -318,17 +318,6 @@ cs_html_gecko_new(void)
 }
 
 void
-cs_html_gecko_clear(CsHtmlGecko *html)
-{
-        static const char *data = "<html><body bgcolor=\"white\"></body></html>";
-        
-        g_return_if_fail(IS_CS_HTML_GECKO (html));
-        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
-
-        gtk_moz_embed_render_data(priv->gecko, data, strlen(data), "file:///", "text/html");
-}
-
-void
 cs_html_gecko_load_url(CsHtmlGecko *html, const gchar *str_uri)
 {
         gchar *full_uri;
@@ -438,6 +427,16 @@ cs_html_gecko_select_all(CsHtmlGecko *html)
         CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
         gecko_utils_select_all(priv->gecko);
+}
+
+gboolean
+cs_html_gecko_find(CsHtmlGecko *html, const gchar *sstr, gboolean backward, gboolean match_case)
+{
+        g_return_val_if_fail(IS_CS_HTML_GECKO (html), FALSE);
+        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
+        gboolean rv = gecko_utils_find(priv->gecko, sstr, backward, match_case);
+        g_debug("CS_HTML_GECKO >>> find result = %d", rv);
+        return rv;
 }
 
 void
