@@ -191,9 +191,8 @@ entry_changed_cb(GtkEntry *entry, CsBookmarks *self)
 static void
 on_bookmarks_add(CsBookmarks *self)
 {
-        CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
-
         g_debug("CS_BOOKMARKS >>> add button clicked");
+        CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
 
         gchar *name = g_strdup(gtk_entry_get_text(GTK_ENTRY (priv->entry)));
         GList *found_link = g_list_find_custom(priv->links, priv->current_uri, link_uri_compare);
@@ -224,6 +223,7 @@ on_bookmarks_add(CsBookmarks *self)
 static void
 on_bookmarks_remove(CsBookmarks *self)
 {
+        g_debug("CS_BOOKMARKS >>> remove button clicked");
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
 
         Link *link = cs_tree_view_get_selected_link(CS_TREE_VIEW (priv->treeview));
@@ -255,7 +255,7 @@ link_uri_compare(gconstpointer a, gconstpointer b) //FIXME: move to link.c
 GtkWidget *
 cs_bookmarks_new(void)
 {
-        g_message("CS_BOOKMARKS >>> create");
+        g_debug("CS_BOOKMARKS >>> create");
         CsBookmarks *self = g_object_new(CS_TYPE_BOOKMARKS, NULL);
 
         return GTK_WIDGET (self);

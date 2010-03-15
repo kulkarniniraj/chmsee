@@ -32,7 +32,7 @@ G_BEGIN_DECLS
 #define CS_TYPE_BOOK        (cs_book_get_type ())
 #define CS_BOOK(o)          (G_TYPE_CHECK_INSTANCE_CAST ((o), CS_TYPE_BOOK, CsBook))
 #define CS_BOOK_CLASS(k)    (G_TYPE_CHECK_CLASS_CAST    ((k), CS_TYPE_BOOK, CsBookClass))
-#define CS_IS_BOOK(o)       (G_TYPE_CHECK_INSTANCE_TYPE ((o), CS_TYPE_BOOK))
+#define IS_CS_BOOK(o)       (G_TYPE_CHECK_INSTANCE_TYPE ((o), CS_TYPE_BOOK))
 #define IS_CS_BOOK_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE    ((k), CS_TYPE_BOOK))
 
 typedef struct _CsBook			CsBook;
@@ -51,7 +51,7 @@ GType        cs_book_get_type(void);
 GtkWidget   *cs_book_new(void);
 void         cs_book_set_model(CsBook *, CsChmfile *);
 
-void         cs_book_new_tab(CsBook *);
+void         cs_book_new_tab_with_fullurl(CsBook *, const gchar *);
 void         cs_book_load_url(CsBook *, const gchar *);
 void         cs_book_close_current_tab(CsBook *);
 void         cs_book_reload_current_page(CsBook *);

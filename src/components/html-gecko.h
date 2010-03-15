@@ -35,11 +35,11 @@ typedef struct _CsHtmlGecko        CsHtmlGecko;
 typedef struct _CsHtmlGeckoClass   CsHtmlGeckoClass;
 
 struct _CsHtmlGecko {
-        GObject parent;
+        GtkFrame      frame;
 };
 
 struct _CsHtmlGeckoClass {
-        GObjectClass parent_class;
+        GtkFrameClass parent_class;
 
         /* Signals */
         void     (* title_changed)    (CsHtmlGecko *html, const gchar *title);
@@ -52,7 +52,7 @@ struct _CsHtmlGeckoClass {
 };
 
 GType        cs_html_gecko_get_type(void);
-CsHtmlGecko *cs_html_gecko_new(void);
+GtkWidget   *cs_html_gecko_new(void);
 void         cs_html_gecko_load_url(CsHtmlGecko *, const gchar *);
 void         cs_html_gecko_reload(CsHtmlGecko *);
 

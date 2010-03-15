@@ -134,7 +134,7 @@ cs_chmfile_init(CsChmfile *self)
 static void
 cs_chmfile_finalize(GObject *object)
 {
-        g_message("CS_CHMFILE >>> finalize");
+        g_debug("CS_CHMFILE >>> finalize");
 
         CsChmfile        *self = CS_CHMFILE (object);
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
@@ -842,7 +842,6 @@ save_bookinfo(CsChmfile *self)
 CsChmfile *
 cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
 {
-        g_debug("CS_CHMFILE >>> create with file = %s, bookshelf = %s ", filename, bookshelf);
         CsChmfile        *self = g_object_new(CS_TYPE_CHMFILE, NULL);
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
@@ -932,14 +931,14 @@ cs_chmfile_get_bookmarks_list(CsChmfile *self)
 void
 cs_chmfile_update_bookmarks_list(CsChmfile *self, GList *links)
 {
+        g_debug("CS_CHMFILE >>> update bookmarks bookmarks_list");
+
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
         priv->bookmarks_list = links;
 
         gchar *bookmarks_file = g_build_filename(priv->bookfolder, CHMSEE_BOOKMARKS_FILE, NULL);
-        guint length = g_list_length(priv->bookmarks_list);
-        g_debug("CS_CHMFILE >>> before save bookmarks bookmarks_list = %p, length = %d", priv->bookmarks_list, length);
         cs_bookmarks_file_save(priv->bookmarks_list, bookmarks_file);
-        g_debug("CS_CHMFILE >>> after save bookmarks bookmarks_list = %p", priv->bookmarks_list);
+
         g_free(bookmarks_file);
 }
 

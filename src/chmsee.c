@@ -63,7 +63,6 @@ struct _ChmseePrivate {
         guint            scid_default;
 
         gboolean         expect_fullscreen;
-        gchar           *context_menu_link;
         gint             state; /* see enum CHMSEE_STATE_* */
 };
 
@@ -73,7 +72,6 @@ enum {
         CHMSEE_STATE_NORMAL   /* normal state, one book is loaded */
 };
 
-/* static gchar *context_menu_link = NULL; */
 static const GtkTargetEntry view_drop_targets[] = {
         { "text/uri-list", 0, 0 }
 };
@@ -124,17 +122,6 @@ static const char *ui_description =
         "    <toolitem action='Preferences'/>"
         "    <toolitem action='About'/>"
         "  </toolbar>"
-        "  <popup name='HtmlContextLink'>"
-        "    <menuitem action='OpenLinkInNewTab' name='OpenLinkInNewTab'/>"
-        "    <menuitem action='CopyLinkLocation'/>"
-        "  </popup>"
-        "  <popup name='HtmlContextNormal'>"
-        "    <menuitem action='Back'/>"
-        "    <menuitem action='Forward'/>"
-        "    <menuitem action='Copy'/>"
-        "    <menuitem action='SelectAll'/>"
-        "    <menuitem action='CopyPageLocation'/>"
-        "  </popup>"
         "  <accelerator action='OnKeyboardEscape'/>"
         "  <accelerator action='OnKeyboardControlEqual'/>"
         "</ui>";
@@ -152,7 +139,7 @@ static gboolean scroll_event_cb(Chmsee *, GdkEventScroll *);
 static gboolean window_state_event_cb(Chmsee *, GdkEventWindowState *);
 static gboolean configure_event_cb(GtkWidget *, GdkEventConfigure *, Chmsee *);
 static void book_model_changed_cb(Chmsee *, CsChmfile *);
-static void book_html_changed_cb(Chmsee *, CsHtmlGecko *);
+static void book_html_changed_cb(Chmsee *, CsBook *);
 static void book_html_link_message_notify_cb(Chmsee *, GParamSpec *, CsChmfile *);
 
 static void open_file_response_cb(GtkWidget *, gint, Chmsee *);
@@ -160,7 +147,6 @@ static void about_response_cb(GtkDialog *, gint, gpointer);
 
 static void on_open_file(GtkWidget *, Chmsee *);
 static void on_open_new_tab(GtkWidget *, Chmsee *);
-static void on_context_new_tab(GtkWidget *, Chmsee *);
 static void on_close_current_tab(GtkWidget *, Chmsee *);
 
 static void on_home(GtkWidget *, Chmsee *);
@@ -175,7 +161,6 @@ static void on_copy(GtkWidget *, Chmsee *);
 static void on_copy_page_location(GtkWidget*, Chmsee*);
 static void on_select_all(GtkWidget *, Chmsee *);
 static void on_find(GtkWidget *, Chmsee *);
-static void on_context_copy_link(GtkWidget *, Chmsee *);
 static void on_keyboard_escape(GtkWidget *, Chmsee *);
 static void on_fullscreen_toggled(GtkWidget *, Chmsee *);
 static void on_sidepane_toggled(GtkWidget *, Chmsee *);
@@ -220,8 +205,6 @@ static const GtkActionEntry entries[] = {
         { "ZoomReset", GTK_STOCK_ZOOM_100, "Normal Size", "<control>0", NULL, G_CALLBACK(on_zoom_reset)},
         { "ZoomOut", GTK_STOCK_ZOOM_OUT, "Zoom _Out", "<control>minus", NULL, G_CALLBACK(on_zoom_out)},
 
-        { "OpenLinkInNewTab", NULL, "Open Link in New _Tab", NULL, NULL, G_CALLBACK(on_context_new_tab)},
-        { "CopyLinkLocation", NULL, "_Copy Link Location", NULL, NULL, G_CALLBACK(on_context_copy_link)},
         { "SelectAll", NULL, "Select _All", NULL, NULL, G_CALLBACK(on_select_all)},
         { "CopyPageLocation", NULL, "Copy Page _Location", NULL, NULL, G_CALLBACK(on_copy_page_location)},
 
@@ -263,7 +246,6 @@ chmsee_init(Chmsee *self)
 
         priv->chmfile = NULL;
         priv->config  = NULL;
-        priv->context_menu_link = NULL;
         priv->expect_fullscreen = FALSE;
         priv->state = CHMSEE_STATE_INIT;
 
@@ -330,10 +312,6 @@ static void
 chmsee_finalize(GObject *object)
 {
         g_debug("Chmsee >>> finalize");
-        Chmsee        *self = CHMSEE(object);
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-
-        g_free(priv->context_menu_link);
 
         G_OBJECT_CLASS (chmsee_parent_class)->finalize (object);
 }
@@ -416,12 +394,12 @@ configure_event_cb(GtkWidget *widget, GdkEventConfigure *event, Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        if (event->width != priv->config->width || event->height != priv->config->height) {
-                if (priv->chmfile)
-                        cs_book_reload_current_page(CS_BOOK (priv->book));
-        }
-
         g_debug("Chmsee >>> configure event callback priv->config->fullscreen = %d", priv->config->fullscreen);
+        /* if (event->width != priv->config->width || event->height != priv->config->height) { */
+        /*         if (priv->chmfile) */
+        /*                 cs_book_reload_current_page(CS_BOOK (priv->book)); */
+        /* } */
+
         if (!priv->config->fullscreen) {
                 priv->config->width  = event->width;
                 priv->config->height = event->height;
@@ -454,16 +432,16 @@ book_model_changed_cb(Chmsee *self, CsChmfile *chmfile)
 }
 
 static void
-book_html_changed_cb(Chmsee *self, CsHtmlGecko *html)
+book_html_changed_cb(Chmsee *self, CsBook *book)
 {
+        g_debug("Chmsee >>> recieve html_changed signal");
+
         gboolean home_state, back_state, forward_state;
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        g_debug("Chmsee >>> recieve html_changed signal from %p", html);
-
-        home_state = cs_book_has_homepage(CS_BOOK (priv->book));
-        back_state = cs_book_can_go_back(CS_BOOK (priv->book));
-        forward_state = cs_book_can_go_forward(CS_BOOK (priv->book));
+        home_state = cs_book_has_homepage(book);
+        back_state = cs_book_can_go_back(book);
+        forward_state = cs_book_can_go_forward(book);
 
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Home"), home_state);
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Back"), back_state);
@@ -497,31 +475,6 @@ open_file_response_cb(GtkWidget *widget, gint response_id, Chmsee *chmsee)
 
         g_free(filename);
 }
-
-#if 0
-/* Popup html context menu */
-static void
-html_context_normal_cb(CsHtmlGecko *html, Chmsee *self)
-{
-        g_message("html context-normal event");
-        gtk_menu_popup(GTK_MENU(gtk_ui_manager_get_widget(priv->ui_manager, "/HtmlContextNormal")),
-                       NULL, NULL, NULL, NULL, 0, GDK_CURRENT_TIME);
-}
-
-/* Popup html context menu when mouse over hyper link */
-static void
-html_context_link_cb(CsHtmlGecko *html, const gchar *link, Chmsee *self)
-{
-        g_debug("html context-link event: %s", link);
-        chmsee_set_context_menu_link(self, link);
-        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "OpenLinkInNewTab"),
-                                 g_str_has_prefix(priv->context_menu_link, "file://"));
-
-        gtk_menu_popup(GTK_MENU(gtk_ui_manager_get_widget(priv->ui_manager, "/HtmlContextLink")),
-                       NULL, NULL, NULL, NULL, 0, GDK_CURRENT_TIME);
-
-}
-#endif
 
 /* Toolbar button events */
 
@@ -682,20 +635,8 @@ on_open_new_tab(GtkWidget *widget, Chmsee *self)
         g_debug("Chmsee >>> Open new tab");
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        cs_book_new_tab(CS_BOOK (priv->book));
-        cs_book_homepage(CS_BOOK (priv->book));
-}
-
-static void
-on_context_new_tab(GtkWidget *widget, Chmsee *self)
-{
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        g_debug("Chmsee >>> On context open new tab: %s", priv->context_menu_link);
-
-        if (priv->context_menu_link != NULL) {
-                cs_book_new_tab(CS_BOOK (priv->book));
-                cs_book_load_url(CS_BOOK (priv->book), priv->context_menu_link);
-        }
+        const gchar* location = cs_book_get_location(CS_BOOK (priv->book));
+        cs_book_new_tab_with_fullurl(CS_BOOK (priv->book), location);
 }
 
 static void
@@ -703,20 +644,6 @@ on_close_current_tab(GtkWidget *widget, Chmsee *self)
 {
         g_debug("Chmsee >>> close current tab");
         cs_book_close_current_tab(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
-}
-
-static void
-on_context_copy_link(GtkWidget *widget, Chmsee *self)
-{
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        g_debug("On context copy link: %s", priv->context_menu_link);
-
-        if (priv->context_menu_link != NULL) {
-                gtk_clipboard_set_text(gtk_clipboard_get(GDK_SELECTION_PRIMARY),
-                                       priv->context_menu_link, -1);
-                gtk_clipboard_set_text(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD),
-                                       priv->context_menu_link, -1);
-        }
 }
 
 static void
@@ -728,7 +655,7 @@ on_keyboard_escape(GtkWidget *widget, Chmsee *self)
         if (priv->config->fullscreen) {
                 chmsee_set_fullscreen(self, FALSE);
         } else {
-                cs_book_findbar_hide(priv->book);
+                cs_book_findbar_hide(CS_BOOK (priv->book));
                 /* gtk_window_iconify(GTK_WINDOW (self)); */
         }
 }
@@ -1035,7 +962,7 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
 {
         g_return_if_fail(IS_CHMSEE (self));
 
-        g_debug("Chmsee >>> open file = %s", filename);
+        g_message("Chmsee >>> open file = %s", filename);
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
         /* close currently opened book */
@@ -1045,7 +972,6 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
 
         /* create chmfile, get file infomation */
         priv->chmfile = cs_chmfile_new(filename, priv->config->bookshelf);
-        g_debug("Chmsee >>> file opened, chmfile = %p", priv->chmfile);
 
         if (priv->chmfile) {
                 cs_html_gecko_set_variable_font(cs_chmfile_get_variable_font(priv->chmfile)); //FIXME: let cs_book do this?

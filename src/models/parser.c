@@ -194,9 +194,6 @@ cs_parse_file(const gchar *filename, const gchar *encoding)
         htmlDocPtr doc = NULL;
         GNode    *tree = g_node_new(NULL);
 
-        g_debug("CS_PARSER >>> encoding = %s", encoding);
-        g_debug("CS_PARSER >>> filename = %s", filename);
-
         doc = htmlSAXParseFile(filename,
                                encoding,
                                hhSAXHandler,

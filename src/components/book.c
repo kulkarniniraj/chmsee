@@ -122,7 +122,7 @@ static void on_findbar_hide(GtkWidget *, CsBook *);
 static void on_findbar_back(GtkWidget *, CsBook *);
 static void on_findbar_forward(GtkWidget *, CsBook *);
 
-static GtkWidget *new_html_page(CsBook *);
+static void new_html_tab(CsBook *);
 static GtkWidget *new_tab_label(CsBook *, const gchar *);
 static void update_tab_title(CsBook *, CsHtmlGecko *);
 static void set_context_menu_link(CsBook *, const gchar *);
@@ -304,7 +304,6 @@ cs_book_init(CsBook *self)
 
         gtk_box_set_homogeneous(GTK_BOX (self), FALSE);
         gtk_widget_show_all(GTK_WIDGET (self));
-        g_debug("CS_BOOK >>> populate windows finished! ");
 }
 
 static void
@@ -320,9 +319,7 @@ cs_book_dispose(GObject* gobject)
                 cs_chmfile_update_bookmarks_list(priv->model, old_list);
 
                 g_object_unref(priv->model);
-                g_object_unref(priv->active_html);
                 priv->model = NULL;
-                priv->active_html = NULL;
         }
 
         if (priv->action_group) {
@@ -369,24 +366,22 @@ link_selected_cb(CsBook *self, Link *link)
 static void
 html_notebook_switch_page_cb(GtkNotebook *notebook, GtkNotebookPage *page, guint new_page_num, CsBook *self)
 {
-        g_debug("CS_BOOK >>> enter switch page callback\n");
+        g_debug("\nCS_BOOK >>> enter switch page callback");
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
         GtkWidget *new_page = gtk_notebook_get_nth_page(notebook, new_page_num);
         g_debug("CS_BOOK >>> switch page new_page_num = %d, new_page = %p", new_page_num, new_page);
+
+
+        /* gint current_page_num = gtk_notebook_get_current_page(notebook); */
+        /* GtkWidget *current_page = gtk_notebook_get_nth_page(notebook, current_page_num); */
+        /* g_debug("CS_BOOK >>> switch page current page num = %d, current page = %p", current_page_num, current_page); */
+
+        g_debug("CS_BOOK >>> switch page callback, set active_html = %p", priv->active_html);
+        priv->active_html = CS_HTML_GECKO (new_page);
+
         gtk_widget_show(new_page);
 
-        gint current_page_num = gtk_notebook_get_current_page(notebook);
-        GtkWidget *current_page = gtk_notebook_get_nth_page(notebook, current_page_num);
-        g_debug("CS_BOOK >>> switch page current page num = %d, current page = %p", current_page_num, current_page);
-
-        if (priv->active_html)
-                g_object_unref(priv->active_html);
-
-        priv->active_html = g_object_ref(g_object_get_data(G_OBJECT (new_page), "html"));
-
-        /* gtk_widget_show_all(GTK_WIDGET (notebook)); */
-        g_debug("CS_BOOK >>> switch page callback, set active_html = %p", priv->active_html);
         /* if (new_page) { */
         /*         CsHtmlGecko* new_html = g_object_get_data(G_OBJECT (new_page), "html"); */
 
@@ -404,15 +399,15 @@ html_notebook_switch_page_cb(GtkNotebook *notebook, GtkNotebookPage *page, guint
         /*         } */
         /* } */
 
-        g_signal_emit(self, signals[HTML_CHANGED], 0, priv->active_html);
+        g_signal_emit(self, signals[HTML_CHANGED], 0, self);
 }
 
 static void
 html_location_changed_cb(CsHtmlGecko *html, const gchar *location, CsBook *self)
 {
         g_debug("CS_BOOK >>> html location changed cb: %s", location);
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        g_signal_emit(self, signals[HTML_CHANGED], 0, priv->active_html);
+
+        g_signal_emit(self, signals[HTML_CHANGED], 0, self);
 }
 
 static gboolean
@@ -500,13 +495,7 @@ static void
 html_open_new_tab_cb(CsHtmlGecko *html, const gchar *location, CsBook *self)
 {
         g_debug("CS_BOOK >>> html open new tab callback: %s", location);
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-
-        const gchar *bookfolder = cs_chmfile_get_bookfolder(priv->model);
-        gchar *uri = g_strrstr(location, bookfolder) + strlen(bookfolder);
-
-        cs_book_new_tab(self);
-        cs_book_load_url(self, uri);
+        cs_book_new_tab_with_fullurl(self, location);
 }
 
 static void
@@ -631,8 +620,7 @@ on_context_new_tab(GtkWidget *widget, CsBook *self)
         g_debug("CS_BOOK >>> On context open new tab: %s", priv->context_menu_link);
 
         if (priv->context_menu_link != NULL) {
-                cs_book_new_tab(self);
-                cs_book_load_url(self, priv->context_menu_link);
+                cs_book_new_tab_with_fullurl(self, priv->context_menu_link);
         }
 }
 
@@ -710,31 +698,15 @@ cs_book_get_property(GObject *object, guint property_id, GValue *value, GParamSp
         }
 }
 
-static GtkWidget *
-new_html_page(CsBook *self)
+static void
+new_html_tab(CsBook *self)
 {
-        g_debug("CS_BOOK >>> new html page");
-
-        /* only allow local link */
-        /* if (uri != NULL && !g_str_has_prefix(uri, "file://")) { */
-        /*         g_debug("CS_BOOK >>> new_tab only alow local link = %s", uri); */
-        /*         return; //FIXME: display a blank page? */
-        /* } */
+        g_debug("CS_BOOK >>> cs_book_new_tab");
+        g_return_if_fail(IS_CS_BOOK (self));
 
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
-        CsHtmlGecko *html = cs_html_gecko_new();
-        GtkWidget *gecko = GTK_WIDGET (cs_html_gecko_get_widget(html));
-        gtk_widget_show(gecko);
-
-        GtkWidget *page = gtk_frame_new(NULL);
-        gtk_frame_set_shadow_type(GTK_FRAME (page), GTK_SHADOW_IN);
-        gtk_container_set_border_width(GTK_CONTAINER (page), 2);
-        gtk_container_add(GTK_CONTAINER (page), GTK_WIDGET (gecko));
-        gtk_widget_show(page);
-
-        g_object_set_data(G_OBJECT (page), "html", html);
-        g_debug("CS_BOOK >>> set object page = %p, html = %p", page, html);
+        GtkWidget *html = cs_html_gecko_new();
 
         g_signal_connect(G_OBJECT (html),
                          "title-changed",
@@ -764,28 +736,22 @@ new_html_page(CsBook *self)
                          "link-message",
                          G_CALLBACK (html_link_message_cb),
                          self);
-        gtk_widget_realize(gecko);
-        return page;
 
-        /* if (uri != NULL || !strlen(uri)) { */
-        /*         cs_html_gecko_load_url(CS_HTML_GECKO (html), uri); */
+        /* customized label, add a close button rightmost */
+        GtkWidget *tab_label = new_tab_label(self, _("No Title"));
+        gint        page_num = gtk_notebook_append_page(GTK_NOTEBOOK (priv->html_notebook),
+                                                        html,
+                                                        tab_label);
+        gtk_notebook_set_tab_label_packing(GTK_NOTEBOOK (priv->html_notebook),
+                                           html,
+                                           TRUE, TRUE,
+                                           GTK_PACK_START);
 
-        /*         /\* synchronize link with toc *\/ */
-        /*         if (priv->has_toc) */
-        /*                 cs_toc_select_uri(CS_TOC (priv->toc_page), uri); */
+        g_debug("CS_BOOK >>> new tab html_notebook append page = %d", page_num);
+        /* gtk_notebook_set_current_page(GTK_NOTEBOOK (priv->html_notebook), page_num); */
 
-        /*         g_signal_emit(self, signals[HTML_CHANGED], 0, html); //FIXME: send with empty page? */
-        /* } else { */
-        /*         g_debug("CS_BOOK >>> before clear page html = %p", html); */
-        /*         cs_html_gecko_clear(html); // FIXME: or duplicate current opened page */
-        /*         g_debug("CS_BOOK >>> after clear page"); */
-        /* } */
-
-        /* if (gtk_notebook_get_n_pages (GTK_NOTEBOOK (priv->html_notebook)) > 1) { */
-        /*         g_debug("CS_BOOK >>> new tab set current page"); */
-
-        /*         gtk_notebook_set_current_page(GTK_NOTEBOOK (priv->html_notebook), page_num); */
-        /* } */
+        gtk_widget_show_all(priv->html_notebook);
+        g_debug("CS_BOOK >>> new tab created.");
 }
 
 static GtkWidget*
@@ -826,7 +792,6 @@ update_tab_title(CsBook *self, CsHtmlGecko *html)
         GtkWidget *widget, *label;
         gint num_pages, i;
 
-        g_debug("CS_BOOK >>> update tab title");
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         gchar        *title = g_strdup(cs_html_gecko_get_title(html));
         g_debug("CS_BOOK >>> update tab title = %s", title);
@@ -890,6 +855,7 @@ cs_book_new(void)
 void
 cs_book_set_model(CsBook *self, CsChmfile *model)
 {
+        g_return_if_fail(IS_CS_BOOK (self));
         g_return_if_fail(IS_CS_CHMFILE (model));
 
         g_debug("CS_BOOK >>> set model, file = %p", model);
@@ -915,7 +881,6 @@ cs_book_set_model(CsBook *self, CsChmfile *model)
                 g_object_unref(priv->model);
         }
 
-        g_debug("CS_BOOK >>> display book");
         priv->model = g_object_ref(model);
 
         gint cur_page = 0;
@@ -935,7 +900,7 @@ cs_book_set_model(CsBook *self, CsChmfile *model)
                                          self);
                 priv->has_toc = TRUE;
         } else {
-                g_debug("CS_BOOK >>> this chmfile dose not include toc");
+                g_message("CS_BOOK >>> this book dose not include a toc");
                 priv->has_toc = FALSE;
         }
 
@@ -953,7 +918,7 @@ cs_book_set_model(CsBook *self, CsChmfile *model)
                                          G_CALLBACK (link_selected_cb),
                                          self);
         } else {
-                g_debug("CS_BOOK >>> this chmfile dose not include index");
+                g_message("CS_BOOK >>> this book dose not include an index");
         }
 
         /* bookmarks */
@@ -976,59 +941,18 @@ cs_book_set_model(CsBook *self, CsChmfile *model)
 
         gtk_widget_show_all(priv->control_notebook);
 
-        cs_book_new_tab(self);
-
-        /* HTML notebook page */
-        /* GtkWidget *page = new_html_page(self); */
-
-        /* customized label, add a close button rightmost */
-        /* GtkWidget *tab_label = new_tab_label(self, _("No Title")); */
-
-        /* gint pageNO = gtk_notebook_append_page(GTK_NOTEBOOK (priv->html_notebook), page, tab_label); */
-        /* g_debug("CS_BOOK >>> html_notebook append page = %d", pageNO); */
-        /* gtk_notebook_set_tab_label_packing(GTK_NOTEBOOK (priv->html_notebook), */
-        /*                                    page, */
-        /*                                    TRUE, TRUE, */
-        /*                                    GTK_PACK_START); */
-
-        /* gtk_widget_show_all(priv->html_notebook); */
-
+        new_html_tab(self);
         cs_book_homepage(self);
 
         g_signal_emit(self, signals[MODEL_CHANGED], 0, model);
 }
 
 void
-cs_book_new_tab(CsBook *self)
-{
-        g_debug("CS_BOOK >>> cs_book_new_tab");
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-
-        GtkWidget *page = new_html_page(self);
-        gtk_widget_show(page);
-
-        /* customized label, add a close button rightmost */
-        GtkWidget *tab_label = new_tab_label(self, _("No Title"));
-
-        g_debug("CS_BOOK >>> new tab before html_notebook append page");
-
-        gint page_num = gtk_notebook_append_page(GTK_NOTEBOOK (priv->html_notebook), page, tab_label);
-        g_debug("CS_BOOK >>> new tab html_notebook append page = %d", page_num);
-        gtk_notebook_set_current_page(GTK_NOTEBOOK (priv->html_notebook), page_num);
-
-        g_debug("CS_BOOK >>> new tab after set html_notebook current page");
-        gtk_notebook_set_tab_label_packing(GTK_NOTEBOOK (priv->html_notebook),
-                                           page,
-                                           TRUE, TRUE,
-                                           GTK_PACK_START);
-
-        gtk_widget_show_all(priv->html_notebook);
-}
-
-void
 cs_book_load_url(CsBook *self, const gchar *uri)
 {
-        g_debug("CS_BOOK >>> load url = %s", uri);
+        g_debug("CS_BOOK >>> cs_book_load_url");
+        g_return_if_fail(IS_CS_BOOK (self));
+
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         gchar *full_uri;
 
@@ -1048,13 +972,35 @@ cs_book_load_url(CsBook *self, const gchar *uri)
 
         g_free(full_uri);
 
-        g_signal_emit(self, signals[HTML_CHANGED], 0, priv->active_html);
+        g_signal_emit(self, signals[HTML_CHANGED], 0, self);
         /* update_tab_title(self, html); //FIXME: unnecessary */
+}
+
+void
+cs_book_new_tab_with_fullurl(CsBook *self, const gchar *full_url)
+{
+        g_debug("CS_BOOK >>> new tab with full url %s", full_url);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+
+        const gchar *bookfolder = cs_chmfile_get_bookfolder(priv->model);
+        g_debug("CS_BOOK >>> new tab with full url, get bookfolder = %s", bookfolder);
+
+        gchar *uri = g_strrstr(full_url, bookfolder);
+        if (uri == NULL) {
+                g_debug("CS_BOOK >>> new tab with full url, wrong protocol");
+                return;
+        }
+
+        uri = uri + strlen(bookfolder);
+
+        new_html_tab(self);
+        cs_book_load_url(self, uri);
 }
 
 void
 cs_book_close_current_tab(CsBook *self)
 {
+        g_return_if_fail(IS_CS_BOOK (self));
         g_debug("CS_BOOK >>> cs_book_close_current_tab");
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         g_return_if_fail(GTK_IS_NOTEBOOK (priv->html_notebook));
@@ -1081,6 +1027,7 @@ cs_book_close_current_tab(CsBook *self)
 void
 cs_book_reload_current_page(CsBook *self)
 {
+        g_return_if_fail(IS_CS_BOOK (self));
         g_debug("CS_BOOK >>> Reload current page");
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
@@ -1091,6 +1038,7 @@ cs_book_reload_current_page(CsBook *self)
 void
 cs_book_homepage(CsBook *self)
 {
+        g_return_if_fail(IS_CS_BOOK (self));
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
         const gchar *homepage = cs_chmfile_get_homepage(priv->model);
@@ -1103,6 +1051,7 @@ cs_book_homepage(CsBook *self)
 gboolean
 cs_book_has_homepage(CsBook *self)
 {
+        g_return_val_if_fail(IS_CS_BOOK (self), FALSE);
         gboolean has_homepage = FALSE;
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
@@ -1115,6 +1064,8 @@ cs_book_has_homepage(CsBook *self)
 gboolean
 cs_book_can_go_back(CsBook *self)
 {
+        g_return_val_if_fail(IS_CS_BOOK (self), FALSE);
+
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         return cs_html_gecko_can_go_back(priv->active_html);
 }
@@ -1122,6 +1073,8 @@ cs_book_can_go_back(CsBook *self)
 gboolean
 cs_book_can_go_forward(CsBook *self)
 {
+        g_return_val_if_fail(IS_CS_BOOK (self), FALSE);
+
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         return cs_html_gecko_can_go_forward(priv->active_html);
 }
@@ -1129,6 +1082,7 @@ cs_book_can_go_forward(CsBook *self)
 void
 cs_book_go_back(CsBook *self)
 {
+        g_return_if_fail(IS_CS_BOOK (self));
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         cs_html_gecko_go_back(priv->active_html);
 }
@@ -1136,6 +1090,7 @@ cs_book_go_back(CsBook *self)
 void
 cs_book_go_forward(CsBook *self)
 {
+        g_return_if_fail(IS_CS_BOOK (self));
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         cs_html_gecko_go_forward(priv->active_html);
 }
@@ -1143,6 +1098,7 @@ cs_book_go_forward(CsBook *self)
 void
 cs_book_zoom_in(CsBook *self)
 {
+        g_return_if_fail(IS_CS_BOOK (self));
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         cs_html_gecko_increase_size(priv->active_html);
 }
@@ -1150,6 +1106,7 @@ cs_book_zoom_in(CsBook *self)
 void
 cs_book_zoom_out(CsBook *self)
 {
+        g_return_if_fail(IS_CS_BOOK (self));
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         cs_html_gecko_decrease_size(priv->active_html);
 }
@@ -1157,6 +1114,7 @@ cs_book_zoom_out(CsBook *self)
 void
 cs_book_zoom_reset(CsBook *self)
 {
+        g_return_if_fail(IS_CS_BOOK (self));
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         cs_html_gecko_reset_size(priv->active_html);
 }
@@ -1164,6 +1122,7 @@ cs_book_zoom_reset(CsBook *self)
 void
 cs_book_copy(CsBook *self)
 {
+        g_return_if_fail(IS_CS_BOOK (self));
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         cs_html_gecko_copy_selection(priv->active_html);
 }
@@ -1171,6 +1130,7 @@ cs_book_copy(CsBook *self)
 void
 cs_book_select_all(CsBook *self)
 {
+        g_return_if_fail(IS_CS_BOOK (self));
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         cs_html_gecko_select_all(priv->active_html);
 }
@@ -1178,6 +1138,7 @@ cs_book_select_all(CsBook *self)
 const gchar *
 cs_book_get_location(CsBook *self)
 {
+        g_return_val_if_fail(IS_CS_BOOK (self), NULL);
         g_debug("CS_BOOK >>> get location");
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
         return cs_html_gecko_get_location(priv->active_html);
@@ -1186,6 +1147,7 @@ cs_book_get_location(CsBook *self)
 int
 cs_book_get_hpaned_position(CsBook *self)
 {
+        g_return_val_if_fail(IS_CS_BOOK (self), 0);
         g_debug("CS_BOOK >>> get hpaned position");
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
         return gtk_paned_get_position(GTK_PANED (priv->hpaned));
@@ -1194,6 +1156,7 @@ cs_book_get_hpaned_position(CsBook *self)
 void
 cs_book_set_hpaned_position(CsBook *self, gint position)
 {
+        g_return_if_fail(IS_CS_BOOK (self));
         g_debug("CS_BOOK >>> set hpaned position = %d", position);
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
         gtk_paned_set_position(GTK_PANED (priv->hpaned), position);
@@ -1202,6 +1165,7 @@ cs_book_set_hpaned_position(CsBook *self, gint position)
 void
 cs_book_findbar_show(CsBook *self)
 {
+        g_return_if_fail(IS_CS_BOOK (self));
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         gtk_widget_show(priv->findbar);
 
@@ -1212,6 +1176,7 @@ cs_book_findbar_show(CsBook *self)
 void
 cs_book_findbar_hide(CsBook *self)
 {
+        g_return_if_fail(IS_CS_BOOK (self));
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         gtk_widget_hide(priv->findbar);
 }
