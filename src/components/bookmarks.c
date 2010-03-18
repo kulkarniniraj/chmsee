@@ -140,7 +140,6 @@ cs_bookmarks_init(CsBookmarks *self)
 
         gtk_box_pack_end(GTK_BOX (hbox), priv->add_button, TRUE, TRUE, 0);
         gtk_box_pack_end(GTK_BOX (hbox), priv->remove_button, TRUE, TRUE, 0);
-        /* gtk_widget_set_sensitive(priv->remove_button, FALSE); */ // FIXME: set sensitive
 
         gtk_box_pack_start(GTK_BOX (self), hbox, FALSE, FALSE, 2);
 
@@ -227,25 +226,24 @@ on_bookmarks_remove(CsBookmarks *self)
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
 
         Link *link = cs_tree_view_get_selected_link(CS_TREE_VIEW (priv->treeview));
-        if (!link)
-                return;
+        if (link) {
+                cs_tree_view_remove_link(CS_TREE_VIEW (priv->treeview), link);
 
-        cs_tree_view_remove_link(CS_TREE_VIEW (priv->treeview), link);
+                GList *list = g_list_find_custom(priv->links, link->uri, link_uri_compare);
+                Link *found_link = (Link *)list->data;
 
-        GList *list = g_list_find_custom(priv->links, link->uri, link_uri_compare);
-        Link *found_link = (Link *)list->data;
-
-        if (found_link) {
-                priv->links = g_list_remove(priv->links, found_link);
-                link_free(found_link); //FIXME: right place?
+                if (found_link) {
+                        priv->links = g_list_remove(priv->links, found_link);
+                        link_free(found_link);
+                }
+                link_free(link);
         }
-        link_free(link);
 }
 
 /* Internal functions */
 
 static gint
-link_uri_compare(gconstpointer a, gconstpointer b) //FIXME: move to link.c
+link_uri_compare(gconstpointer a, gconstpointer b)
 {
         return ncase_compare_utf8_string(((Link *)a)->uri, (char *)b);
 }

@@ -169,7 +169,7 @@ row_activated_cb(CsTreeView *self, GtkTreePath *path, GtkTreeViewColumn *column)
         gchar             *title, *uri;
 
         CsTreeViewPrivate *priv  = CS_TREE_VIEW_GET_PRIVATE (self);
-        GtkTreeModel      *model = GTK_TREE_MODEL (priv->store); //FIXME: filter_model
+        GtkTreeModel      *model = GTK_TREE_MODEL (priv->store);
 
         gtk_tree_model_get_iter(model, &iter, path);
         gtk_tree_model_get(model,
@@ -308,8 +308,8 @@ cs_tree_view_remove_link(CsTreeView *self, Link *link)
 
         CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
 
-        GtkTreeIter        iter;
-        gchar             *uri;
+        GtkTreeIter iter;
+        gchar      *uri;
 
         gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL (priv->store), &iter, "0");
 
@@ -332,7 +332,7 @@ cs_tree_view_get_selected_link(CsTreeView *self)
         GtkTreeSelection  *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (self));
 
         GtkTreeIter iter;
-        Link *link = NULL;
+        Link       *link = NULL;
 
         if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
                 gchar *title, *uri;

@@ -150,6 +150,7 @@ cs_html_gecko_init(CsHtmlGecko *html)
 {
         CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
         priv->gecko = GTK_MOZ_EMBED(gtk_moz_embed_new());
+        gtk_widget_show(GTK_WIDGET (priv->gecko));
         priv->render_name = g_strdup("Mozilla Gecko");
 
         gtk_frame_set_shadow_type(GTK_FRAME (html), GTK_SHADOW_IN);

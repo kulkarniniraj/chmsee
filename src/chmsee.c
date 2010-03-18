@@ -158,7 +158,6 @@ static void on_zoom_out(GtkWidget *, Chmsee *);
 static void on_setup(GtkWidget *, Chmsee *);
 static void on_about(GtkWidget *);
 static void on_copy(GtkWidget *, Chmsee *);
-static void on_copy_page_location(GtkWidget*, Chmsee*);
 static void on_select_all(GtkWidget *, Chmsee *);
 static void on_find(GtkWidget *, Chmsee *);
 static void on_keyboard_escape(GtkWidget *, Chmsee *);
@@ -206,7 +205,6 @@ static const GtkActionEntry entries[] = {
         { "ZoomOut", GTK_STOCK_ZOOM_OUT, "Zoom _Out", "<control>minus", NULL, G_CALLBACK(on_zoom_out)},
 
         { "SelectAll", NULL, "Select _All", NULL, NULL, G_CALLBACK(on_select_all)},
-        { "CopyPageLocation", NULL, "Copy Page _Location", NULL, NULL, G_CALLBACK(on_copy_page_location)},
 
         { "OnKeyboardEscape", NULL, NULL, "Escape", NULL, G_CALLBACK(on_keyboard_escape)},
         { "OnKeyboardControlEqual", NULL, NULL, "<control>equal", NULL, G_CALLBACK(on_zoom_in)}
@@ -526,26 +524,6 @@ on_copy(GtkWidget *widget, Chmsee *self)
 }
 
 static void
-on_copy_page_location(GtkWidget *widget, Chmsee *self)
-{
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        const gchar* location = cs_book_get_location(CS_BOOK (priv->book));
-
-        if(!location) return;
-
-        gtk_clipboard_set_text(
-                gtk_clipboard_get(GDK_SELECTION_PRIMARY),
-                location,
-                -1);
-        gtk_clipboard_set_text(
-                gtk_clipboard_get(GDK_SELECTION_CLIPBOARD),
-                location,
-                -1);
-
-        //g_free(location); FIXME: free?
-}
-
-static void
 on_select_all(GtkWidget *widget, Chmsee *self)
 {
         g_debug("Chmsee >>> On Select All");
@@ -635,8 +613,9 @@ on_open_new_tab(GtkWidget *widget, Chmsee *self)
         g_debug("Chmsee >>> Open new tab");
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        const gchar* location = cs_book_get_location(CS_BOOK (priv->book));
+        gchar* location = cs_book_get_location(CS_BOOK (priv->book));
         cs_book_new_tab_with_fullurl(CS_BOOK (priv->book), location);
+        g_free(location);
 }
 
 static void
@@ -886,7 +865,7 @@ set_sidepane_state(Chmsee *self, gboolean state)
 };
 
 static void
-show_sidepane(Chmsee *self) //FIXME: toggle with config->hpaned_pos?
+show_sidepane(Chmsee *self)
 {
         set_sidepane_state(self, TRUE);
 }
@@ -974,15 +953,12 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
         priv->chmfile = cs_chmfile_new(filename, priv->config->bookshelf);
 
         if (priv->chmfile) {
-                cs_html_gecko_set_variable_font(cs_chmfile_get_variable_font(priv->chmfile)); //FIXME: let cs_book do this?
-                cs_html_gecko_set_fixed_font(cs_chmfile_get_fixed_font(priv->chmfile));
-
                 priv->state = CHMSEE_STATE_LOADING;
                 
                 cs_book_set_model(CS_BOOK (priv->book), priv->chmfile);
 
                 gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON (gtk_ui_manager_get_widget(priv->ui_manager, "/toolbar/sidepane")), TRUE);
-                gtk_container_set_focus_child(GTK_CONTAINER(self), priv->book); //FIXME: set focus
+                gtk_container_set_focus_child(GTK_CONTAINER(self), priv->book);
 
                 g_signal_connect_swapped(priv->book,
                                          "html-changed",

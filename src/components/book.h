@@ -22,7 +22,6 @@
 #define __CS_BOOK_H__
 
 #include <glib-object.h>
-#include <gtk/gtkwindow.h>
 #include <gtk/gtk.h>
 
 #include "models/chmfile.h"
@@ -70,7 +69,7 @@ void         cs_book_zoom_reset(CsBook *);
 void         cs_book_copy(CsBook *);
 void         cs_book_select_all(CsBook *);
 
-const gchar *cs_book_get_location(CsBook *);
+gchar       *cs_book_get_location(CsBook *);
 int          cs_book_get_hpaned_position(CsBook *);
 void         cs_book_set_hpaned_position(CsBook *, gint);
 

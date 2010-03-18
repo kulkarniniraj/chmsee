@@ -881,7 +881,7 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
                 gchar *hhcfile = g_build_filename(priv->bookfolder, priv->hhc, NULL);
 
                 if (!g_file_test(hhcfile, G_FILE_TEST_EXISTS)) {
-                        hhcfile = file_exist_ncase(hhcfile); // FIXME: g_free(hhcfile)
+                        hhcfile = file_exist_ncase(hhcfile);
                 }
 
                 priv->toc_tree = parse_hhc_file(hhcfile, priv->encoding);
