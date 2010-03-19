@@ -6,17 +6,6 @@ include_directories(
 add_definitions(
         ${CHMSEE_CFLAGS_OTHER}
         )
-add_custom_command(
-        OUTPUT marshal.h
-        COMMAND ${GLIB_GENMARSHAL} --prefix=marshal ${CMAKE_CURRENT_SOURCE_DIR}/marshal.list --header > ${CMAKE_CURRENT_BINARY_DIR}/marshal.h
-        DEPENDS marshal.list
-        )
-
-add_custom_command(
-        OUTPUT marshal.c
-        COMMAND ${GLIB_GENMARSHAL} --prefix=marshal ${CMAKE_CURRENT_SOURCE_DIR}/marshal.list --body > ${CMAKE_CURRENT_BINARY_DIR}/marshal.c
-        DEPENDS marshal.list
-        )
 
 link_directories(
         ${CHMSEE_LIBRARY_DIRS}
@@ -27,7 +16,6 @@ set(CHMSEE_SRCS
         startup.h startup.c
         setup.h setup.c
         utils.h utils.c
-        ${CMAKE_CURRENT_BINARY_DIR}/marshal.h ${CMAKE_CURRENT_BINARY_DIR}/marshal.c
         )
 set(CHMSEE_SRCS
         ${CHMSEE_SRCS}

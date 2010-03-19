@@ -30,6 +30,7 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <gdk/gdkkeysyms.h>
+#include <gtk/gtkmarshal.h>
 
 #include "book.h"
 #include "toc.h"
@@ -181,10 +182,10 @@ cs_book_class_init(CsBookClass *klass)
                              0,
                              NULL,
                              NULL,
-                             g_cclosure_marshal_VOID__POINTER,
+                             gtk_marshal_VOID__POINTER_POINTER,
                              G_TYPE_NONE,
-                             1,
-                             G_TYPE_POINTER);
+                             2,
+                             G_TYPE_POINTER, G_TYPE_POINTER);
 
         signals[HTML_CHANGED] =
                 g_signal_new("html-changed",
@@ -193,7 +194,7 @@ cs_book_class_init(CsBookClass *klass)
                              0,
                              NULL,
                              NULL,
-                             g_cclosure_marshal_VOID__POINTER,
+                             gtk_marshal_VOID__POINTER,
                              G_TYPE_NONE,
                              1,
                              G_TYPE_POINTER);
@@ -393,22 +394,23 @@ static gboolean
 html_open_uri_cb(CsHtmlGecko *html, const gchar *uri, CsBook *self)
 {
         g_debug("CS_BOOK >>> enter html_open_uri_cb with uri = %s", uri);
-        static const char* prefix = "file://";
-        static int prefix_len = 7;
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
-        if(g_str_has_prefix(uri, prefix)) {
-                /* FIXME: can't disable the DND function of GtkMozEmbed */
-                if(g_str_has_suffix(uri, ".chm")
-                   || g_str_has_suffix(uri, ".CHM")) {
-                        /* TODO: should popup an event */
-                        /* cs_open_uri(self, uri); */
+        static const char *prefix = "file://";
+        static int prefix_len = 7;
+
+        if (g_str_has_prefix(uri, prefix)) {
+                if (g_str_has_suffix(uri, ".chm") || g_str_has_suffix(uri, ".CHM")) {
+                        g_debug("CS_BOOK >>> open chm file = %s", uri);
+                        g_signal_emit(self, signals[MODEL_CHANGED], 0, NULL, uri);
+
+                        return TRUE;
                 }
 
-                if(g_access(uri+prefix_len, R_OK) < 0) {
+                if (g_access(uri+prefix_len, R_OK) < 0) {
                         g_debug("%s:%d:html_open_uri_cb:%s does not exist", __FILE__, __LINE__, uri+prefix_len);
                         gchar* newfname = correct_filename(uri+prefix_len);
-                        if(newfname) {
+                        if (newfname) {
                                 g_debug(_("CS_BOOK >>> URI redirect: \"%s\" -> \"%s\""), uri, newfname);
                                 cs_html_gecko_load_url(html, newfname);
                                 g_free(newfname);
@@ -906,7 +908,7 @@ cs_book_set_model(CsBook *self, CsChmfile *model)
 
         cs_book_homepage(self);
 
-        g_signal_emit(self, signals[MODEL_CHANGED], 0, model);
+        g_signal_emit(self, signals[MODEL_CHANGED], 0, model, NULL);
 }
 
 void

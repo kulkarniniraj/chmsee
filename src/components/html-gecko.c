@@ -18,10 +18,10 @@
  */
 
 #include <string.h>
+#include <gtk/gtkmarshal.h>
 #include <gtkmozembed.h>
 
 #include "html-gecko.h"
-#include "marshal.h"
 #include "utils.h"
 #include "gecko-utils.h"
 
@@ -80,7 +80,7 @@ cs_html_gecko_class_init(CsHtmlGeckoClass *klass)
                               G_SIGNAL_RUN_LAST,
                               0,
                               NULL, NULL,
-                              marshal_VOID__STRING,
+                              gtk_marshal_VOID__STRING,
                               G_TYPE_NONE,
                               1, G_TYPE_STRING);
 
@@ -90,7 +90,7 @@ cs_html_gecko_class_init(CsHtmlGeckoClass *klass)
                              G_SIGNAL_RUN_LAST,
                              0,
                              NULL, NULL,
-                             marshal_VOID__STRING,
+                             gtk_marshal_VOID__STRING,
                              G_TYPE_NONE,
                              1, G_TYPE_STRING);
 
@@ -100,7 +100,7 @@ cs_html_gecko_class_init(CsHtmlGeckoClass *klass)
                              G_SIGNAL_RUN_LAST,
                              0,
                              NULL, NULL,
-                             marshal_BOOLEAN__STRING,
+                             gtk_marshal_BOOLEAN__POINTER,
                              G_TYPE_BOOLEAN,
                              1, G_TYPE_STRING);
 
@@ -110,7 +110,7 @@ cs_html_gecko_class_init(CsHtmlGeckoClass *klass)
                              G_SIGNAL_RUN_LAST,
                              0,
                              NULL, NULL,
-                             marshal_VOID__VOID,
+                             gtk_marshal_VOID__VOID,
                              G_TYPE_NONE,
                              0);
 
@@ -120,7 +120,7 @@ cs_html_gecko_class_init(CsHtmlGeckoClass *klass)
                              G_SIGNAL_RUN_LAST,
                              0,
                              NULL, NULL,
-                             marshal_VOID__STRING,
+                             gtk_marshal_VOID__STRING,
                              G_TYPE_NONE,
                              1, G_TYPE_STRING);
 
@@ -130,7 +130,7 @@ cs_html_gecko_class_init(CsHtmlGeckoClass *klass)
                              G_SIGNAL_RUN_LAST,
                              0,
                              NULL, NULL,
-                             marshal_VOID__STRING,
+                             gtk_marshal_VOID__STRING,
                              G_TYPE_NONE,
                              1, G_TYPE_STRING);
 
@@ -140,7 +140,7 @@ cs_html_gecko_class_init(CsHtmlGeckoClass *klass)
                              G_SIGNAL_RUN_LAST,
                              0,
                              NULL, NULL,
-                             marshal_VOID__STRING,
+                             gtk_marshal_VOID__STRING,
                              G_TYPE_NONE,
                              1, G_TYPE_STRING);
 }

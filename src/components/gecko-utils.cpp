@@ -50,7 +50,11 @@
 #include <nsStringAPI.h>
 #include <nsILocalFile.h>
 #include <nsIPrefService.h>
+#include <nsIDragService.h>
+#include <nsICommandManager.h>
 #include <nsIDOMMouseEvent.h>
+#include <nsIClipboardDragDropHooks.h>
+#include <nsIWebBrowserChrome.h>
 
 // For zoom
 #include <nsIDOMWindow.h>
@@ -61,6 +65,7 @@
 
 #include <nsServiceManagerUtils.h>
 #include <nsIInterfaceRequestorUtils.h>
+#include <nsComponentManagerUtils.h>
 
 #include "gecko-utils.h"
 #include "utils.h"
@@ -194,7 +199,7 @@ gecko_utils_init(void)
                                           xpcomLocation, sizeof(xpcomLocation));
         if (NS_FAILED (rv))
         {
-                g_warning ("Couldn't find a compatible GRE!\n");
+                g_warning("GECKO_UTILS >>> Couldn't find a compatible GRE!\n");
                 return FALSE;
         }
 
@@ -202,21 +207,21 @@ gecko_utils_init(void)
         rv = XPCOMGlueStartup(xpcomLocation);
         if (NS_FAILED (rv))
         {
-                g_warning ("Couldn't start XPCOM!\n");
+                g_warning("GECKO_UTILS >>> Couldn't start XPCOM!\n");
                 return FALSE;
         }
 
         rv = GTKEmbedGlueStartup();
         if (NS_FAILED (rv))
         {
-                g_warning ("Couldn't find GTKMozEmbed symbols!\n");
+                g_warning("GECKO_UTILS >>> Couldn't find GTKMozEmbed symbols!\n");
                 return FALSE;
         }
 
         rv = GTKEmbedGlueStartupInternal();
         if (NS_FAILED (rv))
         {
-                g_warning ("Could not startup embed glue (internal)!\n");
+                g_warning("GECKO_UTILS >>> Could not startup embed glue (internal)!\n");
                 return FALSE;
         }
 
@@ -358,7 +363,7 @@ gecko_utils_select_all(GtkMozEmbed *embed)
         nsCOMPtr<nsIClipboardCommands> clipboard = do_GetInterface(webBrowser);
 
         if (!clipboard)
-                g_warning("could not get ClipboardCommands Interface.");
+                g_warning("GECKO_UTILS >>> could not get ClipboardCommands Interface.");
         else
                 clipboard->SelectAll();
 }
@@ -372,7 +377,7 @@ gecko_utils_copy_selection(GtkMozEmbed *embed)
         nsCOMPtr<nsIClipboardCommands> clipboard = do_GetInterface(webBrowser);
 
         if (!clipboard)
-                g_warning("could not get ClipboardCommands Interface.");
+                g_warning("GECKO_UTILS >>> could not get ClipboardCommands Interface.");
         else
                 clipboard->CopySelection();
 }
@@ -388,7 +393,7 @@ gecko_utils_get_zoom(GtkMozEmbed *embed)
         webBrowser->GetContentDOMWindow(getter_AddRefs(domWindow));
 
         if (!domWindow) {
-                g_warning("could not get DOMWindow.");
+                g_warning("GECKO_UTILS >>> could not get DOMWindow.");
                 return 1.0;
         }
 
@@ -400,6 +405,7 @@ gecko_utils_get_zoom(GtkMozEmbed *embed)
 extern "C" void
 gecko_utils_set_zoom(GtkMozEmbed *embed, gfloat zoom)
 {
+        g_debug("GECKO_UTILS >>> set zoom %f", zoom);
         nsCOMPtr<nsIWebBrowser>	webBrowser;
         nsCOMPtr<nsIDOMWindow>  domWindow;
 
@@ -407,7 +413,7 @@ gecko_utils_set_zoom(GtkMozEmbed *embed, gfloat zoom)
         webBrowser->GetContentDOMWindow(getter_AddRefs(domWindow));
 
         if (!domWindow) {
-                g_warning("Could not get DOMWindow.");
+                g_warning("GECKO_UTILS >>> Could not get DOMWindow.");
                 return;
         }
 

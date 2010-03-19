@@ -138,7 +138,7 @@ static void destroy_cb(GtkWidget *, Chmsee *);
 static gboolean scroll_event_cb(Chmsee *, GdkEventScroll *);
 static gboolean window_state_event_cb(Chmsee *, GdkEventWindowState *);
 static gboolean configure_event_cb(GtkWidget *, GdkEventConfigure *, Chmsee *);
-static void book_model_changed_cb(Chmsee *, CsChmfile *);
+static void book_model_changed_cb(Chmsee *, CsChmfile *, const gchar *);
 static void book_html_changed_cb(Chmsee *, CsBook *);
 static void book_html_link_message_notify_cb(Chmsee *, GParamSpec *, CsChmfile *);
 
@@ -409,9 +409,9 @@ configure_event_cb(GtkWidget *widget, GdkEventConfigure *event, Chmsee *self)
 }
 
 static void
-book_model_changed_cb(Chmsee *self, CsChmfile *chmfile)
+book_model_changed_cb(Chmsee *self, CsChmfile *chmfile, const gchar *filename)
 {
-        g_debug("Chmsee >>> receive book model changed callback");
+        g_debug("Chmsee >>> receive book model changed callback %s", filename);
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         gboolean has_model = (chmfile != NULL);
 
@@ -427,6 +427,12 @@ book_model_changed_cb(Chmsee *self, CsChmfile *chmfile)
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Forward"), has_model);
 
         gtk_widget_set_sensitive(priv->book, has_model);
+
+        if (filename
+            && g_str_has_prefix(filename, "file://")
+            && (g_str_has_suffix(filename, ".chm") || g_str_has_suffix(filename, ".CHM"))) {
+                chmsee_open_draged_file(self, filename);
+        }
 }
 
 static void
@@ -631,12 +637,7 @@ on_keyboard_escape(GtkWidget *widget, Chmsee *self)
         g_debug("Chmsee >>> press ESC key");
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        if (priv->config->fullscreen) {
-                chmsee_set_fullscreen(self, FALSE);
-        } else {
-                cs_book_findbar_hide(CS_BOOK (priv->book));
-                /* gtk_window_iconify(GTK_WINDOW (self)); */
-        }
+        cs_book_findbar_hide(CS_BOOK (priv->book));
 }
 
 static void
@@ -692,46 +693,36 @@ chmsee_quit(Chmsee *self)
 }
 
 static void
-chmsee_drag_data_received (GtkWidget          *widget,
-                           GdkDragContext     *context,
-                           gint                x,
-                           gint                y,
-                           GtkSelectionData   *selection_data,
-                           guint               info,
-                           guint               time)
+chmsee_drag_data_received (GtkWidget *widget, GdkDragContext *context, gint x, gint y,
+                           GtkSelectionData *selection_data, guint info, guint time)
 {
         gchar  **uris;
         gint     i = 0;
 
-        uris = gtk_selection_data_get_uris (selection_data);
+        uris = gtk_selection_data_get_uris(selection_data);
         if (!uris) {
                 gtk_drag_finish (context, FALSE, FALSE, time);
                 return;
         }
 
         for (i = 0; uris[i]; i++) {
-                gchar* uri = uris[i];
-                if(g_str_has_prefix(uri, "file://")
-                   && (g_str_has_suffix(uri, ".chm")
-                       || g_str_has_suffix(uri, ".CHM"))) {
-                        chmsee_open_draged_file(CHMSEE(widget), uri);
+                gchar *uri = uris[i];
+                if (g_str_has_prefix(uri, "file://")
+                    && (g_str_has_suffix(uri, ".chm") || g_str_has_suffix(uri, ".CHM"))) {
+                        chmsee_open_draged_file(CHMSEE (widget), uri);
                         break;
                 }
         }
 
-        gtk_drag_finish (context, TRUE, FALSE, time);
+        gtk_drag_finish(context, TRUE, FALSE, time);
 
-        g_strfreev (uris);
+        g_strfreev(uris);
 }
 
 static void
 chmsee_open_draged_file(Chmsee *chmsee, const gchar *file)
 {
-        if(!g_str_has_prefix(file, "file://")) {
-                return;
-        }
-
-        gchar* fname = g_uri_unescape_string(file+7, NULL);
+        gchar *fname = g_uri_unescape_string(file+7, NULL);
         chmsee_open_file(chmsee, fname);
         g_free(fname);
 }
@@ -1056,7 +1047,7 @@ chmsee_close_book(Chmsee *self)
                 priv->chmfile = NULL;
         }
 
-        book_model_changed_cb(self, NULL);
+        book_model_changed_cb(self, NULL, NULL);
 
         priv->state = CHMSEE_STATE_NORMAL;
 }
