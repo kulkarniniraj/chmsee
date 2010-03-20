@@ -378,15 +378,22 @@ cs_toc_select_uri(CsToc *self, const gchar *uri)
 
         CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
 
-        gchar *real_uri = get_real_uri(uri);
-
         FindURIData data;
         data.found = FALSE;
-        data.uri = real_uri;
+        data.uri = uri;
 
         gtk_tree_model_foreach(GTK_TREE_MODEL (priv->store),
                                (GtkTreeModelForeachFunc) find_uri_foreach,
                                &data);
+
+        if (!data.found) {
+                gchar *real_uri = get_real_uri(uri);
+                data.uri = real_uri;
+                gtk_tree_model_foreach(GTK_TREE_MODEL (priv->store),
+                                       (GtkTreeModelForeachFunc) find_uri_foreach,
+                                       &data);
+                g_free(real_uri);
+        }
 
         if (!data.found) {
                 g_debug("CS_TOC >>> select uri: cannot found data");
@@ -408,7 +415,6 @@ cs_toc_select_uri(CsToc *self, const gchar *uri)
                                           self);
 
         gtk_tree_path_free(data.path);
-        g_free(real_uri);
 }
 
 gboolean

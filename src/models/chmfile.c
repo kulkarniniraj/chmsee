@@ -541,14 +541,16 @@ chmfile_file_info(CsChmfile *self)
 
         /* convert bookname to UTF-8 */
         if (priv->bookname != NULL && priv->encoding != NULL) {
-                gchar *bookname_utf8;
-
-                bookname_utf8 = g_convert(priv->bookname, -1, "UTF-8",
-                                       priv->encoding,
-                                       NULL, NULL, NULL);
+                gchar *bookname_utf8 = g_convert(priv->bookname, -1, "UTF-8",
+                                                 priv->encoding,
+                                                 NULL, NULL, NULL);
+                g_debug("CS_CHMFILE >>> priv->bookname = %s, bookname_utf8 = %s", priv->bookname, bookname_utf8);
                 g_free(priv->bookname);
                 priv->bookname = bookname_utf8;
         }
+
+        if (priv->bookname == NULL)
+                priv->bookname = g_strdup(g_path_get_basename(priv->filename));
 
         /* convert filename to UTF-8 */
         if (priv->hhc != NULL && priv->encoding != NULL) {
@@ -618,12 +620,8 @@ chmfile_windows_info(struct chmFile *cfd, CsChmfile *self)
         if (priv->homepage == NULL && homepage)
                 priv->homepage = g_strdup_printf("/%s", buffer + homepage);
 
-        if (priv->bookname == NULL) {
-                if (bookname)
-                        priv->bookname = g_strdup((char *)buffer + bookname);
-                else
-                        priv->bookname = g_strdup(g_path_get_basename(priv->filename));
-        }
+        if (priv->bookname == NULL && bookname)
+                priv->bookname = g_strdup((char *)buffer + bookname);
 }
 
 static void

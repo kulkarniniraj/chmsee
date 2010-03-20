@@ -931,9 +931,6 @@ cs_book_load_url(CsBook *self, const gchar *uri)
         cs_html_gecko_load_url(priv->active_html, full_uri);
         g_signal_handlers_unblock_by_func(priv->active_html, html_open_uri_cb, self);
 
-        if (priv->has_toc)
-                cs_toc_select_uri(CS_TOC (priv->toc_page), uri);
-
         g_free(full_uri);
 
         g_signal_emit(self, signals[HTML_CHANGED], 0, self);
@@ -1003,6 +1000,9 @@ cs_book_homepage(CsBook *self)
 
         if (homepage) {
                 cs_book_load_url(self, homepage);
+
+                if (priv->has_toc)
+                        cs_toc_select_uri(CS_TOC (priv->toc_page), homepage);
         }
 }
 
