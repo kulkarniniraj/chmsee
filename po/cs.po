@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-17 11:55+0800\n"
+"POT-Creation-Date: 2010-03-20 11:10+0800\n"
 "PO-Revision-Date: 2009-06-09 10:21+0000\n"
 "Last-Translator: Vojtěch Trefný <vojtech.trefny@gmail.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -17,41 +17,50 @@ msgstr ""
 "X-Launchpad-Export-Date: 2009-07-04 04:44+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
-#: ../data/about-dialog.glade.h:1
+#: ../data/about-dialog.ui.h:1
 msgid "The HTML Help(CHM) viewer for Unix/Linux"
 msgstr "HTML Help(CHM) prohlížeč pro Unix/Linux"
 
-#: ../data/about-dialog.glade.h:2
+#: ../data/about-dialog.ui.h:2
 msgid "http://code.google.com/p/chmsee"
 msgstr "http://code.google.com/p/chmsee"
 
-#: ../data/about-dialog.glade.h:3
+#. TRANSLATORS: Replace this string with your names, one name per line.
+#: ../data/about-dialog.ui.h:4
 msgid "translator-credits"
 msgstr ""
 "Launchpad Contributions:\n"
 "  Vojtěch Trefný https://launchpad.net/~vojtech.trefny"
 
-#: ../data/openfile-dialog.glade.h:1
+#: ../data/chmsee.desktop.in.h:1
+msgid "ChmSee"
+msgstr "ChmSee"
+
+#: ../data/chmsee.desktop.in.h:2
+msgid "HTML Help(CHM) viewer"
+msgstr "Prohlížeč HTML Help(CHM)"
+
+#: ../data/openfile-dialog.ui.h:1
 msgid "Open File"
 msgstr "Otevřít soubor"
 
-#: ../data/setup-window.glade.h:1
+#: ../data/setup-window.ui.h:1
 msgid "<b>Cache</b>"
 msgstr "<b>Vyrovnávací paměť</b>"
 
-#: ../data/setup-window.glade.h:2
+#: ../data/setup-window.ui.h:2
 msgid "<b>Charset</b>"
 msgstr "<b>Znaková sada</b>"
 
-#: ../data/setup-window.glade.h:3
+#: ../data/setup-window.ui.h:3
 msgid "<b>Font</b>"
 msgstr "<b>Písmo</b>"
 
-#: ../data/setup-window.glade.h:4
+#: ../data/setup-window.ui.h:4
 msgid "Auto-Detect:"
 msgstr "Autodetekce"
 
-#: ../data/setup-window.glade.h:5
+#: ../data/setup-window.ui.h:5
 msgid ""
 "CHM files extracted in this cache folder, you can press Clear button to free "
 "disk space.\n"
@@ -64,149 +73,156 @@ msgstr ""
 "POZNÁMKA: Pokud právě prohlížíte nějaký soubor, musíte jej po vyčištění "
 "znovu otevřít."
 
-#: ../data/setup-window.glade.h:8
+#: ../data/setup-window.ui.h:8
 msgid "Fixed Width:"
 msgstr "Pevná šířka:"
 
-#: ../data/setup-window.glade.h:9
+#: ../data/setup-window.ui.h:9
 msgid "Japanese"
 msgstr ""
 
-#: ../data/setup-window.glade.h:10
+#: ../data/setup-window.ui.h:10
 msgid "Korean"
 msgstr ""
 
-#: ../data/setup-window.glade.h:11
+#: ../data/setup-window.ui.h:11
 msgid "Russian"
 msgstr ""
 
-#: ../data/setup-window.glade.h:12
+#: ../data/setup-window.ui.h:12
 msgid "Setup"
 msgstr "Nastavení"
 
-#: ../data/setup-window.glade.h:13
+#: ../data/setup-window.ui.h:13
 msgid "Simplified Chinese"
 msgstr ""
 
-#: ../data/setup-window.glade.h:14
+#: ../data/setup-window.ui.h:14
 msgid "Traditional Chinese"
 msgstr ""
 
-#: ../data/setup-window.glade.h:15
+#: ../data/setup-window.ui.h:15
 msgid "Ukrainian"
 msgstr ""
 
-#: ../data/setup-window.glade.h:16
+#: ../data/setup-window.ui.h:16
 msgid "Universal"
 msgstr ""
 
-#: ../data/setup-window.glade.h:17
+#: ../data/setup-window.ui.h:17
 msgid "Variable Width:"
 msgstr "Proměnná šířka"
 
-#: ../data/chmsee.desktop.in.h:1
-msgid "ChmSee"
-msgstr "ChmSee"
-
-#: ../data/chmsee.desktop.in.h:2
-msgid "HTML Help(CHM) viewer"
-msgstr "Prohlížeč HTML Help(CHM)"
-
-#: ../src/chmsee.c:481 ../src/ui_chmfile.c:419
-#, c-format
-msgid "URI redirect: \"%s\" -> \"%s\""
-msgstr "Přesměrování: \"%s\" -> \"%s\""
-
-#: ../src/chmsee.c:554
+#: ../src/chmsee.c:507
 msgid "CHM Files"
 msgstr "Soubory CHM"
 
-#: ../src/chmsee.c:559
+#: ../src/chmsee.c:512
 msgid "All Files"
 msgstr "Všechny soubory"
 
-#: ../src/chmsee.c:841
+#: ../src/chmsee.c:802
 msgid "Ready!"
 msgstr "Připraven!"
 
-#: ../src/chmsee.c:973
-#, c-format
-msgid "Error loading file '%s'"
-msgstr "Chyba při načítání souboru '%s'"
+#: ../src/chmsee.c:983
+#, fuzzy, c-format
+msgid "Error: Can not open spectified file '%s'"
+msgstr "Nemohu otevřít soubor %s"
 
-#: ../src/ui_bookmarks.c:315
-msgid "Bookmark"
-msgstr "Záložka"
-
-#: ../src/ui_chmfile.c:665
-msgid "Topics"
-msgstr "Témata"
-
-#: ../src/ui_chmfile.c:674
-msgid "Index"
-msgstr ""
-
-#: ../src/ui_chmfile.c:680
-msgid "Bookmarks"
-msgstr "Záložky"
-
-#. Custom label widget, with a close button
-#: ../src/ui_chmfile.c:870 ../src/ui_chmfile.c:1003
-msgid "No Title"
-msgstr "bez názvu"
-
-#: ../src/main.cpp:108
-msgid "Specify index"
-msgstr ""
-
-#: ../src/main.cpp:109
-msgid "INDEX"
-msgstr ""
-
-#: ../src/main.cpp:113
+#: ../src/main.c:190
 msgid "Display the version and exit"
 msgstr "Zobrazit verzi ukončit"
 
-#: ../src/main.cpp:118
+#: ../src/main.c:195
 msgid "be verbose, repeat 3 times to get all info"
 msgstr ""
 
-#: ../src/main.cpp:123
+#: ../src/main.c:200
 msgid "be quiet, repeat 2 times to disable all info"
 msgstr ""
 
-#: ../src/main.cpp:129
-msgid "PATH"
+#: ../src/main.c:206
+msgid "Bookshelf"
 msgstr ""
 
-#: ../src/main.cpp:160
+#: ../src/main.c:231
 #, c-format
 msgid "more than 1 argument\n"
 msgstr "víc jak jeden argument\n"
 
-#: ../src/models/chmfile.c:254
-#, c-format
-msgid "cannot open chmfile: %s"
-msgstr "nemohu otevřít soubor: %s"
+#: ../src/components/book.c:253
+msgid "Find:"
+msgstr ""
 
-#: ../src/models/chmfile.c:261
+#: ../src/components/book.c:280
+msgid "Match case"
+msgstr ""
+
+#. customized label, add a close button rightmost
+#: ../src/components/book.c:698 ../src/components/book.c:758
+msgid "No Title"
+msgstr "bez názvu"
+
+#: ../src/components/book.c:856
+msgid "Topics"
+msgstr "Témata"
+
+#: ../src/components/book.c:875
+msgid "Index"
+msgstr ""
+
+#: ../src/components/book.c:891
+msgid "Bookmarks"
+msgstr "Záložky"
+
+#: ../src/models/chmfile.c:297
+#, fuzzy, c-format
+msgid "Cannot open chmfile: %s"
+msgstr "Nemohu otevřít soubor %s"
+
+#: ../src/models/chmfile.c:307
 #, c-format
 msgid "Extract chmfile failed: %s"
 msgstr "Rozbalení souboru selhalo: %s"
 
-#: ../src/models/chmfile.c:287
-#, c-format
-msgid "open \"%s\" failed: %s"
+#: ../src/models/chmfile.c:332
+#, fuzzy, c-format
+msgid "Open \"%s\" failed: %s"
 msgstr "otevírání \"%s\" selhalo: %s"
 
-#: ../src/models/chmfile.c:337
+#: ../src/models/chmfile.c:535
 #, c-format
 msgid "Can not open chm file %s."
 msgstr "Nemohu otevřít soubor %s"
 
-#: ../src/models/chmfile.c:595
-msgid "Can't found hhc file."
-msgstr "Nemohu najít hhc soubor."
+#~ msgid "_File"
+#~ msgstr "_Soubor"
+
+#, fuzzy
+#~ msgid "Open a file"
+#~ msgstr "Otevřít soubor"
+
+#, fuzzy
+#~ msgid "Exit ChmSee"
+#~ msgstr "ChmSee"
+
+#, fuzzy
+#~ msgid "CS_BOOK >>> URI redirect: \"%s\" -> \"%s\""
+#~ msgstr "Přesměrování: \"%s\" -> \"%s\""
+
+#, fuzzy
+#~ msgid "CS_CHMFILE >>> cannot open chmfile: %s"
+#~ msgstr "nemohu otevřít soubor: %s"
+
+#~ msgid "Error loading file '%s'"
+#~ msgstr "Chyba při načítání souboru '%s'"
+
+#~ msgid "Bookmark"
+#~ msgstr "Záložka"
+
+#~ msgid "Can't found hhc file."
+#~ msgstr "Nemohu najít hhc soubor."
 
 #~ msgid "About"
 #~ msgstr "O aplikaci"
@@ -275,9 +291,6 @@ msgstr "Nemohu najít hhc soubor."
 
 #~ msgid "_Edit"
 #~ msgstr "_Upravit"
-
-#~ msgid "_File"
-#~ msgstr "_Soubor"
 
 #~ msgid "_Forward"
 #~ msgstr "_Vpřed"

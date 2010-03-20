@@ -294,7 +294,7 @@ extract_chm(const gchar *filename, const gchar *base_path)
         handle = chm_open(filename);
 
         if (handle == NULL) {
-                g_warning(_("CS_CHMFILE >>> cannot open chmfile: %s"), filename);
+                g_warning(_("Cannot open chmfile: %s"), filename);
                 return FALSE;
         }
 
@@ -329,7 +329,7 @@ MD5File(const char *filename, char *buf)
         gcry_md_open(&hd, GCRY_MD_MD5, 0);
         f = open(filename, O_RDONLY);
         if (f < 0) {
-                g_warning(_("CS_CHMFILE >>> open \"%s\" failed: %s"), filename, strerror(errno));
+                g_warning(_("Open \"%s\" failed: %s"), filename, strerror(errno));
                 return NULL;
         }
 

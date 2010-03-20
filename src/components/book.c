@@ -411,7 +411,7 @@ html_open_uri_cb(CsHtmlGecko *html, const gchar *uri, CsBook *self)
                         g_debug("%s:%d:html_open_uri_cb:%s does not exist", __FILE__, __LINE__, uri+prefix_len);
                         gchar* newfname = correct_filename(uri+prefix_len);
                         if (newfname) {
-                                g_debug(_("CS_BOOK >>> URI redirect: \"%s\" -> \"%s\""), uri, newfname);
+                                g_debug("CS_BOOK >>> URI redirect: \"%s\" -> \"%s\"", uri, newfname);
                                 cs_html_gecko_load_url(html, newfname);
                                 g_free(newfname);
                                 return TRUE;

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ChmSee 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-17 11:55+0800\n"
-"PO-Revision-Date: 2010-01-17 12:45+0800\n"
+"POT-Creation-Date: 2010-03-20 11:10+0800\n"
+"PO-Revision-Date: 2010-03-20 11:11+0800\n"
 "Last-Translator: Ji YongGang <jungleji@gmail.com>\n"
 "Language-Team: szlug <szlug@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -17,15 +17,16 @@ msgstr ""
 "X-Launchpad-Export-Date: 2009-09-06 10:48+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
-#: ../data/about-dialog.glade.h:1
+#: ../data/about-dialog.ui.h:1
 msgid "The HTML Help(CHM) viewer for Unix/Linux"
 msgstr "Unix/Linux 下的 HTML Help(CHM) 阅读工具"
 
-#: ../data/about-dialog.glade.h:2
+#: ../data/about-dialog.ui.h:2
 msgid "http://code.google.com/p/chmsee"
 msgstr "http://code.google.com/p/chmsee"
 
-#: ../data/about-dialog.glade.h:3
+#. TRANSLATORS: Replace this string with your names, one name per line.
+#: ../data/about-dialog.ui.h:4
 msgid "translator-credits"
 msgstr ""
 "翻译人员\n"
@@ -36,27 +37,35 @@ msgstr ""
 "  LI Daobing https://launchpad.net/~lidaobing\n"
 "  zhangmiao https://launchpad.net/~mymzhang"
 
-#: ../data/openfile-dialog.glade.h:1
+#: ../data/chmsee.desktop.in.h:1
+msgid "ChmSee"
+msgstr "ChmSee"
+
+#: ../data/chmsee.desktop.in.h:2
+msgid "HTML Help(CHM) viewer"
+msgstr "HTML Help(CHM) 文件阅读工具"
+
+#: ../data/openfile-dialog.ui.h:1
 msgid "Open File"
 msgstr "打开文件"
 
-#: ../data/setup-window.glade.h:1
+#: ../data/setup-window.ui.h:1
 msgid "<b>Cache</b>"
 msgstr "<b>缓冲区</b>"
 
-#: ../data/setup-window.glade.h:2
+#: ../data/setup-window.ui.h:2
 msgid "<b>Charset</b>"
 msgstr "<b>字符集</b>"
 
-#: ../data/setup-window.glade.h:3
+#: ../data/setup-window.ui.h:3
 msgid "<b>Font</b>"
 msgstr "<b>字体</b>"
 
-#: ../data/setup-window.glade.h:4
+#: ../data/setup-window.ui.h:4
 msgid "Auto-Detect:"
 msgstr "自动检测："
 
-#: ../data/setup-window.glade.h:5
+#: ../data/setup-window.ui.h:5
 msgid ""
 "CHM files extracted in this cache folder, you can press Clear button to free "
 "disk space.\n"
@@ -67,146 +76,125 @@ msgstr ""
 "\n"
 "注意：假如您正在浏览 CHM 文件，清空后需要重新打开该文件。"
 
-#: ../data/setup-window.glade.h:8
+#: ../data/setup-window.ui.h:8
 msgid "Fixed Width:"
 msgstr "固定宽度："
 
-#: ../data/setup-window.glade.h:9
+#: ../data/setup-window.ui.h:9
 msgid "Japanese"
 msgstr "日语"
 
-#: ../data/setup-window.glade.h:10
+#: ../data/setup-window.ui.h:10
 msgid "Korean"
 msgstr "朝鲜语"
 
-#: ../data/setup-window.glade.h:11
+#: ../data/setup-window.ui.h:11
 msgid "Russian"
 msgstr "俄语"
 
-#: ../data/setup-window.glade.h:12
+#: ../data/setup-window.ui.h:12
 msgid "Setup"
 msgstr "设置"
 
-#: ../data/setup-window.glade.h:13
+#: ../data/setup-window.ui.h:13
 msgid "Simplified Chinese"
 msgstr "简体中文"
 
-#: ../data/setup-window.glade.h:14
+#: ../data/setup-window.ui.h:14
 msgid "Traditional Chinese"
 msgstr "繁体中文"
 
-#: ../data/setup-window.glade.h:15
+#: ../data/setup-window.ui.h:15
 msgid "Ukrainian"
 msgstr "乌克兰语"
 
-#: ../data/setup-window.glade.h:16
+#: ../data/setup-window.ui.h:16
 msgid "Universal"
 msgstr "通用"
 
-#: ../data/setup-window.glade.h:17
+#: ../data/setup-window.ui.h:17
 msgid "Variable Width:"
 msgstr "可变宽度："
 
-#: ../data/chmsee.desktop.in.h:1
-msgid "ChmSee"
-msgstr "ChmSee"
-
-#: ../data/chmsee.desktop.in.h:2
-msgid "HTML Help(CHM) viewer"
-msgstr "HTML Help(CHM) 文件阅读工具"
-
-#: ../src/chmsee.c:481 ../src/ui_chmfile.c:419
-#, c-format
-msgid "URI redirect: \"%s\" -> \"%s\""
-msgstr "URI 重定向: \"%s\" -> \"%s\""
-
-#: ../src/chmsee.c:554
+#: ../src/chmsee.c:507
 msgid "CHM Files"
 msgstr "CHM 文件"
 
-#: ../src/chmsee.c:559
+#: ../src/chmsee.c:512
 msgid "All Files"
 msgstr "所有文件"
 
-#: ../src/chmsee.c:841
+#: ../src/chmsee.c:802
 msgid "Ready!"
 msgstr "就绪！"
 
-#: ../src/chmsee.c:973
+#: ../src/chmsee.c:983
 #, c-format
-msgid "Error loading file '%s'"
-msgstr "打开文件错误 '%s'"
+msgid "Error: Can not open spectified file '%s'"
+msgstr "出错： 无法打开 chm 文件 %s。"
 
-#: ../src/ui_bookmarks.c:315
-msgid "Bookmark"
-msgstr "书签"
-
-#: ../src/ui_chmfile.c:665
-msgid "Topics"
-msgstr "目录"
-
-#: ../src/ui_chmfile.c:674
-msgid "Index"
-msgstr "索引"
-
-#: ../src/ui_chmfile.c:680
-msgid "Bookmarks"
-msgstr "书签"
-
-#. Custom label widget, with a close button
-#: ../src/ui_chmfile.c:870 ../src/ui_chmfile.c:1003
-msgid "No Title"
-msgstr "无标题"
-
-#: ../src/main.cpp:108
-msgid "Specify index"
-msgstr "指定索引"
-
-#: ../src/main.cpp:109
-msgid "INDEX"
-msgstr "索引"
-
-#: ../src/main.cpp:113
+#: ../src/main.c:190
 msgid "Display the version and exit"
 msgstr "显示版本并退出"
 
-#: ../src/main.cpp:118
+#: ../src/main.c:195
 msgid "be verbose, repeat 3 times to get all info"
 msgstr "详细，重复 3 次获得全部信息"
 
-#: ../src/main.cpp:123
+#: ../src/main.c:200
 msgid "be quiet, repeat 2 times to disable all info"
 msgstr "安静，重复 2 次关闭全部信息"
 
-#: ../src/main.cpp:129
-msgid "PATH"
-msgstr "路径"
+#: ../src/main.c:206
+msgid "Bookshelf"
+msgstr "书架"
 
-#: ../src/main.cpp:160
+#: ../src/main.c:231
 #, c-format
 msgid "more than 1 argument\n"
 msgstr "超过 1 个参数\n"
 
-#: ../src/models/chmfile.c:254
-#, c-format
-msgid "cannot open chmfile: %s"
-msgstr "无法打开 chmfile: %s"
+#: ../src/components/book.c:253
+msgid "Find:"
+msgstr "搜寻："
 
-#: ../src/models/chmfile.c:261
+#: ../src/components/book.c:280
+msgid "Match case"
+msgstr "区分大小写字母"
+
+#. customized label, add a close button rightmost
+#: ../src/components/book.c:698 ../src/components/book.c:758
+msgid "No Title"
+msgstr "无标题"
+
+#: ../src/components/book.c:856
+msgid "Topics"
+msgstr "目录"
+
+#: ../src/components/book.c:875
+msgid "Index"
+msgstr "索引"
+
+#: ../src/components/book.c:891
+msgid "Bookmarks"
+msgstr "书签"
+
+#: ../src/models/chmfile.c:297
+#, c-format
+msgid "Cannot open chmfile: %s"
+msgstr "无法打开 chm 文件 %s。"
+
+#: ../src/models/chmfile.c:307
 #, c-format
 msgid "Extract chmfile failed: %s"
 msgstr "解包 chmfile 失败: %s"
 
-#: ../src/models/chmfile.c:287
+#: ../src/models/chmfile.c:332
 #, c-format
-msgid "open \"%s\" failed: %s"
+msgid "Open \"%s\" failed: %s"
 msgstr "打开 \"%s\" 失败: %s"
 
-#: ../src/models/chmfile.c:337
+#: ../src/models/chmfile.c:535
 #, c-format
 msgid "Can not open chm file %s."
 msgstr "无法打开 chm 文件 %s。"
-
-#: ../src/models/chmfile.c:595
-msgid "Can't found hhc file."
-msgstr "无法找到 hhc 文件。"

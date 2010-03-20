@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-17 11:55+0800\n"
+"POT-Creation-Date: 2010-03-20 11:10+0800\n"
 "PO-Revision-Date: 2009-08-14 00:51+0000\n"
 "Last-Translator: Mauro de Carvalho <mauro.dec@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -17,15 +17,16 @@ msgstr ""
 "X-Launchpad-Export-Date: 2009-09-06 10:48+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
-#: ../data/about-dialog.glade.h:1
+#: ../data/about-dialog.ui.h:1
 msgid "The HTML Help(CHM) viewer for Unix/Linux"
 msgstr "El visor de Ayuda HTML (CHM) para Unix/Linux"
 
-#: ../data/about-dialog.glade.h:2
+#: ../data/about-dialog.ui.h:2
 msgid "http://code.google.com/p/chmsee"
 msgstr "http://code.google.com/p/chmsee"
 
-#: ../data/about-dialog.glade.h:3
+#. TRANSLATORS: Replace this string with your names, one name per line.
+#: ../data/about-dialog.ui.h:4
 msgid "translator-credits"
 msgstr ""
 "Launchpad Contributions:\n"
@@ -35,27 +36,35 @@ msgstr ""
 "  DiegoJ https://launchpad.net/~diegojromerolopez\n"
 "  Mauro de Carvalho https://launchpad.net/~mauro-dec"
 
-#: ../data/openfile-dialog.glade.h:1
+#: ../data/chmsee.desktop.in.h:1
+msgid "ChmSee"
+msgstr "ChmSee"
+
+#: ../data/chmsee.desktop.in.h:2
+msgid "HTML Help(CHM) viewer"
+msgstr "Visor de Ayuda HTML (CHM)"
+
+#: ../data/openfile-dialog.ui.h:1
 msgid "Open File"
 msgstr "Abrir archivo"
 
-#: ../data/setup-window.glade.h:1
+#: ../data/setup-window.ui.h:1
 msgid "<b>Cache</b>"
 msgstr "<b>Caché</b>"
 
-#: ../data/setup-window.glade.h:2
+#: ../data/setup-window.ui.h:2
 msgid "<b>Charset</b>"
 msgstr "<b>Juego de caracteres</b>"
 
-#: ../data/setup-window.glade.h:3
+#: ../data/setup-window.ui.h:3
 msgid "<b>Font</b>"
 msgstr "<b>Tipografía</b>"
 
-#: ../data/setup-window.glade.h:4
+#: ../data/setup-window.ui.h:4
 msgid "Auto-Detect:"
 msgstr "Auto-detectar:"
 
-#: ../data/setup-window.glade.h:5
+#: ../data/setup-window.ui.h:5
 msgid ""
 "CHM files extracted in this cache folder, you can press Clear button to free "
 "disk space.\n"
@@ -65,149 +74,156 @@ msgstr ""
 "Los archivos CHM se extraen en la carpeta de caché, puedes pulsar el botón "
 "de Limpiar para liberar ese espacio de disco."
 
-#: ../data/setup-window.glade.h:8
+#: ../data/setup-window.ui.h:8
 msgid "Fixed Width:"
 msgstr "Ancho fijo:"
 
-#: ../data/setup-window.glade.h:9
+#: ../data/setup-window.ui.h:9
 msgid "Japanese"
 msgstr ""
 
-#: ../data/setup-window.glade.h:10
+#: ../data/setup-window.ui.h:10
 msgid "Korean"
 msgstr ""
 
-#: ../data/setup-window.glade.h:11
+#: ../data/setup-window.ui.h:11
 msgid "Russian"
 msgstr ""
 
-#: ../data/setup-window.glade.h:12
+#: ../data/setup-window.ui.h:12
 msgid "Setup"
 msgstr "Configurar"
 
-#: ../data/setup-window.glade.h:13
+#: ../data/setup-window.ui.h:13
 msgid "Simplified Chinese"
 msgstr ""
 
-#: ../data/setup-window.glade.h:14
+#: ../data/setup-window.ui.h:14
 msgid "Traditional Chinese"
 msgstr ""
 
-#: ../data/setup-window.glade.h:15
+#: ../data/setup-window.ui.h:15
 msgid "Ukrainian"
 msgstr ""
 
-#: ../data/setup-window.glade.h:16
+#: ../data/setup-window.ui.h:16
 msgid "Universal"
 msgstr ""
 
-#: ../data/setup-window.glade.h:17
+#: ../data/setup-window.ui.h:17
 msgid "Variable Width:"
 msgstr "Ancho variable:"
 
-#: ../data/chmsee.desktop.in.h:1
-msgid "ChmSee"
-msgstr "ChmSee"
-
-#: ../data/chmsee.desktop.in.h:2
-msgid "HTML Help(CHM) viewer"
-msgstr "Visor de Ayuda HTML (CHM)"
-
-#: ../src/chmsee.c:481 ../src/ui_chmfile.c:419
-#, c-format
-msgid "URI redirect: \"%s\" -> \"%s\""
-msgstr "Redirección de URI: \"%s\" -> \"%s\""
-
-#: ../src/chmsee.c:554
+#: ../src/chmsee.c:507
 msgid "CHM Files"
 msgstr "Archivos CHM"
 
-#: ../src/chmsee.c:559
+#: ../src/chmsee.c:512
 msgid "All Files"
 msgstr "Todos los archivos"
 
-#: ../src/chmsee.c:841
+#: ../src/chmsee.c:802
 msgid "Ready!"
 msgstr "¡Listo!"
 
-#: ../src/chmsee.c:973
-#, c-format
-msgid "Error loading file '%s'"
-msgstr "Error cargando el archivo '%s'"
+#: ../src/chmsee.c:983
+#, fuzzy, c-format
+msgid "Error: Can not open spectified file '%s'"
+msgstr "No se puede abrir el archivo chm %s."
 
-#: ../src/ui_bookmarks.c:315
-msgid "Bookmark"
-msgstr "Marcador"
-
-#: ../src/ui_chmfile.c:665
-msgid "Topics"
-msgstr "Temas"
-
-#: ../src/ui_chmfile.c:674
-msgid "Index"
-msgstr "Índice"
-
-#: ../src/ui_chmfile.c:680
-msgid "Bookmarks"
-msgstr "Marcadores"
-
-#. Custom label widget, with a close button
-#: ../src/ui_chmfile.c:870 ../src/ui_chmfile.c:1003
-msgid "No Title"
-msgstr "Sin título"
-
-#: ../src/main.cpp:108
-msgid "Specify index"
-msgstr ""
-
-#: ../src/main.cpp:109
-msgid "INDEX"
-msgstr ""
-
-#: ../src/main.cpp:113
+#: ../src/main.c:190
 msgid "Display the version and exit"
 msgstr "Mostrar la versión y salir"
 
-#: ../src/main.cpp:118
+#: ../src/main.c:195
 msgid "be verbose, repeat 3 times to get all info"
 msgstr "ser más explícito, repítalo 3 veces para obtener toda la información"
 
-#: ../src/main.cpp:123
+#: ../src/main.c:200
 msgid "be quiet, repeat 2 times to disable all info"
 msgstr "ser silencioso, repítalo 2 veces para deshabilitar toda la información"
 
-#: ../src/main.cpp:129
-msgid "PATH"
+#: ../src/main.c:206
+msgid "Bookshelf"
 msgstr ""
 
-#: ../src/main.cpp:160
+#: ../src/main.c:231
 #, c-format
 msgid "more than 1 argument\n"
 msgstr "más de un argumento\n"
 
-#: ../src/models/chmfile.c:254
-#, c-format
-msgid "cannot open chmfile: %s"
-msgstr "no se puede abrir el archivo CHM: %s"
+#: ../src/components/book.c:253
+msgid "Find:"
+msgstr ""
 
-#: ../src/models/chmfile.c:261
+#: ../src/components/book.c:280
+msgid "Match case"
+msgstr ""
+
+#. customized label, add a close button rightmost
+#: ../src/components/book.c:698 ../src/components/book.c:758
+msgid "No Title"
+msgstr "Sin título"
+
+#: ../src/components/book.c:856
+msgid "Topics"
+msgstr "Temas"
+
+#: ../src/components/book.c:875
+msgid "Index"
+msgstr "Índice"
+
+#: ../src/components/book.c:891
+msgid "Bookmarks"
+msgstr "Marcadores"
+
+#: ../src/models/chmfile.c:297
+#, fuzzy, c-format
+msgid "Cannot open chmfile: %s"
+msgstr "No se puede abrir el archivo chm %s."
+
+#: ../src/models/chmfile.c:307
 #, c-format
 msgid "Extract chmfile failed: %s"
 msgstr "Ha fallado la extracción del archivo CHM: %s"
 
-#: ../src/models/chmfile.c:287
-#, c-format
-msgid "open \"%s\" failed: %s"
+#: ../src/models/chmfile.c:332
+#, fuzzy, c-format
+msgid "Open \"%s\" failed: %s"
 msgstr "la apertura de \"%s\" ha fallado: %s"
 
-#: ../src/models/chmfile.c:337
+#: ../src/models/chmfile.c:535
 #, c-format
 msgid "Can not open chm file %s."
 msgstr "No se puede abrir el archivo chm %s."
 
-#: ../src/models/chmfile.c:595
-msgid "Can't found hhc file."
-msgstr "No se encontró el archivo hhc"
+#~ msgid "_File"
+#~ msgstr "_Archivo"
+
+#, fuzzy
+#~ msgid "Open a file"
+#~ msgstr "Abrir archivo"
+
+#, fuzzy
+#~ msgid "Exit ChmSee"
+#~ msgstr "ChmSee"
+
+#, fuzzy
+#~ msgid "CS_BOOK >>> URI redirect: \"%s\" -> \"%s\""
+#~ msgstr "Redirección de URI: \"%s\" -> \"%s\""
+
+#, fuzzy
+#~ msgid "CS_CHMFILE >>> cannot open chmfile: %s"
+#~ msgstr "no se puede abrir el archivo CHM: %s"
+
+#~ msgid "Error loading file '%s'"
+#~ msgstr "Error cargando el archivo '%s'"
+
+#~ msgid "Bookmark"
+#~ msgstr "Marcador"
+
+#~ msgid "Can't found hhc file."
+#~ msgstr "No se encontró el archivo hhc"
 
 #~ msgid "About"
 #~ msgstr "Acerca de"
@@ -282,9 +298,6 @@ msgstr "No se encontró el archivo hhc"
 
 #~ msgid "_Edit"
 #~ msgstr "_Editar"
-
-#~ msgid "_File"
-#~ msgstr "_Archivo"
 
 #~ msgid "_Forward"
 #~ msgstr "_Adelante"
