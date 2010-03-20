@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-20 11:10+0800\n"
+"POT-Creation-Date: 2010-03-21 00:12+0800\n"
 "PO-Revision-Date: 2009-06-21 17:11+0000\n"
 "Last-Translator: abuyop <Unknown>\n"
 "Language-Team: Malay <ms@li.org>\n"
@@ -113,6 +113,116 @@ msgstr ""
 msgid "Variable Width:"
 msgstr "Lebar Boleh Ubah"
 
+#: ../src/chmsee.c:182
+msgid "_File"
+msgstr "_Fail"
+
+#: ../src/chmsee.c:183
+msgid "_Edit"
+msgstr "_Sunting"
+
+#: ../src/chmsee.c:184
+msgid "_View"
+msgstr "_Papar"
+
+#: ../src/chmsee.c:185
+msgid "_Help"
+msgstr "_Bantuan"
+
+#: ../src/chmsee.c:187
+msgid "_Open"
+msgstr ""
+
+#: ../src/chmsee.c:187
+#, fuzzy
+msgid "Open a file"
+msgstr "Buka Fail"
+
+#: ../src/chmsee.c:188
+#, fuzzy
+msgid "New _Tab"
+msgstr "Tab _Baru"
+
+#: ../src/chmsee.c:189
+msgid "_Close Tab"
+msgstr "_Tutup Tab"
+
+#: ../src/chmsee.c:190
+msgid "E_xit"
+msgstr ""
+
+#: ../src/chmsee.c:190
+#, fuzzy
+msgid "Exit ChmSee"
+msgstr "ChmSee"
+
+#: ../src/chmsee.c:192 ../src/components/book.c:133
+msgid "_Copy"
+msgstr "_Salin"
+
+#: ../src/chmsee.c:193
+msgid "_Find"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "_Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:197
+#, fuzzy
+msgid "_Home"
+msgstr "Runah"
+
+#: ../src/chmsee.c:198 ../src/components/book.c:134
+msgid "_Back"
+msgstr "_Kembali"
+
+#: ../src/chmsee.c:199 ../src/components/book.c:135
+msgid "_Forward"
+msgstr "_Hadapan"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "_About"
+msgstr "Perihal"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "About ChmSee"
+msgstr "ChmSee"
+
+#: ../src/chmsee.c:203
+#, fuzzy
+msgid "Zoom _In"
+msgstr "Zum masuk"
+
+#: ../src/chmsee.c:204
+#, fuzzy
+msgid "_Normal Size"
+msgstr "Normal"
+
+#: ../src/chmsee.c:205
+#, fuzzy
+msgid "Zoom _Out"
+msgstr "Zum Keluar"
+
+#: ../src/chmsee.c:207 ../src/components/book.c:138
+msgid "Select _All"
+msgstr "Pilih _Semua"
+
+#: ../src/chmsee.c:215
+#, fuzzy
+msgid "Full _Screen"
+msgstr "Skrin Penuh"
+
+#: ../src/chmsee.c:216
+msgid "Side _Pane"
+msgstr "_Pane Sisi"
+
 #: ../src/chmsee.c:507
 msgid "CHM Files"
 msgstr "Fail CHM"
@@ -121,11 +231,11 @@ msgstr "Fail CHM"
 msgid "All Files"
 msgstr "Semua Fail"
 
-#: ../src/chmsee.c:802
+#: ../src/chmsee.c:803
 msgid "Ready!"
 msgstr "Sedia!"
 
-#: ../src/chmsee.c:983
+#: ../src/chmsee.c:984
 #, fuzzy, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Tidak dapat membuka fail chm: %s"
@@ -151,6 +261,18 @@ msgstr ""
 msgid "more than 1 argument\n"
 msgstr "lebih dari 1 argumen/n\n"
 
+#: ../src/components/book.c:136
+msgid "Open Link in New _Tab"
+msgstr "Buka Pautan pada _Tab Baru"
+
+#: ../src/components/book.c:137
+msgid "_Copy Link Location"
+msgstr "_Salin Lokasi Pautan"
+
+#: ../src/components/book.c:139
+msgid "Copy Page _Location"
+msgstr "Salin Lokasi _Halaman"
+
 #: ../src/components/book.c:253
 msgid "Find:"
 msgstr ""
@@ -160,19 +282,19 @@ msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:698 ../src/components/book.c:758
+#: ../src/components/book.c:699 ../src/components/book.c:759
 msgid "No Title"
 msgstr "Tiada Tajuk"
 
-#: ../src/components/book.c:856
+#: ../src/components/book.c:857
 msgid "Topics"
 msgstr "Topik"
 
-#: ../src/components/book.c:875
+#: ../src/components/book.c:876
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:891
+#: ../src/components/book.c:892
 msgid "Bookmarks"
 msgstr "Tanda Buku"
 
@@ -196,16 +318,8 @@ msgstr "buka '%s' gagal: %s"
 msgid "Can not open chm file %s."
 msgstr "Tidak dapat membuka fail chm: %s"
 
-#~ msgid "_File"
-#~ msgstr "_Fail"
-
-#, fuzzy
-#~ msgid "Open a file"
-#~ msgstr "Buka Fail"
-
-#, fuzzy
-#~ msgid "Exit ChmSee"
-#~ msgstr "ChmSee"
+#~ msgid "About"
+#~ msgstr "Perihal"
 
 #, fuzzy
 #~ msgid "CS_CHMFILE >>> cannot open chmfile: %s"
@@ -220,41 +334,20 @@ msgstr "Tidak dapat membuka fail chm: %s"
 #~ msgid "Can't found hhc file."
 #~ msgstr "Tidak jumpa fail hhc."
 
-#~ msgid "About"
-#~ msgstr "Perihal"
-
 #~ msgid "About..."
 #~ msgstr "Perihal..."
 
 #~ msgid "Back"
 #~ msgstr "Kembali"
 
-#~ msgid "Copy Page _Location"
-#~ msgstr "Salin Lokasi _Halaman"
-
 #~ msgid "Forward"
 #~ msgstr "Hadapan"
-
-#~ msgid "Home"
-#~ msgstr "Runah"
-
-#~ msgid "Normal"
-#~ msgstr "Normal"
-
-#~ msgid "Open Link in New _Tab"
-#~ msgstr "Buka Pautan pada _Tab Baru"
 
 #~ msgid "Panel"
 #~ msgstr "Panel"
 
-#~ msgid "Select _All"
-#~ msgstr "Pilih _Semua"
-
 #~ msgid "Show/Hide Panel"
 #~ msgstr "Papar/Sembunyi Panel"
-
-#~ msgid "Side _Pane"
-#~ msgstr "_Pane Sisi"
 
 #~ msgid ""
 #~ "Universal\n"
@@ -272,39 +365,3 @@ msgstr "Tidak dapat membuka fail chm: %s"
 #~ "Korea/n\n"
 #~ "Rusia/n\n"
 #~ "Ukraine"
-
-#~ msgid "Zoom In"
-#~ msgstr "Zum masuk"
-
-#~ msgid "Zoom Out"
-#~ msgstr "Zum Keluar"
-
-#~ msgid "_Back"
-#~ msgstr "_Kembali"
-
-#~ msgid "_Close Tab"
-#~ msgstr "_Tutup Tab"
-
-#~ msgid "_Copy"
-#~ msgstr "_Salin"
-
-#~ msgid "_Copy Link Location"
-#~ msgstr "_Salin Lokasi Pautan"
-
-#~ msgid "_Edit"
-#~ msgstr "_Sunting"
-
-#~ msgid "_Forward"
-#~ msgstr "_Hadapan"
-
-#~ msgid "_Full Screen"
-#~ msgstr "Skrin Penuh"
-
-#~ msgid "_Help"
-#~ msgstr "_Bantuan"
-
-#~ msgid "_New Tab"
-#~ msgstr "Tab _Baru"
-
-#~ msgid "_View"
-#~ msgstr "_Papar"

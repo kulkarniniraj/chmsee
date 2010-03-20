@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-20 11:10+0800\n"
+"POT-Creation-Date: 2010-03-21 00:12+0800\n"
 "PO-Revision-Date: 2009-05-23 19:44+0000\n"
 "Last-Translator: Jimmy Frydkær Jensen <thewolf40@mailme.dk>\n"
 "Language-Team: Danish <da@li.org>\n"
@@ -111,6 +111,116 @@ msgstr ""
 msgid "Variable Width:"
 msgstr "Variabel bredde:"
 
+#: ../src/chmsee.c:182
+msgid "_File"
+msgstr "_Fil"
+
+#: ../src/chmsee.c:183
+msgid "_Edit"
+msgstr "_Rediger"
+
+#: ../src/chmsee.c:184
+msgid "_View"
+msgstr "_Vis"
+
+#: ../src/chmsee.c:185
+msgid "_Help"
+msgstr "_Hjælp"
+
+#: ../src/chmsee.c:187
+msgid "_Open"
+msgstr ""
+
+#: ../src/chmsee.c:187
+#, fuzzy
+msgid "Open a file"
+msgstr "Åbn fil"
+
+#: ../src/chmsee.c:188
+#, fuzzy
+msgid "New _Tab"
+msgstr "_Nyt faneblad"
+
+#: ../src/chmsee.c:189
+msgid "_Close Tab"
+msgstr "_Luk faneblad"
+
+#: ../src/chmsee.c:190
+msgid "E_xit"
+msgstr ""
+
+#: ../src/chmsee.c:190
+#, fuzzy
+msgid "Exit ChmSee"
+msgstr "ChmSe"
+
+#: ../src/chmsee.c:192 ../src/components/book.c:133
+msgid "_Copy"
+msgstr "_Kopiér"
+
+#: ../src/chmsee.c:193
+msgid "_Find"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "_Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:197
+#, fuzzy
+msgid "_Home"
+msgstr "Start"
+
+#: ../src/chmsee.c:198 ../src/components/book.c:134
+msgid "_Back"
+msgstr "Til_bage"
+
+#: ../src/chmsee.c:199 ../src/components/book.c:135
+msgid "_Forward"
+msgstr "_Næste"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "_About"
+msgstr "Om"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "About ChmSee"
+msgstr "ChmSe"
+
+#: ../src/chmsee.c:203
+#, fuzzy
+msgid "Zoom _In"
+msgstr "Zoom ind"
+
+#: ../src/chmsee.c:204
+#, fuzzy
+msgid "_Normal Size"
+msgstr "Normal"
+
+#: ../src/chmsee.c:205
+#, fuzzy
+msgid "Zoom _Out"
+msgstr "Zoom ud"
+
+#: ../src/chmsee.c:207 ../src/components/book.c:138
+msgid "Select _All"
+msgstr "Vælg _alle"
+
+#: ../src/chmsee.c:215
+#, fuzzy
+msgid "Full _Screen"
+msgstr "_Fuldskærm"
+
+#: ../src/chmsee.c:216
+msgid "Side _Pane"
+msgstr "Side_panel"
+
 #: ../src/chmsee.c:507
 msgid "CHM Files"
 msgstr "CHM Filer"
@@ -119,11 +229,11 @@ msgstr "CHM Filer"
 msgid "All Files"
 msgstr "Alle filer"
 
-#: ../src/chmsee.c:802
+#: ../src/chmsee.c:803
 msgid "Ready!"
 msgstr "Klar!"
 
-#: ../src/chmsee.c:983
+#: ../src/chmsee.c:984
 #, fuzzy, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Kan ikke åbne chm-fil %s."
@@ -149,6 +259,18 @@ msgstr ""
 msgid "more than 1 argument\n"
 msgstr "flere end 1 argument\n"
 
+#: ../src/components/book.c:136
+msgid "Open Link in New _Tab"
+msgstr "Gå til adressen i nyt _faneblad"
+
+#: ../src/components/book.c:137
+msgid "_Copy Link Location"
+msgstr "_Kopiér adresse"
+
+#: ../src/components/book.c:139
+msgid "Copy Page _Location"
+msgstr "Kopier Side _Lokation"
+
 #: ../src/components/book.c:253
 msgid "Find:"
 msgstr ""
@@ -158,19 +280,19 @@ msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:698 ../src/components/book.c:758
+#: ../src/components/book.c:699 ../src/components/book.c:759
 msgid "No Title"
 msgstr "Ingen titel"
 
-#: ../src/components/book.c:856
+#: ../src/components/book.c:857
 msgid "Topics"
 msgstr "Emner"
 
-#: ../src/components/book.c:875
+#: ../src/components/book.c:876
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:891
+#: ../src/components/book.c:892
 msgid "Bookmarks"
 msgstr "Bogmærker"
 
@@ -194,16 +316,8 @@ msgstr "åbn \"%s\" fejlede: %s"
 msgid "Can not open chm file %s."
 msgstr "Kan ikke åbne chm-fil %s."
 
-#~ msgid "_File"
-#~ msgstr "_Fil"
-
-#, fuzzy
-#~ msgid "Open a file"
-#~ msgstr "Åbn fil"
-
-#, fuzzy
-#~ msgid "Exit ChmSee"
-#~ msgstr "ChmSe"
+#~ msgid "About"
+#~ msgstr "Om"
 
 #, fuzzy
 #~ msgid "CS_BOOK >>> URI redirect: \"%s\" -> \"%s\""
@@ -222,41 +336,20 @@ msgstr "Kan ikke åbne chm-fil %s."
 #~ msgid "Can't found hhc file."
 #~ msgstr "Kan ikke finde hhc-fil."
 
-#~ msgid "About"
-#~ msgstr "Om"
-
 #~ msgid "About..."
 #~ msgstr "Om..."
 
 #~ msgid "Back"
 #~ msgstr "Tilbage"
 
-#~ msgid "Copy Page _Location"
-#~ msgstr "Kopier Side _Lokation"
-
 #~ msgid "Forward"
 #~ msgstr "Fremad"
-
-#~ msgid "Home"
-#~ msgstr "Start"
-
-#~ msgid "Normal"
-#~ msgstr "Normal"
-
-#~ msgid "Open Link in New _Tab"
-#~ msgstr "Gå til adressen i nyt _faneblad"
 
 #~ msgid "Panel"
 #~ msgstr "Panel"
 
-#~ msgid "Select _All"
-#~ msgstr "Vælg _alle"
-
 #~ msgid "Show/Hide Panel"
 #~ msgstr "Vis/Skjul panel"
-
-#~ msgid "Side _Pane"
-#~ msgstr "Side_panel"
 
 #~ msgid ""
 #~ "Universal\n"
@@ -274,39 +367,3 @@ msgstr "Kan ikke åbne chm-fil %s."
 #~ "Koreansk\n"
 #~ "Russisk\n"
 #~ "Ukrainsk"
-
-#~ msgid "Zoom In"
-#~ msgstr "Zoom ind"
-
-#~ msgid "Zoom Out"
-#~ msgstr "Zoom ud"
-
-#~ msgid "_Back"
-#~ msgstr "Til_bage"
-
-#~ msgid "_Close Tab"
-#~ msgstr "_Luk faneblad"
-
-#~ msgid "_Copy"
-#~ msgstr "_Kopiér"
-
-#~ msgid "_Copy Link Location"
-#~ msgstr "_Kopiér adresse"
-
-#~ msgid "_Edit"
-#~ msgstr "_Rediger"
-
-#~ msgid "_Forward"
-#~ msgstr "_Næste"
-
-#~ msgid "_Full Screen"
-#~ msgstr "_Fuldskærm"
-
-#~ msgid "_Help"
-#~ msgstr "_Hjælp"
-
-#~ msgid "_New Tab"
-#~ msgstr "_Nyt faneblad"
-
-#~ msgid "_View"
-#~ msgstr "_Vis"

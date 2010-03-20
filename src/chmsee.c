@@ -179,32 +179,32 @@ static void unfullscreen(Chmsee *);
 
 /* Normal items */
 static const GtkActionEntry entries[] = {
-        { "FileMenu", NULL, "_File" },
-        { "EditMenu", NULL, "_Edit" },
-        { "ViewMenu", NULL, "_View" },
-        { "HelpMenu", NULL, "_Help" },
+        { "FileMenu", NULL, N_("_File") },
+        { "EditMenu", NULL, N_("_Edit") },
+        { "ViewMenu", NULL, N_("_View") },
+        { "HelpMenu", NULL, N_("_Help") },
 
-        { "Open", GTK_STOCK_OPEN, "_Open", "<control>O", "Open a file", G_CALLBACK(on_open_file)},
-        { "NewTab", NULL, "_New Tab", "<control>T", NULL, G_CALLBACK(on_open_new_tab)},
-        { "CloseTab", NULL, "_Close Tab", "<control>W", NULL, G_CALLBACK(on_close_current_tab)},
-        { "Exit", GTK_STOCK_QUIT, "E_xit", "<control>Q", "Exit the program", G_CALLBACK(destroy_cb)},
+        { "Open", GTK_STOCK_OPEN, N_("_Open"), "<control>O", N_("Open a file"), G_CALLBACK(on_open_file)},
+        { "NewTab", NULL, N_("New _Tab"), "<control>T", NULL, G_CALLBACK(on_open_new_tab)},
+        { "CloseTab", NULL, N_("_Close Tab"), "<control>W", NULL, G_CALLBACK(on_close_current_tab)},
+        { "Exit", GTK_STOCK_QUIT, N_("E_xit"), "<control>Q", N_("Exit ChmSee"), G_CALLBACK(destroy_cb)},
 
-        { "Copy", GTK_STOCK_COPY, "_Copy", "<control>C", NULL, G_CALLBACK(on_copy)},
-        { "Find", GTK_STOCK_FIND, "_Find", "<control>F", NULL, G_CALLBACK(on_find)},
+        { "Copy", GTK_STOCK_COPY, N_("_Copy"), "<control>C", NULL, G_CALLBACK(on_copy)},
+        { "Find", GTK_STOCK_FIND, N_("_Find"), "<control>F", NULL, G_CALLBACK(on_find)},
 
-        { "Preferences", GTK_STOCK_PREFERENCES, "_Preferences", NULL, "Preferences", G_CALLBACK(on_setup)},
+        { "Preferences", GTK_STOCK_PREFERENCES, N_("_Preferences"), NULL, N_("Preferences"), G_CALLBACK(on_setup)},
 
-        { "Home", GTK_STOCK_HOME, "_Home", NULL, NULL, G_CALLBACK(on_home)},
-        { "Back", GTK_STOCK_GO_BACK, "_Back", "<alt>Left", NULL, G_CALLBACK(on_back)},
-        { "Forward", GTK_STOCK_GO_FORWARD, "_Forward", "<alt>Right", NULL, G_CALLBACK(on_forward)},
+        { "Home", GTK_STOCK_HOME, N_("_Home"), NULL, NULL, G_CALLBACK(on_home)},
+        { "Back", GTK_STOCK_GO_BACK, N_("_Back"), "<alt>Left", NULL, G_CALLBACK(on_back)},
+        { "Forward", GTK_STOCK_GO_FORWARD, N_("_Forward"), "<alt>Right", NULL, G_CALLBACK(on_forward)},
 
-        { "About", GTK_STOCK_ABOUT, "_About", NULL, "About", G_CALLBACK(on_about)},
+        { "About", GTK_STOCK_ABOUT, N_("_About"), NULL, N_("About ChmSee"), G_CALLBACK(on_about)},
 
-        { "ZoomIn", GTK_STOCK_ZOOM_IN, "Zoom _In", "<control>plus", NULL, G_CALLBACK(on_zoom_in)},
-        { "ZoomReset", GTK_STOCK_ZOOM_100, "Normal Size", "<control>0", NULL, G_CALLBACK(on_zoom_reset)},
-        { "ZoomOut", GTK_STOCK_ZOOM_OUT, "Zoom _Out", "<control>minus", NULL, G_CALLBACK(on_zoom_out)},
+        { "ZoomIn", GTK_STOCK_ZOOM_IN, N_("Zoom _In"), "<control>plus", NULL, G_CALLBACK(on_zoom_in)},
+        { "ZoomReset", GTK_STOCK_ZOOM_100, N_("_Normal Size"), "<control>0", NULL, G_CALLBACK(on_zoom_reset)},
+        { "ZoomOut", GTK_STOCK_ZOOM_OUT, N_("Zoom _Out"), "<control>minus", NULL, G_CALLBACK(on_zoom_out)},
 
-        { "SelectAll", NULL, "Select _All", NULL, NULL, G_CALLBACK(on_select_all)},
+        { "SelectAll", NULL, N_("Select _All"), NULL, NULL, G_CALLBACK(on_select_all)},
 
         { "OnKeyboardEscape", NULL, NULL, "Escape", NULL, G_CALLBACK(on_keyboard_escape)},
         { "OnKeyboardControlEqual", NULL, NULL, "<control>equal", NULL, G_CALLBACK(on_zoom_in)}
@@ -212,8 +212,8 @@ static const GtkActionEntry entries[] = {
 
 /* Toggle items */
 static const GtkToggleActionEntry toggle_entries[] = {
-        { "FullScreen", NULL, "_Full Screen", "F11", "Switch between full screen and windowed mode", G_CALLBACK(on_fullscreen_toggled), FALSE },
-        { "SidePane", NULL, "Side _Pane", "F9", NULL, G_CALLBACK(on_sidepane_toggled), FALSE }
+        { "FullScreen", NULL, N_("Full _Screen"), "F11", "Switch between full screen and windowed mode", G_CALLBACK(on_fullscreen_toggled), FALSE },
+        { "SidePane", NULL, N_("Side _Pane"), "F9", NULL, G_CALLBACK(on_sidepane_toggled), FALSE }
 };
 
 /* Radio items */
@@ -736,6 +736,7 @@ populate_windows(Chmsee *self)
 
         GtkActionGroup* action_group = gtk_action_group_new("MenuActions");
         priv->action_group = action_group;
+        gtk_action_group_set_translation_domain(priv->action_group, NULL);
         gtk_action_group_add_actions(action_group, entries, G_N_ELEMENTS (entries), self);
         gtk_action_group_add_toggle_actions(action_group, toggle_entries, G_N_ELEMENTS (toggle_entries), self);
 

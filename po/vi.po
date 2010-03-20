@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-20 11:10+0800\n"
+"POT-Creation-Date: 2010-03-21 00:12+0800\n"
 "PO-Revision-Date: 2009-06-08 13:36+0000\n"
 "Last-Translator: huanctv <huanctv@gmail.com>\n"
 "Language-Team: Vietnamese <vi@li.org>\n"
@@ -111,6 +111,116 @@ msgstr ""
 msgid "Variable Width:"
 msgstr "Độ rộng thay đổi:"
 
+#: ../src/chmsee.c:182
+msgid "_File"
+msgstr "_File"
+
+#: ../src/chmsee.c:183
+msgid "_Edit"
+msgstr "Soạn _thảo"
+
+#: ../src/chmsee.c:184
+msgid "_View"
+msgstr "_Xem"
+
+#: ../src/chmsee.c:185
+msgid "_Help"
+msgstr "T_rợ giúp"
+
+#: ../src/chmsee.c:187
+msgid "_Open"
+msgstr ""
+
+#: ../src/chmsee.c:187
+#, fuzzy
+msgid "Open a file"
+msgstr "Mở File"
+
+#: ../src/chmsee.c:188
+#, fuzzy
+msgid "New _Tab"
+msgstr "Tab mớ_i"
+
+#: ../src/chmsee.c:189
+msgid "_Close Tab"
+msgstr "Đón_g Tab"
+
+#: ../src/chmsee.c:190
+msgid "E_xit"
+msgstr ""
+
+#: ../src/chmsee.c:190
+#, fuzzy
+msgid "Exit ChmSee"
+msgstr "ChmSee"
+
+#: ../src/chmsee.c:192 ../src/components/book.c:133
+msgid "_Copy"
+msgstr "Sao _chép"
+
+#: ../src/chmsee.c:193
+msgid "_Find"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "_Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:197
+#, fuzzy
+msgid "_Home"
+msgstr "Trang chính"
+
+#: ../src/chmsee.c:198 ../src/components/book.c:134
+msgid "_Back"
+msgstr "Trước đó"
+
+#: ../src/chmsee.c:199 ../src/components/book.c:135
+msgid "_Forward"
+msgstr "P_hần sau"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "_About"
+msgstr "Về CHMSee"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "About ChmSee"
+msgstr "ChmSee"
+
+#: ../src/chmsee.c:203
+#, fuzzy
+msgid "Zoom _In"
+msgstr "Phóng to"
+
+#: ../src/chmsee.c:204
+#, fuzzy
+msgid "_Normal Size"
+msgstr "Bình thường"
+
+#: ../src/chmsee.c:205
+#, fuzzy
+msgid "Zoom _Out"
+msgstr "Thu nhỏ"
+
+#: ../src/chmsee.c:207 ../src/components/book.c:138
+msgid "Select _All"
+msgstr "Chọ_n toàn bộ"
+
+#: ../src/chmsee.c:215
+#, fuzzy
+msgid "Full _Screen"
+msgstr "Toàn _màn hình"
+
+#: ../src/chmsee.c:216
+msgid "Side _Pane"
+msgstr "Side _Pane"
+
 #: ../src/chmsee.c:507
 msgid "CHM Files"
 msgstr "File CHM"
@@ -119,11 +229,11 @@ msgstr "File CHM"
 msgid "All Files"
 msgstr "Toàn bộ File"
 
-#: ../src/chmsee.c:802
+#: ../src/chmsee.c:803
 msgid "Ready!"
 msgstr "Sẵn sàng!"
 
-#: ../src/chmsee.c:983
+#: ../src/chmsee.c:984
 #, fuzzy, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Không thể mở file chm %s."
@@ -149,6 +259,18 @@ msgstr ""
 msgid "more than 1 argument\n"
 msgstr "nhiều hơn 1 tham số\n"
 
+#: ../src/components/book.c:136
+msgid "Open Link in New _Tab"
+msgstr "Mở liên kết trong _Tab mới"
+
+#: ../src/components/book.c:137
+msgid "_Copy Link Location"
+msgstr "_Sao chép đường link"
+
+#: ../src/components/book.c:139
+msgid "Copy Page _Location"
+msgstr "Sao chép _vị trí trang"
+
 #: ../src/components/book.c:253
 msgid "Find:"
 msgstr ""
@@ -158,19 +280,19 @@ msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:698 ../src/components/book.c:758
+#: ../src/components/book.c:699 ../src/components/book.c:759
 msgid "No Title"
 msgstr "Vô đề"
 
-#: ../src/components/book.c:856
+#: ../src/components/book.c:857
 msgid "Topics"
 msgstr "Chủ đề"
 
-#: ../src/components/book.c:875
+#: ../src/components/book.c:876
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:891
+#: ../src/components/book.c:892
 msgid "Bookmarks"
 msgstr "Đánh dấu"
 
@@ -194,16 +316,8 @@ msgstr "mở \"%s\" bị lỗi: %s"
 msgid "Can not open chm file %s."
 msgstr "Không thể mở file chm %s."
 
-#~ msgid "_File"
-#~ msgstr "_File"
-
-#, fuzzy
-#~ msgid "Open a file"
-#~ msgstr "Mở File"
-
-#, fuzzy
-#~ msgid "Exit ChmSee"
-#~ msgstr "ChmSee"
+#~ msgid "About"
+#~ msgstr "Về CHMSee"
 
 #, fuzzy
 #~ msgid "CS_BOOK >>> URI redirect: \"%s\" -> \"%s\""
@@ -222,41 +336,20 @@ msgstr "Không thể mở file chm %s."
 #~ msgid "Can't found hhc file."
 #~ msgstr "Không tìm thấy file hhc"
 
-#~ msgid "About"
-#~ msgstr "Về CHMSee"
-
 #~ msgid "About..."
 #~ msgstr "Thông tin..."
 
 #~ msgid "Back"
 #~ msgstr "Trước đó"
 
-#~ msgid "Copy Page _Location"
-#~ msgstr "Sao chép _vị trí trang"
-
 #~ msgid "Forward"
 #~ msgstr "Phần sau đó"
-
-#~ msgid "Home"
-#~ msgstr "Trang chính"
-
-#~ msgid "Normal"
-#~ msgstr "Bình thường"
-
-#~ msgid "Open Link in New _Tab"
-#~ msgstr "Mở liên kết trong _Tab mới"
 
 #~ msgid "Panel"
 #~ msgstr "Bảng"
 
-#~ msgid "Select _All"
-#~ msgstr "Chọ_n toàn bộ"
-
 #~ msgid "Show/Hide Panel"
 #~ msgstr "Hiện/Ẩn Bảng"
-
-#~ msgid "Side _Pane"
-#~ msgstr "Side _Pane"
 
 #~ msgid ""
 #~ "Universal\n"
@@ -274,39 +367,3 @@ msgstr "Không thể mở file chm %s."
 #~ "Korean\n"
 #~ "Russian\n"
 #~ "Ukrainain"
-
-#~ msgid "Zoom In"
-#~ msgstr "Phóng to"
-
-#~ msgid "Zoom Out"
-#~ msgstr "Thu nhỏ"
-
-#~ msgid "_Back"
-#~ msgstr "Trước đó"
-
-#~ msgid "_Close Tab"
-#~ msgstr "Đón_g Tab"
-
-#~ msgid "_Copy"
-#~ msgstr "Sao _chép"
-
-#~ msgid "_Copy Link Location"
-#~ msgstr "_Sao chép đường link"
-
-#~ msgid "_Edit"
-#~ msgstr "Soạn _thảo"
-
-#~ msgid "_Forward"
-#~ msgstr "P_hần sau"
-
-#~ msgid "_Full Screen"
-#~ msgstr "Toàn _màn hình"
-
-#~ msgid "_Help"
-#~ msgstr "T_rợ giúp"
-
-#~ msgid "_New Tab"
-#~ msgstr "Tab mớ_i"
-
-#~ msgid "_View"
-#~ msgstr "_Xem"

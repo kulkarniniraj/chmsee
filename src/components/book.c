@@ -130,13 +130,13 @@ static void set_context_menu_link(CsBook *, const gchar *);
 static void find_text(CsBook *, gboolean);
 
 static const GtkActionEntry entries[] = {
-        { "Copy", GTK_STOCK_COPY, "_Copy", "<control>C", NULL, G_CALLBACK(on_copy)},
-        { "Back", GTK_STOCK_GO_BACK, "_Back", "<alt>Left", NULL, G_CALLBACK(on_back)},
-        { "Forward", GTK_STOCK_GO_FORWARD, "_Forward", "<alt>Right", NULL, G_CALLBACK(on_forward)},
-        { "OpenLinkInNewTab", NULL, "Open Link in New _Tab", NULL, NULL, G_CALLBACK(on_context_new_tab)},
-        { "CopyLinkLocation", NULL, "_Copy Link Location", NULL, NULL, G_CALLBACK(on_context_copy_link)},
-        { "SelectAll", NULL, "Select _All", NULL, NULL, G_CALLBACK(on_select_all)},
-        { "CopyPageLocation", NULL, "Copy Page _Location", NULL, NULL, G_CALLBACK(on_copy_page_location)},
+        { "Copy", GTK_STOCK_COPY, N_("_Copy"), "<control>C", NULL, G_CALLBACK(on_copy)},
+        { "Back", GTK_STOCK_GO_BACK, N_("_Back"), "<alt>Left", NULL, G_CALLBACK(on_back)},
+        { "Forward", GTK_STOCK_GO_FORWARD, N_("_Forward"), "<alt>Right", NULL, G_CALLBACK(on_forward)},
+        { "OpenLinkInNewTab", NULL, N_("Open Link in New _Tab"), NULL, NULL, G_CALLBACK(on_context_new_tab)},
+        { "CopyLinkLocation", NULL, N_("_Copy Link Location"), NULL, NULL, G_CALLBACK(on_context_copy_link)},
+        { "SelectAll", NULL, N_("Select _All"), NULL, NULL, G_CALLBACK(on_select_all)},
+        { "CopyPageLocation", NULL, N_("Copy Page _Location"), NULL, NULL, G_CALLBACK(on_copy_page_location)},
         { "OnKeyboardControlEqual", NULL, NULL, "<control>equal", NULL, G_CALLBACK(on_zoom_in)},
 };
 
@@ -286,6 +286,7 @@ cs_book_init(CsBook *self)
         /* HTML content popup menu */
         GtkActionGroup* action_group = gtk_action_group_new("BookActions");
         priv->action_group = action_group;
+        gtk_action_group_set_translation_domain(priv->action_group, NULL);
         gtk_action_group_add_actions(action_group, entries, G_N_ELEMENTS (entries), self);
 
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "Back"), FALSE);

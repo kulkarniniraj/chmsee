@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-20 11:10+0800\n"
+"POT-Creation-Date: 2010-03-21 00:12+0800\n"
 "PO-Revision-Date: 2009-01-11 09:21+0000\n"
 "Last-Translator: Luca Livraghi <luca.91@hotmail.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -116,6 +116,115 @@ msgstr ""
 msgid "Variable Width:"
 msgstr "Larghezza Variabile:"
 
+#: ../src/chmsee.c:182
+msgid "_File"
+msgstr "_File"
+
+#: ../src/chmsee.c:183
+msgid "_Edit"
+msgstr "_Modifica"
+
+#: ../src/chmsee.c:184
+msgid "_View"
+msgstr "_Visualizza"
+
+#: ../src/chmsee.c:185
+msgid "_Help"
+msgstr "_Aiuto"
+
+#: ../src/chmsee.c:187
+msgid "_Open"
+msgstr ""
+
+#: ../src/chmsee.c:187
+#, fuzzy
+msgid "Open a file"
+msgstr "Apri File"
+
+#: ../src/chmsee.c:188
+#, fuzzy
+msgid "New _Tab"
+msgstr "_Nuova scheda"
+
+#: ../src/chmsee.c:189
+msgid "_Close Tab"
+msgstr "_Chiudi scheda"
+
+#: ../src/chmsee.c:190
+msgid "E_xit"
+msgstr ""
+
+#: ../src/chmsee.c:190
+#, fuzzy
+msgid "Exit ChmSee"
+msgstr "ChmSee"
+
+#: ../src/chmsee.c:192 ../src/components/book.c:133
+msgid "_Copy"
+msgstr "_Copia"
+
+#: ../src/chmsee.c:193
+msgid "_Find"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "_Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:197
+msgid "_Home"
+msgstr "_Home"
+
+#: ../src/chmsee.c:198 ../src/components/book.c:134
+msgid "_Back"
+msgstr "_Indietro"
+
+#: ../src/chmsee.c:199 ../src/components/book.c:135
+msgid "_Forward"
+msgstr "_Avanti"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "_About"
+msgstr "Informazioni"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "About ChmSee"
+msgstr "ChmSee"
+
+#: ../src/chmsee.c:203
+#, fuzzy
+msgid "Zoom _In"
+msgstr "Ingrandisci"
+
+#: ../src/chmsee.c:204
+#, fuzzy
+msgid "_Normal Size"
+msgstr "Normale"
+
+#: ../src/chmsee.c:205
+#, fuzzy
+msgid "Zoom _Out"
+msgstr "Riduci"
+
+#: ../src/chmsee.c:207 ../src/components/book.c:138
+msgid "Select _All"
+msgstr "Seleziona _Tutto"
+
+#: ../src/chmsee.c:215
+msgid "Full _Screen"
+msgstr ""
+
+#: ../src/chmsee.c:216
+#, fuzzy
+msgid "Side _Pane"
+msgstr "Mostra/Nascondi Pannello"
+
 #: ../src/chmsee.c:507
 msgid "CHM Files"
 msgstr "File CHM"
@@ -124,11 +233,11 @@ msgstr "File CHM"
 msgid "All Files"
 msgstr "Tutti i File"
 
-#: ../src/chmsee.c:802
+#: ../src/chmsee.c:803
 msgid "Ready!"
 msgstr "Pronto!"
 
-#: ../src/chmsee.c:983
+#: ../src/chmsee.c:984
 #, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr ""
@@ -154,6 +263,19 @@ msgstr ""
 msgid "more than 1 argument\n"
 msgstr ""
 
+#: ../src/components/book.c:136
+msgid "Open Link in New _Tab"
+msgstr "Apri Collegamento in una Nuova _Scheda"
+
+#: ../src/components/book.c:137
+msgid "_Copy Link Location"
+msgstr "_Copia Posizione Collegamento"
+
+#: ../src/components/book.c:139
+#, fuzzy
+msgid "Copy Page _Location"
+msgstr "_Copia Posizione Collegamento"
+
 #: ../src/components/book.c:253
 msgid "Find:"
 msgstr ""
@@ -163,19 +285,19 @@ msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:698 ../src/components/book.c:758
+#: ../src/components/book.c:699 ../src/components/book.c:759
 msgid "No Title"
 msgstr "Nessun Titolo"
 
-#: ../src/components/book.c:856
+#: ../src/components/book.c:857
 msgid "Topics"
 msgstr "Argomenti"
 
-#: ../src/components/book.c:875
+#: ../src/components/book.c:876
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:891
+#: ../src/components/book.c:892
 msgid "Bookmarks"
 msgstr "Segnalibri"
 
@@ -199,25 +321,14 @@ msgstr ""
 msgid "Can not open chm file %s."
 msgstr ""
 
-#~ msgid "_File"
-#~ msgstr "_File"
-
-#, fuzzy
-#~ msgid "Open a file"
-#~ msgstr "Apri File"
-
-#, fuzzy
-#~ msgid "Exit ChmSee"
-#~ msgstr "ChmSee"
+#~ msgid "About"
+#~ msgstr "Informazioni"
 
 #~ msgid "Error loading file '%s'"
 #~ msgstr "Errore durante il caricamento del file '%s'"
 
 #~ msgid "Bookmark"
 #~ msgstr "Segnalibro"
-
-#~ msgid "About"
-#~ msgstr "Informazioni"
 
 #~ msgid "About..."
 #~ msgstr "Informazioni su..."
@@ -231,20 +342,8 @@ msgstr ""
 #~ msgid "Home"
 #~ msgstr "Home"
 
-#~ msgid "Normal"
-#~ msgstr "Normale"
-
-#~ msgid "Open Link in New _Tab"
-#~ msgstr "Apri Collegamento in una Nuova _Scheda"
-
 #~ msgid "Panel"
 #~ msgstr "Pannello"
-
-#~ msgid "Select _All"
-#~ msgstr "Seleziona _Tutto"
-
-#~ msgid "Show/Hide Panel"
-#~ msgstr "Mostra/Nascondi Pannello"
 
 #~ msgid ""
 #~ "Universal\n"
@@ -262,42 +361,6 @@ msgstr ""
 #~ "Coreano\n"
 #~ "Russo\n"
 #~ "Ucraino"
-
-#~ msgid "Zoom In"
-#~ msgstr "Ingrandisci"
-
-#~ msgid "Zoom Out"
-#~ msgstr "Riduci"
-
-#~ msgid "_Back"
-#~ msgstr "_Indietro"
-
-#~ msgid "_Close Tab"
-#~ msgstr "_Chiudi scheda"
-
-#~ msgid "_Copy"
-#~ msgstr "_Copia"
-
-#~ msgid "_Copy Link Location"
-#~ msgstr "_Copia Posizione Collegamento"
-
-#~ msgid "_Edit"
-#~ msgstr "_Modifica"
-
-#~ msgid "_Forward"
-#~ msgstr "_Avanti"
-
-#~ msgid "_Help"
-#~ msgstr "_Aiuto"
-
-#~ msgid "_New Tab"
-#~ msgstr "_Nuova scheda"
-
-#~ msgid "_View"
-#~ msgstr "_Visualizza"
-
-#~ msgid "_Home"
-#~ msgstr "_Home"
 
 #~ msgid "_Setup"
 #~ msgstr "_Configurazione"

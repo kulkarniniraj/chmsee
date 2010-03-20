@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-20 11:10+0800\n"
+"POT-Creation-Date: 2010-03-21 00:12+0800\n"
 "PO-Revision-Date: 2009-06-16 19:30+0000\n"
 "Last-Translator: bitter <Unknown>\n"
 "Language-Team: Romanian <ro@li.org>\n"
@@ -112,6 +112,116 @@ msgstr ""
 msgid "Variable Width:"
 msgstr "Lățime Variabilă"
 
+#: ../src/chmsee.c:182
+msgid "_File"
+msgstr "_Fișier"
+
+#: ../src/chmsee.c:183
+msgid "_Edit"
+msgstr "_Editează"
+
+#: ../src/chmsee.c:184
+msgid "_View"
+msgstr "_Vizualizează"
+
+#: ../src/chmsee.c:185
+msgid "_Help"
+msgstr "_Ajutor"
+
+#: ../src/chmsee.c:187
+msgid "_Open"
+msgstr ""
+
+#: ../src/chmsee.c:187
+#, fuzzy
+msgid "Open a file"
+msgstr "Deschide Fișier"
+
+#: ../src/chmsee.c:188
+#, fuzzy
+msgid "New _Tab"
+msgstr "_Tab Nou"
+
+#: ../src/chmsee.c:189
+msgid "_Close Tab"
+msgstr "_Închide Tab"
+
+#: ../src/chmsee.c:190
+msgid "E_xit"
+msgstr ""
+
+#: ../src/chmsee.c:190
+#, fuzzy
+msgid "Exit ChmSee"
+msgstr "ChmSee"
+
+#: ../src/chmsee.c:192 ../src/components/book.c:133
+msgid "_Copy"
+msgstr "_Copiază"
+
+#: ../src/chmsee.c:193
+msgid "_Find"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "_Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:197
+#, fuzzy
+msgid "_Home"
+msgstr "Acasă"
+
+#: ../src/chmsee.c:198 ../src/components/book.c:134
+msgid "_Back"
+msgstr "_Înapoi"
+
+#: ../src/chmsee.c:199 ../src/components/book.c:135
+msgid "_Forward"
+msgstr "_Înainte"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "_About"
+msgstr "Despre"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "About ChmSee"
+msgstr "ChmSee"
+
+#: ../src/chmsee.c:203
+#, fuzzy
+msgid "Zoom _In"
+msgstr "Mărește"
+
+#: ../src/chmsee.c:204
+#, fuzzy
+msgid "_Normal Size"
+msgstr "Normal"
+
+#: ../src/chmsee.c:205
+#, fuzzy
+msgid "Zoom _Out"
+msgstr "Micșorează"
+
+#: ../src/chmsee.c:207 ../src/components/book.c:138
+msgid "Select _All"
+msgstr "Selectează _Tot"
+
+#: ../src/chmsee.c:215
+#, fuzzy
+msgid "Full _Screen"
+msgstr "_Tot Ecranul"
+
+#: ../src/chmsee.c:216
+msgid "Side _Pane"
+msgstr "_Panou Lateral"
+
 #: ../src/chmsee.c:507
 msgid "CHM Files"
 msgstr "Fișiere CHM"
@@ -120,11 +230,11 @@ msgstr "Fișiere CHM"
 msgid "All Files"
 msgstr "Toate Fișierele"
 
-#: ../src/chmsee.c:802
+#: ../src/chmsee.c:803
 msgid "Ready!"
 msgstr "Gata!"
 
-#: ../src/chmsee.c:983
+#: ../src/chmsee.c:984
 #, fuzzy, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Nu se poate deschide fișierul chm %s."
@@ -150,6 +260,18 @@ msgstr ""
 msgid "more than 1 argument\n"
 msgstr "mai mult de 1 argument\n"
 
+#: ../src/components/book.c:136
+msgid "Open Link in New _Tab"
+msgstr "Deschide Legătura în _Tab Nou"
+
+#: ../src/components/book.c:137
+msgid "_Copy Link Location"
+msgstr "_Copiază Locația Legăturii"
+
+#: ../src/components/book.c:139
+msgid "Copy Page _Location"
+msgstr "Copiază _Locația Paginii"
+
 #: ../src/components/book.c:253
 msgid "Find:"
 msgstr ""
@@ -159,19 +281,19 @@ msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:698 ../src/components/book.c:758
+#: ../src/components/book.c:699 ../src/components/book.c:759
 msgid "No Title"
 msgstr "Nici un Titlu"
 
-#: ../src/components/book.c:856
+#: ../src/components/book.c:857
 msgid "Topics"
 msgstr "Subiecte"
 
-#: ../src/components/book.c:875
+#: ../src/components/book.c:876
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:891
+#: ../src/components/book.c:892
 msgid "Bookmarks"
 msgstr "Semne de carte"
 
@@ -195,16 +317,8 @@ msgstr "deschidere \"%s\" eșuată: %s"
 msgid "Can not open chm file %s."
 msgstr "Nu se poate deschide fișierul chm %s."
 
-#~ msgid "_File"
-#~ msgstr "_Fișier"
-
-#, fuzzy
-#~ msgid "Open a file"
-#~ msgstr "Deschide Fișier"
-
-#, fuzzy
-#~ msgid "Exit ChmSee"
-#~ msgstr "ChmSee"
+#~ msgid "About"
+#~ msgstr "Despre"
 
 #, fuzzy
 #~ msgid "CS_BOOK >>> URI redirect: \"%s\" -> \"%s\""
@@ -223,41 +337,20 @@ msgstr "Nu se poate deschide fișierul chm %s."
 #~ msgid "Can't found hhc file."
 #~ msgstr "Nu s-a găsit fișierul hhc."
 
-#~ msgid "About"
-#~ msgstr "Despre"
-
 #~ msgid "About..."
 #~ msgstr "Despre..."
 
 #~ msgid "Back"
 #~ msgstr "Înapoi"
 
-#~ msgid "Copy Page _Location"
-#~ msgstr "Copiază _Locația Paginii"
-
 #~ msgid "Forward"
 #~ msgstr "Înainte"
-
-#~ msgid "Home"
-#~ msgstr "Acasă"
-
-#~ msgid "Normal"
-#~ msgstr "Normal"
-
-#~ msgid "Open Link in New _Tab"
-#~ msgstr "Deschide Legătura în _Tab Nou"
 
 #~ msgid "Panel"
 #~ msgstr "Panou"
 
-#~ msgid "Select _All"
-#~ msgstr "Selectează _Tot"
-
 #~ msgid "Show/Hide Panel"
 #~ msgstr "Arată/Ascunde Panoul"
-
-#~ msgid "Side _Pane"
-#~ msgstr "_Panou Lateral"
 
 #~ msgid ""
 #~ "Universal\n"
@@ -275,39 +368,3 @@ msgstr "Nu se poate deschide fișierul chm %s."
 #~ "Koreană\n"
 #~ "Rusă\n"
 #~ "Ucrainiană"
-
-#~ msgid "Zoom In"
-#~ msgstr "Mărește"
-
-#~ msgid "Zoom Out"
-#~ msgstr "Micșorează"
-
-#~ msgid "_Back"
-#~ msgstr "_Înapoi"
-
-#~ msgid "_Close Tab"
-#~ msgstr "_Închide Tab"
-
-#~ msgid "_Copy"
-#~ msgstr "_Copiază"
-
-#~ msgid "_Copy Link Location"
-#~ msgstr "_Copiază Locația Legăturii"
-
-#~ msgid "_Edit"
-#~ msgstr "_Editează"
-
-#~ msgid "_Forward"
-#~ msgstr "_Înainte"
-
-#~ msgid "_Full Screen"
-#~ msgstr "_Tot Ecranul"
-
-#~ msgid "_Help"
-#~ msgstr "_Ajutor"
-
-#~ msgid "_New Tab"
-#~ msgstr "_Tab Nou"
-
-#~ msgid "_View"
-#~ msgstr "_Vizualizează"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-20 11:10+0800\n"
+"POT-Creation-Date: 2010-03-21 00:12+0800\n"
 "PO-Revision-Date: 2009-06-07 00:29+0000\n"
 "Last-Translator: el_libre XDDDDDDDDDDDDDDDDDDDDDDDDDDD <el.libre@gmail.com>\n"
 "Language-Team: Catalan <ca@li.org>\n"
@@ -108,6 +108,115 @@ msgstr ""
 msgid "Variable Width:"
 msgstr ""
 
+#: ../src/chmsee.c:182
+msgid "_File"
+msgstr "_Arxiu"
+
+#: ../src/chmsee.c:183
+msgid "_Edit"
+msgstr "_Edita"
+
+#: ../src/chmsee.c:184
+msgid "_View"
+msgstr "_Veu"
+
+#: ../src/chmsee.c:185
+msgid "_Help"
+msgstr "_Ajut"
+
+#: ../src/chmsee.c:187
+msgid "_Open"
+msgstr ""
+
+#: ../src/chmsee.c:187
+#, fuzzy
+msgid "Open a file"
+msgstr "Obre Arxiu"
+
+#: ../src/chmsee.c:188
+msgid "New _Tab"
+msgstr ""
+
+#: ../src/chmsee.c:189
+msgid "_Close Tab"
+msgstr ""
+
+#: ../src/chmsee.c:190
+msgid "E_xit"
+msgstr ""
+
+#: ../src/chmsee.c:190
+#, fuzzy
+msgid "Exit ChmSee"
+msgstr "ChmSee"
+
+#: ../src/chmsee.c:192 ../src/components/book.c:133
+msgid "_Copy"
+msgstr "_Copia"
+
+#: ../src/chmsee.c:193
+msgid "_Find"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "_Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:197
+#, fuzzy
+msgid "_Home"
+msgstr "Inici"
+
+#: ../src/chmsee.c:198 ../src/components/book.c:134
+#, fuzzy
+msgid "_Back"
+msgstr "Torna"
+
+#: ../src/chmsee.c:199 ../src/components/book.c:135
+msgid "_Forward"
+msgstr "_Endavant"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "_About"
+msgstr "Sobre"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "About ChmSee"
+msgstr "ChmSee"
+
+#: ../src/chmsee.c:203
+#, fuzzy
+msgid "Zoom _In"
+msgstr "Amplia"
+
+#: ../src/chmsee.c:204
+#, fuzzy
+msgid "_Normal Size"
+msgstr "Normal"
+
+#: ../src/chmsee.c:205
+#, fuzzy
+msgid "Zoom _Out"
+msgstr "Redueix"
+
+#: ../src/chmsee.c:207 ../src/components/book.c:138
+msgid "Select _All"
+msgstr ""
+
+#: ../src/chmsee.c:215
+msgid "Full _Screen"
+msgstr ""
+
+#: ../src/chmsee.c:216
+msgid "Side _Pane"
+msgstr ""
+
 #: ../src/chmsee.c:507
 msgid "CHM Files"
 msgstr ""
@@ -116,11 +225,11 @@ msgstr ""
 msgid "All Files"
 msgstr ""
 
-#: ../src/chmsee.c:802
+#: ../src/chmsee.c:803
 msgid "Ready!"
 msgstr ""
 
-#: ../src/chmsee.c:983
+#: ../src/chmsee.c:984
 #, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr ""
@@ -146,6 +255,18 @@ msgstr ""
 msgid "more than 1 argument\n"
 msgstr ""
 
+#: ../src/components/book.c:136
+msgid "Open Link in New _Tab"
+msgstr ""
+
+#: ../src/components/book.c:137
+msgid "_Copy Link Location"
+msgstr ""
+
+#: ../src/components/book.c:139
+msgid "Copy Page _Location"
+msgstr ""
+
 #: ../src/components/book.c:253
 msgid "Find:"
 msgstr ""
@@ -155,19 +276,19 @@ msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:698 ../src/components/book.c:758
+#: ../src/components/book.c:699 ../src/components/book.c:759
 msgid "No Title"
 msgstr ""
 
-#: ../src/components/book.c:856
+#: ../src/components/book.c:857
 msgid "Topics"
 msgstr "Temes"
 
-#: ../src/components/book.c:875
+#: ../src/components/book.c:876
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:891
+#: ../src/components/book.c:892
 msgid "Bookmarks"
 msgstr "Favorits"
 
@@ -191,58 +312,17 @@ msgstr ""
 msgid "Can not open chm file %s."
 msgstr ""
 
-#~ msgid "_File"
-#~ msgstr "_Arxiu"
-
-#, fuzzy
-#~ msgid "Open a file"
-#~ msgstr "Obre Arxiu"
-
-#, fuzzy
-#~ msgid "Exit ChmSee"
-#~ msgstr "ChmSee"
+#~ msgid "About"
+#~ msgstr "Sobre"
 
 #~ msgid "Bookmark"
 #~ msgstr "Favorit"
 
-#~ msgid "About"
-#~ msgstr "Sobre"
-
 #~ msgid "About..."
 #~ msgstr "Sobre..."
-
-#~ msgid "Back"
-#~ msgstr "Torna"
 
 #~ msgid "Forward"
 #~ msgstr "Endavant"
 
-#~ msgid "Home"
-#~ msgstr "Inici"
-
-#~ msgid "Normal"
-#~ msgstr "Normal"
-
 #~ msgid "Panel"
 #~ msgstr "Panell"
-
-#~ msgid "Zoom In"
-#~ msgstr "Amplia"
-
-#~ msgid "Zoom Out"
-#~ msgstr "Redueix"
-
-#~ msgid "_Copy"
-#~ msgstr "_Copia"
-
-#~ msgid "_Edit"
-#~ msgstr "_Edita"
-
-#~ msgid "_Forward"
-#~ msgstr "_Endavant"
-
-#~ msgid "_Help"
-#~ msgstr "_Ajut"
-
-#~ msgid "_View"
-#~ msgstr "_Veu"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-20 11:10+0800\n"
+"POT-Creation-Date: 2010-03-21 00:12+0800\n"
 "PO-Revision-Date: 2009-05-16 00:23+0000\n"
 "Last-Translator: Μάριος Ζηντίλης <m.zindilis@dmajor.org>\n"
 "Language-Team: Greek <el@li.org>\n"
@@ -113,6 +113,116 @@ msgstr ""
 msgid "Variable Width:"
 msgstr "Μεταβλητού πλάτους"
 
+#: ../src/chmsee.c:182
+msgid "_File"
+msgstr "_Αρχείο"
+
+#: ../src/chmsee.c:183
+msgid "_Edit"
+msgstr "_Επεξεργασία"
+
+#: ../src/chmsee.c:184
+msgid "_View"
+msgstr "_Προβολή"
+
+#: ../src/chmsee.c:185
+msgid "_Help"
+msgstr "_Βοήθεια"
+
+#: ../src/chmsee.c:187
+msgid "_Open"
+msgstr ""
+
+#: ../src/chmsee.c:187
+#, fuzzy
+msgid "Open a file"
+msgstr "Άνοιγμα αρχείου"
+
+#: ../src/chmsee.c:188
+#, fuzzy
+msgid "New _Tab"
+msgstr "_Νέα καρτέλα"
+
+#: ../src/chmsee.c:189
+msgid "_Close Tab"
+msgstr "_Κλείσιμο καρτέλας"
+
+#: ../src/chmsee.c:190
+msgid "E_xit"
+msgstr ""
+
+#: ../src/chmsee.c:190
+#, fuzzy
+msgid "Exit ChmSee"
+msgstr "ChmSee"
+
+#: ../src/chmsee.c:192 ../src/components/book.c:133
+msgid "_Copy"
+msgstr "_Αντιγραφή"
+
+#: ../src/chmsee.c:193
+msgid "_Find"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "_Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:197
+#, fuzzy
+msgid "_Home"
+msgstr "Αρχή"
+
+#: ../src/chmsee.c:198 ../src/components/book.c:134
+msgid "_Back"
+msgstr "_Πίσω"
+
+#: ../src/chmsee.c:199 ../src/components/book.c:135
+msgid "_Forward"
+msgstr "_Μπροστά"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "_About"
+msgstr "Περί"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "About ChmSee"
+msgstr "ChmSee"
+
+#: ../src/chmsee.c:203
+#, fuzzy
+msgid "Zoom _In"
+msgstr "Μεγέθυνση"
+
+#: ../src/chmsee.c:204
+#, fuzzy
+msgid "_Normal Size"
+msgstr "Κανονικό"
+
+#: ../src/chmsee.c:205
+#, fuzzy
+msgid "Zoom _Out"
+msgstr "Σμίκρυνση"
+
+#: ../src/chmsee.c:207 ../src/components/book.c:138
+msgid "Select _All"
+msgstr "Επιλ_ογή όλων"
+
+#: ../src/chmsee.c:215
+#, fuzzy
+msgid "Full _Screen"
+msgstr "Πλήρης _οθόνη"
+
+#: ../src/chmsee.c:216
+msgid "Side _Pane"
+msgstr "Πλευρική _στήλη"
+
 #: ../src/chmsee.c:507
 msgid "CHM Files"
 msgstr "Αρχεία CHM"
@@ -121,11 +231,11 @@ msgstr "Αρχεία CHM"
 msgid "All Files"
 msgstr "Όλα τα αρχεία"
 
-#: ../src/chmsee.c:802
+#: ../src/chmsee.c:803
 msgid "Ready!"
 msgstr "Έτοιμο!"
 
-#: ../src/chmsee.c:983
+#: ../src/chmsee.c:984
 #, fuzzy, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Αδύνατο το άνοιγμα του chm αρχείου %s."
@@ -152,6 +262,18 @@ msgstr ""
 msgid "more than 1 argument\n"
 msgstr "περισσότερα από 1 ορίσματα\n"
 
+#: ../src/components/book.c:136
+msgid "Open Link in New _Tab"
+msgstr "Άνοιγμα συνδέσμου σε νέα _καρτέλα"
+
+#: ../src/components/book.c:137
+msgid "_Copy Link Location"
+msgstr "_Αντιγραφή τοποθεσίας δεσμού"
+
+#: ../src/components/book.c:139
+msgid "Copy Page _Location"
+msgstr "Αντιγραφή _τοποθεσίας σελίδας"
+
 #: ../src/components/book.c:253
 msgid "Find:"
 msgstr ""
@@ -161,19 +283,19 @@ msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:698 ../src/components/book.c:758
+#: ../src/components/book.c:699 ../src/components/book.c:759
 msgid "No Title"
 msgstr "Χωρίς τίτλο"
 
-#: ../src/components/book.c:856
+#: ../src/components/book.c:857
 msgid "Topics"
 msgstr "Θέματα"
 
-#: ../src/components/book.c:875
+#: ../src/components/book.c:876
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:891
+#: ../src/components/book.c:892
 msgid "Bookmarks"
 msgstr "Σελιδοδείκτες"
 
@@ -197,16 +319,8 @@ msgstr "το άνοιγμα του \"%s\" απέτυχε: %s"
 msgid "Can not open chm file %s."
 msgstr "Αδύνατο το άνοιγμα του chm αρχείου %s."
 
-#~ msgid "_File"
-#~ msgstr "_Αρχείο"
-
-#, fuzzy
-#~ msgid "Open a file"
-#~ msgstr "Άνοιγμα αρχείου"
-
-#, fuzzy
-#~ msgid "Exit ChmSee"
-#~ msgstr "ChmSee"
+#~ msgid "About"
+#~ msgstr "Περί"
 
 #, fuzzy
 #~ msgid "CS_BOOK >>> URI redirect: \"%s\" -> \"%s\""
@@ -225,41 +339,20 @@ msgstr "Αδύνατο το άνοιγμα του chm αρχείου %s."
 #~ msgid "Can't found hhc file."
 #~ msgstr "Δε βρέθηκε το αρχείο hhc."
 
-#~ msgid "About"
-#~ msgstr "Περί"
-
 #~ msgid "About..."
 #~ msgstr "Περί..."
 
 #~ msgid "Back"
 #~ msgstr "Πίσω"
 
-#~ msgid "Copy Page _Location"
-#~ msgstr "Αντιγραφή _τοποθεσίας σελίδας"
-
 #~ msgid "Forward"
 #~ msgstr "Μπροστά"
-
-#~ msgid "Home"
-#~ msgstr "Αρχή"
-
-#~ msgid "Normal"
-#~ msgstr "Κανονικό"
-
-#~ msgid "Open Link in New _Tab"
-#~ msgstr "Άνοιγμα συνδέσμου σε νέα _καρτέλα"
 
 #~ msgid "Panel"
 #~ msgstr "Πλευρική στήλη"
 
-#~ msgid "Select _All"
-#~ msgstr "Επιλ_ογή όλων"
-
 #~ msgid "Show/Hide Panel"
 #~ msgstr "Εμφάνιση/απόκρυψη πλευρικής στήλης"
-
-#~ msgid "Side _Pane"
-#~ msgstr "Πλευρική _στήλη"
 
 #~ msgid ""
 #~ "Universal\n"
@@ -277,39 +370,3 @@ msgstr "Αδύνατο το άνοιγμα του chm αρχείου %s."
 #~ "Κορεατικά\n"
 #~ "Ρωσικά\n"
 #~ "Ουκρανικά"
-
-#~ msgid "Zoom In"
-#~ msgstr "Μεγέθυνση"
-
-#~ msgid "Zoom Out"
-#~ msgstr "Σμίκρυνση"
-
-#~ msgid "_Back"
-#~ msgstr "_Πίσω"
-
-#~ msgid "_Close Tab"
-#~ msgstr "_Κλείσιμο καρτέλας"
-
-#~ msgid "_Copy"
-#~ msgstr "_Αντιγραφή"
-
-#~ msgid "_Copy Link Location"
-#~ msgstr "_Αντιγραφή τοποθεσίας δεσμού"
-
-#~ msgid "_Edit"
-#~ msgstr "_Επεξεργασία"
-
-#~ msgid "_Forward"
-#~ msgstr "_Μπροστά"
-
-#~ msgid "_Full Screen"
-#~ msgstr "Πλήρης _οθόνη"
-
-#~ msgid "_Help"
-#~ msgstr "_Βοήθεια"
-
-#~ msgid "_New Tab"
-#~ msgstr "_Νέα καρτέλα"
-
-#~ msgid "_View"
-#~ msgstr "_Προβολή"

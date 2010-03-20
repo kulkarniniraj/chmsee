@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-20 11:10+0800\n"
+"POT-Creation-Date: 2010-03-21 00:12+0800\n"
 "PO-Revision-Date: 2009-04-07 16:48+0000\n"
 "Last-Translator: Emanuel Feruzi <emanuel.feruzi@gmail.com>\n"
 "Language-Team: Swahili <sw@li.org>\n"
@@ -116,6 +116,115 @@ msgstr ""
 msgid "Variable Width:"
 msgstr "Upana unaobadilika"
 
+#: ../src/chmsee.c:182
+msgid "_File"
+msgstr "Faili"
+
+#: ../src/chmsee.c:183
+msgid "_Edit"
+msgstr "Hariri"
+
+#: ../src/chmsee.c:184
+msgid "_View"
+msgstr "Angalia"
+
+#: ../src/chmsee.c:185
+msgid "_Help"
+msgstr "Msaada"
+
+#: ../src/chmsee.c:187
+msgid "_Open"
+msgstr ""
+
+#: ../src/chmsee.c:187
+#, fuzzy
+msgid "Open a file"
+msgstr "Fungua Faile"
+
+#: ../src/chmsee.c:188
+#, fuzzy
+msgid "New _Tab"
+msgstr "Tabo Mpya"
+
+#: ../src/chmsee.c:189
+msgid "_Close Tab"
+msgstr "Funga Tabo"
+
+#: ../src/chmsee.c:190
+msgid "E_xit"
+msgstr ""
+
+#: ../src/chmsee.c:190
+#, fuzzy
+msgid "Exit ChmSee"
+msgstr "ChmSee"
+
+#: ../src/chmsee.c:192 ../src/components/book.c:133
+msgid "_Copy"
+msgstr "Nakili"
+
+#: ../src/chmsee.c:193
+msgid "_Find"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "_Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:197
+msgid "_Home"
+msgstr "Nyumbani"
+
+#: ../src/chmsee.c:198 ../src/components/book.c:134
+msgid "_Back"
+msgstr "Nyuma"
+
+#: ../src/chmsee.c:199 ../src/components/book.c:135
+msgid "_Forward"
+msgstr "Mbele"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "_About"
+msgstr "Kuhusu"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "About ChmSee"
+msgstr "ChmSee"
+
+#: ../src/chmsee.c:203
+#, fuzzy
+msgid "Zoom _In"
+msgstr "Tutuza"
+
+#: ../src/chmsee.c:204
+#, fuzzy
+msgid "_Normal Size"
+msgstr "Kawaida"
+
+#: ../src/chmsee.c:205
+#, fuzzy
+msgid "Zoom _Out"
+msgstr "Fifiza"
+
+#: ../src/chmsee.c:207 ../src/components/book.c:138
+msgid "Select _All"
+msgstr "Chagua Yote"
+
+#: ../src/chmsee.c:215
+msgid "Full _Screen"
+msgstr ""
+
+#: ../src/chmsee.c:216
+#, fuzzy
+msgid "Side _Pane"
+msgstr "Onyesha/Ficha Paneli"
+
 #: ../src/chmsee.c:507
 msgid "CHM Files"
 msgstr "Mafaili ya CHM"
@@ -124,11 +233,11 @@ msgstr "Mafaili ya CHM"
 msgid "All Files"
 msgstr "Mafaili yote"
 
-#: ../src/chmsee.c:802
+#: ../src/chmsee.c:803
 msgid "Ready!"
 msgstr "Tayari!"
 
-#: ../src/chmsee.c:983
+#: ../src/chmsee.c:984
 #, fuzzy, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Faili %s la chm limeshishwa funguliwa."
@@ -154,6 +263,18 @@ msgstr ""
 msgid "more than 1 argument\n"
 msgstr "zaidi ya agyument 1\n"
 
+#: ../src/components/book.c:136
+msgid "Open Link in New _Tab"
+msgstr "Fungua Kiungo kweye Tabo Mpya"
+
+#: ../src/components/book.c:137
+msgid "_Copy Link Location"
+msgstr "Nakili Mahali pa Kiungo"
+
+#: ../src/components/book.c:139
+msgid "Copy Page _Location"
+msgstr "Nakili _Mahali pa Ukurasa"
+
 #: ../src/components/book.c:253
 msgid "Find:"
 msgstr ""
@@ -163,19 +284,19 @@ msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:698 ../src/components/book.c:758
+#: ../src/components/book.c:699 ../src/components/book.c:759
 msgid "No Title"
 msgstr "Hakuna Jina"
 
-#: ../src/components/book.c:856
+#: ../src/components/book.c:857
 msgid "Topics"
 msgstr "Mada"
 
-#: ../src/components/book.c:875
+#: ../src/components/book.c:876
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:891
+#: ../src/components/book.c:892
 msgid "Bookmarks"
 msgstr "Maalamisho"
 
@@ -199,16 +320,8 @@ msgstr "kufungua \"%s\" kumeshindikana: %s"
 msgid "Can not open chm file %s."
 msgstr "Faili %s la chm limeshishwa funguliwa."
 
-#~ msgid "_File"
-#~ msgstr "Faili"
-
-#, fuzzy
-#~ msgid "Open a file"
-#~ msgstr "Fungua Faile"
-
-#, fuzzy
-#~ msgid "Exit ChmSee"
-#~ msgstr "ChmSee"
+#~ msgid "About"
+#~ msgstr "Kuhusu"
 
 #, fuzzy
 #~ msgid "CS_BOOK >>> URI redirect: \"%s\" -> \"%s\""
@@ -227,17 +340,11 @@ msgstr "Faili %s la chm limeshishwa funguliwa."
 #~ msgid "Can't found hhc file."
 #~ msgstr "Faili la hhc halipatikani."
 
-#~ msgid "About"
-#~ msgstr "Kuhusu"
-
 #~ msgid "About..."
 #~ msgstr "Kuhusu..."
 
 #~ msgid "Back"
 #~ msgstr "Nyuma"
-
-#~ msgid "Copy Page _Location"
-#~ msgstr "Nakili _Mahali pa Ukurasa"
 
 #~ msgid "Forward"
 #~ msgstr "Mbele"
@@ -245,20 +352,8 @@ msgstr "Faili %s la chm limeshishwa funguliwa."
 #~ msgid "Home"
 #~ msgstr "Kaya"
 
-#~ msgid "Normal"
-#~ msgstr "Kawaida"
-
-#~ msgid "Open Link in New _Tab"
-#~ msgstr "Fungua Kiungo kweye Tabo Mpya"
-
 #~ msgid "Panel"
 #~ msgstr "Paneli"
-
-#~ msgid "Select _All"
-#~ msgstr "Chagua Yote"
-
-#~ msgid "Show/Hide Panel"
-#~ msgstr "Onyesha/Ficha Paneli"
 
 #~ msgid ""
 #~ "Universal\n"
@@ -276,42 +371,6 @@ msgstr "Faili %s la chm limeshishwa funguliwa."
 #~ "Mkorea\n"
 #~ "Mrusi\n"
 #~ "Myukrein"
-
-#~ msgid "Zoom In"
-#~ msgstr "Tutuza"
-
-#~ msgid "Zoom Out"
-#~ msgstr "Fifiza"
-
-#~ msgid "_Back"
-#~ msgstr "Nyuma"
-
-#~ msgid "_Close Tab"
-#~ msgstr "Funga Tabo"
-
-#~ msgid "_Copy"
-#~ msgstr "Nakili"
-
-#~ msgid "_Copy Link Location"
-#~ msgstr "Nakili Mahali pa Kiungo"
-
-#~ msgid "_Edit"
-#~ msgstr "Hariri"
-
-#~ msgid "_Forward"
-#~ msgstr "Mbele"
-
-#~ msgid "_Help"
-#~ msgstr "Msaada"
-
-#~ msgid "_New Tab"
-#~ msgstr "Tabo Mpya"
-
-#~ msgid "_View"
-#~ msgstr "Angalia"
-
-#~ msgid "_Home"
-#~ msgstr "Nyumbani"
 
 #~ msgid "_Setup"
 #~ msgstr "Usanidi"

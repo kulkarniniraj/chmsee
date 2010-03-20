@@ -7,15 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ChmSee 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-20 11:10+0800\n"
-"PO-Revision-Date: 2010-03-20 11:11+0800\n"
+"POT-Creation-Date: 2010-03-21 00:12+0800\n"
+"PO-Revision-Date: 2010-03-21 00:14+0800\n"
 "Last-Translator: Ji YongGang <jungleji@gmail.com>\n"
 "Language-Team: szlug <szlug@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2009-09-06 10:48+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
 
 #: ../data/about-dialog.ui.h:1
 msgid "The HTML Help(CHM) viewer for Unix/Linux"
@@ -33,7 +32,6 @@ msgstr ""
 "\n"
 "Launchpad Contributions:\n"
 "  Careone https://launchpad.net/~zzbusagain\n"
-"  Ji YongGang https://launchpad.net/~jungle-soforge-studio\n"
 "  LI Daobing https://launchpad.net/~lidaobing\n"
 "  zhangmiao https://launchpad.net/~mymzhang"
 
@@ -116,6 +114,106 @@ msgstr "通用"
 msgid "Variable Width:"
 msgstr "可变宽度："
 
+#: ../src/chmsee.c:182
+msgid "_File"
+msgstr "文件(_F)"
+
+#: ../src/chmsee.c:183
+msgid "_Edit"
+msgstr "编辑(_E)"
+
+#: ../src/chmsee.c:184
+msgid "_View"
+msgstr "查看(_V)"
+
+#: ../src/chmsee.c:185
+msgid "_Help"
+msgstr "帮助(_H)"
+
+#: ../src/chmsee.c:187
+msgid "_Open"
+msgstr "打开(_O)"
+
+#: ../src/chmsee.c:187
+msgid "Open a file"
+msgstr "打开文件"
+
+#: ../src/chmsee.c:188
+msgid "New _Tab"
+msgstr "打开标签页(_T)"
+
+#: ../src/chmsee.c:189
+msgid "_Close Tab"
+msgstr "关闭标签页(_C)"
+
+#: ../src/chmsee.c:190
+msgid "E_xit"
+msgstr "退出(_X)"
+
+#: ../src/chmsee.c:190
+msgid "Exit ChmSee"
+msgstr "退出 ChmSee"
+
+#: ../src/chmsee.c:192 ../src/components/book.c:133
+msgid "_Copy"
+msgstr "复制(_C)"
+
+#: ../src/chmsee.c:193
+msgid "_Find"
+msgstr "搜寻(_F)"
+
+#: ../src/chmsee.c:195
+msgid "_Preferences"
+msgstr "配置(_P)"
+
+#: ../src/chmsee.c:195
+msgid "Preferences"
+msgstr "配置"
+
+#: ../src/chmsee.c:197
+msgid "_Home"
+msgstr "首页(_H)"
+
+#: ../src/chmsee.c:198 ../src/components/book.c:134
+msgid "_Back"
+msgstr "回退(_B)"
+
+#: ../src/chmsee.c:199 ../src/components/book.c:135
+msgid "_Forward"
+msgstr "前进(_F)"
+
+#: ../src/chmsee.c:201
+msgid "_About"
+msgstr "关于(_A)"
+
+#: ../src/chmsee.c:201
+msgid "About ChmSee"
+msgstr "关于 ChmSee"
+
+#: ../src/chmsee.c:203
+msgid "Zoom _In"
+msgstr "放大(_I)"
+
+#: ../src/chmsee.c:204
+msgid "_Normal Size"
+msgstr "还原(_N)"
+
+#: ../src/chmsee.c:205
+msgid "Zoom _Out"
+msgstr "缩小(_O)"
+
+#: ../src/chmsee.c:207 ../src/components/book.c:138
+msgid "Select _All"
+msgstr "全选(_A)"
+
+#: ../src/chmsee.c:215
+msgid "Full _Screen"
+msgstr "全屏(_S)"
+
+#: ../src/chmsee.c:216
+msgid "Side _Pane"
+msgstr "侧边栏(_P)"
+
 #: ../src/chmsee.c:507
 msgid "CHM Files"
 msgstr "CHM 文件"
@@ -124,11 +222,11 @@ msgstr "CHM 文件"
 msgid "All Files"
 msgstr "所有文件"
 
-#: ../src/chmsee.c:802
+#: ../src/chmsee.c:803
 msgid "Ready!"
 msgstr "就绪！"
 
-#: ../src/chmsee.c:983
+#: ../src/chmsee.c:984
 #, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "出错： 无法打开 chm 文件 %s。"
@@ -154,6 +252,18 @@ msgstr "书架"
 msgid "more than 1 argument\n"
 msgstr "超过 1 个参数\n"
 
+#: ../src/components/book.c:136
+msgid "Open Link in New _Tab"
+msgstr "在新标签页打开(_T)"
+
+#: ../src/components/book.c:137
+msgid "_Copy Link Location"
+msgstr "复制链接地址(_C)"
+
+#: ../src/components/book.c:139
+msgid "Copy Page _Location"
+msgstr "复制页面地址(_L)"
+
 #: ../src/components/book.c:253
 msgid "Find:"
 msgstr "搜寻："
@@ -163,19 +273,19 @@ msgid "Match case"
 msgstr "区分大小写字母"
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:698 ../src/components/book.c:758
+#: ../src/components/book.c:699 ../src/components/book.c:759
 msgid "No Title"
 msgstr "无标题"
 
-#: ../src/components/book.c:856
+#: ../src/components/book.c:857
 msgid "Topics"
 msgstr "目录"
 
-#: ../src/components/book.c:875
+#: ../src/components/book.c:876
 msgid "Index"
 msgstr "索引"
 
-#: ../src/components/book.c:891
+#: ../src/components/book.c:892
 msgid "Bookmarks"
 msgstr "书签"
 

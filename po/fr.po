@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-20 11:10+0800\n"
+"POT-Creation-Date: 2010-03-21 00:12+0800\n"
 "PO-Revision-Date: 2009-04-13 22:36+0000\n"
 "Last-Translator: Pierre Slamich <pierre.slamich@gmail.com>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -117,6 +117,115 @@ msgstr ""
 msgid "Variable Width:"
 msgstr ""
 
+#: ../src/chmsee.c:182
+msgid "_File"
+msgstr "_Fichier"
+
+#: ../src/chmsee.c:183
+msgid "_Edit"
+msgstr "Édit_er"
+
+#: ../src/chmsee.c:184
+msgid "_View"
+msgstr "_Visualiser"
+
+#: ../src/chmsee.c:185
+msgid "_Help"
+msgstr "Aide"
+
+#: ../src/chmsee.c:187
+msgid "_Open"
+msgstr ""
+
+#: ../src/chmsee.c:187
+#, fuzzy
+msgid "Open a file"
+msgstr "Ouvrir un fichier"
+
+#: ../src/chmsee.c:188
+#, fuzzy
+msgid "New _Tab"
+msgstr "_Nouvel onglet"
+
+#: ../src/chmsee.c:189
+msgid "_Close Tab"
+msgstr "Fermer l'onglet"
+
+#: ../src/chmsee.c:190
+msgid "E_xit"
+msgstr ""
+
+#: ../src/chmsee.c:190
+#, fuzzy
+msgid "Exit ChmSee"
+msgstr "ChmSee"
+
+#: ../src/chmsee.c:192 ../src/components/book.c:133
+msgid "_Copy"
+msgstr "_Copier"
+
+#: ../src/chmsee.c:193
+msgid "_Find"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "_Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:195
+msgid "Preferences"
+msgstr ""
+
+#: ../src/chmsee.c:197
+msgid "_Home"
+msgstr "Accueil"
+
+#: ../src/chmsee.c:198 ../src/components/book.c:134
+msgid "_Back"
+msgstr "Retour"
+
+#: ../src/chmsee.c:199 ../src/components/book.c:135
+msgid "_Forward"
+msgstr "Suivant"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "_About"
+msgstr "À propos"
+
+#: ../src/chmsee.c:201
+#, fuzzy
+msgid "About ChmSee"
+msgstr "ChmSee"
+
+#: ../src/chmsee.c:203
+#, fuzzy
+msgid "Zoom _In"
+msgstr "Zoomer"
+
+#: ../src/chmsee.c:204
+#, fuzzy
+msgid "_Normal Size"
+msgstr "Normal"
+
+#: ../src/chmsee.c:205
+#, fuzzy
+msgid "Zoom _Out"
+msgstr "Dézoomer"
+
+#: ../src/chmsee.c:207 ../src/components/book.c:138
+msgid "Select _All"
+msgstr "Tout sélectionner"
+
+#: ../src/chmsee.c:215
+msgid "Full _Screen"
+msgstr ""
+
+#: ../src/chmsee.c:216
+#, fuzzy
+msgid "Side _Pane"
+msgstr "Afficher/cacher le panneau"
+
 #: ../src/chmsee.c:507
 msgid "CHM Files"
 msgstr "Fichiers CHM"
@@ -125,11 +234,11 @@ msgstr "Fichiers CHM"
 msgid "All Files"
 msgstr "Tous les fichiers"
 
-#: ../src/chmsee.c:802
+#: ../src/chmsee.c:803
 msgid "Ready!"
 msgstr "Prêt !"
 
-#: ../src/chmsee.c:983
+#: ../src/chmsee.c:984
 #, fuzzy, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Le fichier chm %s n'a pas pu être ouvert."
@@ -155,6 +264,18 @@ msgstr ""
 msgid "more than 1 argument\n"
 msgstr "plus d'un argument\n"
 
+#: ../src/components/book.c:136
+msgid "Open Link in New _Tab"
+msgstr "Ouvrir le lien dans un nouvel ongle_t"
+
+#: ../src/components/book.c:137
+msgid "_Copy Link Location"
+msgstr "_Copier l'adresse du lien"
+
+#: ../src/components/book.c:139
+msgid "Copy Page _Location"
+msgstr "Copier l'UR_L de la page"
+
 #: ../src/components/book.c:253
 msgid "Find:"
 msgstr ""
@@ -164,19 +285,19 @@ msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:698 ../src/components/book.c:758
+#: ../src/components/book.c:699 ../src/components/book.c:759
 msgid "No Title"
 msgstr "Sans titre"
 
-#: ../src/components/book.c:856
+#: ../src/components/book.c:857
 msgid "Topics"
 msgstr "Rubriques"
 
-#: ../src/components/book.c:875
+#: ../src/components/book.c:876
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:891
+#: ../src/components/book.c:892
 msgid "Bookmarks"
 msgstr "Marque-pages"
 
@@ -200,16 +321,8 @@ msgstr "Échec à l'ouverture de '%s' : '%s'"
 msgid "Can not open chm file %s."
 msgstr "Le fichier chm %s n'a pas pu être ouvert."
 
-#~ msgid "_File"
-#~ msgstr "_Fichier"
-
-#, fuzzy
-#~ msgid "Open a file"
-#~ msgstr "Ouvrir un fichier"
-
-#, fuzzy
-#~ msgid "Exit ChmSee"
-#~ msgstr "ChmSee"
+#~ msgid "About"
+#~ msgstr "À propos"
 
 #, fuzzy
 #~ msgid "CS_CHMFILE >>> cannot open chmfile: %s"
@@ -221,17 +334,11 @@ msgstr "Le fichier chm %s n'a pas pu être ouvert."
 #~ msgid "Can't found hhc file."
 #~ msgstr "Le fichier hhc est introuvable."
 
-#~ msgid "About"
-#~ msgstr "À propos"
-
 #~ msgid "About..."
 #~ msgstr "À propos..."
 
 #~ msgid "Back"
 #~ msgstr "Retour"
-
-#~ msgid "Copy Page _Location"
-#~ msgstr "Copier l'UR_L de la page"
 
 #~ msgid "Forward"
 #~ msgstr "Suivant"
@@ -239,20 +346,8 @@ msgstr "Le fichier chm %s n'a pas pu être ouvert."
 #~ msgid "Home"
 #~ msgstr "Accueil"
 
-#~ msgid "Normal"
-#~ msgstr "Normal"
-
-#~ msgid "Open Link in New _Tab"
-#~ msgstr "Ouvrir le lien dans un nouvel ongle_t"
-
 #~ msgid "Panel"
 #~ msgstr "Panneau"
-
-#~ msgid "Select _All"
-#~ msgstr "Tout sélectionner"
-
-#~ msgid "Show/Hide Panel"
-#~ msgstr "Afficher/cacher le panneau"
 
 #~ msgid ""
 #~ "Universal\n"
@@ -270,42 +365,6 @@ msgstr "Le fichier chm %s n'a pas pu être ouvert."
 #~ "Coréen\n"
 #~ "Russe\n"
 #~ "Ukrainien"
-
-#~ msgid "Zoom In"
-#~ msgstr "Zoomer"
-
-#~ msgid "Zoom Out"
-#~ msgstr "Dézoomer"
-
-#~ msgid "_Back"
-#~ msgstr "Retour"
-
-#~ msgid "_Close Tab"
-#~ msgstr "Fermer l'onglet"
-
-#~ msgid "_Copy"
-#~ msgstr "_Copier"
-
-#~ msgid "_Copy Link Location"
-#~ msgstr "_Copier l'adresse du lien"
-
-#~ msgid "_Edit"
-#~ msgstr "Édit_er"
-
-#~ msgid "_Forward"
-#~ msgstr "Suivant"
-
-#~ msgid "_Help"
-#~ msgstr "Aide"
-
-#~ msgid "_New Tab"
-#~ msgstr "_Nouvel onglet"
-
-#~ msgid "_View"
-#~ msgstr "_Visualiser"
-
-#~ msgid "_Home"
-#~ msgstr "Accueil"
 
 #~ msgid "_Setup"
 #~ msgstr "Paramètre_s"
