@@ -788,6 +788,12 @@ load_bookinfo(CsChmfile *self)
 
         gboolean rv = g_key_file_load_from_file(keyfile, bookinfo_file, G_KEY_FILE_NONE, NULL);
 
+        if (!rv) {
+                convert_old_config_file(bookinfo_file, "[Bookinfo]\n");
+        }
+
+        rv = g_key_file_load_from_file(keyfile, bookinfo_file, G_KEY_FILE_NONE, NULL);
+
         if (rv) {
                 priv->hhc           = g_key_file_get_string(keyfile, "Bookinfo", "hhc", &error);
                 priv->hhk           = g_key_file_get_string(keyfile, "Bookinfo", "hhk", &error);

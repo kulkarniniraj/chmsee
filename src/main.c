@@ -106,7 +106,7 @@ load_config()
         config->pos_y      = -100;
         config->width      = 0;
         config->height     = 0;
-        config->hpaned_pos = -1;
+        config->hpaned_pos = 200;
         config->fullscreen = FALSE;
 
         /* Read stored values from config file */ //FIXME: convert old version config file
@@ -117,19 +117,28 @@ load_config()
 
         GKeyFile *keyfile = g_key_file_new();
         gboolean rv = g_key_file_load_from_file(keyfile, config_file, G_KEY_FILE_NONE, NULL);
+        g_debug("Main >>> chmsee load config file return = %d", rv);
+
+        if (!rv) {
+                convert_old_config_file(config_file, "[ChmSee]\n");
+        }
+
+        rv = g_key_file_load_from_file(keyfile, config_file, G_KEY_FILE_NONE, NULL);
 
         if (rv) {
-                config->lang     = g_key_file_get_integer(keyfile, "Base", "LANG", &error);
-
+                config->lang     = g_key_file_get_integer(keyfile, "ChmSee", "LANG", &error);
                 g_free(config->last_dir);
-                config->last_dir = g_key_file_get_string (keyfile, "Base", "LAST_DIR", &error);
+                config->last_dir = g_key_file_get_string (keyfile, "ChmSee", "LAST_DIR", &error);
 
-                config->pos_x      = g_key_file_get_integer(keyfile, "Window", "POS_X", &error);
-                config->pos_y      = g_key_file_get_integer(keyfile, "Window", "POS_Y", &error);
-                config->width      = g_key_file_get_integer(keyfile, "Window", "WIDTH", &error);
-                config->height     = g_key_file_get_integer(keyfile, "Window", "HEIGHT", &error);
-                config->hpaned_pos = g_key_file_get_integer(keyfile, "Window", "HPANED_POSITION", &error);
-                config->fullscreen = g_key_file_get_boolean(keyfile, "Window", "FULLSCREEN", &error);
+                config->pos_x      = g_key_file_get_integer(keyfile, "ChmSee", "POS_X", &error);
+                config->pos_y      = g_key_file_get_integer(keyfile, "ChmSee", "POS_Y", &error);
+                config->width      = g_key_file_get_integer(keyfile, "ChmSee", "WIDTH", &error);
+                config->height     = g_key_file_get_integer(keyfile, "ChmSee", "HEIGHT", &error);
+                config->hpaned_pos = g_key_file_get_integer(keyfile, "ChmSee", "HPANED_POSITION", &error);
+                config->fullscreen = g_key_file_get_boolean(keyfile, "ChmSee", "FULLSCREEN", &error);
+
+                if (!config->hpaned_pos)
+                        config->hpaned_pos = 200;
         }
 
         g_key_file_free(keyfile);
@@ -148,15 +157,15 @@ save_config(CsConfig *config)
         gchar *config_file = g_build_filename(config->home, CHMSEE_CONFIG_FILE, NULL);
 
         GKeyFile *keyfile = g_key_file_new();
-        g_key_file_set_integer(keyfile, "Base", "LANG", config->lang);
-        g_key_file_set_string (keyfile, "Base", "LAST_DIR", config->last_dir);
+        g_key_file_set_integer(keyfile, "ChmSee", "LANG", config->lang);
+        g_key_file_set_string (keyfile, "ChmSee", "LAST_DIR", config->last_dir);
 
-        g_key_file_set_integer(keyfile, "Window", "POS_X", config->pos_x);
-        g_key_file_set_integer(keyfile, "Window", "POS_Y", config->pos_y);
-        g_key_file_set_integer(keyfile, "Window", "WIDTH", config->width);
-        g_key_file_set_integer(keyfile, "Window", "HEIGHT", config->height);
-        g_key_file_set_integer(keyfile, "Window", "HPANED_POSITION", config->hpaned_pos);
-        g_key_file_set_boolean(keyfile, "Window", "FULLSCREEN", config->fullscreen);
+        g_key_file_set_integer(keyfile, "ChmSee", "POS_X", config->pos_x);
+        g_key_file_set_integer(keyfile, "ChmSee", "POS_Y", config->pos_y);
+        g_key_file_set_integer(keyfile, "ChmSee", "WIDTH", config->width);
+        g_key_file_set_integer(keyfile, "ChmSee", "HEIGHT", config->height);
+        g_key_file_set_integer(keyfile, "ChmSee", "HPANED_POSITION", config->hpaned_pos);
+        g_key_file_set_boolean(keyfile, "ChmSee", "FULLSCREEN", config->fullscreen);
 
         gchar *contents = g_key_file_to_data(keyfile, &length, &error);
         g_file_set_contents(config_file, contents, length, &error);

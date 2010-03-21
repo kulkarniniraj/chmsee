@@ -107,6 +107,7 @@ file_exist_ncase(const gchar *path)
         g_debug("filename = %s", filename);
 
         dir = g_dir_open(dirname, 0, NULL);
+        g_free(dirname);
 
         if (dir) {
                 const gchar *entry;
@@ -118,6 +119,7 @@ file_exist_ncase(const gchar *path)
                                 found = g_strdup_printf("%s/%s", dirname, entry);
                                 g_dir_close(dir);
 
+                                g_free(filename);
                                 return found;
                         }
                 }
@@ -220,4 +222,29 @@ correct_filename(const gchar *fname)
         free(oldpath);
 
         return res;
+}
+
+void
+convert_old_config_file(const gchar *path, const gchar *groupname)
+{
+        FILE *fd_old, *fd_new;
+
+        gchar *dir = g_path_get_dirname(path);
+        gchar *new_conf = g_build_filename(dir, "config.new", NULL);
+
+        if ((fd_old = fopen(path, "r")) && (fd_new = fopen(new_conf, "w"))) {
+                fputs(groupname, fd_new);
+
+                gchar line[MAXLINE];
+                while (fgets(line, MAXLINE, fd_old)) {
+                        fputs(line, fd_new);
+                }
+                fclose(fd_old);
+                fclose(fd_new);
+
+                rename(new_conf, path);
+        }
+
+        g_free(dir);
+        g_free(new_conf);
 }

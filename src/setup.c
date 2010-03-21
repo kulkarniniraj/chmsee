@@ -75,6 +75,7 @@ variable_font_set_cb(GtkFontButton *button, Chmsee *chmsee)
         g_debug("SETUP >>> variable font set: %s", font_name);
 
         chmsee_set_variable_font(chmsee, font_name);
+        g_free(font_name);
 }
 
 static void
@@ -85,6 +86,7 @@ fixed_font_set_cb(GtkFontButton *button, Chmsee *chmsee)
         g_debug("SETUP >>> fixed font set: %s", font_name);
 
         chmsee_set_fixed_font(chmsee, font_name);
+        g_free(font_name);
 }
 
 static void

@@ -45,6 +45,8 @@ G_BEGIN_DECLS
 #  define N_(String) (String)
 #endif
 
+#define MAXLINE 1024
+
 #define RESOURCE_FILE(file) (CHMSEE_DATA_DIR G_DIR_SEPARATOR_S file)
 #define BUILDER_WIDGET(builder, widget) (GTK_WIDGET (gtk_builder_get_object(builder, widget)))
 
@@ -55,6 +57,7 @@ gchar *get_real_uri(const gchar *);
 gchar *correct_filename(const gchar *fname);
 char  *url_decode(const char*);
 gint   ncase_compare_utf8_string(const gchar *, const gchar *);
+void   convert_old_config_file(const gchar *, const gchar *);
 
 G_END_DECLS
 

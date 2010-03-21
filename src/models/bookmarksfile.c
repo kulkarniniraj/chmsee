@@ -26,8 +26,6 @@
 #include "utils.h"
 #include "models/link.h"
 
-#define MAXLINE 1024
-
 static gchar *strip_string(gchar *);
 static gchar *escape_parse(gchar *);
 static gint parse_line(gchar *, gchar *, gchar *);
