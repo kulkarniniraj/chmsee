@@ -432,6 +432,7 @@ cs_html_gecko_find(CsHtmlGecko *html, const gchar *sstr, gboolean backward, gboo
 {
         g_return_val_if_fail(IS_CS_HTML_GECKO (html), FALSE);
         CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
+
         gboolean rv = gecko_utils_find(priv->gecko, sstr, backward, match_case);
         g_debug("CS_HTML_GECKO >>> find result = %d", rv);
         return rv;

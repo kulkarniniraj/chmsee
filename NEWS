@@ -1,7 +1,7 @@
 ChmSee 1.1.0 2010-xx-xx
 -----------------------
 * Only support Gecko > 1.9 (Firefox3)
-* Need gtk+ >= 2.12 (for using gtkbuilder)
+* Need gtk+ >= 2.16 (for using gtkbuilder and g_uri functions)
 * Add index page filter string (Thanks Mingxi Wu <mxwu@novell.com>)
 * Add page find function
 

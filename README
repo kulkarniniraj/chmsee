@@ -11,7 +11,7 @@ Dependencies
 
 Compile ChmSee from source you need following packages:
  * cmake >= 2.6
- * gtk2 >= 2.12
+ * gtk2 >= 2.16
  * xulrunner >= 1.9
  * chmlib
  * libgcrypt

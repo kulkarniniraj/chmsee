@@ -106,6 +106,7 @@ static const char *ui_description =
         "      <menuitem action='ZoomOut'/>"
         "    </menu>"
         "    <menu action='HelpMenu'>"
+        "      <separator/>"
         "      <menuitem action='About'/>"
         "    </menu>"
         "  </menubar>"
@@ -140,7 +141,7 @@ static gboolean window_state_event_cb(Chmsee *, GdkEventWindowState *);
 static gboolean configure_event_cb(GtkWidget *, GdkEventConfigure *, Chmsee *);
 static void book_model_changed_cb(Chmsee *, CsChmfile *, const gchar *);
 static void book_html_changed_cb(Chmsee *, CsBook *);
-static void book_html_link_message_notify_cb(Chmsee *, GParamSpec *, CsChmfile *);
+static void book_message_notify_cb(Chmsee *, GParamSpec *, CsBook *);
 
 static void open_file_response_cb(GtkWidget *, gint, Chmsee *);
 static void about_response_cb(GtkDialog *, gint, gpointer);
@@ -453,15 +454,13 @@ book_html_changed_cb(Chmsee *self, CsBook *book)
 }
 
 static void
-book_html_link_message_notify_cb(Chmsee *self, GParamSpec *pspec, CsChmfile *chmfile)
+book_message_notify_cb(Chmsee *self, GParamSpec *pspec, CsBook *book)
 {
-        gchar* link_message;
-        g_object_get(chmfile,
-                     "link-message", &link_message,
-                     NULL);
+        gchar *message;
+        g_object_get(book, "book-message", &message, NULL);
 
-        update_status_bar(self, link_message);
-        g_free(link_message);
+        update_status_bar(self, message);
+        g_free(message);
 }
 
 static void
@@ -619,7 +618,7 @@ on_open_new_tab(GtkWidget *widget, Chmsee *self)
         g_debug("Chmsee >>> Open new tab");
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        gchar* location = cs_book_get_location(CS_BOOK (priv->book));
+        gchar *location = cs_book_get_location(CS_BOOK (priv->book));
         cs_book_new_tab_with_fullurl(CS_BOOK (priv->book), location);
         g_free(location);
 }
@@ -734,7 +733,7 @@ populate_windows(Chmsee *self)
 
         GtkWidget *vbox = GTK_WIDGET (gtk_vbox_new(FALSE, 2));
 
-        GtkActionGroup* action_group = gtk_action_group_new("MenuActions");
+        GtkActionGroup *action_group = gtk_action_group_new("MenuActions");
         priv->action_group = action_group;
         gtk_action_group_set_translation_domain(priv->action_group, NULL);
         gtk_action_group_add_actions(action_group, entries, G_N_ELEMENTS (entries), self);
@@ -753,14 +752,14 @@ populate_windows(Chmsee *self)
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "ZoomOut"), FALSE);
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "ZoomReset"), FALSE);
 
-        GtkUIManager* ui_manager = gtk_ui_manager_new();
+        GtkUIManager *ui_manager = gtk_ui_manager_new();
         priv->ui_manager = ui_manager;
         gtk_ui_manager_insert_action_group(ui_manager, action_group, 0);
 
-        GtkAccelGroup* accel_group = gtk_ui_manager_get_accel_group(ui_manager);
+        GtkAccelGroup *accel_group = gtk_ui_manager_get_accel_group(ui_manager);
         gtk_window_add_accel_group(GTK_WINDOW (self), accel_group);
 
-        GError* error = NULL;
+        GError *error = NULL;
         if (!gtk_ui_manager_add_ui_from_string(ui_manager, ui_description, -1, &error))
         {
                 g_warning ("Chmsee >>> building menus failed: %s", error->message);
@@ -768,12 +767,12 @@ populate_windows(Chmsee *self)
                 exit (EXIT_FAILURE);
         }
 
-        GtkWidget* menubar = gtk_handle_box_new();
+        GtkWidget *menubar = gtk_handle_box_new();
         priv->menubar = menubar;
         gtk_container_add(GTK_CONTAINER(menubar), gtk_ui_manager_get_widget (ui_manager, "/MainMenu"));
         gtk_box_pack_start (GTK_BOX (vbox), menubar, FALSE, FALSE, 0);
 
-        GtkWidget* toolbar = gtk_handle_box_new();
+        GtkWidget *toolbar = gtk_handle_box_new();
         priv->toolbar = toolbar;
         gtk_container_add(GTK_CONTAINER(toolbar), gtk_ui_manager_get_widget(ui_manager, "/toolbar"));
         gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -840,7 +839,7 @@ set_sidepane_state(Chmsee *self, gboolean state)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        GtkWidget* icon_widget;
+        GtkWidget *icon_widget;
         g_object_set(priv->book,
                      "sidepane-visible", state,
                      NULL);
@@ -957,8 +956,8 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
                                          G_CALLBACK (book_html_changed_cb),
                                          self);
                 g_signal_connect_swapped(priv->book,
-                                         "notify::link-message",
-                                         G_CALLBACK (book_html_link_message_notify_cb),
+                                         "notify::book-message",
+                                         G_CALLBACK (book_message_notify_cb),
                                          self);
 
                 /* update window title */

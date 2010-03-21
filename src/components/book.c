@@ -41,12 +41,6 @@
 #include "models/chmfile.h"
 #include "models/link.h"
 
-enum {
-        CS_STATE_INIT,    /* init state, no book is loaded */
-        CS_STATE_LOADING, /* loading state, don't pop up an error window when open homepage failed */
-        CS_STATE_NORMAL   /* normal state, one book is loaded */
-};
-
 /* Signals */
 enum {
         MODEL_CHANGED,
@@ -59,7 +53,7 @@ enum {
         PROP_0,
 
         PROP_SIDEPANE_VISIBLE,
-        PROP_LINK_MESSAGE
+        PROP_BOOK_MESSAGE
 };
 
 typedef struct _CsBookPrivate CsBookPrivate;
@@ -78,8 +72,6 @@ struct _CsBookPrivate {
         GtkActionGroup  *action_group;
         GtkUIManager    *ui_manager;
 
-        guint            scid_default;
-
         gboolean         has_toc;
         gint             lang;
 
@@ -87,7 +79,7 @@ struct _CsBookPrivate {
         CsHtmlGecko     *active_html;
 
         gchar           *context_menu_link;
-        gchar           *link_message;
+        gchar           *book_message;
 };
 
 #define CS_BOOK_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), CS_TYPE_BOOK, CsBookPrivate))
@@ -100,6 +92,7 @@ static void cs_book_set_property(GObject *, guint, const GValue *, GParamSpec *)
 static void cs_book_get_property(GObject *, guint, GValue *, GParamSpec *);
 
 static void find_entry_changed_cb(GtkEntry *, CsBook *);
+static void find_entry_activate_cb(GtkEntry *, CsBook *);
 static void link_selected_cb(CsBook *, Link *);
 static void html_notebook_switch_page_cb(GtkNotebook *, GtkNotebookPage *, guint , CsBook *);
 static void html_location_changed_cb(CsHtmlGecko *, const gchar *, CsBook *);
@@ -123,11 +116,12 @@ static void on_findbar_hide(GtkWidget *, CsBook *);
 static void on_findbar_back(GtkWidget *, CsBook *);
 static void on_findbar_forward(GtkWidget *, CsBook *);
 
+static void update_book_message(CsBook *, const gchar *);
 static gint new_html_tab(CsBook *);
 static GtkWidget *new_tab_label(CsBook *, const gchar *);
 static void update_tab_title(CsBook *, CsHtmlGecko *);
 static void set_context_menu_link(CsBook *, const gchar *);
-static void find_text(CsBook *, gboolean);
+static void find_text(GtkWidget *, CsBook *, gboolean);
 
 static const GtkActionEntry entries[] = {
         { "Copy", GTK_STOCK_COPY, N_("_Copy"), "<control>C", NULL, G_CALLBACK(on_copy)},
@@ -205,8 +199,8 @@ cs_book_class_init(CsBookClass *klass)
         pspec = g_param_spec_boolean("sidepane-visible", NULL, NULL, TRUE, G_PARAM_READWRITE);
         g_object_class_install_property(G_OBJECT_CLASS(klass), PROP_SIDEPANE_VISIBLE, pspec);
 
-        pspec = g_param_spec_string("link-message", NULL, NULL, "", G_PARAM_READABLE);
-        g_object_class_install_property(G_OBJECT_CLASS(klass), PROP_LINK_MESSAGE, pspec);
+        pspec = g_param_spec_string("book-message", NULL, NULL, "", G_PARAM_READABLE);
+        g_object_class_install_property(G_OBJECT_CLASS(klass), PROP_BOOK_MESSAGE, pspec);
 }
 
 static void
@@ -220,7 +214,7 @@ cs_book_init(CsBook *self)
         priv->model = NULL;
         priv->active_html = NULL;
         priv->has_toc = FALSE;
-        priv->link_message = NULL;
+        priv->book_message = NULL;
 
         priv->hpaned = gtk_hpaned_new();
         gtk_box_pack_start(GTK_BOX (self), priv->hpaned, TRUE, TRUE, 0);
@@ -241,7 +235,7 @@ cs_book_init(CsBook *self)
 
         GtkWidget *close_button = gtk_button_new();
         gtk_button_set_relief(GTK_BUTTON(close_button), GTK_RELIEF_NONE);
-        GtkWidget *close_image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+        GtkWidget *close_image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_SMALL_TOOLBAR);
         gtk_container_add(GTK_CONTAINER (close_button), close_image);
 
         g_signal_connect(G_OBJECT (close_button),
@@ -260,8 +254,14 @@ cs_book_init(CsBook *self)
                          "changed",
                          G_CALLBACK (find_entry_changed_cb),
                          self);
+        g_signal_connect(find_entry,
+                         "activate",
+                         G_CALLBACK (find_entry_activate_cb),
+                         self);
 
-        GtkWidget *find_back = gtk_button_new_from_stock(GTK_STOCK_GO_BACK);
+        GtkWidget *find_back = gtk_button_new_with_label(_("Previous"));
+        gtk_button_set_image(GTK_BUTTON (find_back),
+                             gtk_image_new_from_stock(GTK_STOCK_GO_BACK, GTK_ICON_SIZE_SMALL_TOOLBAR));
         g_signal_connect(G_OBJECT (find_back),
                          "clicked",
                          G_CALLBACK (on_findbar_back),
@@ -269,7 +269,9 @@ cs_book_init(CsBook *self)
         gtk_box_pack_start(GTK_BOX (priv->findbar), find_back, FALSE, FALSE, 0);
         gtk_button_set_relief(GTK_BUTTON(find_back), GTK_RELIEF_NONE);
 
-        GtkWidget *find_forward = gtk_button_new_from_stock(GTK_STOCK_GO_FORWARD);
+        GtkWidget *find_forward = gtk_button_new_with_label(_("Next"));
+        gtk_button_set_image(GTK_BUTTON (find_forward),
+                             gtk_image_new_from_stock(GTK_STOCK_GO_FORWARD, GTK_ICON_SIZE_SMALL_TOOLBAR));
         g_signal_connect(G_OBJECT (find_forward),
                          "clicked",
                          G_CALLBACK (on_findbar_forward),
@@ -342,6 +344,7 @@ cs_book_finalize(GObject *object)
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
         g_free(priv->context_menu_link);
+        g_free(priv->book_message);
 
         G_OBJECT_CLASS (cs_book_parent_class)->finalize(object);
 }
@@ -351,7 +354,13 @@ cs_book_finalize(GObject *object)
 static void
 find_entry_changed_cb(GtkEntry *entry, CsBook *self)
 {
-        find_text(self, FALSE);
+        find_text(GTK_WIDGET (entry), self, FALSE);
+}
+
+static void
+find_entry_activate_cb(GtkEntry *entry, CsBook *self)
+{
+        find_text(GTK_WIDGET (entry), self, FALSE);
 }
 
 static void
@@ -365,10 +374,13 @@ link_selected_cb(CsBook *self, Link *link)
 
         if (scheme && g_strcmp0(scheme, "file")) {
                 g_message("%s is unsupported protocol.", scheme);
+                gchar *message = g_strdup_printf("URI %s has unsupported protocol: %s", link->uri, scheme);
+                update_book_message(self, message);
+                g_free(message);
+                g_free(scheme);
         } else {
                 cs_book_load_url(self, link->uri);
         }
-        g_free(scheme);
 }
 
 static void
@@ -435,14 +447,20 @@ html_open_uri_cb(CsHtmlGecko *html, const gchar *uri, CsBook *self)
 static void
 html_title_changed_cb(CsHtmlGecko *html, const gchar *title, CsBook *self)
 {
-        g_debug("CS_BOOK >>> html title changed cb %s", title);
+        g_debug("CS_BOOK >>> html title changed cb title = %s", title);
 
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
         update_tab_title(self, html);
 
+        if (!strlen(title)) return;
+
         /* sync bookmarks title entry */
         gchar *location = cs_html_gecko_get_location(html);
+        g_debug("CS_BOOK >>> html title changed cb location = %s", location);
+
+        gboolean about = g_str_has_prefix(location, "about:");
+        if (about) return;
 
         if (location != NULL && strlen(location)) {
                 const gchar *bookfolder = cs_chmfile_get_bookfolder(priv->model);
@@ -490,10 +508,7 @@ html_open_new_tab_cb(CsHtmlGecko *html, const gchar *location, CsBook *self)
 static void
 html_link_message_cb(CsHtmlGecko *html, const gchar *url, CsBook *self)
 {
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        g_free(priv->link_message);
-        priv->link_message = g_strdup(url);
-        g_object_notify(G_OBJECT(self), "link-message");
+        update_book_message(self, url);
 }
 
 static void
@@ -611,13 +626,13 @@ on_findbar_hide(GtkWidget *widget, CsBook *self)
 static void
 on_findbar_back(GtkWidget *widget, CsBook *self)
 {
-        find_text(self, TRUE);
+        find_text(widget, self, TRUE);
 }
 
 static void
 on_findbar_forward(GtkWidget *widget, CsBook *self)
 {
-        find_text(self, FALSE);
+        find_text(widget, self, FALSE);
 }
 
 /* Internal functions */
@@ -652,13 +667,24 @@ cs_book_get_property(GObject *object, guint property_id, GValue *value, GParamSp
         case PROP_SIDEPANE_VISIBLE:
                 g_value_set_boolean(value, GTK_WIDGET_VISIBLE (gtk_paned_get_child1(GTK_PANED (priv->hpaned))));
                 break;
-        case PROP_LINK_MESSAGE:
-                g_value_set_string(value, priv->link_message);
+        case PROP_BOOK_MESSAGE:
+                g_value_set_string(value, priv->book_message);
                 break;
         default:
                 G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
                 break;
         }
+}
+
+static void
+update_book_message(CsBook *self, const gchar *message)
+{
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        if (priv->book_message)
+                g_free(priv->book_message);
+
+        priv->book_message = g_strdup(message);
+        g_object_notify(G_OBJECT(self), "book-message");
 }
 
 static gint
@@ -780,6 +806,7 @@ update_tab_title(CsBook *self, CsHtmlGecko *html)
                         break;
                 }
         }
+        g_debug("CS_BOOK >>> update tab title finished");
         g_free(title);
 }
 
@@ -792,7 +819,7 @@ set_context_menu_link(CsBook *self, const gchar *link)
 }
 
 static void
-find_text(CsBook *self, gboolean backward)
+find_text(GtkWidget *widget, CsBook *self, gboolean backward)
 {
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
 
@@ -802,6 +829,14 @@ find_text(CsBook *self, gboolean backward)
         GtkWidget *find_entry = g_object_get_data(G_OBJECT (priv->findbar), "find-entry");
         const gchar *text = gtk_entry_get_text(GTK_ENTRY (find_entry));
         gint length = strlen(text);
+
+        if (GTK_IS_BUTTON (widget) && backward && mcase) {
+                if (g_str_has_prefix(text, "gecko:about:")) {
+                    g_debug("CS_BOOK >>> call Gecko about: protocol = %s", text);
+                    cs_html_gecko_load_url(priv->active_html, text+6);
+                    return;
+                }
+        }
 
         g_debug("CS_BOOK >>> find string = %s, length = %d, backward = %d, match_case = %d", text, length, backward, mcase);
         cs_html_gecko_find(priv->active_html, text, backward, mcase);
@@ -956,6 +991,10 @@ cs_book_new_tab_with_fullurl(CsBook *self, const gchar *full_url)
         gchar *uri = g_strrstr(full_url, bookfolder);
         if (uri == NULL) {
                 g_message("CS_BOOK >>> new tab with full url, wrong protocol");
+                gchar *message = g_strdup_printf("URI %s has unsupported protocol", full_url);
+                update_book_message(self, message);
+                g_free(message);
+
                 return;
         }
 

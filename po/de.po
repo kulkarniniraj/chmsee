@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-21 00:12+0800\n"
+"POT-Creation-Date: 2010-03-21 15:55+0800\n"
 "PO-Revision-Date: 2009-07-28 15:41+0000\n"
 "Last-Translator: Moritz Baumann <Unknown>\n"
 "Language-Team: English (United Kingdom) <en_GB@li.org>\n"
@@ -115,128 +115,128 @@ msgstr ""
 msgid "Variable Width:"
 msgstr "Variabel:"
 
-#: ../src/chmsee.c:182
+#: ../src/chmsee.c:183
 msgid "_File"
 msgstr "_Datei"
 
-#: ../src/chmsee.c:183
+#: ../src/chmsee.c:184
 msgid "_Edit"
 msgstr "_Bearbeiten"
 
-#: ../src/chmsee.c:184
+#: ../src/chmsee.c:185
 msgid "_View"
 msgstr "_Ansicht"
 
-#: ../src/chmsee.c:185
+#: ../src/chmsee.c:186
 msgid "_Help"
 msgstr "_Hilfe"
 
-#: ../src/chmsee.c:187
+#: ../src/chmsee.c:188
 msgid "_Open"
 msgstr ""
 
-#: ../src/chmsee.c:187
+#: ../src/chmsee.c:188
 #, fuzzy
 msgid "Open a file"
 msgstr "Datei öffnen"
 
-#: ../src/chmsee.c:188
+#: ../src/chmsee.c:189
 #, fuzzy
 msgid "New _Tab"
 msgstr "_Neuer Reiter"
 
-#: ../src/chmsee.c:189
+#: ../src/chmsee.c:190
 msgid "_Close Tab"
 msgstr "_Reiter schließen"
 
-#: ../src/chmsee.c:190
+#: ../src/chmsee.c:191
 msgid "E_xit"
 msgstr ""
 
-#: ../src/chmsee.c:190
+#: ../src/chmsee.c:191
 #, fuzzy
 msgid "Exit ChmSee"
 msgstr "ChmSee"
 
-#: ../src/chmsee.c:192 ../src/components/book.c:133
+#: ../src/chmsee.c:193 ../src/components/book.c:127
 msgid "_Copy"
 msgstr "_Kopieren"
 
-#: ../src/chmsee.c:193
+#: ../src/chmsee.c:194
 msgid "_Find"
 msgstr ""
 
-#: ../src/chmsee.c:195
+#: ../src/chmsee.c:196
 msgid "_Preferences"
 msgstr ""
 
-#: ../src/chmsee.c:195
+#: ../src/chmsee.c:196
 msgid "Preferences"
 msgstr ""
 
-#: ../src/chmsee.c:197
+#: ../src/chmsee.c:198
 msgid "_Home"
 msgstr "_Home"
 
-#: ../src/chmsee.c:198 ../src/components/book.c:134
+#: ../src/chmsee.c:199 ../src/components/book.c:128
 msgid "_Back"
 msgstr "_Zurück"
 
-#: ../src/chmsee.c:199 ../src/components/book.c:135
+#: ../src/chmsee.c:200 ../src/components/book.c:129
 msgid "_Forward"
 msgstr "Weiter"
 
-#: ../src/chmsee.c:201
+#: ../src/chmsee.c:202
 #, fuzzy
 msgid "_About"
 msgstr "Über"
 
-#: ../src/chmsee.c:201
+#: ../src/chmsee.c:202
 #, fuzzy
 msgid "About ChmSee"
 msgstr "ChmSee"
 
-#: ../src/chmsee.c:203
+#: ../src/chmsee.c:204
 #, fuzzy
 msgid "Zoom _In"
 msgstr "Vergrößern"
 
-#: ../src/chmsee.c:204
+#: ../src/chmsee.c:205
 #, fuzzy
 msgid "_Normal Size"
 msgstr "Normale Größe"
 
-#: ../src/chmsee.c:205
+#: ../src/chmsee.c:206
 #, fuzzy
 msgid "Zoom _Out"
 msgstr "Verkleinern"
 
-#: ../src/chmsee.c:207 ../src/components/book.c:138
+#: ../src/chmsee.c:208 ../src/components/book.c:132
 msgid "Select _All"
 msgstr "Alles auswählen"
 
-#: ../src/chmsee.c:215
+#: ../src/chmsee.c:216
 #, fuzzy
 msgid "Full _Screen"
 msgstr "Vollbild"
 
-#: ../src/chmsee.c:216
+#: ../src/chmsee.c:217
 msgid "Side _Pane"
 msgstr "Seitenleiste"
 
-#: ../src/chmsee.c:507
+#: ../src/chmsee.c:506
 msgid "CHM Files"
 msgstr "CHM-Dateien"
 
-#: ../src/chmsee.c:512
+#: ../src/chmsee.c:511
 msgid "All Files"
 msgstr "Alle Dateien"
 
-#: ../src/chmsee.c:803
+#: ../src/chmsee.c:802
 msgid "Ready!"
 msgstr "Fertig!"
 
-#: ../src/chmsee.c:984
+#: ../src/chmsee.c:983
 #, fuzzy, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Die CHM-Datei %s kann nicht geöffnet werden."
@@ -264,40 +264,48 @@ msgstr ""
 msgid "more than 1 argument\n"
 msgstr "Mehr als 1 Argument erhalten\n"
 
-#: ../src/components/book.c:136
+#: ../src/components/book.c:130
 msgid "Open Link in New _Tab"
 msgstr "Link in einem neuen Rei_ter öffnen"
 
-#: ../src/components/book.c:137
+#: ../src/components/book.c:131
 msgid "_Copy Link Location"
 msgstr "_Link-Adresse kopieren"
 
-#: ../src/components/book.c:139
+#: ../src/components/book.c:133
 msgid "Copy Page _Location"
 msgstr "Adresse der Seite kopieren"
 
-#: ../src/components/book.c:253
+#: ../src/components/book.c:247
 msgid "Find:"
 msgstr ""
 
-#: ../src/components/book.c:280
+#: ../src/components/book.c:262
+msgid "Previous"
+msgstr ""
+
+#: ../src/components/book.c:272
+msgid "Next"
+msgstr ""
+
+#: ../src/components/book.c:282
 msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:699 ../src/components/book.c:759
+#: ../src/components/book.c:731 ../src/components/book.c:791
 msgid "No Title"
 msgstr "Unbenannt"
 
-#: ../src/components/book.c:857
+#: ../src/components/book.c:899
 msgid "Topics"
 msgstr "Inhalt"
 
-#: ../src/components/book.c:876
+#: ../src/components/book.c:918
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:892
+#: ../src/components/book.c:934
 msgid "Bookmarks"
 msgstr "Lesezeichen"
 
