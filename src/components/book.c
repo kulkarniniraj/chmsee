@@ -360,9 +360,15 @@ link_selected_cb(CsBook *self, Link *link)
         if (!g_ascii_strcasecmp(CHMSEE_NO_LINK, link->uri))
                 return;
 
-        g_debug("CS_BOOK >>> link selected load url: %s", link->uri);
+        char *scheme = g_uri_parse_scheme(link->uri);
+        g_debug("CS_BOOK >>> link selected load url: %s, scheme = %s", link->uri, scheme);
 
-        cs_book_load_url(self, link->uri);
+        if (scheme && g_strcmp0(scheme, "file")) {
+                g_message("%s is unsupported protocol.", scheme);
+        } else {
+                cs_book_load_url(self, link->uri);
+        }
+        g_free(scheme);
 }
 
 static void
@@ -823,6 +829,9 @@ cs_book_set_model(CsBook *self, CsChmfile *model)
 
         /* close opened book */
         if (priv->model) {
+                GList *old_list = cs_bookmarks_get_model(CS_BOOKMARKS (priv->bookmarks_page));
+                cs_chmfile_update_bookmarks_list(priv->model, old_list);
+
                 /* remove all notebook page tab */
                 gint i, num;
                 num = gtk_notebook_get_n_pages(GTK_NOTEBOOK (priv->control_notebook));
@@ -835,8 +844,6 @@ cs_book_set_model(CsBook *self, CsChmfile *model)
                         gtk_notebook_remove_page(GTK_NOTEBOOK (priv->html_notebook), -1);
                 }
 
-                GList *old_list = cs_bookmarks_get_model(CS_BOOKMARKS (priv->bookmarks_page));
-                cs_chmfile_update_bookmarks_list(priv->model, old_list);
                 g_object_unref(priv->model);
         }
 
