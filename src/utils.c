@@ -89,45 +89,6 @@ ncase_compare_utf8_string(const gchar *str1, const gchar *str2)
         return result;
 }
 
-gchar *
-file_exist_ncase(const gchar *path)
-{
-        gchar *ch;
-        gchar *dirname;
-        gchar *filename;
-        gchar *found;
-
-        GDir *dir;
-
-        ch = g_strrstr(path, "/");
-        dirname = g_strndup(path, ch - path);
-        filename = g_strdup(ch + 1);
-
-        g_debug("dirname = %s", dirname);
-        g_debug("filename = %s", filename);
-
-        dir = g_dir_open(dirname, 0, NULL);
-        g_free(dirname);
-
-        if (dir) {
-                const gchar *entry;
-
-                while ((entry = g_dir_read_name(dir))) {
-                        g_debug("entry = %s", entry);
-                        if (!g_ascii_strcasecmp(filename, entry)) {
-                                g_debug("found case insensitive file: %s", entry);
-                                found = g_strdup_printf("%s/%s", dirname, entry);
-                                g_dir_close(dir);
-
-                                g_free(filename);
-                                return found;
-                        }
-                }
-        }
-
-        return NULL;
-}
-
 char *
 url_decode(const char *encoded)
 {

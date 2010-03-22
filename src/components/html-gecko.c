@@ -326,12 +326,9 @@ cs_html_gecko_load_url(CsHtmlGecko *html, const gchar *str_uri)
 
         g_debug("CS_HTML_GECKO >>> load_url html = %p, uri = %s", html, str_uri);
 
-        gchar *full_uri;
-        if (str_uri[0] == '/')
-                full_uri = g_strdup_printf("file://%s", str_uri);
-        else
-                full_uri = g_strdup(str_uri);
+        gchar *full_uri = g_filename_to_uri(str_uri, NULL, NULL);
         
+        g_debug("CS_HTML_GECKO >>> load_url full uri = %s", full_uri);
         gtk_moz_embed_load_url(CS_HTML_GECKO_GET_PRIVATE (html)->gecko, full_uri);
 
         g_free(full_uri);

@@ -1133,6 +1133,14 @@ cs_book_zoom_reset(CsBook *self)
         cs_html_gecko_reset_size(priv->active_html);
 }
 
+gboolean
+cs_book_can_copy(CsBook *self)
+{
+        g_return_val_if_fail(IS_CS_BOOK (self), FALSE);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        return cs_html_gecko_can_copy_selection(priv->active_html);
+}
+
 void
 cs_book_copy(CsBook *self)
 {

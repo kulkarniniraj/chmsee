@@ -81,12 +81,15 @@ static const char *ui_description =
         "  <menubar name='MainMenu'>"
         "    <menu action='FileMenu'>"
         "      <menuitem action='Open'/>"
+        "      <menuitem action='RecentFiles'/>"
+        "      <separator/>"
         "      <menuitem action='NewTab'/>"
         "      <menuitem action='CloseTab'/>"
         "      <separator/>"
         "      <menuitem action='Exit'/>"
         "    </menu>"
         "    <menu action='EditMenu'>"
+        "      <menuitem action='Copy'/>"
         "      <menuitem action='SelectAll'/>"
         "      <separator/>"
         "      <menuitem action='Find'/>"
@@ -146,9 +149,11 @@ static void open_file_response_cb(GtkWidget *, gint, Chmsee *);
 static void about_response_cb(GtkDialog *, gint, gpointer);
 
 static void on_open_file(GtkWidget *, Chmsee *);
+static void on_recent_files(GtkRecentChooser *, Chmsee *);
 static void on_open_new_tab(GtkWidget *, Chmsee *);
 static void on_close_current_tab(GtkWidget *, Chmsee *);
 
+static void on_menu_edit(GtkWidget *, Chmsee *);
 static void on_home(GtkWidget *, Chmsee *);
 static void on_back(GtkWidget *, Chmsee *);
 static void on_forward(GtkWidget *, Chmsee *);
@@ -157,6 +162,7 @@ static void on_zoom_reset(GtkWidget *, Chmsee *);
 static void on_zoom_out(GtkWidget *, Chmsee *);
 static void on_setup(GtkWidget *, Chmsee *);
 static void on_about(GtkWidget *);
+static void on_copy(GtkWidget *, Chmsee *);
 static void on_select_all(GtkWidget *, Chmsee *);
 static void on_find(GtkWidget *, Chmsee *);
 static void on_keyboard_escape(GtkWidget *, Chmsee *);
@@ -179,15 +185,18 @@ static void unfullscreen(Chmsee *);
 /* Normal items */
 static const GtkActionEntry entries[] = {
         { "FileMenu", NULL, N_("_File") },
-        { "EditMenu", NULL, N_("_Edit") },
+        { "EditMenu", NULL, N_("_Edit"), NULL, NULL, G_CALLBACK(on_menu_edit) },
         { "ViewMenu", NULL, N_("_View") },
         { "HelpMenu", NULL, N_("_Help") },
 
         { "Open", GTK_STOCK_OPEN, N_("_Open"), "<control>O", N_("Open a file"), G_CALLBACK(on_open_file)},
+        { "RecentFiles", NULL, N_("_Recent Files"), NULL, NULL, NULL},
+
         { "NewTab", NULL, N_("New _Tab"), "<control>T", NULL, G_CALLBACK(on_open_new_tab)},
         { "CloseTab", NULL, N_("_Close Tab"), "<control>W", NULL, G_CALLBACK(on_close_current_tab)},
         { "Exit", GTK_STOCK_QUIT, N_("E_xit"), "<control>Q", N_("Exit ChmSee"), G_CALLBACK(destroy_cb)},
 
+        { "Copy", NULL, N_("_Copy"), NULL, NULL, G_CALLBACK(on_copy)},
         { "SelectAll", NULL, N_("Select _All"), NULL, NULL, G_CALLBACK(on_select_all)},
 
         { "Find", GTK_STOCK_FIND, N_("_Find"), "<control>F", NULL, G_CALLBACK(on_find)},
@@ -462,17 +471,45 @@ book_message_notify_cb(Chmsee *self, GParamSpec *pspec, CsBook *book)
 }
 
 static void
-open_file_response_cb(GtkWidget *widget, gint response_id, Chmsee *chmsee)
+open_file_response_cb(GtkWidget *widget, gint response_id, Chmsee *self)
 {
         gchar *filename = NULL;
 
         if (response_id == GTK_RESPONSE_OK)
                 filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (widget));
 
+        gchar *content;
+        gsize length;
+
+        if (g_file_get_contents(filename, &content, &length, NULL))
+        {
+                static gchar *groups[2] = {
+                        "CHM Viewer",
+                        NULL
+                };
+
+                GtkRecentData *data = g_slice_new(GtkRecentData);
+                data->display_name = NULL;
+                data->description = NULL;
+                data->mime_type = "application/x-chm";
+                data->app_name = (gchar*) g_get_application_name();
+                data->app_exec = g_strjoin(" ", g_get_prgname (), "%u", NULL);
+                data->groups = groups;
+                data->is_private = FALSE;
+                gchar *uri = g_filename_to_uri(filename, NULL, NULL);
+
+                GtkRecentManager *manager = gtk_recent_manager_get_default();
+                gtk_recent_manager_add_full(manager, uri, data);
+
+                g_free(uri);
+                g_free(data->app_exec);
+                g_slice_free(GtkRecentData, data);
+        }
+
         gtk_widget_destroy(widget);
 
         if (filename != NULL)
-                chmsee_open_file(chmsee, filename);
+                chmsee_open_file(self, filename);
 
         g_free(filename);
 }
@@ -482,17 +519,13 @@ open_file_response_cb(GtkWidget *widget, gint response_id, Chmsee *chmsee)
 static void
 on_open_file(GtkWidget *widget, Chmsee *self)
 {
-        GtkBuilder    *builder;
-        GtkWidget     *dialog;
-        GtkFileFilter *filter;
-
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
         /* create open file dialog */
-        builder = gtk_builder_new();
+        GtkBuilder *builder = gtk_builder_new();
         gtk_builder_add_from_file(builder, RESOURCE_FILE ("openfile-dialog.ui"), NULL);
 
-        dialog = BUILDER_WIDGET (builder, "openfile_dialog");
+        GtkWidget *dialog = BUILDER_WIDGET (builder, "openfile_dialog");
 
         g_signal_connect(G_OBJECT (dialog),
                          "response",
@@ -500,6 +533,7 @@ on_open_file(GtkWidget *widget, Chmsee *self)
                          self);
 
         /* file list fiter */
+        GtkFileFilter *filter;
         filter = gtk_file_filter_new();
         gtk_file_filter_set_name(filter, _("CHM Files"));
         gtk_file_filter_add_pattern(filter, "*.[cC][hH][mM]");
@@ -516,6 +550,31 @@ on_open_file(GtkWidget *widget, Chmsee *self)
         }
 
         g_object_unref(G_OBJECT (builder));
+}
+
+static void
+on_recent_files(GtkRecentChooser *chooser, Chmsee *self)
+{
+        gchar *uri = gtk_recent_chooser_get_current_uri(chooser);
+        g_debug("Chmsee >>> On Recent File %s", uri);
+
+        if (uri != NULL)
+        {
+                gchar *filename = g_filename_from_uri(uri, NULL, NULL);
+
+                chmsee_open_file(self, filename);
+                g_free(filename);
+        }
+        g_free(uri);
+}
+
+static void
+on_copy(GtkWidget *widget, Chmsee *self)
+{
+        g_debug("Chmsee >>> On Copy");
+
+        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
+        cs_book_copy(CS_BOOK (priv->book));
 }
 
 static void
@@ -547,6 +606,15 @@ on_forward(GtkWidget *widget, Chmsee *self)
         g_debug("Chmsee >>> On forward");
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_go_forward(CS_BOOK (priv->book));
+}
+
+static void
+on_menu_edit(GtkWidget *widget, Chmsee *self)
+{
+        g_debug("Chmsee >>> On Menu Edit");
+        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
+        gboolean can_copy = cs_book_can_copy(CS_BOOK (priv->book));
+        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Copy"), can_copy);
 }
 
 static void
@@ -760,6 +828,28 @@ populate_windows(Chmsee *self)
         priv->menubar = menubar;
         gtk_container_add(GTK_CONTAINER(menubar), gtk_ui_manager_get_widget (ui_manager, "/MainMenu"));
         gtk_box_pack_start (GTK_BOX (vbox), menubar, FALSE, FALSE, 0);
+
+        GtkRecentManager *manager = gtk_recent_manager_get_default();
+        GtkWidget *recent_menu = gtk_recent_chooser_menu_new_for_manager(manager);
+
+        gtk_recent_chooser_set_show_not_found(GTK_RECENT_CHOOSER (recent_menu), FALSE);
+        gtk_recent_chooser_set_local_only(GTK_RECENT_CHOOSER (recent_menu), TRUE);
+        gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER (recent_menu), 10);
+        gtk_recent_chooser_set_show_icons(GTK_RECENT_CHOOSER (recent_menu), FALSE);
+        gtk_recent_chooser_set_sort_type(GTK_RECENT_CHOOSER (recent_menu), GTK_RECENT_SORT_MRU);
+        gtk_recent_chooser_menu_set_show_numbers(GTK_RECENT_CHOOSER_MENU (recent_menu), TRUE);
+
+        GtkRecentFilter *filter = gtk_recent_filter_new();
+        gtk_recent_filter_add_application(filter, g_get_application_name());
+        gtk_recent_chooser_set_filter(GTK_RECENT_CHOOSER (recent_menu), filter);
+
+        g_signal_connect(recent_menu,
+                         "item-activated",
+                         G_CALLBACK (on_recent_files),
+                         self);
+
+        GtkWidget *widget = gtk_ui_manager_get_widget(ui_manager, "/MainMenu/FileMenu/RecentFiles");
+        gtk_menu_item_set_submenu(GTK_MENU_ITEM (widget), recent_menu);
 
         GtkWidget *toolbar = gtk_handle_box_new();
         priv->toolbar = toolbar;

@@ -66,6 +66,7 @@ void         cs_book_zoom_in(CsBook *);
 void         cs_book_zoom_out(CsBook *);
 void         cs_book_zoom_reset(CsBook *);
 
+gboolean     cs_book_can_copy(CsBook *);
 void         cs_book_copy(CsBook *);
 void         cs_book_select_all(CsBook *);
 

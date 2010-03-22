@@ -94,6 +94,7 @@ static GNode *parse_hhc_file(const gchar *, const gchar*);
 static void parse_hhk_file(CsChmfile *, const gchar *, const gchar*);
 static void tree_to_list_callback(GNode *, gpointer);
 static void free_list_data(gpointer, gpointer);
+static gchar *file_exist_ncase(const gchar *);
 
 /* GObject functions */
 
@@ -839,6 +840,40 @@ save_bookinfo(CsChmfile *self)
         g_key_file_free(keyfile);
         g_free(contents);
         g_free(bookinfo_file);
+}
+
+static gchar *
+file_exist_ncase(const gchar *path)
+{
+        gchar *found = NULL;
+
+        gchar *ch = g_strrstr(path, "/");
+        gchar *dirname = g_strndup(path, ch - path);
+        gchar *filename = g_strdup(ch + 1);
+
+        g_debug("CHMFILE >>> dirname = %s", dirname);
+        g_debug("CHMFILE >>> filename = %s", filename);
+
+        GDir *dir = g_dir_open(dirname, 0, NULL);
+
+        if (dir) {
+                const gchar *entry;
+
+                while ((entry = g_dir_read_name(dir))) {
+                        if (!g_ascii_strcasecmp(filename, entry)) {
+                                g_debug("CHMFILE >>> found case insensitive file: %s", entry);
+                                found = g_strdup_printf("%s/%s", dirname, entry);
+                                g_dir_close(dir);
+
+                                g_free(filename);
+                                g_debug("CHMFILE >>> return found file: %s", found);
+                                break;
+                        }
+                }
+        }
+        g_free(dirname);
+
+        return found;
 }
 
 /* External functions */
