@@ -409,6 +409,15 @@ cs_html_gecko_get_location(CsHtmlGecko *html)
         return gtk_moz_embed_get_location(priv->gecko);
 }
 
+gboolean
+cs_html_gecko_can_copy_selection(CsHtmlGecko *html)
+{
+        g_return_val_if_fail(IS_CS_HTML_GECKO (html), FALSE);
+        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
+
+        return gecko_utils_can_copy_selection(priv->gecko);
+}
+
 void
 cs_html_gecko_copy_selection(CsHtmlGecko *html)
 {
@@ -423,6 +432,7 @@ cs_html_gecko_select_all(CsHtmlGecko *html)
 {
         g_return_if_fail(IS_CS_HTML_GECKO (html));
         CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
+        g_debug("CS_HTML_GECKO >>> select all");
 
         gecko_utils_select_all(priv->gecko);
 }

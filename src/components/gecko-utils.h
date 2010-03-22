@@ -57,6 +57,7 @@ gint gecko_utils_get_mouse_event_modifiers(gpointer);
 void gecko_utils_set_font(gint, const gchar *);
 void gecko_utils_set_default_lang(gint);
 void gecko_utils_select_all(GtkMozEmbed *);
+gboolean gecko_utils_can_copy_selection(GtkMozEmbed *);
 void gecko_utils_copy_selection(GtkMozEmbed *);
 gfloat gecko_utils_get_zoom(GtkMozEmbed *);
 void gecko_utils_set_zoom(GtkMozEmbed *, gfloat);

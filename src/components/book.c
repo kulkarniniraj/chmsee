@@ -479,6 +479,15 @@ html_context_normal_cb(CsHtmlGecko *html, CsBook *self)
 
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
+        gboolean can_copy = cs_html_gecko_can_copy_selection(priv->active_html);
+        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Copy"), can_copy);
+
+        gboolean can_back = cs_book_can_go_back(self);
+        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Back"), can_back);
+
+        gboolean can_forward = cs_book_can_go_forward(self);
+        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Forward"), can_forward);
+
         gtk_menu_popup(GTK_MENU(gtk_ui_manager_get_widget(priv->ui_manager, "/HtmlContextNormal")),
                        NULL, NULL, NULL, NULL, 0, GDK_CURRENT_TIME);
 }
@@ -1136,6 +1145,7 @@ void
 cs_book_select_all(CsBook *self)
 {
         g_return_if_fail(IS_CS_BOOK (self));
+        g_debug("CS_BOOK >>> select all");
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         cs_html_gecko_select_all(priv->active_html);
 }

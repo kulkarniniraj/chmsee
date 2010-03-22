@@ -63,6 +63,7 @@ void         cs_html_gecko_go_forward(CsHtmlGecko *);
 void         cs_html_gecko_go_back(CsHtmlGecko *);
 gchar       *cs_html_gecko_get_title(CsHtmlGecko *);
 gchar       *cs_html_gecko_get_location(CsHtmlGecko *);
+gboolean     cs_html_gecko_can_copy_selection(CsHtmlGecko *);
 void         cs_html_gecko_copy_selection(CsHtmlGecko *);
 void         cs_html_gecko_select_all(CsHtmlGecko *);
 void         cs_html_gecko_increase_size(CsHtmlGecko *);

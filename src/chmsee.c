@@ -88,7 +88,6 @@ static const char *ui_description =
         "    </menu>"
         "    <menu action='EditMenu'>"
         "      <menuitem action='SelectAll'/>"
-        "      <menuitem action='Copy'/>"
         "      <separator/>"
         "      <menuitem action='Find'/>"
         "      <menuitem action='Preferences'/>"
@@ -158,7 +157,6 @@ static void on_zoom_reset(GtkWidget *, Chmsee *);
 static void on_zoom_out(GtkWidget *, Chmsee *);
 static void on_setup(GtkWidget *, Chmsee *);
 static void on_about(GtkWidget *);
-static void on_copy(GtkWidget *, Chmsee *);
 static void on_select_all(GtkWidget *, Chmsee *);
 static void on_find(GtkWidget *, Chmsee *);
 static void on_keyboard_escape(GtkWidget *, Chmsee *);
@@ -190,7 +188,8 @@ static const GtkActionEntry entries[] = {
         { "CloseTab", NULL, N_("_Close Tab"), "<control>W", NULL, G_CALLBACK(on_close_current_tab)},
         { "Exit", GTK_STOCK_QUIT, N_("E_xit"), "<control>Q", N_("Exit ChmSee"), G_CALLBACK(destroy_cb)},
 
-        { "Copy", GTK_STOCK_COPY, N_("_Copy"), "<control>C", NULL, G_CALLBACK(on_copy)},
+        { "SelectAll", NULL, N_("Select _All"), NULL, NULL, G_CALLBACK(on_select_all)},
+
         { "Find", GTK_STOCK_FIND, N_("_Find"), "<control>F", NULL, G_CALLBACK(on_find)},
 
         { "Preferences", GTK_STOCK_PREFERENCES, N_("_Preferences"), NULL, N_("Preferences"), G_CALLBACK(on_setup)},
@@ -204,8 +203,6 @@ static const GtkActionEntry entries[] = {
         { "ZoomIn", GTK_STOCK_ZOOM_IN, N_("Zoom _In"), "<control>plus", NULL, G_CALLBACK(on_zoom_in)},
         { "ZoomReset", GTK_STOCK_ZOOM_100, N_("_Normal Size"), "<control>0", NULL, G_CALLBACK(on_zoom_reset)},
         { "ZoomOut", GTK_STOCK_ZOOM_OUT, N_("Zoom _Out"), "<control>minus", NULL, G_CALLBACK(on_zoom_out)},
-
-        { "SelectAll", NULL, N_("Select _All"), NULL, NULL, G_CALLBACK(on_select_all)},
 
         { "OnKeyboardEscape", NULL, NULL, "Escape", NULL, G_CALLBACK(on_keyboard_escape)},
         { "OnKeyboardControlEqual", NULL, NULL, "<control>equal", NULL, G_CALLBACK(on_zoom_in)}
@@ -418,6 +415,7 @@ book_model_changed_cb(Chmsee *self, CsChmfile *chmfile, const gchar *filename)
 
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "NewTab"), has_model);
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "CloseTab"), has_model);
+        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "SelectAll"), has_model);
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Home"), has_model);
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Find"), has_model);
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "SidePane"), has_model);
@@ -518,14 +516,6 @@ on_open_file(GtkWidget *widget, Chmsee *self)
         }
 
         g_object_unref(G_OBJECT (builder));
-}
-
-static void
-on_copy(GtkWidget *widget, Chmsee *self)
-{
-        g_debug("Chmsee >>> On Copy");
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        cs_book_copy(CS_BOOK (priv->book));
 }
 
 static void
@@ -741,7 +731,6 @@ populate_windows(Chmsee *self)
 
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "NewTab"), FALSE);
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "CloseTab"), FALSE);
-        gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "Copy"), FALSE);
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "SelectAll"), FALSE);
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "Find"), FALSE);
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "Home"), FALSE);

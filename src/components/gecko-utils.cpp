@@ -361,11 +361,30 @@ gecko_utils_select_all(GtkMozEmbed *embed)
         gtk_moz_embed_get_nsIWebBrowser(embed, getter_AddRefs(webBrowser));
 
         nsCOMPtr<nsIClipboardCommands> clipboard = do_GetInterface(webBrowser);
+        g_debug("GECKO_UTILS >>> select all");
 
         if (!clipboard)
                 g_warning("GECKO_UTILS >>> could not get ClipboardCommands Interface.");
         else
                 clipboard->SelectAll();
+}
+
+extern "C" gboolean
+gecko_utils_can_copy_selection(GtkMozEmbed *embed)
+{
+        nsCOMPtr<nsIWebBrowser> webBrowser;
+        gtk_moz_embed_get_nsIWebBrowser(embed, getter_AddRefs(webBrowser));
+
+        nsCOMPtr<nsIClipboardCommands> clipboard = do_GetInterface(webBrowser);
+
+        if (!clipboard) {
+                g_warning("GECKO_UTILS >>> could not get ClipboardCommands Interface.");
+                return FALSE;
+        } else {
+                PRBool rv;
+                clipboard->CanCopySelection(&rv);
+                return rv;
+        }
 }
 
 extern "C" void
