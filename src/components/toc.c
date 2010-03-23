@@ -200,7 +200,7 @@ selection_changed_cb(GtkTreeSelection *selection, CsToc *self)
                 gtk_tree_model_get(GTK_TREE_MODEL (priv->store),
                                    &iter, COL_LINK, &link, -1);
 
-                g_debug("CS_TOC >>> emiting link-selected signal '%s'\n", link->uri);
+                g_debug("CS_TOC >>> emiting link-selected signal '%s'", link->uri);
                 g_signal_emit(self, signals[LINK_SELECTED], 0, link);
         }
 }

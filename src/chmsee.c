@@ -677,7 +677,7 @@ on_open_new_tab(GtkWidget *widget, Chmsee *self)
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
         gchar *location = cs_book_get_location(CS_BOOK (priv->book));
-        cs_book_new_tab_with_fullurl(CS_BOOK (priv->book), location);
+        cs_book_new_tab_with_fulluri(CS_BOOK (priv->book), location);
         g_free(location);
 }
 
@@ -1048,7 +1048,9 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
                 /* record last opened file directory */
                 if (priv->config->last_dir)
                         g_free(priv->config->last_dir);
-                priv->config->last_dir = g_strdup(g_path_get_dirname(cs_chmfile_get_filename(priv->chmfile)));
+
+                priv->config->last_dir = g_path_get_dirname(cs_chmfile_get_filename(priv->chmfile));
+                g_debug("Chmsee >>> last dir =  %s", priv->config->last_dir);
 
                 priv->state = CHMSEE_STATE_NORMAL;
         } else {

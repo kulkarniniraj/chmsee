@@ -50,7 +50,7 @@ GType        cs_book_get_type(void);
 GtkWidget   *cs_book_new(void);
 void         cs_book_set_model(CsBook *, CsChmfile *);
 
-void         cs_book_new_tab_with_fullurl(CsBook *, const gchar *);
+void         cs_book_new_tab_with_fulluri(CsBook *, const gchar *);
 void         cs_book_load_url(CsBook *, const gchar *);
 void         cs_book_close_current_tab(CsBook *);
 void         cs_book_reload_current_page(CsBook *);

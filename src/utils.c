@@ -179,16 +179,26 @@ convert_old_config_file(const gchar *path, const gchar *groupname)
 gchar *
 file_exist_ncase(const gchar *path)
 {
+        if (g_file_test(path, G_FILE_TEST_EXISTS)) {
+                g_debug("UTILS >>> file_exist_ncase found path: %s", path);
+                return g_strdup(path);
+        }
+
         gchar *found = NULL;
-
-        gchar *dirname = g_path_get_dirname(path);
-        gchar *filename = g_path_get_basename(path);
-
+        gchar *old_dir = g_path_get_dirname(path);
+        gchar *dirname = file_exist_ncase(old_dir);
         g_debug("UTILS >>> dirname = %s", dirname);
+        gchar *filename = g_path_get_basename(path);
         g_debug("UTILS >>> filename = %s", filename);
 
-        GDir *dir = g_dir_open(dirname, 0, NULL);
+        /* check new dirname with basename */
+        gchar *newfile = g_strdup_printf("%s/%s", dirname, filename);
+        if (g_file_test(newfile, G_FILE_TEST_EXISTS)) {
+                g_debug("UTILS >>> file_exist_ncase found newfile: %s", newfile);
+                return newfile;
+        }
 
+        GDir *dir = g_dir_open(dirname, 0, NULL);
         if (dir) {
                 const gchar *entry;
 
@@ -203,6 +213,7 @@ file_exist_ncase(const gchar *path)
                 }
         }
 
+        g_free(old_dir);
         g_free(dirname);
         g_free(filename);
 

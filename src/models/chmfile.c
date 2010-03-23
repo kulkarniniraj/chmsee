@@ -94,7 +94,7 @@ static GNode *parse_hhc_file(const gchar *, const gchar*);
 static void parse_hhk_file(CsChmfile *, const gchar *, const gchar*);
 static void tree_to_list_callback(GNode *, gpointer);
 static void free_list_data(gpointer, gpointer);
-static gchar *check_file_case(CsChmfile *, gchar *);
+static gchar *check_file_ncase(CsChmfile *, gchar *);
 
 /* GObject functions */
 
@@ -541,11 +541,11 @@ chmfile_file_info(CsChmfile *self)
         chmfile_windows_info(cfd, self);
 
         if (priv->hhc != NULL) {
-                check_file_case(self, priv->hhc);
+                check_file_ncase(self, priv->hhc);
         }
 
         if (priv->hhk != NULL) {
-                check_file_case(self, priv->hhk);
+                check_file_ncase(self, priv->hhk);
         }
 
         /* convert encoding to UTF-8 */
@@ -848,7 +848,7 @@ save_bookinfo(CsChmfile *self)
 }
 
 static gchar *
-check_file_case(CsChmfile *self, gchar *path)
+check_file_ncase(CsChmfile *self, gchar *path)
 {
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
         gchar *filename = g_build_filename(priv->bookfolder, path, NULL);

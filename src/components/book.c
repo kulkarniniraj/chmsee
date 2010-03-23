@@ -409,40 +409,25 @@ html_location_changed_cb(CsHtmlGecko *html, const gchar *location, CsBook *self)
 }
 
 static gboolean
-html_open_uri_cb(CsHtmlGecko *html, const gchar *uri, CsBook *self)
+html_open_uri_cb(CsHtmlGecko *html, const gchar *full_uri, CsBook *self)
 {
-        g_debug("CS_BOOK >>> enter html_open_uri_cb with uri = %s", uri);
+        g_debug("CS_BOOK >>> enter html_open_uri_cb with uri = %s", full_uri);
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
-        char *scheme = g_uri_parse_scheme(uri);
-        static const char *prefix = "file://";
-        static int prefix_len = 7;
+        char *scheme = g_uri_parse_scheme(full_uri);
 
-        if (g_str_has_prefix(uri, prefix)) {
+        if (scheme && !g_strcmp0(scheme, "file")) {
                 /* DND chmfile check */
-                if (g_str_has_suffix(uri, ".chm") || g_str_has_suffix(uri, ".CHM")) {
-                        g_debug("CS_BOOK >>> open chm file = %s", uri);
-                        g_signal_emit(self, signals[MODEL_CHANGED], 0, NULL, uri);
-
-                        return TRUE;
+                if (g_str_has_suffix(full_uri, ".chm") || g_str_has_suffix(full_uri, ".CHM")) {
+                        g_debug("CS_BOOK >>> open chm file = %s", full_uri);
+                        g_signal_emit(self, signals[MODEL_CHANGED], 0, NULL, full_uri);
+                } else {
+                        const gchar *bookfolder = cs_chmfile_get_bookfolder(priv->model);
+                        gchar *uri = g_strrstr(full_uri, bookfolder);
+                        uri = uri + strlen(bookfolder);
+                        g_debug("CS_BOOK >>> html_open_uri call load url = %s", uri);
+                        cs_book_load_url(self, uri);
                 }
-
-                /* Bad uri check */
-                if (g_access(uri+prefix_len, R_OK) < 0) {
-                        g_debug("CS_BOOK >>> html_open_uri_cb: %s does not exist", uri+prefix_len);
-                        gchar *newfname = file_exist_ncase(uri+prefix_len);
-                        if (newfname) {
-                                g_debug("CS_BOOK >>> URI redirect: \"%s\" -> \"%s\"", uri, newfname);
-                                cs_html_gecko_load_url(html, newfname);
-                        }
-                        g_free(newfname);
-                        return TRUE;
-                }
-
-                if ((html == priv->active_html) && priv->has_toc)
-                        cs_toc_select_uri(CS_TOC (priv->toc_page), uri);
-
-                return FALSE;
         }
         return TRUE;
 }
@@ -514,7 +499,7 @@ static void
 html_open_new_tab_cb(CsHtmlGecko *html, const gchar *location, CsBook *self)
 {
         g_debug("CS_BOOK >>> html open new tab callback: %s", location);
-        cs_book_new_tab_with_fullurl(self, location);
+        cs_book_new_tab_with_fulluri(self, location);
 }
 
 static void
@@ -610,7 +595,7 @@ on_context_new_tab(GtkWidget *widget, CsBook *self)
         g_debug("CS_BOOK >>> On context open new tab: %s", priv->context_menu_link);
 
         if (priv->context_menu_link != NULL) {
-                cs_book_new_tab_with_fullurl(self, priv->context_menu_link);
+                cs_book_new_tab_with_fulluri(self, priv->context_menu_link);
         }
 }
 
@@ -982,11 +967,14 @@ cs_book_load_url(CsBook *self, const gchar *uri)
         }
 
         /* check file exist */
-        if (!g_file_test(full_uri, G_FILE_TEST_EXISTS)) {
-                gchar *found = file_exist_ncase(full_uri);
+        gchar *real_uri = get_real_uri(full_uri);
+        if (!g_file_test(real_uri, G_FILE_TEST_EXISTS)) {
+                gchar *found = file_exist_ncase(real_uri);
                 if (found) {
                         g_free(full_uri);
-                        full_uri = found;
+
+                        full_uri = g_strdup_printf("%s%s", found, full_uri+strlen(real_uri));
+                        g_free(found);
                 } else {
                         GtkWidget *msg_dialog;
 
@@ -1010,19 +998,22 @@ cs_book_load_url(CsBook *self, const gchar *uri)
         cs_html_gecko_load_url(priv->active_html, full_uri);
         g_signal_handlers_unblock_by_func(priv->active_html, html_open_uri_cb, self);
 
+        if (priv->has_toc)
+                cs_toc_select_uri(CS_TOC (priv->toc_page), uri);
+
         g_signal_emit(self, signals[HTML_CHANGED], 0, self);
         g_free(full_uri);
 }
 
 void
-cs_book_new_tab_with_fullurl(CsBook *self, const gchar *full_url)
+cs_book_new_tab_with_fulluri(CsBook *self, const gchar *full_uri)
 {
-        g_debug("CS_BOOK >>> new tab with full url %s", full_url);
+        g_debug("CS_BOOK >>> new tab with full url %s", full_uri);
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
-        char *scheme = g_uri_parse_scheme(full_url);
+        char *scheme = g_uri_parse_scheme(full_uri);
         if (scheme && g_strcmp0(scheme, "file")) {
-                gchar *message = g_strdup_printf("URI %s has unsupported protocol: %s", full_url, scheme);
+                gchar *message = g_strdup_printf("URI %s has unsupported protocol: %s", full_uri, scheme);
                 g_message("%s", message);
                 update_book_message(self, message);
                 g_free(message);
@@ -1030,7 +1021,7 @@ cs_book_new_tab_with_fullurl(CsBook *self, const gchar *full_url)
                 const gchar *bookfolder = cs_chmfile_get_bookfolder(priv->model);
                 g_debug("CS_BOOK >>> new tab with full url, get bookfolder = %s", bookfolder);
 
-                gchar *uri = g_strrstr(full_url, bookfolder);
+                gchar *uri = g_strrstr(full_uri, bookfolder);
                 uri = uri + strlen(bookfolder);
 
                 gint page_num = new_html_tab(self);
@@ -1082,9 +1073,6 @@ cs_book_homepage(CsBook *self)
 
         if (homepage) {
                 cs_book_load_url(self, homepage);
-
-                if (priv->has_toc)
-                        cs_toc_select_uri(CS_TOC (priv->toc_page), homepage);
         }
 }
 
