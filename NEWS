@@ -4,6 +4,7 @@ ChmSee 1.1.0 2010-xx-xx
 * Need gtk+ >= 2.16 (for using gtkbuilder and g_uri functions)
 * Add index page filter string (Thanks Mingxi Wu <mxwu@novell.com>)
 * Add page find function
+* Add Recent Files feature
 
 ChmSee 1.0.7 2009-09-14
 -----------------------

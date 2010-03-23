@@ -33,11 +33,6 @@ if(${INTLTOOL_MERGE} STREQUAL "INTLTOOL_MERGE-NOTFOUND")
         message(FATAL_ERROR "intltool-merge not found, you can find one in http://ftp.gnome.org/pub/gnome/sources/intltool/")
 endif()
 
-find_program(GLIB_GENMARSHAL glib-genmarshal)
-if(${GLIB_GENMARSHAL} STREQUAL "GLIB_GENMARSHAL-NOTFOUND")
-        message(FATAL_ERROR "glib-genmarshal not found, check your glib-2.0 development environment")
-endif()
-
 find_library(LIBCHM chm)
 if(${LIBCHM} STREQUAL "LIBCHM-NOTFOUND")
         message(FATAL_ERROR "libchm not found, you can find one in http://www.jedrea.com/chmlib/")
@@ -57,21 +52,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 add_subdirectory(src)
 add_subdirectory(data)
 add_subdirectory(po)
-add_subdirectory(test)
 #add_subdirectory(gtkmoz)
-add_custom_target(report
-        COMMAND gtester -o gtester.xml test/test
-        COMMAND gtester-report gtester.xml > report.html
-        DEPENDS test
-        VERBATIM)
-add_custom_target(love
-        COMMAND src/chmsee -vvv --datadir=data
-        DEPENDS chmsee
-        )
-add_custom_target(love-gdb
-        COMMAND gdb --args src/chmsee --g-fatal-warnings -vv --datadir=data
-        DEPENDS chmsee
-        )
 
 SET(CPACK_SOURCE_PACKAGE_FILE_NAME "chmsee-1.1.0_beta")
 SET(CPACK_SOURCE_GENERATOR "TGZ")

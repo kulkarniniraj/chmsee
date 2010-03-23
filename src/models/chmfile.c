@@ -94,7 +94,7 @@ static GNode *parse_hhc_file(const gchar *, const gchar*);
 static void parse_hhk_file(CsChmfile *, const gchar *, const gchar*);
 static void tree_to_list_callback(GNode *, gpointer);
 static void free_list_data(gpointer, gpointer);
-static gchar *file_exist_ncase(const gchar *);
+static gchar *check_file_case(CsChmfile *, gchar *);
 
 /* GObject functions */
 
@@ -530,7 +530,7 @@ chmfile_file_info(CsChmfile *self)
 {
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
-        struct chmFile    *cfd = chm_open(priv->filename);
+        struct chmFile *cfd = chm_open(priv->filename);
 
         if (cfd == NULL) {
                 g_error(_("Can not open chm file %s."), priv->filename);
@@ -540,35 +540,40 @@ chmfile_file_info(CsChmfile *self)
         chmfile_system_info(cfd, self);
         chmfile_windows_info(cfd, self);
 
-        /* convert bookname to UTF-8 */
-        if (priv->bookname != NULL && priv->encoding != NULL) {
-                gchar *bookname_utf8 = g_convert(priv->bookname, -1, "UTF-8",
-                                                 priv->encoding,
-                                                 NULL, NULL, NULL);
-                g_debug("CS_CHMFILE >>> priv->bookname = %s, bookname_utf8 = %s", priv->bookname, bookname_utf8);
-                g_free(priv->bookname);
-                priv->bookname = bookname_utf8;
+        if (priv->hhc != NULL) {
+                check_file_case(self, priv->hhc);
+        }
+
+        if (priv->hhk != NULL) {
+                check_file_case(self, priv->hhk);
+        }
+
+        /* convert encoding to UTF-8 */
+        if (priv->encoding != NULL) {
+                if (priv->bookname) {
+                        gchar *bookname_utf8 = g_convert(priv->bookname, -1, "UTF-8",
+                                                         priv->encoding,
+                                                         NULL, NULL, NULL);
+                        g_debug("CS_CHMFILE >>> priv->bookname = %s, bookname_utf8 = %s", priv->bookname, bookname_utf8);
+                        g_free(priv->bookname);
+                        priv->bookname = bookname_utf8;
+                }
+
+                if (priv->hhc) {
+                        gchar *hhc_utf8 = convert_filename_to_utf8(priv->hhc, priv->encoding);
+                        g_free(priv->hhc);
+                        priv->hhc = hhc_utf8;
+                }
+
+                if (priv->hhk) {
+                        gchar *hhk_utf8 = convert_filename_to_utf8(priv->hhk, priv->encoding);
+                        g_free(priv->hhk);
+                        priv->hhk = hhk_utf8;
+                }
         }
 
         if (priv->bookname == NULL)
-                priv->bookname = g_strdup(g_path_get_basename(priv->filename));
-
-        /* convert filename to UTF-8 */
-        if (priv->hhc != NULL && priv->encoding != NULL) {
-                gchar *filename_utf8;
-
-                filename_utf8 = convert_filename_to_utf8(priv->hhc, priv->encoding);
-                g_free(priv->hhc);
-                priv->hhc = filename_utf8;
-        }
-
-        if (priv->hhk != NULL && priv->encoding != NULL) {
-                gchar *filename_utf8;
-
-                filename_utf8 = convert_filename_to_utf8(priv->hhk, priv->encoding);
-                g_free(priv->hhk);
-                priv->hhk = filename_utf8;
-        }
+                priv->bookname = g_path_get_basename(priv->filename);
 
         chm_close(cfd);
 }
@@ -843,37 +848,23 @@ save_bookinfo(CsChmfile *self)
 }
 
 static gchar *
-file_exist_ncase(const gchar *path)
+check_file_case(CsChmfile *self, gchar *path)
 {
-        gchar *found = NULL;
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+        gchar *filename = g_build_filename(priv->bookfolder, path, NULL);
 
-        gchar *ch = g_strrstr(path, "/");
-        gchar *dirname = g_strndup(path, ch - path);
-        gchar *filename = g_strdup(ch + 1);
+        if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
+                g_free(path);
+                path = NULL;
 
-        g_debug("CHMFILE >>> dirname = %s", dirname);
-        g_debug("CHMFILE >>> filename = %s", filename);
-
-        GDir *dir = g_dir_open(dirname, 0, NULL);
-
-        if (dir) {
-                const gchar *entry;
-
-                while ((entry = g_dir_read_name(dir))) {
-                        if (!g_ascii_strcasecmp(filename, entry)) {
-                                g_debug("CHMFILE >>> found case insensitive file: %s", entry);
-                                found = g_strdup_printf("%s/%s", dirname, entry);
-                                g_dir_close(dir);
-
-                                g_free(filename);
-                                g_debug("CHMFILE >>> return found file: %s", found);
-                                break;
-                        }
+                gchar *found = file_exist_ncase(filename);
+                if (found) {
+                        path = g_path_get_basename(found);
+                        g_free(found);
                 }
         }
-        g_free(dirname);
-
-        return found;
+        g_free(filename);
+        return path;
 }
 
 /* External functions */
@@ -919,10 +910,6 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
         if (priv->hhc != NULL && g_ascii_strcasecmp(priv->hhc, "(null)") != 0) {
                 gchar *hhcfile = g_build_filename(priv->bookfolder, priv->hhc, NULL);
 
-                if (!g_file_test(hhcfile, G_FILE_TEST_EXISTS)) {
-                        hhcfile = file_exist_ncase(hhcfile);
-                }
-
                 priv->toc_tree = parse_hhc_file(hhcfile, priv->encoding);
                 g_free(hhcfile);
         }
@@ -930,13 +917,10 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
         /* parse hhk file */
         if (priv->hhk != NULL && priv->index_list == NULL) {
                 gchar* path = g_build_filename(priv->bookfolder, priv->hhk, NULL);
-                gchar* path2 = correct_filename(path);
 
-                parse_hhk_file(self, path2, priv->encoding);
+                parse_hhk_file(self, path, priv->encoding);
                 g_debug("CS_CHMFILE >>> priv->index_list = %p", priv->index_list);
-
                 g_free(path);
-                g_free(path2);
         }
 
         /* Load bookmarks */
@@ -1021,7 +1005,7 @@ cs_chmfile_set_variable_font(CsChmfile *self, const gchar *font_name)
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
         g_free(priv->variable_font);
-        
+
         priv->variable_font = g_strdup(font_name);
 }
 
@@ -1038,7 +1022,7 @@ cs_chmfile_set_fixed_font(CsChmfile *self, const gchar *font_name)
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
         g_free(priv->fixed_font);
-        
+
         priv->fixed_font = g_strdup(font_name);
 }
 

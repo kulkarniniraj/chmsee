@@ -151,40 +151,6 @@ get_real_uri(const gchar *uri)
         return real_uri;
 }
 
-gchar *
-correct_filename(const gchar *fname)
-{
-        if(g_access(fname, R_OK) == 0) {
-                return g_strdup(fname);
-        }
-
-        gchar* oldpath = g_path_get_dirname(fname);
-        gchar* newpath = correct_filename(oldpath);
-
-        gchar* basename = g_path_get_basename(fname);
-        gchar* res = NULL;
-
-        if(newpath) {
-                GDir* dir = g_dir_open(newpath, 0, NULL);
-                if(dir) {
-                        while(1) {
-                                const gchar* newfname = g_dir_read_name(dir);
-                                if(!newfname) break;
-                                if(g_ascii_strcasecmp(basename, newfname) == 0) {
-                                        res = g_strdup_printf("%s/%s", newpath, newfname);
-                                        break;
-                                }
-                        }
-                        g_dir_close(dir);
-                }
-        }
-        free(basename);
-        free(newpath);
-        free(oldpath);
-
-        return res;
-}
-
 void
 convert_old_config_file(const gchar *path, const gchar *groupname)
 {
@@ -208,4 +174,38 @@ convert_old_config_file(const gchar *path, const gchar *groupname)
 
         g_free(dir);
         g_free(new_conf);
+}
+
+gchar *
+file_exist_ncase(const gchar *path)
+{
+        gchar *found = NULL;
+
+        gchar *dirname = g_path_get_dirname(path);
+        gchar *filename = g_path_get_basename(path);
+
+        g_debug("UTILS >>> dirname = %s", dirname);
+        g_debug("UTILS >>> filename = %s", filename);
+
+        GDir *dir = g_dir_open(dirname, 0, NULL);
+
+        if (dir) {
+                const gchar *entry;
+
+                while ((entry = g_dir_read_name(dir))) {
+                        if (!g_ascii_strcasecmp(filename, entry)) {
+                                g_debug("UTILS >>> found case insensitive file: %s", entry);
+                                found = g_strdup_printf("%s/%s", dirname, entry);
+                                g_dir_close(dir);
+
+                                break;
+                        }
+                }
+        }
+
+        g_free(dirname);
+        g_free(filename);
+
+        g_debug("UTILS >>> return found file: %s", found);
+        return found;
 }

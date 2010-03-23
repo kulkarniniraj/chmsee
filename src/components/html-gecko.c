@@ -151,6 +151,7 @@ cs_html_gecko_init(CsHtmlGecko *html)
         CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
         priv->gecko = GTK_MOZ_EMBED(gtk_moz_embed_new());
         gtk_widget_show(GTK_WIDGET (priv->gecko));
+
         priv->render_name = g_strdup("Mozilla Gecko");
 
         gtk_frame_set_shadow_type(GTK_FRAME (html), GTK_SHADOW_IN);
@@ -238,11 +239,8 @@ gecko_open_uri_cb(GtkMozEmbed *embed, const gchar *uri, CsHtmlGecko *html)
 static gboolean
 gecko_mouse_click_cb(GtkMozEmbed *widget, gpointer dom_event, CsHtmlGecko *html)
 {
-        gint button;
-        gint mask;
-        
-        button = gecko_utils_get_mouse_event_button(dom_event);
-        mask = gecko_utils_get_mouse_event_modifiers(dom_event);
+        gint button = gecko_utils_get_mouse_event_button(dom_event);
+        gint mask = gecko_utils_get_mouse_event_modifiers(dom_event);
 
         if (button == 2 || (button == 1 && mask & GDK_CONTROL_MASK)) {
                 if (current_url) {
@@ -281,6 +279,7 @@ gecko_link_message_cb(GtkMozEmbed *widget, CsHtmlGecko *html)
 static void
 gecko_child_add_cb(GtkMozEmbed *embed, GtkWidget *child, CsHtmlGecko *html)
 {
+        g_debug("CS_HTML_GECKO >>> child add callback");
         g_signal_connect(G_OBJECT (child), 
                          "grab-focus",
                          G_CALLBACK (gecko_child_grab_focus_cb),
@@ -290,15 +289,16 @@ gecko_child_add_cb(GtkMozEmbed *embed, GtkWidget *child, CsHtmlGecko *html)
 static void
 gecko_child_remove_cb(GtkMozEmbed *embed, GtkWidget *child, CsHtmlGecko *html)
 {
+        g_debug("CS_HTML_GECKO >>> child remove callback");
         g_signal_handlers_disconnect_by_func(child, gecko_child_grab_focus_cb, html);
 }
 
 static void
 gecko_child_grab_focus_cb(GtkWidget *widget, CsHtmlGecko *html)
 {
-        GdkEvent *event;
+        g_debug("CS_HTML_GECKO >>> grab focus callback");
 
-        event = gtk_get_current_event();
+        GdkEvent *event = gtk_get_current_event();
 
         if (event == NULL)
                 g_signal_stop_emission_by_name(widget, "grab-focus");
@@ -311,9 +311,7 @@ gecko_child_grab_focus_cb(GtkWidget *widget, CsHtmlGecko *html)
 GtkWidget *
 cs_html_gecko_new(void)
 {
-        CsHtmlGecko *html;
-
-        html = g_object_new(CS_TYPE_HTML_GECKO, NULL);
+        CsHtmlGecko *html = g_object_new(CS_TYPE_HTML_GECKO, NULL);
 
         return GTK_WIDGET (html);
 }
@@ -326,9 +324,12 @@ cs_html_gecko_load_url(CsHtmlGecko *html, const gchar *str_uri)
 
         g_debug("CS_HTML_GECKO >>> load_url html = %p, uri = %s", html, str_uri);
 
-        gchar *full_uri = g_filename_to_uri(str_uri, NULL, NULL);
+        gchar *full_uri;
+        if (str_uri[0] == '/')
+                full_uri = g_strdup_printf("file://%s", str_uri);
+        else
+                full_uri = g_strdup(str_uri);
         
-        g_debug("CS_HTML_GECKO >>> load_url full uri = %s", full_uri);
         gtk_moz_embed_load_url(CS_HTML_GECKO_GET_PRIVATE (html)->gecko, full_uri);
 
         g_free(full_uri);
