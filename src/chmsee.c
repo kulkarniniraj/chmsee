@@ -447,33 +447,6 @@ open_file_response_cb(GtkWidget *widget, gint response_id, Chmsee *self)
         if (response_id == GTK_RESPONSE_OK)
                 filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (widget));
 
-        gchar *content;
-        gsize length;
-
-        if (filename && g_file_get_contents(filename, &content, &length, NULL)) {
-                static gchar *groups[2] = {
-                        "CHM Viewer",
-                        NULL
-                };
-
-                GtkRecentData *data = g_slice_new(GtkRecentData);
-                data->display_name = NULL;
-                data->description = NULL;
-                data->mime_type = "application/x-chm";
-                data->app_name = (gchar*) g_get_application_name();
-                data->app_exec = g_strjoin(" ", g_get_prgname (), "%u", NULL);
-                data->groups = groups;
-                data->is_private = FALSE;
-                gchar *uri = g_filename_to_uri(filename, NULL, NULL);
-
-                GtkRecentManager *manager = gtk_recent_manager_get_default();
-                gtk_recent_manager_add_full(manager, uri, data);
-
-                g_free(uri);
-                g_free(data->app_exec);
-                g_slice_free(GtkRecentData, data);
-        }
-
         gtk_widget_destroy(widget);
 
         if (filename != NULL)
@@ -823,7 +796,8 @@ populate_windows(Chmsee *self)
         priv->toolbar = toolbar;
         gtk_container_add(GTK_CONTAINER(toolbar), gtk_ui_manager_get_widget(ui_manager, "/toolbar"));
         gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
-        gtk_toolbar_set_style(GTK_TOOLBAR (gtk_ui_manager_get_widget(ui_manager, "/toolbar")), GTK_TOOLBAR_ICONS);// FIXME: issue 43
+        /* gtk_toolbar_set_style(GTK_TOOLBAR (gtk_ui_manager_get_widget(ui_manager, "/toolbar")), */
+        /*                       GTK_TOOLBAR_ICONS);// FIXME: issue 43 */
         gtk_tool_button_set_icon_widget(
                 GTK_TOOL_BUTTON(gtk_ui_manager_get_widget(ui_manager, "/toolbar/sidepane")),
                 gtk_image_new_from_file(RESOURCE_FILE ("show-pane.png")));
@@ -845,7 +819,7 @@ populate_windows(Chmsee *self)
 
         accel_group = g_object_new(GTK_TYPE_ACCEL_GROUP, NULL);
         gtk_window_add_accel_group(GTK_WINDOW (self), accel_group);
-        
+
         update_status_bar(self, _("Ready!"));
         gtk_widget_show_all(GTK_WIDGET (self));
         cs_book_findbar_hide(CS_BOOK (priv->book));
@@ -992,7 +966,7 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
 
         if (priv->chmfile) {
                 priv->state = CHMSEE_STATE_LOADING;
-                
+
                 cs_book_set_model(CS_BOOK (priv->book), priv->chmfile);
 
                 gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON (gtk_ui_manager_get_widget(priv->ui_manager, "/toolbar/sidepane")), TRUE);
@@ -1019,6 +993,34 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
 
                 priv->config->last_dir = g_path_get_dirname(cs_chmfile_get_filename(priv->chmfile));
                 g_debug("Chmsee >>> last dir =  %s", priv->config->last_dir);
+
+                /* recent files */
+                gchar *content;
+                gsize length;
+
+                if (g_file_get_contents(filename, &content, &length, NULL)) {
+                        static gchar *groups[2] = {
+                                "CHM Viewer",
+                                NULL
+                        };
+
+                        GtkRecentData *data = g_slice_new(GtkRecentData);
+                        data->display_name = NULL;
+                        data->description = NULL;
+                        data->mime_type = "application/x-chm";
+                        data->app_name = (gchar*) g_get_application_name();
+                        data->app_exec = g_strjoin(" ", g_get_prgname (), "%u", NULL);
+                        data->groups = groups;
+                        data->is_private = FALSE;
+                        gchar *uri = g_filename_to_uri(filename, NULL, NULL);
+
+                        GtkRecentManager *manager = gtk_recent_manager_get_default();
+                        gtk_recent_manager_add_full(manager, uri, data);
+
+                        g_free(uri);
+                        g_free(data->app_exec);
+                        g_slice_free(GtkRecentData, data);
+                }
 
                 priv->state = CHMSEE_STATE_NORMAL;
         } else {
