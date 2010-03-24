@@ -228,8 +228,6 @@ _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
                 return CHM_ENUMERATOR_FAILURE;
         }
 
-        g_debug("CS_CHMFILE >>> ui->path = %s", ui->path);
-
         fname = g_build_filename(ctx->base_path, ui->path+1, NULL);
 
         ui_path_len = strlen(ui->path)-1;
@@ -240,10 +238,7 @@ _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
                 LONGINT64 len, remain = ui->length;
                 LONGUINT64 offset = 0;
 
-                gchar *file_ext;
-
-                file_ext = g_strrstr(g_path_get_basename(ui->path), ".");
-                g_debug("CS_CHMFILE >>> file_ext = %s", file_ext);
+                gchar *file_ext = g_strrstr(g_path_get_basename(ui->path), ".");
 
                 if ((fout = fopen(fname, "wb")) == NULL) {
                         /* make sure that it isn't just a missing directory before we abort */

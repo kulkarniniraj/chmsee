@@ -32,7 +32,7 @@ link_new(LinkType type, const gchar *name, const gchar *uri)
         g_return_val_if_fail(name != NULL, NULL);
         g_return_val_if_fail(uri != NULL, NULL);
 
-        link = g_new0(Link, 1);
+        link = g_slice_new(Link);
 
         link->type = type;
 
@@ -48,7 +48,7 @@ link_free(Link *link)
         g_free(link->name);
         g_free(link->uri);
 
-        g_free(link);
+        g_slice_free(Link, link);
 }
 
 Link *

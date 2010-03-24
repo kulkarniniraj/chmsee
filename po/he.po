@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-22 21:08+0800\n"
+"POT-Creation-Date: 2010-03-24 22:11+0800\n"
 "PO-Revision-Date: 2009-01-11 09:27+0000\n"
 "Last-Translator: Yaron <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
@@ -115,220 +115,225 @@ msgstr ""
 msgid "Variable Width:"
 msgstr "רוחב משתנה:"
 
-#: ../src/chmsee.c:187
+#: ../src/chmsee.c:185
 msgid "_File"
 msgstr "_קובץ"
 
-#: ../src/chmsee.c:188
+#: ../src/chmsee.c:186
 msgid "_Edit"
 msgstr "ע_ריכה"
 
-#: ../src/chmsee.c:189
+#: ../src/chmsee.c:187
 msgid "_View"
 msgstr "_תצוגה"
 
-#: ../src/chmsee.c:190
+#: ../src/chmsee.c:188
 msgid "_Help"
 msgstr "ע_זרה"
 
-#: ../src/chmsee.c:192
+#: ../src/chmsee.c:190
 msgid "_Open"
 msgstr ""
 
-#: ../src/chmsee.c:192
+#: ../src/chmsee.c:190
 #, fuzzy
 msgid "Open a file"
 msgstr "פתח קובץ"
 
-#: ../src/chmsee.c:193
+#: ../src/chmsee.c:191
 #, fuzzy
 msgid "_Recent Files"
 msgstr "פתח קובץ"
 
-#: ../src/chmsee.c:195
+#: ../src/chmsee.c:193
 #, fuzzy
 msgid "New _Tab"
 msgstr "לשונית _חדשה"
 
-#: ../src/chmsee.c:196
+#: ../src/chmsee.c:194
 msgid "_Close Tab"
 msgstr "סגור _לשונית"
 
-#: ../src/chmsee.c:197
+#: ../src/chmsee.c:195
 msgid "E_xit"
 msgstr ""
 
-#: ../src/chmsee.c:197
+#: ../src/chmsee.c:195
 #, fuzzy
 msgid "Exit ChmSee"
 msgstr "מציג ה־CHM‏ (ChmSee)"
 
-#: ../src/chmsee.c:199 ../src/components/book.c:127
+#: ../src/chmsee.c:197 ../src/components/book.c:126
 msgid "_Copy"
 msgstr "ה_עתק"
 
-#: ../src/chmsee.c:200 ../src/components/book.c:132
+#: ../src/chmsee.c:198 ../src/components/book.c:131
 msgid "Select _All"
 msgstr "בחר ה_כל"
 
-#: ../src/chmsee.c:202
+#: ../src/chmsee.c:200
 msgid "_Find"
 msgstr ""
 
-#: ../src/chmsee.c:204
+#: ../src/chmsee.c:202
 msgid "_Preferences"
 msgstr ""
 
-#: ../src/chmsee.c:204
+#: ../src/chmsee.c:202
 msgid "Preferences"
 msgstr ""
 
-#: ../src/chmsee.c:206
+#: ../src/chmsee.c:204
 msgid "_Home"
 msgstr "_בית"
 
-#: ../src/chmsee.c:207 ../src/components/book.c:128
+#: ../src/chmsee.c:205 ../src/components/book.c:127
 msgid "_Back"
 msgstr "_חזור"
 
-#: ../src/chmsee.c:208 ../src/components/book.c:129
+#: ../src/chmsee.c:206 ../src/components/book.c:128
 msgid "_Forward"
 msgstr "ה_תקדם"
 
-#: ../src/chmsee.c:210
+#: ../src/chmsee.c:208
 #, fuzzy
 msgid "_About"
 msgstr "אודות"
 
-#: ../src/chmsee.c:210
+#: ../src/chmsee.c:208
 #, fuzzy
 msgid "About ChmSee"
 msgstr "מציג ה־CHM‏ (ChmSee)"
 
-#: ../src/chmsee.c:212
+#: ../src/chmsee.c:210
 #, fuzzy
 msgid "Zoom _In"
 msgstr "התקרבות"
 
-#: ../src/chmsee.c:213
+#: ../src/chmsee.c:211
 #, fuzzy
 msgid "_Normal Size"
 msgstr "רגיל"
 
-#: ../src/chmsee.c:214
+#: ../src/chmsee.c:212
 #, fuzzy
 msgid "Zoom _Out"
 msgstr "התרחקות"
 
-#: ../src/chmsee.c:222
+#: ../src/chmsee.c:220
 msgid "Full _Screen"
 msgstr ""
 
-#: ../src/chmsee.c:223
+#: ../src/chmsee.c:221
 #, fuzzy
 msgid "Side _Pane"
 msgstr "הצג/הסתר חלונית"
 
-#: ../src/chmsee.c:538
+#: ../src/chmsee.c:506
 msgid "CHM Files"
 msgstr "קבצי CHM"
 
-#: ../src/chmsee.c:543
+#: ../src/chmsee.c:511
 msgid "All Files"
 msgstr "כל הקבצים"
 
-#: ../src/chmsee.c:881
+#: ../src/chmsee.c:849
 msgid "Ready!"
 msgstr "מוכן!"
 
-#: ../src/chmsee.c:1062
+#: ../src/chmsee.c:1032
 #, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr ""
 
-#: ../src/main.c:199
+#: ../src/main.c:198
 msgid "Display the version and exit"
 msgstr ""
 
-#: ../src/main.c:204
+#: ../src/main.c:203
 msgid "be verbose, repeat 3 times to get all info"
 msgstr ""
 
-#: ../src/main.c:209
+#: ../src/main.c:208
 msgid "be quiet, repeat 2 times to disable all info"
 msgstr ""
 
-#: ../src/main.c:215
+#: ../src/main.c:214
 msgid "Bookshelf"
 msgstr ""
 
-#: ../src/main.c:240
+#: ../src/main.c:239
 #, c-format
 msgid "more than 1 argument\n"
 msgstr ""
 
-#: ../src/components/book.c:130
+#: ../src/components/book.c:129
 msgid "Open Link in New _Tab"
 msgstr "פתח קישור ב_לשונית חדשה"
 
-#: ../src/components/book.c:131
+#: ../src/components/book.c:130
 msgid "_Copy Link Location"
 msgstr "העתק את _מיקום הקישור"
 
-#: ../src/components/book.c:133
+#: ../src/components/book.c:132
 #, fuzzy
 msgid "Copy Page _Location"
 msgstr "העתק את _מיקום הקישור"
 
-#: ../src/components/book.c:247
+#: ../src/components/book.c:246
 msgid "Find:"
 msgstr ""
 
-#: ../src/components/book.c:262
+#: ../src/components/book.c:261
 msgid "Previous"
 msgstr ""
 
-#: ../src/components/book.c:272
+#: ../src/components/book.c:271
 msgid "Next"
 msgstr ""
 
-#: ../src/components/book.c:282
+#: ../src/components/book.c:281
 msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:740 ../src/components/book.c:800
+#: ../src/components/book.c:727 ../src/components/book.c:787
 msgid "No Title"
 msgstr "אין כותרת"
 
-#: ../src/components/book.c:908
+#: ../src/components/book.c:895
 msgid "Topics"
 msgstr "נושאים"
 
-#: ../src/components/book.c:927
+#: ../src/components/book.c:914
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:943
+#: ../src/components/book.c:930
 msgid "Bookmarks"
 msgstr "סימניות"
 
-#: ../src/models/chmfile.c:298
+#: ../src/components/book.c:984
+#, c-format
+msgid "Can not find link target file at \"%s\""
+msgstr ""
+
+#: ../src/models/chmfile.c:293
 #, c-format
 msgid "Cannot open chmfile: %s"
 msgstr ""
 
-#: ../src/models/chmfile.c:308
+#: ../src/models/chmfile.c:303
 #, c-format
 msgid "Extract chmfile failed: %s"
 msgstr ""
 
-#: ../src/models/chmfile.c:333
+#: ../src/models/chmfile.c:328
 #, c-format
 msgid "Open \"%s\" failed: %s"
 msgstr ""
 
-#: ../src/models/chmfile.c:536
+#: ../src/models/chmfile.c:531
 #, c-format
 msgid "Can not open chm file %s."
 msgstr ""

@@ -62,7 +62,6 @@ struct _ChmseePrivate {
         GtkUIManager    *ui_manager;
         guint            scid_default;
 
-        gboolean         expect_fullscreen;
         gint             state; /* see enum CHMSEE_STATE_* */
 };
 
@@ -138,7 +137,6 @@ static void chmsee_dispose(GObject *);
 
 static gboolean delete_cb(GtkWidget *, GdkEvent *, Chmsee *);
 static void destroy_cb(GtkWidget *, Chmsee *);
-static gboolean scroll_event_cb(Chmsee *, GdkEventScroll *);
 static gboolean window_state_event_cb(Chmsee *, GdkEventWindowState *);
 static gboolean configure_event_cb(GtkWidget *, GdkEventConfigure *, Chmsee *);
 static void book_model_changed_cb(Chmsee *, CsChmfile *, const gchar *);
@@ -251,16 +249,11 @@ chmsee_init(Chmsee *self)
 
         priv->chmfile = NULL;
         priv->config  = NULL;
-        priv->expect_fullscreen = FALSE;
         priv->state = CHMSEE_STATE_INIT;
 
         gtk_widget_add_events(GTK_WIDGET(self),
                               GDK_STRUCTURE_MASK | GDK_BUTTON_PRESS_MASK );
 
-        g_signal_connect(G_OBJECT (self),
-                         "scroll-event",
-                         G_CALLBACK (scroll_event_cb),
-                         NULL);
         g_signal_connect(G_OBJECT (self),
                          "window-state-event",
                          G_CALLBACK (window_state_event_cb),
@@ -339,24 +332,6 @@ destroy_cb(GtkWidget *widget, Chmsee *self)
 }
 
 static gboolean
-scroll_event_cb(Chmsee *self, GdkEventScroll *event)
-{
-        g_debug("Chmsee >>> scroll event");
-        if(event->direction == GDK_SCROLL_UP && (event->state & GDK_CONTROL_MASK)) {
-                on_zoom_in(NULL, self);
-                return TRUE;
-        } else if(event->direction == GDK_SCROLL_DOWN && (event->state & GDK_CONTROL_MASK)) {
-                on_zoom_out(NULL, self);
-                return TRUE;
-        } else {
-                g_debug("scrollevent->direction: %d", event->direction);
-                g_debug("scrollevent->state: %x", event->state);
-        }
-
-        return FALSE;
-}
-
-static gboolean
 window_state_event_cb(Chmsee *self, GdkEventWindowState *event)
 {
         g_return_val_if_fail(IS_CHMSEE(self), FALSE);
@@ -374,7 +349,7 @@ window_state_event_cb(Chmsee *self, GdkEventWindowState *event)
         }
 
         if(event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN) {
-                if(priv->expect_fullscreen) {
+                if(priv->config->fullscreen) {
                         fullscreen(self);
                 } else {
                         g_warning("expect not fullscreen but got a fullscreen event, restored");
@@ -382,7 +357,7 @@ window_state_event_cb(Chmsee *self, GdkEventWindowState *event)
                         return TRUE;
                 }
         } else {
-                if(!priv->expect_fullscreen) {
+                if(!priv->config->fullscreen) {
                         unfullscreen(self);
                 } else {
                         g_warning("expect fullscreen but got an unfullscreen event, restored");
@@ -398,12 +373,6 @@ static gboolean
 configure_event_cb(GtkWidget *widget, GdkEventConfigure *event, Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-
-        g_debug("Chmsee >>> configure event callback priv->config->fullscreen = %d", priv->config->fullscreen);
-        /* if (event->width != priv->config->width || event->height != priv->config->height) { */
-        /*         if (priv->chmfile) */
-        /*                 cs_book_reload_current_page(CS_BOOK (priv->book)); */
-        /* } */
 
         if (!priv->config->fullscreen) {
                 priv->config->width  = event->width;
@@ -481,8 +450,7 @@ open_file_response_cb(GtkWidget *widget, gint response_id, Chmsee *self)
         gchar *content;
         gsize length;
 
-        if (g_file_get_contents(filename, &content, &length, NULL))
-        {
+        if (filename && g_file_get_contents(filename, &content, &length, NULL)) {
                 static gchar *groups[2] = {
                         "CHM Viewer",
                         NULL
@@ -855,7 +823,7 @@ populate_windows(Chmsee *self)
         priv->toolbar = toolbar;
         gtk_container_add(GTK_CONTAINER(toolbar), gtk_ui_manager_get_widget(ui_manager, "/toolbar"));
         gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
-        gtk_toolbar_set_style(GTK_TOOLBAR (gtk_ui_manager_get_widget(ui_manager, "/toolbar")), GTK_TOOLBAR_ICONS);
+        gtk_toolbar_set_style(GTK_TOOLBAR (gtk_ui_manager_get_widget(ui_manager, "/toolbar")), GTK_TOOLBAR_ICONS);// FIXME: issue 43
         gtk_tool_button_set_icon_widget(
                 GTK_TOOL_BUTTON(gtk_ui_manager_get_widget(ui_manager, "/toolbar/sidepane")),
                 gtk_image_new_from_file(RESOURCE_FILE ("show-pane.png")));
@@ -890,13 +858,13 @@ chmsee_set_fullscreen(Chmsee *self, gboolean fullscreen)
         g_debug("Chmsee >>> chmsee_set_fullscreen with fullscreen = %d", fullscreen);
 
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        priv->expect_fullscreen = fullscreen;
+        priv->config->fullscreen = fullscreen;
 
         if(fullscreen) {
-                g_debug("call gtk_window_fullscreen");
+                g_debug("Chmsee >>> call gtk_window_fullscreen");
                 gtk_window_fullscreen(GTK_WINDOW(self));
         } else {
-                g_debug("call gtk_window_unfullscreen");
+                g_debug("ChmSee >>> call gtk_window_unfullscreen");
                 gtk_window_unfullscreen(GTK_WINDOW(self));
         }
 }

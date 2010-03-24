@@ -53,7 +53,7 @@ G_BEGIN_DECLS
 gchar *convert_filename_to_utf8(const gchar *, const gchar *);
 gchar *convert_string_to_utf8(const gchar *, const gchar *);
 gchar *get_real_uri(const gchar *);
-char  *url_decode(const char*);
+char  *uri_decode(const char*);
 gint   ncase_compare_utf8_string(const gchar *, const gchar *);
 void   convert_old_config_file(const gchar *, const gchar *);
 gchar *file_exist_ncase(const gchar *);

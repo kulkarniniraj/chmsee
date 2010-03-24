@@ -25,7 +25,6 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <gtkmozembed.h>
-#include <unistd.h>             /* R_OK */
 
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -954,7 +953,7 @@ cs_book_set_model(CsBook *self, CsChmfile *model)
 void
 cs_book_load_url(CsBook *self, const gchar *uri)
 {
-        g_debug("CS_BOOK >>> cs_book_load_url");
+        g_debug("CS_BOOK >>> cs_book_load_url %s", uri);
         g_return_if_fail(IS_CS_BOOK (self));
 
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
@@ -1041,7 +1040,7 @@ cs_book_close_current_tab(CsBook *self)
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
         if (gtk_notebook_get_n_pages(GTK_NOTEBOOK (priv->html_notebook)) == 1) {
-                return; //FIXME: quit chmsee?
+                return;
         }
 
         gint page_num = gtk_notebook_get_current_page(GTK_NOTEBOOK (priv->html_notebook));

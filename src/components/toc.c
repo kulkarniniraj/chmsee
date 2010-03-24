@@ -181,7 +181,7 @@ cs_toc_finalize(GObject *object)
         CsToc        *self = CS_TOC (object);
         CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
 
-        g_free(priv->pixbufs);
+        g_slice_free(TocPixbufs, priv->pixbufs);
 
         G_OBJECT_CLASS (cs_toc_parent_class)->finalize(object);
 }
@@ -226,7 +226,7 @@ create_pixbufs(void)
 {
         TocPixbufs *pixbufs;
 
-        pixbufs = g_new0(TocPixbufs, 1);
+        pixbufs = g_slice_new(TocPixbufs);
 
         pixbufs->pixbuf_closed = gdk_pixbuf_new_from_file(RESOURCE_FILE ("book-closed.png"), NULL);
         pixbufs->pixbuf_opened = gdk_pixbuf_new_from_file(RESOURCE_FILE ("book-open.png"), NULL);
@@ -314,9 +314,9 @@ find_uri_foreach(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, Find
 
         gtk_tree_model_get(model, iter, COL_LINK, &link, -1);
 
-        if (g_str_has_suffix(data->uri, link->uri)) {
-                g_debug("CS_TOC >>> data->uri: %s", data->uri);
-                g_debug("CS_TOC >>> link->uri: %s", link->uri);
+        if (!g_strcmp0(data->uri, link->uri)) {
+                g_debug("CS_TOC >>> found data->uri: %s", data->uri);
+                g_debug("CS_TOC >>> found link->uri: %s", link->uri);
 
                 data->found = TRUE;
                 data->iter = *iter;
@@ -380,7 +380,10 @@ cs_toc_select_uri(CsToc *self, const gchar *uri)
 
         FindURIData data;
         data.found = FALSE;
-        data.uri = uri;
+        if (uri[0] == '/')
+                data.uri = uri + 1;
+        else
+                data.uri = uri;
 
         gtk_tree_model_foreach(GTK_TREE_MODEL (priv->store),
                                (GtkTreeModelForeachFunc) find_uri_foreach,

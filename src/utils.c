@@ -23,7 +23,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>  /* R_OK */
 #include <glib/gstdio.h>
 
 #include "utils.h"
@@ -90,7 +89,7 @@ ncase_compare_utf8_string(const gchar *str1, const gchar *str2)
 }
 
 char *
-url_decode(const char *encoded)
+uri_decode(const char *encoded)
 {
         const char *at = encoded;
         int length = 0;
@@ -111,7 +110,7 @@ url_decode(const char *encoded)
                 }
         }
 
-        rv = g_new (char, length + 1);
+        rv = g_new(char, length + 1);
         out = rv;
         at = encoded;
 
@@ -124,7 +123,7 @@ url_decode(const char *encoded)
                         if (at[1] == '\0' || at[2] == '\0')
                                 return NULL;
                         at += 3;
-                        *out++ = (char) strtol (hex, NULL, 16);
+                        *out++ = (char) strtol(hex, NULL, 16);
                 } else {
                         *out++ = *at++;
                         length++;
@@ -135,6 +134,7 @@ url_decode(const char *encoded)
         return rv;
 }
 
+/* Remove uri's '#' fragment  */
 gchar *
 get_real_uri(const gchar *uri)
 {
@@ -184,9 +184,13 @@ file_exist_ncase(const gchar *path)
                 return g_strdup(path);
         }
 
-        gchar *found = NULL;
         gchar *old_dir = g_path_get_dirname(path);
         gchar *dirname = file_exist_ncase(old_dir);
+        if (!dirname) {
+                g_free(old_dir);
+                return NULL;
+        }
+
         g_debug("UTILS >>> dirname = %s", dirname);
         gchar *filename = g_path_get_basename(path);
         g_debug("UTILS >>> filename = %s", filename);
@@ -195,9 +199,13 @@ file_exist_ncase(const gchar *path)
         gchar *newfile = g_strdup_printf("%s/%s", dirname, filename);
         if (g_file_test(newfile, G_FILE_TEST_EXISTS)) {
                 g_debug("UTILS >>> file_exist_ncase found newfile: %s", newfile);
+                g_free(old_dir);
+                g_free(dirname);
+                g_free(filename);
                 return newfile;
         }
 
+        gchar *found = NULL;
         GDir *dir = g_dir_open(dirname, 0, NULL);
         if (dir) {
                 const gchar *entry;

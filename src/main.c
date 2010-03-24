@@ -89,7 +89,7 @@ load_config()
         GError *error = NULL;
 
         g_message("Main >>> load config");
-        CsConfig *config = g_new0(CsConfig, 1);
+        CsConfig *config = g_slice_new(CsConfig);
         
         /* ChmSee HOME directory ~/.chmsee */
         config->home = g_build_filename(g_get_home_dir(), ".chmsee", NULL);
@@ -109,7 +109,6 @@ load_config()
         config->hpaned_pos = 200;
         config->fullscreen = FALSE;
 
-        /* Read stored values from config file */ //FIXME: convert old version config file
         gchar *config_file = g_build_filename(config->home, CHMSEE_CONFIG_FILE, NULL);
         g_debug("Main >>> chmsee config file path = %s", config_file);
         if (!g_file_test(config_file, G_FILE_TEST_EXISTS))
@@ -178,7 +177,7 @@ save_config(CsConfig *config)
         g_free(config->bookshelf);
         g_free(config->last_dir);
 
-        g_free(config);
+        g_slice_free(CsConfig, config);
 }
 
 int
@@ -223,7 +222,7 @@ main(int argc, char *argv[])
                 "GTK+ based CHM file viewer\n"
                 "Example: chmsee FreeBSD_Handbook.chm";
 
-        if (!gtk_init_with_args(&argc, &argv, params, options, g_strdup(GETTEXT_PACKAGE), &error)) {
+        if (!gtk_init_with_args(&argc, &argv, params, options, GETTEXT_PACKAGE, &error)) {
                 g_printerr("%s\n", error->message);
                 return 1;
         }
