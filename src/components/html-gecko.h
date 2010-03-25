@@ -56,7 +56,6 @@ GtkWidget   *cs_html_gecko_new(void);
 void         cs_html_gecko_load_url(CsHtmlGecko *, const gchar *);
 void         cs_html_gecko_reload(CsHtmlGecko *);
 
-GtkWidget   *cs_html_gecko_get_widget(CsHtmlGecko *);
 gboolean     cs_html_gecko_can_go_forward(CsHtmlGecko *);
 gboolean     cs_html_gecko_can_go_back(CsHtmlGecko *);
 void         cs_html_gecko_go_forward(CsHtmlGecko *);

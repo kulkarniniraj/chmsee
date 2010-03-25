@@ -179,9 +179,9 @@ entry_changed_cb(GtkEntry *entry, CsBookmarks *self)
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
 
         const gchar *name = gtk_entry_get_text(entry);
-        gint       length = strlen(name);
+        gint length = strlen(name);
 
-        if (length >= 2)
+        if (length >= 3)
                 gtk_widget_set_sensitive(priv->add_button, TRUE);
         else
                 gtk_widget_set_sensitive(priv->add_button, FALSE);

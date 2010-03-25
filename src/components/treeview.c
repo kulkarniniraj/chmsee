@@ -119,10 +119,10 @@ cs_tree_view_init(CsTreeView *self)
                          G_CALLBACK (selection_changed_cb),
                          self);
 
-        g_signal_connect_swapped(self,
+        g_signal_connect(self,
                          "row_activated",
                          G_CALLBACK (row_activated_cb),
-                         self);
+                         NULL);
 
         gtk_widget_show_all(GTK_WIDGET (self));
 }
@@ -165,6 +165,7 @@ cs_tree_view_finalize(GObject *object)
 static void
 row_activated_cb(CsTreeView *self, GtkTreePath *path, GtkTreeViewColumn *column)
 {
+        g_debug("CS_TREE_VIEW >>> row_activate callback");
         GtkTreeIter        iter;
         gchar             *title, *uri;
 
@@ -179,7 +180,6 @@ row_activated_cb(CsTreeView *self, GtkTreePath *path, GtkTreeViewColumn *column)
                            -1);
 
         Link *link = link_new(LINK_TYPE_PAGE, title, uri);
-
         g_debug("CS_TREE_VIEW >>> row activated, link: name = %s uri = %s\n", link->name, link->uri);
         g_signal_emit(self, signals[LINK_SELECTED], 0, link);
 }

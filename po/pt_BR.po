@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-24 22:11+0800\n"
+"POT-Creation-Date: 2010-03-25 12:32+0800\n"
 "PO-Revision-Date: 2009-04-12 22:53+0000\n"
 "Last-Translator: Andrius Gabriel da Luz <Unknown>\n"
 "Language-Team: Brazilian Portuguese <pt_BR@li.org>\n"
@@ -225,19 +225,19 @@ msgstr ""
 msgid "Side _Pane"
 msgstr "Exibir/ocultar painel"
 
-#: ../src/chmsee.c:506
+#: ../src/chmsee.c:479
 msgid "CHM Files"
 msgstr "Arquivos CHM"
 
-#: ../src/chmsee.c:511
+#: ../src/chmsee.c:484
 msgid "All Files"
 msgstr "Todos os arquivos"
 
-#: ../src/chmsee.c:849
+#: ../src/chmsee.c:823
 msgid "Ready!"
 msgstr "Pronto!"
 
-#: ../src/chmsee.c:1032
+#: ../src/chmsee.c:1034
 #, fuzzy, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Não foi possível abrir o arquivo chm %s."
@@ -292,23 +292,23 @@ msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:727 ../src/components/book.c:787
+#: ../src/components/book.c:444 ../src/components/book.c:733
 msgid "No Title"
 msgstr "Sem título"
 
-#: ../src/components/book.c:895
+#: ../src/components/book.c:877
 msgid "Topics"
 msgstr "Tópicos"
 
-#: ../src/components/book.c:914
+#: ../src/components/book.c:896
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:930
+#: ../src/components/book.c:912
 msgid "Bookmarks"
 msgstr "Favoritos"
 
-#: ../src/components/book.c:984
+#: ../src/components/book.c:967
 #, c-format
 msgid "Can not find link target file at \"%s\""
 msgstr ""

@@ -75,7 +75,7 @@ cs_html_gecko_class_init(CsHtmlGeckoClass *klass)
         G_OBJECT_CLASS (klass)->finalize = cs_html_gecko_finalize;
         g_type_class_add_private(klass, sizeof(CsHtmlGeckoPrivate));
 
-        signals[TITLE_CHANGED] = 
+        signals[TITLE_CHANGED] =
                 g_signal_new ("title-changed",
                               G_TYPE_FROM_CLASS (klass),
                               G_SIGNAL_RUN_LAST,
@@ -135,7 +135,7 @@ cs_html_gecko_class_init(CsHtmlGeckoClass *klass)
                              G_TYPE_NONE,
                              1, G_TYPE_STRING);
 
-        signals[LINK_MESSAGE] = 
+        signals[LINK_MESSAGE] =
                 g_signal_new("link-message",
                              G_TYPE_FROM_CLASS (klass),
                              G_SIGNAL_RUN_LAST,
@@ -167,11 +167,11 @@ cs_html_gecko_init(CsHtmlGecko *html)
                          "title",
                          G_CALLBACK (gecko_title_cb),
                          html);
-        g_signal_connect(G_OBJECT (priv->gecko), 
+        g_signal_connect(G_OBJECT (priv->gecko),
                          "location",
                          G_CALLBACK (gecko_location_cb),
                          html);
-        g_signal_connect(G_OBJECT (priv->gecko), 
+        g_signal_connect(G_OBJECT (priv->gecko),
                          "open-uri",
                          G_CALLBACK (gecko_open_uri_cb),
                          html);
@@ -179,15 +179,15 @@ cs_html_gecko_init(CsHtmlGecko *html)
                          "dom_mouse_down",
                          G_CALLBACK (gecko_mouse_click_cb),
                          html);
-        g_signal_connect(G_OBJECT (priv->gecko), 
+        g_signal_connect(G_OBJECT (priv->gecko),
                          "link_message",
                          G_CALLBACK (gecko_link_message_cb),
                          html);
-        g_signal_connect(G_OBJECT (priv->gecko), 
+        g_signal_connect(G_OBJECT (priv->gecko),
                          "add",
                          G_CALLBACK (gecko_child_add_cb),
                          html);
-        g_signal_connect(G_OBJECT (priv->gecko), 
+        g_signal_connect(G_OBJECT (priv->gecko),
                          "remove",
                          G_CALLBACK (gecko_child_remove_cb),
                          html);
@@ -304,7 +304,7 @@ static void
 gecko_child_add_cb(GtkMozEmbed *embed, GtkWidget *child, CsHtmlGecko *html)
 {
         g_debug("CS_HTML_GECKO >>> child add callback");
-        g_signal_connect(G_OBJECT (child), 
+        g_signal_connect(G_OBJECT (child),
                          "grab-focus",
                          G_CALLBACK (gecko_child_grab_focus_cb),
                          html);
@@ -353,7 +353,7 @@ cs_html_gecko_load_url(CsHtmlGecko *html, const gchar *str_uri)
                 full_uri = g_strdup_printf("file://%s", str_uri);
         else
                 full_uri = g_strdup(str_uri);
-        
+
         gtk_moz_embed_load_url(CS_HTML_GECKO_GET_PRIVATE (html)->gecko, full_uri);
 
         g_free(full_uri);
@@ -366,15 +366,6 @@ cs_html_gecko_reload(CsHtmlGecko *html)
         CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
         gtk_moz_embed_reload(priv->gecko, GTK_MOZ_EMBED_FLAG_RELOADNORMAL);
-}
-
-GtkWidget *
-cs_html_gecko_get_widget(CsHtmlGecko *html)
-{
-        g_return_val_if_fail(IS_CS_HTML_GECKO (html), NULL);
-
-        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
-        return GTK_WIDGET (priv->gecko);
 }
 
 gboolean
@@ -507,7 +498,7 @@ cs_html_gecko_decrease_size(CsHtmlGecko *html)
         gecko_utils_set_zoom(priv->gecko, zoom);
 }
 
-gboolean 
+gboolean
 cs_html_gecko_init_system(void)
 {
         g_message("CS_HTML_GECKO >>> init gecko system");

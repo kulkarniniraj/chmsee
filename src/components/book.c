@@ -118,7 +118,7 @@ static void on_findbar_forward(GtkWidget *, CsBook *);
 static void update_book_message(CsBook *, const gchar *);
 static gint new_html_tab(CsBook *);
 static GtkWidget *new_tab_label(CsBook *, const gchar *);
-static void update_tab_title(CsBook *, CsHtmlGecko *);
+static void update_tab_title(CsBook *, CsHtmlGecko *, const gchar *);
 static void set_context_menu_link(CsBook *, const gchar *);
 static void find_text(GtkWidget *, CsBook *, gboolean);
 
@@ -426,6 +426,9 @@ html_open_uri_cb(CsHtmlGecko *html, const gchar *full_uri, CsBook *self)
                         uri = uri + strlen(bookfolder);
                         g_debug("CS_BOOK >>> html_open_uri call load url = %s", uri);
                         cs_book_load_url(self, uri);
+
+                        if (priv->has_toc)
+                                cs_toc_select_uri(CS_TOC (priv->toc_page), uri);
                 }
         }
         return TRUE;
@@ -438,23 +441,26 @@ html_title_changed_cb(CsHtmlGecko *html, const gchar *title, CsBook *self)
 
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
-        update_tab_title(self, html);
+        const gchar *label_text = _("No Title");
 
-        if (!strlen(title)) return;
+        if (title && title[0] != '\0')
+                label_text = title;
+
+        update_tab_title(self, html, label_text);
 
         /* sync bookmarks title entry */
         gchar *location = cs_html_gecko_get_location(html);
         g_debug("CS_BOOK >>> html title changed cb location = %s", location);
 
-        gboolean about = g_str_has_prefix(location, "about:");
-        if (about) return;
-
         if (location != NULL && strlen(location)) {
-                const gchar *bookfolder = cs_chmfile_get_bookfolder(priv->model);
-                gchar *uri = g_strrstr(location, bookfolder) + strlen(bookfolder);
-                Link *link = link_new(LINK_TYPE_PAGE, title, uri);
-                cs_bookmarks_set_current_link(CS_BOOKMARKS (priv->bookmarks_page), link);
-                link_free(link);
+                gboolean about = g_str_has_prefix(location, "about:");
+                if (!about) {
+                        const gchar *bookfolder = cs_chmfile_get_bookfolder(priv->model);
+                        gchar *uri = g_strrstr(location, bookfolder) + strlen(bookfolder);
+                        Link *link = link_new(LINK_TYPE_PAGE, label_text, uri);
+                        cs_bookmarks_set_current_link(CS_BOOKMARKS (priv->bookmarks_page), link);
+                        link_free(link);
+                }
                 g_free(location);
         }
 }
@@ -772,38 +778,14 @@ new_tab_label(CsBook *self, const gchar *str)
 }
 
 static void
-update_tab_title(CsBook *self, CsHtmlGecko *html)
+update_tab_title(CsBook *self, CsHtmlGecko *html, const gchar *title)
 {
+        g_debug("CS_BOOK >>> update tab title = %s", title);
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
-        GtkWidget *page;
-        GtkWidget *widget, *label;
-        gint num_pages, i;
-
-        gchar *title = g_strdup(cs_html_gecko_get_title(html));
-        g_debug("CS_BOOK >>> update tab title = %s", title);
-
-        if (title == NULL || title[0] == '\0')
-                title = g_strdup(_("No Title"));
-
-        num_pages = gtk_notebook_get_n_pages(GTK_NOTEBOOK (priv->html_notebook));
-
-        for (i = 0; i < num_pages; i++) {
-                page = gtk_notebook_get_nth_page(GTK_NOTEBOOK (priv->html_notebook), i);
-
-                if (gtk_bin_get_child(GTK_BIN (page)) == cs_html_gecko_get_widget (html)) {
-                        widget = gtk_notebook_get_tab_label(GTK_NOTEBOOK (priv->html_notebook), page);
-
-                        label = g_object_get_data(G_OBJECT (widget), "label");
-
-                        if (label != NULL)
-                                gtk_label_set_text(GTK_LABEL (label), title);
-
-                        break;
-                }
-        }
-        g_debug("CS_BOOK >>> update tab title finished");
-        g_free(title);
+        GtkWidget *widget = gtk_notebook_get_tab_label(GTK_NOTEBOOK (priv->html_notebook), GTK_WIDGET (html));
+        GtkWidget *label = g_object_get_data(G_OBJECT (widget), "label");
+        gtk_label_set_text(GTK_LABEL (label), title);
 }
 
 static void
@@ -967,6 +949,7 @@ cs_book_load_url(CsBook *self, const gchar *uri)
 
         /* check file exist */
         gchar *real_uri = get_real_uri(full_uri);
+
         if (!g_file_test(real_uri, G_FILE_TEST_EXISTS)) {
                 gchar *found = file_exist_ncase(real_uri);
                 if (found) {
@@ -997,9 +980,6 @@ cs_book_load_url(CsBook *self, const gchar *uri)
         cs_html_gecko_load_url(priv->active_html, full_uri);
         g_signal_handlers_unblock_by_func(priv->active_html, html_open_uri_cb, self);
 
-        if (priv->has_toc)
-                cs_toc_select_uri(CS_TOC (priv->toc_page), uri);
-
         g_signal_emit(self, signals[HTML_CHANGED], 0, self);
         g_free(full_uri);
 }
@@ -1027,6 +1007,9 @@ cs_book_new_tab_with_fulluri(CsBook *self, const gchar *full_uri)
                 gtk_notebook_set_current_page(GTK_NOTEBOOK (priv->html_notebook), page_num);
 
                 cs_book_load_url(self, uri);
+
+                if (priv->has_toc)
+                        cs_toc_select_uri(CS_TOC (priv->toc_page), uri);
         }
         g_free(scheme);
 }
@@ -1072,6 +1055,9 @@ cs_book_homepage(CsBook *self)
 
         if (homepage) {
                 cs_book_load_url(self, homepage);
+
+                if (priv->has_toc)
+                        cs_toc_select_uri(CS_TOC (priv->toc_page), homepage);
         }
 }
 

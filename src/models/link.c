@@ -45,8 +45,10 @@ link_new(LinkType type, const gchar *name, const gchar *uri)
 void
 link_free(Link *link)
 {
-        g_free(link->name);
-        g_free(link->uri);
+        if (link->name)
+                g_free(link->name);
+        if (link->uri)
+                g_free(link->uri);
 
         g_slice_free(Link, link);
 }

@@ -70,7 +70,7 @@ static void cs_toc_dispose(GObject *);
 static void cs_toc_finalize(GObject *);
 
 static void selection_changed_cb(GtkTreeSelection *, CsToc *);
-static void row_activated_cb(CsToc *, GtkTreePath *);
+static void row_activated_cb(GtkTreeView *, GtkTreePath *, GtkTreeViewColumn *);
 
 static TocPixbufs *create_pixbufs(void);
 static GtkTreeViewColumn *create_columns(void);
@@ -148,6 +148,7 @@ cs_toc_init(CsToc *self)
                          "row-activated",
                          G_CALLBACK(row_activated_cb),
                          NULL);
+
         /* put treeview into scrollwindow */
         gtk_container_add(GTK_CONTAINER (toc_sw), GTK_WIDGET (priv->treeview));
         /* put scrollwindow into my vbox */
@@ -205,18 +206,15 @@ selection_changed_cb(GtkTreeSelection *selection, CsToc *self)
         }
 }
 
-void
-row_activated_cb(CsToc* self, GtkTreePath* path)
+static void
+row_activated_cb(GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn *column)
 {
-        g_return_if_fail(IS_CS_TOC(self));
+        g_debug("CS_TOC >>> row_activated callback");
 
-        CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
-
-        if(gtk_tree_view_row_expanded(GTK_TREE_VIEW(priv->treeview), path)) {
-                gtk_tree_view_collapse_row(GTK_TREE_VIEW(priv->treeview), path);
-        } else {
-                gtk_tree_view_expand_row(GTK_TREE_VIEW(priv->treeview), path, FALSE);
-        }
+        if (gtk_tree_view_row_expanded(treeview, path))
+                gtk_tree_view_collapse_row(treeview, path);
+        else
+                gtk_tree_view_expand_row(treeview, path, FALSE);
 }
 
 /* Internal functions */
