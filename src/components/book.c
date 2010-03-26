@@ -415,20 +415,24 @@ html_open_uri_cb(CsHtmlGecko *html, const gchar *full_uri, CsBook *self)
 
         char *scheme = g_uri_parse_scheme(full_uri);
 
-        if (scheme && !g_strcmp0(scheme, "file")) {
-                /* DND chmfile check */
-                if (g_str_has_suffix(full_uri, ".chm") || g_str_has_suffix(full_uri, ".CHM")) {
-                        g_debug("CS_BOOK >>> open chm file = %s", full_uri);
-                        g_signal_emit(self, signals[MODEL_CHANGED], 0, NULL, full_uri);
-                } else {
-                        const gchar *bookfolder = cs_chmfile_get_bookfolder(priv->model);
-                        gchar *uri = g_strrstr(full_uri, bookfolder);
-                        uri = uri + strlen(bookfolder);
-                        g_debug("CS_BOOK >>> html_open_uri call load url = %s", uri);
-                        cs_book_load_url(self, uri);
+        if (scheme) {
+                if (!g_strcmp0(scheme, "file")) {
+                        /* DND chmfile check */
+                        if (g_str_has_suffix(full_uri, ".chm") || g_str_has_suffix(full_uri, ".CHM")) {
+                                g_debug("CS_BOOK >>> open chm file = %s", full_uri);
+                                g_signal_emit(self, signals[MODEL_CHANGED], 0, NULL, full_uri);
+                        } else {
+                                const gchar *bookfolder = cs_chmfile_get_bookfolder(priv->model);
+                                gchar *uri = g_strrstr(full_uri, bookfolder);
+                                uri = uri + strlen(bookfolder);
+                                g_debug("CS_BOOK >>> html_open_uri call load url = %s", uri);
+                                cs_book_load_url(self, uri);
 
-                        if (priv->has_toc)
-                                cs_toc_select_uri(CS_TOC (priv->toc_page), uri);
+                                if (priv->has_toc)
+                                        cs_toc_select_uri(CS_TOC (priv->toc_page), uri);
+                        }
+                } else if (!g_strcmp0(scheme, "about") || !g_strcmp0(scheme, "jar")) {
+                        return FALSE;
                 }
         }
         return TRUE;

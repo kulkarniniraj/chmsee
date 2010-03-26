@@ -1,15 +1,11 @@
-// mouse wheel: disable mozilla's ctrl+wheel zooming, and enable our own
-// set numlines to -1 to reverse directions, see bug #306110
-pref("mousewheel.withcontrolkey.action", 0);
-pref("mousewheel.withcontrolkey.numlines", -1);
+// mouse wheel: using mozilla's ctrl+wheel zooming
+pref("mousewheel.withcontrolkey.action", 3);
+pref("mousewheel.withcontrolkey.numlines", 1);
 pref("mousewheel.withcontrolkey.sysnumlines", false);
 
-// fix horizontal scroll with 2nd wheel, see bug #148557
+// horizontal scroll with 2nd wheel
 pref("mousewheel.horizscroll.withnokey.action", 0);
 pref("mousewheel.horizscroll.withnokey.sysnumlines", true);
-
-// don't allow opening file:/// URLs on pages from network sources (http, etc.)
-pref("security.checkloaduri", true);
 
 // enable line wrapping in View Source
 pref("view_source.wrap_long_lines", true);
@@ -56,7 +52,7 @@ pref("font.size.variable.zh-CN", 12);
 
 // protocols
 pref("network.protocol-handler.external-default", false);
-pref("network.protocol-handler.warn-external-default", false);
+pref("network.protocol-handler.warn-external-default", true);
 pref("network.protocol-handler.external.ftp", true);
 pref("network.protocol-handler.external.http", true);
 pref("network.protocol-handler.external.https", true);

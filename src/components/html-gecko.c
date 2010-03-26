@@ -36,7 +36,6 @@ static void cs_html_gecko_class_init(CsHtmlGeckoClass *);
 static void cs_html_gecko_init(CsHtmlGecko *);
 static void cs_html_gecko_finalize(GObject *);
 
-static gboolean scroll_event_cb(GtkMozEmbed *, GdkEventScroll *);
 static void gecko_title_cb(GtkMozEmbed *, CsHtmlGecko *);
 static void gecko_location_cb(GtkMozEmbed *, CsHtmlGecko *);
 static gboolean gecko_open_uri_cb(GtkMozEmbed *, const gchar *, CsHtmlGecko *);
@@ -159,10 +158,6 @@ cs_html_gecko_init(CsHtmlGecko *html)
         gtk_container_add(GTK_CONTAINER (html), GTK_WIDGET (priv->gecko));
 
         g_signal_connect(G_OBJECT (priv->gecko),
-                         "scroll-event",
-                         G_CALLBACK (scroll_event_cb),
-                         html);
-        g_signal_connect(G_OBJECT (priv->gecko),
                          "title",
                          G_CALLBACK (gecko_title_cb),
                          html);
@@ -204,24 +199,6 @@ cs_html_gecko_finalize(GObject *object)
 
 /* Callbacks */
 
-static gboolean
-scroll_event_cb(GtkMozEmbed *self, GdkEventScroll *event)
-{
-        g_debug("CS_HTML_GECKO >>> scroll event");
-        /* if(event->direction == GDK_SCROLL_UP && (event->state & GDK_CONTROL_MASK)) { */
-        /*         on_zoom_in(NULL, self); */
-        /*         return TRUE; */
-        /* } else if(event->direction == GDK_SCROLL_DOWN && (event->state & GDK_CONTROL_MASK)) { */
-        /*         on_zoom_out(NULL, self); */
-        /*         return TRUE; */
-        /* } else { */
-        /*         g_debug("scrollevent->direction: %d", event->direction); */
-        /*         g_debug("scrollevent->state: %x", event->state); */
-        /* } */
-
-        return FALSE;
-}
-
 static void
 gecko_title_cb(GtkMozEmbed *embed, CsHtmlGecko *html)
 {
@@ -261,7 +238,6 @@ gecko_open_uri_cb(GtkMozEmbed *embed, const gchar *uri, CsHtmlGecko *html)
 static gboolean
 gecko_mouse_click_cb(GtkMozEmbed *widget, gpointer dom_event, CsHtmlGecko *html)
 {
-        g_debug("CS_HTML_GECKO >>> mouse click callback");
         gint button = gecko_utils_get_mouse_event_button(dom_event);
         gint mask = gecko_utils_get_mouse_event_modifiers(dom_event);
 
