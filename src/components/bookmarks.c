@@ -190,8 +190,11 @@ entry_changed_cb(GtkEntry *entry, CsBookmarks *self)
 static void
 on_bookmarks_add(CsBookmarks *self)
 {
-        g_debug("CS_BOOKMARKS >>> add button clicked");
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
+        g_debug("CS_BOOKMARKS >>> add button clicked, current_uri = %p", priv->current_uri);
+
+        if (!priv->current_uri)
+                return;
 
         gchar *name = g_strdup(gtk_entry_get_text(GTK_ENTRY (priv->entry)));
         GList *found_link = g_list_find_custom(priv->links, priv->current_uri, link_uri_compare);

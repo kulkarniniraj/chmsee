@@ -942,46 +942,55 @@ cs_book_load_url(CsBook *self, const gchar *uri)
         gchar *full_uri;
 
         if (strlen(uri)) {
-                full_uri = g_build_filename(cs_chmfile_get_bookfolder(priv->model), uri, NULL);
+                if (uri[0] == '/')
+                        full_uri = g_strdup_printf("file://%s%s", cs_chmfile_get_bookfolder(priv->model), uri);
+                else
+                        full_uri = g_strdup_printf("file://%s/%s", cs_chmfile_get_bookfolder(priv->model), uri);
         } else {
-                full_uri = cs_book_get_location(self);
+                full_uri = cs_html_gecko_get_location(priv->active_html);
         }
 
         /* check file exist */
         gchar *real_uri = get_real_uri(full_uri);
+        gchar *filename = g_filename_from_uri(real_uri, NULL, NULL);
 
-        if (!g_file_test(real_uri, G_FILE_TEST_EXISTS)) {
-                gchar *found = file_exist_ncase(real_uri);
+        gboolean has_file = FALSE;
+        if (g_file_test(filename, G_FILE_TEST_EXISTS)) {
+                has_file = TRUE;
+        } else {
+                gchar *found = file_exist_ncase(filename);
                 if (found) {
                         g_free(full_uri);
 
-                        full_uri = g_strdup_printf("%s%s", found, full_uri+strlen(real_uri));
+                        full_uri = g_strdup_printf("file://%s%s", found, full_uri+strlen(real_uri));
                         g_free(found);
-                } else {
-                        GtkWidget *msg_dialog;
-
-                        msg_dialog = gtk_message_dialog_new(NULL,
-                                                            GTK_DIALOG_MODAL,
-                                                            GTK_MESSAGE_ERROR,
-                                                            GTK_BUTTONS_CLOSE,
-                                                            _("Can not find link target file at \"%s\""),
-                                                            full_uri);
-                        gtk_dialog_run(GTK_DIALOG (msg_dialog));
-                        gtk_widget_destroy(msg_dialog);
-
-                        g_message("CS_BOOK >>> cannot found target file at uri = %s", full_uri);
-                        g_free(full_uri);
-                        return;
+                        has_file = TRUE;
                 }
         }
 
-        g_debug("CS_BOOK >>> cs_book_load_url html = %p, full_uri = %s", priv->active_html, full_uri);
-        g_signal_handlers_block_by_func(priv->active_html, html_open_uri_cb, self);
-        cs_html_gecko_load_url(priv->active_html, full_uri);
-        g_signal_handlers_unblock_by_func(priv->active_html, html_open_uri_cb, self);
+        if (has_file) {
+                g_debug("CS_BOOK >>> cs_book_load_url html = %p, full_uri = %s", priv->active_html, full_uri);
+                g_signal_handlers_block_by_func(priv->active_html, html_open_uri_cb, self);
+                cs_html_gecko_load_url(priv->active_html, full_uri);
+                g_signal_handlers_unblock_by_func(priv->active_html, html_open_uri_cb, self);
+        } else {
+                GtkWidget *msg_dialog;
 
-        g_signal_emit(self, signals[HTML_CHANGED], 0, self);
+                msg_dialog = gtk_message_dialog_new(NULL,
+                                                    GTK_DIALOG_MODAL,
+                                                    GTK_MESSAGE_ERROR,
+                                                    GTK_BUTTONS_CLOSE,
+                                                    _("Can not find link target file at \"%s\""),
+                                                    filename);
+                gtk_dialog_run(GTK_DIALOG (msg_dialog));
+                gtk_widget_destroy(msg_dialog);
+
+                g_message("CS_BOOK >>> cannot found target file = %s", filename);
+        }
+
         g_free(full_uri);
+        g_free(real_uri);
+        g_free(filename);
 }
 
 void

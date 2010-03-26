@@ -183,9 +183,6 @@ gecko_utils_init_prefs(void)
 extern "C" gboolean
 gecko_utils_init(void)
 {
-        if (!g_thread_supported())
-                g_thread_init(NULL);
-
         nsresult rv;
 
         static const GREVersionRange greVersion = {

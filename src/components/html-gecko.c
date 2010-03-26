@@ -152,7 +152,6 @@ cs_html_gecko_init(CsHtmlGecko *html)
         CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
         priv->gecko = GTK_MOZ_EMBED(gtk_moz_embed_new());
         gtk_widget_show(GTK_WIDGET (priv->gecko));
-
         priv->render_name = g_strdup("Mozilla Gecko");
 
         gtk_frame_set_shadow_type(GTK_FRAME (html), GTK_SHADOW_IN);
@@ -341,22 +340,13 @@ cs_html_gecko_new(void)
 }
 
 void
-cs_html_gecko_load_url(CsHtmlGecko *html, const gchar *str_uri)
+cs_html_gecko_load_url(CsHtmlGecko *html, const gchar *url)
 {
         g_return_if_fail(IS_CS_HTML_GECKO (html));
-        g_return_if_fail(str_uri != NULL);
+        g_return_if_fail(url != NULL);
 
-        g_debug("CS_HTML_GECKO >>> load_url html = %p, uri = %s", html, str_uri);
-
-        gchar *full_uri;
-        if (str_uri[0] == '/')
-                full_uri = g_strdup_printf("file://%s", str_uri);
-        else
-                full_uri = g_strdup(str_uri);
-
-        gtk_moz_embed_load_url(CS_HTML_GECKO_GET_PRIVATE (html)->gecko, full_uri);
-
-        g_free(full_uri);
+        g_debug("CS_HTML_GECKO >>> load_url html = %p, uri = %s", html, url);
+        gtk_moz_embed_load_url(CS_HTML_GECKO_GET_PRIVATE (html)->gecko, url);
 }
 
 void
@@ -445,7 +435,6 @@ cs_html_gecko_select_all(CsHtmlGecko *html)
 {
         g_return_if_fail(IS_CS_HTML_GECKO (html));
         CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
-        g_debug("CS_HTML_GECKO >>> select all");
 
         gecko_utils_select_all(priv->gecko);
 }
@@ -457,7 +446,7 @@ cs_html_gecko_find(CsHtmlGecko *html, const gchar *sstr, gboolean backward, gboo
         CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
         gboolean rv = gecko_utils_find(priv->gecko, sstr, backward, match_case);
-        g_debug("CS_HTML_GECKO >>> find result = %d", rv);
+
         return rv;
 }
 
