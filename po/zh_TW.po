@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee 1.0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-25 12:32+0800\n"
+"POT-Creation-Date: 2010-03-26 23:30+0800\n"
 "PO-Revision-Date: 2009-07-14 15:36+0000\n"
 "Last-Translator: Wei-Lun Chao <chaoweilun@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -295,23 +295,23 @@ msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:444 ../src/components/book.c:733
+#: ../src/components/book.c:460 ../src/components/book.c:749
 msgid "No Title"
 msgstr "無標題"
 
-#: ../src/components/book.c:877
+#: ../src/components/book.c:893
 msgid "Topics"
 msgstr "主題"
 
-#: ../src/components/book.c:896
+#: ../src/components/book.c:912
 msgid "Index"
 msgstr "索引"
 
-#: ../src/components/book.c:912
+#: ../src/components/book.c:928
 msgid "Bookmarks"
 msgstr "書籤"
 
-#: ../src/components/book.c:967
+#: ../src/components/book.c:999
 #, c-format
 msgid "Can not find link target file at \"%s\""
 msgstr ""

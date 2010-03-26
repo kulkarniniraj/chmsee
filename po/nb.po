@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-25 12:32+0800\n"
+"POT-Creation-Date: 2010-03-26 23:30+0800\n"
 "PO-Revision-Date: 2009-03-06 14:09+0000\n"
 "Last-Translator: Mikal Krogstad <mikal.krogstad@gmail.com>\n"
 "Language-Team: Norwegian Bokmal <nb@li.org>\n"
@@ -296,23 +296,23 @@ msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:444 ../src/components/book.c:733
+#: ../src/components/book.c:460 ../src/components/book.c:749
 msgid "No Title"
 msgstr "Ingen tittel"
 
-#: ../src/components/book.c:877
+#: ../src/components/book.c:893
 msgid "Topics"
 msgstr "Emner"
 
-#: ../src/components/book.c:896
+#: ../src/components/book.c:912
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:912
+#: ../src/components/book.c:928
 msgid "Bookmarks"
 msgstr "Bokmerker"
 
-#: ../src/components/book.c:967
+#: ../src/components/book.c:999
 #, c-format
 msgid "Can not find link target file at \"%s\""
 msgstr ""

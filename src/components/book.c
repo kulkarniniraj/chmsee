@@ -428,8 +428,20 @@ html_open_uri_cb(CsHtmlGecko *html, const gchar *full_uri, CsBook *self)
                                 g_debug("CS_BOOK >>> html_open_uri call load url = %s", uri);
                                 cs_book_load_url(self, uri);
 
-                                if (priv->has_toc)
-                                        cs_toc_select_uri(CS_TOC (priv->toc_page), uri);
+                                if (priv->has_toc) {
+                                        gchar *real_uri = get_real_uri(full_uri);
+                                        gchar *filename = g_filename_from_uri(real_uri, NULL, NULL);
+
+                                        g_debug("CS_BOOK >>> html_open_uri filename = %s", filename);
+                                        uri = g_strrstr(filename, bookfolder);
+                                        uri = uri + strlen(bookfolder);
+                                        gchar *toc_uri = g_strdup_printf("%s%s", uri, full_uri+strlen(real_uri));
+                                        g_debug("CS_BOOK >>> html_open_uri toc_uri= %s", toc_uri);
+                                        cs_toc_select_uri(CS_TOC (priv->toc_page), toc_uri);
+                                        g_free(real_uri);
+                                        g_free(filename);
+                                        g_free(toc_uri);
+                                }
                         }
                 } else if (!g_strcmp0(scheme, "about") || !g_strcmp0(scheme, "jar")) {
                         return FALSE;

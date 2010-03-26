@@ -312,7 +312,7 @@ find_uri_foreach(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, Find
 
         gtk_tree_model_get(model, iter, COL_LINK, &link, -1);
 
-        if (!g_strcmp0(data->uri, link->uri)) {
+        if (!ncase_compare_utf8_string(data->uri, link->uri)) {
                 g_debug("CS_TOC >>> found data->uri: %s", data->uri);
                 g_debug("CS_TOC >>> found link->uri: %s", link->uri);
 
