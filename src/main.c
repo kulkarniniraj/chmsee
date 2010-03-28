@@ -269,7 +269,7 @@ main(int argc, char *argv[])
 
         if (filename)
                 chmsee_open_file(chmsee, filename);
-        else if (config->startup_lastfile)
+        else if (config->startup_lastfile && config->last_file)
                 chmsee_open_file(chmsee, config->last_file);
 
         gtk_main();

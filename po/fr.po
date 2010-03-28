@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-26 23:30+0800\n"
+"POT-Creation-Date: 2010-03-28 12:11+0800\n"
 "PO-Revision-Date: 2009-04-13 22:36+0000\n"
 "Last-Translator: Pierre Slamich <pierre.slamich@gmail.com>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -61,10 +61,15 @@ msgid "<b>Font</b>"
 msgstr "<b>Police</b>"
 
 #: ../data/setup-window.ui.h:4
+#, fuzzy
+msgid "<b>Startup</b>"
+msgstr "<b>Encodage</b>"
+
+#: ../data/setup-window.ui.h:5
 msgid "Auto-Detect:"
 msgstr "Détection auto. :"
 
-#: ../data/setup-window.ui.h:5
+#: ../data/setup-window.ui.h:6
 msgid ""
 "CHM files extracted in this cache folder, you can press Clear button to free "
 "disk space.\n"
@@ -77,43 +82,47 @@ msgstr ""
 "Note : si vous êtes en train de visualiser un fichier CHM, il vous faudra "
 "l'ouvrir à nouveau."
 
-#: ../data/setup-window.ui.h:8
+#: ../data/setup-window.ui.h:9
 msgid "Fixed Width:"
 msgstr "Chasse fixe :"
 
-#: ../data/setup-window.ui.h:9
+#: ../data/setup-window.ui.h:10
 msgid "Japanese"
 msgstr ""
 
-#: ../data/setup-window.ui.h:10
+#: ../data/setup-window.ui.h:11
 msgid "Korean"
 msgstr ""
 
-#: ../data/setup-window.ui.h:11
+#: ../data/setup-window.ui.h:12
+msgid "Load last opened file."
+msgstr ""
+
+#: ../data/setup-window.ui.h:13
 msgid "Russian"
 msgstr ""
 
-#: ../data/setup-window.ui.h:12
+#: ../data/setup-window.ui.h:14
 msgid "Setup"
 msgstr "Paramètres"
 
-#: ../data/setup-window.ui.h:13
+#: ../data/setup-window.ui.h:15
 msgid "Simplified Chinese"
 msgstr ""
 
-#: ../data/setup-window.ui.h:14
+#: ../data/setup-window.ui.h:16
 msgid "Traditional Chinese"
 msgstr ""
 
-#: ../data/setup-window.ui.h:15
+#: ../data/setup-window.ui.h:17
 msgid "Ukrainian"
 msgstr ""
 
-#: ../data/setup-window.ui.h:16
+#: ../data/setup-window.ui.h:18
 msgid "Universal"
 msgstr ""
 
-#: ../data/setup-window.ui.h:17
+#: ../data/setup-window.ui.h:19
 msgid "Variable Width:"
 msgstr ""
 
@@ -165,11 +174,11 @@ msgstr ""
 msgid "Exit ChmSee"
 msgstr "ChmSee"
 
-#: ../src/chmsee.c:197 ../src/components/book.c:126
+#: ../src/chmsee.c:197 ../src/components/book.c:123
 msgid "_Copy"
 msgstr "_Copier"
 
-#: ../src/chmsee.c:198 ../src/components/book.c:131
+#: ../src/chmsee.c:198 ../src/components/book.c:128
 msgid "Select _All"
 msgstr "Tout sélectionner"
 
@@ -189,11 +198,11 @@ msgstr ""
 msgid "_Home"
 msgstr "Accueil"
 
-#: ../src/chmsee.c:205 ../src/components/book.c:127
+#: ../src/chmsee.c:205 ../src/components/book.c:124
 msgid "_Back"
 msgstr "Retour"
 
-#: ../src/chmsee.c:206 ../src/components/book.c:128
+#: ../src/chmsee.c:206 ../src/components/book.c:125
 msgid "_Forward"
 msgstr "Suivant"
 
@@ -239,61 +248,61 @@ msgstr "Fichiers CHM"
 msgid "All Files"
 msgstr "Tous les fichiers"
 
-#: ../src/chmsee.c:823
+#: ../src/chmsee.c:828
 msgid "Ready!"
 msgstr "Prêt !"
 
-#: ../src/chmsee.c:1034
+#: ../src/chmsee.c:1039
 #, fuzzy, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Le fichier chm %s n'a pas pu être ouvert."
 
-#: ../src/main.c:198
+#: ../src/main.c:202
 msgid "Display the version and exit"
 msgstr "Afficher la version et quitter"
 
-#: ../src/main.c:203
+#: ../src/main.c:207
 msgid "be verbose, repeat 3 times to get all info"
 msgstr ""
 
-#: ../src/main.c:208
+#: ../src/main.c:212
 msgid "be quiet, repeat 2 times to disable all info"
 msgstr ""
 
-#: ../src/main.c:214
+#: ../src/main.c:218
 msgid "Bookshelf"
 msgstr ""
 
-#: ../src/main.c:239
+#: ../src/main.c:243
 #, c-format
 msgid "more than 1 argument\n"
 msgstr "plus d'un argument\n"
 
-#: ../src/components/book.c:129
+#: ../src/components/book.c:126
 msgid "Open Link in New _Tab"
 msgstr "Ouvrir le lien dans un nouvel ongle_t"
 
-#: ../src/components/book.c:130
+#: ../src/components/book.c:127
 msgid "_Copy Link Location"
 msgstr "_Copier l'adresse du lien"
 
-#: ../src/components/book.c:132
+#: ../src/components/book.c:129
 msgid "Copy Page _Location"
 msgstr "Copier l'UR_L de la page"
 
-#: ../src/components/book.c:246
+#: ../src/components/book.c:242
 msgid "Find:"
 msgstr ""
 
-#: ../src/components/book.c:261
+#: ../src/components/book.c:257
 msgid "Previous"
 msgstr ""
 
-#: ../src/components/book.c:271
+#: ../src/components/book.c:267
 msgid "Next"
 msgstr ""
 
-#: ../src/components/book.c:281
+#: ../src/components/book.c:277
 msgid "Match case"
 msgstr ""
 
@@ -306,15 +315,15 @@ msgstr "Sans titre"
 msgid "Topics"
 msgstr "Rubriques"
 
-#: ../src/components/book.c:912
+#: ../src/components/book.c:910
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:928
+#: ../src/components/book.c:926
 msgid "Bookmarks"
 msgstr "Marque-pages"
 
-#: ../src/components/book.c:999
+#: ../src/components/book.c:997
 #, c-format
 msgid "Can not find link target file at \"%s\""
 msgstr ""

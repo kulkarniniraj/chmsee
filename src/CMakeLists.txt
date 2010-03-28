@@ -44,5 +44,8 @@ add_executable(chmsee main.c)
 target_link_libraries(chmsee
         chmseelib
         )
+set_target_properties(chmsee
+        PROPERTIES LINKER_LANGUAGE CXX
+        )
 
 install(TARGETS chmsee DESTINATION bin)
