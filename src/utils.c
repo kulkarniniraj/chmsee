@@ -134,7 +134,7 @@ uri_decode(const char *encoded)
         return rv;
 }
 
-/* Remove uri's '#' fragment  */
+/* Remove '#', ';' fragment in uri */
 gchar *
 get_real_uri(const gchar *uri)
 {
@@ -147,6 +147,14 @@ get_real_uri(const gchar *uri)
                 real_uri = g_strndup(uri, p - uri);
         else
                 real_uri = g_strdup(uri);
+
+        p = g_strrstr(real_uri, ";");
+        g_debug("check reserved character ';' p = %p", p);
+
+        if (p) {
+                g_free(real_uri);
+                real_uri = g_strndup(real_uri, p - real_uri);
+        }
 
         return real_uri;
 }

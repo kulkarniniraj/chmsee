@@ -272,6 +272,7 @@ NOTE: If you are viewing a CHM file, you need reopen it after cleaning.</propert
                 <child>
                   <object class="GtkHButtonBox" id="hbuttonbox2">
                     <property name="visible">True</property>
+                    <property name="layout_style">start</property>
                     <child>
                       <object class="GtkCheckButton" id="startup_lastfile_chkbtn">
                         <property name="label" translatable="yes">Load last opened file.</property>
