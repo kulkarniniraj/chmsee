@@ -101,13 +101,14 @@ load_config()
                 mkdir(config->bookshelf, 0755);
 
         config->lang       = 0;
-        config->last_dir   = g_strdup(g_get_home_dir());
+        config->last_file  = NULL;
         config->pos_x      = -100;
         config->pos_y      = -100;
         config->width      = 0;
         config->height     = 0;
         config->hpaned_pos = 200;
-        config->fullscreen = FALSE;
+        config->fullscreen       = FALSE;
+        config->startup_lastfile = FALSE;
 
         gchar *config_file = g_build_filename(config->home, CHMSEE_CONFIG_FILE, NULL);
         g_debug("Main >>> chmsee config file path = %s", config_file);
@@ -125,16 +126,16 @@ load_config()
         rv = g_key_file_load_from_file(keyfile, config_file, G_KEY_FILE_NONE, NULL);
 
         if (rv) {
-                config->lang     = g_key_file_get_integer(keyfile, "ChmSee", "LANG", &error);
-                g_free(config->last_dir);
-                config->last_dir = g_key_file_get_string (keyfile, "ChmSee", "LAST_DIR", &error);
+                config->lang      = g_key_file_get_integer(keyfile, "ChmSee", "LANG", &error);
+                config->last_file = g_key_file_get_string (keyfile, "ChmSee", "LAST_FILE", &error);
 
                 config->pos_x      = g_key_file_get_integer(keyfile, "ChmSee", "POS_X", &error);
                 config->pos_y      = g_key_file_get_integer(keyfile, "ChmSee", "POS_Y", &error);
                 config->width      = g_key_file_get_integer(keyfile, "ChmSee", "WIDTH", &error);
                 config->height     = g_key_file_get_integer(keyfile, "ChmSee", "HEIGHT", &error);
                 config->hpaned_pos = g_key_file_get_integer(keyfile, "ChmSee", "HPANED_POSITION", &error);
-                config->fullscreen = g_key_file_get_boolean(keyfile, "ChmSee", "FULLSCREEN", &error);
+                config->fullscreen       = g_key_file_get_boolean(keyfile, "ChmSee", "FULLSCREEN", &error);
+                config->startup_lastfile = g_key_file_get_boolean(keyfile, "ChmSee", "STARTUP_LASTFILE", &error);
 
                 if (!config->hpaned_pos)
                         config->hpaned_pos = 200;
@@ -157,7 +158,9 @@ save_config(CsConfig *config)
 
         GKeyFile *keyfile = g_key_file_new();
         g_key_file_set_integer(keyfile, "ChmSee", "LANG", config->lang);
-        g_key_file_set_string (keyfile, "ChmSee", "LAST_DIR", config->last_dir);
+
+        if (config->last_file)
+                g_key_file_set_string (keyfile, "ChmSee", "LAST_FILE", config->last_file);
 
         g_key_file_set_integer(keyfile, "ChmSee", "POS_X", config->pos_x);
         g_key_file_set_integer(keyfile, "ChmSee", "POS_Y", config->pos_y);
@@ -165,6 +168,7 @@ save_config(CsConfig *config)
         g_key_file_set_integer(keyfile, "ChmSee", "HEIGHT", config->height);
         g_key_file_set_integer(keyfile, "ChmSee", "HPANED_POSITION", config->hpaned_pos);
         g_key_file_set_boolean(keyfile, "ChmSee", "FULLSCREEN", config->fullscreen);
+        g_key_file_set_boolean(keyfile, "ChmSee", "STARTUP_LASTFILE", config->startup_lastfile);
 
         gchar *contents = g_key_file_to_data(keyfile, &length, &error);
         g_file_set_contents(config_file, contents, length, &error);
@@ -175,7 +179,7 @@ save_config(CsConfig *config)
 
         g_free(config->home);
         g_free(config->bookshelf);
-        g_free(config->last_dir);
+        g_free(config->last_file);
 
         g_slice_free(CsConfig, config);
 }
@@ -265,6 +269,8 @@ main(int argc, char *argv[])
 
         if (filename)
                 chmsee_open_file(chmsee, filename);
+        else if (config->startup_lastfile)
+                chmsee_open_file(chmsee, config->last_file);
 
         gtk_main();
 

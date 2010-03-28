@@ -102,6 +102,16 @@ cmb_lang_changed_cb(GtkWidget *widget, Chmsee *chmsee)
         }
 }
 
+static void
+startup_lastfile_toggled_cb(GtkWidget *widget, Chmsee *chmsee)
+{
+        g_debug("SETUP >>> startup_lastfile toggled");
+        GtkToggleButton *toggle_button = GTK_TOGGLE_BUTTON (widget);
+        gboolean state = gtk_toggle_button_get_active(toggle_button);
+
+        chmsee_set_startup_lastfile(chmsee, state);
+}
+
 void
 setup_window_new(Chmsee *chmsee)
 {
@@ -147,6 +157,14 @@ setup_window_new(Chmsee *chmsee)
                          G_CALLBACK (cmb_lang_changed_cb),
                          chmsee);
         gtk_combo_box_set_active(GTK_COMBO_BOX (cmb_lang), chmsee_get_lang(chmsee));
+
+        /* startup load lastfile */
+        GtkWidget *startup_lastfile_chkbtn = BUILDER_WIDGET (builder, "startup_lastfile_chkbtn");
+        g_signal_connect(G_OBJECT (startup_lastfile_chkbtn),
+                         "toggled",
+                         G_CALLBACK (startup_lastfile_toggled_cb),
+                         chmsee);
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON (startup_lastfile_chkbtn), chmsee_get_startup_lastfile(chmsee));
 
         GtkWidget *close_button = BUILDER_WIDGET (builder, "setup_close");
         g_signal_connect(G_OBJECT (close_button),

@@ -61,7 +61,7 @@ typedef struct _CsConfig CsConfig;
 struct _CsConfig {
         gchar   *home;
         gchar   *bookshelf;
-        gchar   *last_dir;
+        gchar   *last_file;
 
         gint     lang;
         gint     pos_x;
@@ -70,6 +70,7 @@ struct _CsConfig {
         gint     width;
         gint     hpaned_pos;
         gboolean fullscreen;
+        gboolean startup_lastfile;
 };
 
 GType        chmsee_get_type(void);
@@ -85,6 +86,9 @@ void         chmsee_set_variable_font(Chmsee *, const gchar *);
 
 const gchar *chmsee_get_fixed_font(Chmsee *);
 void         chmsee_set_fixed_font(Chmsee *, const gchar *);
+
+gboolean     chmsee_get_startup_lastfile(Chmsee *);
+void         chmsee_set_startup_lastfile(Chmsee *, gboolean);
 
 gboolean     chmsee_has_book(Chmsee *);
 const gchar *chmsee_get_bookshelf(Chmsee *);

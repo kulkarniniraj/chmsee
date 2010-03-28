@@ -486,9 +486,14 @@ on_open_file(GtkWidget *widget, Chmsee *self)
         gtk_file_chooser_add_filter(GTK_FILE_CHOOSER (dialog), filter);
 
         /* previous opened file folder */
-        if (priv->config->last_dir) {
-                gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog), priv->config->last_dir);
+        gchar *last_dir = NULL;
+        if (priv->config->last_file) {
+                last_dir = g_path_get_dirname(priv->config->last_file);
+        } else {
+                last_dir = g_strdup(g_get_home_dir());
         }
+        gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog), last_dir);
+        g_free(last_dir);
 
         g_object_unref(G_OBJECT (builder));
 }
@@ -988,11 +993,11 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
                 g_free(window_title);
 
                 /* record last opened file directory */
-                if (priv->config->last_dir)
-                        g_free(priv->config->last_dir);
+                if (priv->config->last_file)
+                        g_free(priv->config->last_file);
 
-                priv->config->last_dir = g_path_get_dirname(cs_chmfile_get_filename(priv->chmfile));
-                g_debug("Chmsee >>> last dir =  %s", priv->config->last_dir);
+                priv->config->last_file = g_strdup(cs_chmfile_get_filename(priv->chmfile));
+                g_debug("Chmsee >>> record last file =  %s", priv->config->last_file);
 
                 /* recent files */
                 gchar *content;
@@ -1048,6 +1053,19 @@ void
 chmsee_set_lang(Chmsee *self, int lang)
 {
         CHMSEE_GET_PRIVATE (self)->config->lang = lang;
+}
+
+gboolean
+chmsee_get_startup_lastfile(Chmsee *self)
+{
+        return CHMSEE_GET_PRIVATE (self)->config->startup_lastfile;
+}
+
+void
+chmsee_set_startup_lastfile(Chmsee *self, gboolean state)
+{
+        g_debug("Chmsee >>> set startup lastfile = %d", state);
+        CHMSEE_GET_PRIVATE (self)->config->startup_lastfile = state;
 }
 
 const gchar *

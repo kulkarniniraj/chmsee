@@ -71,9 +71,6 @@ struct _CsBookPrivate {
         GtkActionGroup  *action_group;
         GtkUIManager    *ui_manager;
 
-        gboolean         has_toc;
-        gint             lang;
-
         CsChmfile       *model;
         CsHtmlGecko     *active_html;
 
@@ -92,7 +89,7 @@ static void cs_book_get_property(GObject *, guint, GValue *, GParamSpec *);
 
 static void find_entry_changed_cb(GtkEntry *, CsBook *);
 static void find_entry_activate_cb(GtkEntry *, CsBook *);
-static void link_selected_cb(CsBook *, Link *);
+static void link_selected_cb(GtkWidget *, Link *, CsBook *);
 static void html_notebook_switch_page_cb(GtkNotebook *, GtkNotebookPage *, guint , CsBook *);
 static void html_location_changed_cb(CsHtmlGecko *, const gchar *, CsBook *);
 static gboolean html_open_uri_cb(CsHtmlGecko *, const gchar *, CsBook *);
@@ -207,13 +204,12 @@ cs_book_init(CsBook *self)
 {
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
-        priv->lang = 0;
         priv->context_menu_link = NULL;
 
         priv->model = NULL;
         priv->active_html = NULL;
-        priv->has_toc = FALSE;
         priv->book_message = NULL;
+        priv->toc_page = NULL;
 
         priv->hpaned = gtk_hpaned_new();
         gtk_box_pack_start(GTK_BOX (self), priv->hpaned, TRUE, TRUE, 0);
@@ -363,9 +359,9 @@ find_entry_activate_cb(GtkEntry *entry, CsBook *self)
 }
 
 static void
-link_selected_cb(CsBook *self, Link *link)
+link_selected_cb(GtkWidget *widget, Link *link, CsBook *self)
 {
-        g_debug("CS_BOOK >>> link selected load url: %s", link->uri);
+        g_debug("CS_BOOK >>> link selected callback, url = %s", link->uri);
         if (!g_ascii_strcasecmp(CHMSEE_NO_LINK, link->uri))
                 return;
 
@@ -377,6 +373,10 @@ link_selected_cb(CsBook *self, Link *link)
                 g_free(message);
         } else {
                 cs_book_load_url(self, link->uri);
+
+                CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+                if (widget != priv->toc_page)
+                        cs_toc_select_uri(CS_TOC (priv->toc_page), link->uri);
         }
         g_free(scheme);
 }
@@ -428,7 +428,7 @@ html_open_uri_cb(CsHtmlGecko *html, const gchar *full_uri, CsBook *self)
                                 g_debug("CS_BOOK >>> html_open_uri call load url = %s", uri);
                                 cs_book_load_url(self, uri);
 
-                                if (priv->has_toc) {
+                                if (priv->toc_page) {
                                         gchar *real_uri = get_real_uri(full_uri);
                                         gchar *filename = g_filename_from_uri(real_uri, NULL, NULL);
 
@@ -892,14 +892,12 @@ cs_book_set_model(CsBook *self, CsChmfile *model)
                                                     priv->toc_page,
                                                     gtk_label_new(_("Topics")));
 
-                g_signal_connect_swapped(G_OBJECT (priv->toc_page),
-                                         "link-selected",
-                                         G_CALLBACK (link_selected_cb),
-                                         self);
-                priv->has_toc = TRUE;
+                g_signal_connect(G_OBJECT (priv->toc_page),
+                                 "link-selected",
+                                 G_CALLBACK (link_selected_cb),
+                                 self);
         } else {
                 g_message("CS_BOOK >>> this book dose not include a toc");
-                priv->has_toc = FALSE;
         }
 
         /* index */
@@ -911,10 +909,10 @@ cs_book_set_model(CsBook *self, CsChmfile *model)
                                                     priv->index_page,
                                                     gtk_label_new(_("Index")));
 
-                g_signal_connect_swapped(G_OBJECT (priv->index_page),
-                                         "link-selected",
-                                         G_CALLBACK (link_selected_cb),
-                                         self);
+                g_signal_connect(G_OBJECT (priv->index_page),
+                                 "link-selected",
+                                 G_CALLBACK (link_selected_cb),
+                                 self);
         } else {
                 g_message("CS_BOOK >>> this book dose not include an index");
         }
@@ -927,10 +925,10 @@ cs_book_set_model(CsBook *self, CsChmfile *model)
                                             priv->bookmarks_page,
                                             gtk_label_new (_("Bookmarks")));
 
-        g_signal_connect_swapped(G_OBJECT (priv->bookmarks_page),
-                                 "link-selected",
-                                 G_CALLBACK (link_selected_cb),
-                                 self);
+        g_signal_connect(G_OBJECT (priv->bookmarks_page),
+                         "link-selected",
+                         G_CALLBACK (link_selected_cb),
+                         self);
 
         if (g_list_length(bookmarks_list) == 0)
                 cur_page = 0;
@@ -1033,7 +1031,7 @@ cs_book_new_tab_with_fulluri(CsBook *self, const gchar *full_uri)
 
                 cs_book_load_url(self, uri);
 
-                if (priv->has_toc)
+                if (priv->toc_page)
                         cs_toc_select_uri(CS_TOC (priv->toc_page), uri);
         }
         g_free(scheme);
@@ -1081,7 +1079,7 @@ cs_book_homepage(CsBook *self)
         if (homepage) {
                 cs_book_load_url(self, homepage);
 
-                if (priv->has_toc)
+                if (priv->toc_page)
                         cs_toc_select_uri(CS_TOC (priv->toc_page), homepage);
         }
 }
