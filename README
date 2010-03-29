@@ -1,5 +1,5 @@
 ChmSee is an HTML Help viewer for Unix/Linux. It is based on CHMLIB
-and use GTK+ as frontend toolkit. Because of using gecko as HTML
+and use GTK+ as frontend toolkit. Because of using gecko HTML
 rendering engine, ChmSee can support rich features of modern HTML
 page, such as CSS and JavaScript.
 
@@ -14,6 +14,7 @@ Compile ChmSee from source you need following packages:
  * gtk2 >= 2.16
  * xulrunner >= 1.9
  * chmlib
+ * libxml2
  * libgcrypt
 
 Installation
@@ -29,7 +30,7 @@ $ make
 Report bug
 ==========
 
-If you find any problem, please file this bug in
+If you find any problem, please commit bug report to
 http://code.google.com/p/chmsee/issues/entry, thanks.
 
 Help translation

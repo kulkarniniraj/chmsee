@@ -30,6 +30,7 @@ typedef struct _CsHtmlGeckoPrivate CsHtmlGeckoPrivate;
 struct _CsHtmlGeckoPrivate {
         GtkMozEmbed *gecko;
         gchar       *render_name;
+        gchar       *current_url;
 };
 
 static void cs_html_gecko_class_init(CsHtmlGeckoClass *);
@@ -40,7 +41,7 @@ static void gecko_title_cb(GtkMozEmbed *, CsHtmlGecko *);
 static void gecko_location_cb(GtkMozEmbed *, CsHtmlGecko *);
 static gboolean gecko_open_uri_cb(GtkMozEmbed *, const gchar *, CsHtmlGecko *);
 static gboolean gecko_mouse_click_cb(GtkMozEmbed *, gpointer, CsHtmlGecko *);
-static gboolean gecko_link_message_cb(GtkMozEmbed *, CsHtmlGecko *);
+static void gecko_link_message_cb(GtkMozEmbed *, CsHtmlGecko *);
 static void gecko_child_add_cb(GtkMozEmbed *, GtkWidget *, CsHtmlGecko *);
 static void gecko_child_remove_cb(GtkMozEmbed *, GtkWidget *, CsHtmlGecko *);
 static void gecko_child_grab_focus_cb(GtkWidget *, CsHtmlGecko *);
@@ -58,9 +59,6 @@ enum {
 };
 
 static gint signals[LAST_SIGNAL] = { 0 };
-
-/* Has the value of the URL under the mouse pointer, otherwise NULL */
-static gchar *current_url = NULL;
 
 #define CS_HTML_GECKO_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), CS_TYPE_HTML_GECKO, CsHtmlGeckoPrivate))
 
@@ -102,7 +100,7 @@ cs_html_gecko_class_init(CsHtmlGeckoClass *klass)
                              NULL, NULL,
                              gtk_marshal_BOOLEAN__POINTER,
                              G_TYPE_BOOLEAN,
-                             1, G_TYPE_STRING);
+                             1, G_TYPE_POINTER);
 
         signals[CONTEXT_NORMAL] =
                 g_signal_new("context-normal",
@@ -152,6 +150,7 @@ cs_html_gecko_init(CsHtmlGecko *html)
         priv->gecko = GTK_MOZ_EMBED(gtk_moz_embed_new());
         gtk_widget_show(GTK_WIDGET (priv->gecko));
         priv->render_name = g_strdup("Mozilla Gecko");
+        priv->current_url = NULL;
 
         gtk_frame_set_shadow_type(GTK_FRAME (html), GTK_SHADOW_IN);
         gtk_container_set_border_width(GTK_CONTAINER (html), 2);
@@ -170,7 +169,7 @@ cs_html_gecko_init(CsHtmlGecko *html)
                          G_CALLBACK (gecko_open_uri_cb),
                          html);
         g_signal_connect(G_OBJECT (priv->gecko),
-                         "dom_mouse_down",
+                         "dom_mouse_click",
                          G_CALLBACK (gecko_mouse_click_cb),
                          html);
         g_signal_connect(G_OBJECT (priv->gecko),
@@ -194,6 +193,7 @@ cs_html_gecko_finalize(GObject *object)
         CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (self);
 
         g_free(priv->render_name);
+        g_free(priv->current_url);
         G_OBJECT_CLASS (cs_html_gecko_parent_class)->finalize(object);
 }
 
@@ -224,32 +224,27 @@ gecko_open_uri_cb(GtkMozEmbed *embed, const gchar *uri, CsHtmlGecko *html)
         g_debug("CS_HTML_GECKO >>> send open-uri signal, uri = %s", uri);
         g_signal_emit(html, signals[OPEN_URI], 0, uri, &ret_val);
 
-        /* Reset current url */
-        if (current_url != NULL) {
-                g_free(current_url);
-                current_url = NULL;
-
-                g_signal_emit(html, signals[LINK_MESSAGE], 0, "");
-        }
-
         return ret_val;
 }
 
 static gboolean
 gecko_mouse_click_cb(GtkMozEmbed *widget, gpointer dom_event, CsHtmlGecko *html)
 {
+        g_debug("CS_HTML_GECKO >>> mouse click callback");
+        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
         gint button = gecko_utils_get_mouse_event_button(dom_event);
         gint mask = gecko_utils_get_mouse_event_modifiers(dom_event);
 
+        g_debug("CS_HTML_GECKO >>> mouse click callback, current_url = %s", priv->current_url);
         if (button == 2 || (button == 1 && mask & GDK_CONTROL_MASK)) {
-                if (current_url) {
-                        g_signal_emit(html, signals[OPEN_NEW_TAB], 0, current_url);
+                if (priv->current_url && strlen(priv->current_url)) {
+                        g_signal_emit(html, signals[OPEN_NEW_TAB], 0, priv->current_url);
 
                         return TRUE;
                 }
         } else if (button == 3) {
-                if (current_url)
-                        g_signal_emit(html, signals[CONTEXT_LINK], 0, current_url);
+                if (priv->current_url && strlen(priv->current_url))
+                        g_signal_emit(html, signals[CONTEXT_LINK], 0, priv->current_url);
                 else
                         g_signal_emit(html, signals[CONTEXT_NORMAL], 0);
 
@@ -259,20 +254,15 @@ gecko_mouse_click_cb(GtkMozEmbed *widget, gpointer dom_event, CsHtmlGecko *html)
         return FALSE;
 }
 
-static gboolean
+static void
 gecko_link_message_cb(GtkMozEmbed *widget, CsHtmlGecko *html)
 {
-        g_free(current_url);
+        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
-        current_url = gtk_moz_embed_get_link_message(widget);
-        g_signal_emit(html, signals[LINK_MESSAGE], 0, current_url);
-
-        if (current_url[0] == '\0') {
-                g_free(current_url);
-                current_url = NULL;
-        }
-
-        return FALSE;
+        g_free(priv->current_url);
+        priv->current_url = gtk_moz_embed_get_link_message(widget);
+        g_debug("CS_HTML_GECKO >>> link message callback current_url = %s", priv->current_url);
+        g_signal_emit(html, signals[LINK_MESSAGE], 0, priv->current_url);
 }
 
 static void

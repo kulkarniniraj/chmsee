@@ -1,10 +1,11 @@
-ChmSee 1.1.0-beta 2010-03-26
+ChmSee 1.1.0-beta1 2010-xx-xx
 -----------------------
 * Only support Gecko > 1.9 (Firefox3)
 * Need gtk+ >= 2.16 (for using gtkbuilder and g_uri functions)
 * Add index page filter string (Thanks Mingxi Wu <mxwu@novell.com>)
 * Add page find function
 * Add Recent Files feature
+* Add loading last file at starup option
 
 ChmSee 1.0.7 2009-09-14
 -----------------------
@@ -75,7 +76,7 @@ Bugs
 ~~~~
 
 * issue 19: Arabic language support in sidebar.
-* issue 25: Double-click on topic title (in sidebar) to open its sub-topics 
+* issue 25: Double-click on topic title (in sidebar) to open its sub-topics
 * a safer hcc parser.
 
 l10n

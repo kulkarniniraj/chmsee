@@ -90,7 +90,7 @@ load_config()
 
         g_message("Main >>> load config");
         CsConfig *config = g_slice_new(CsConfig);
-        
+
         /* ChmSee HOME directory ~/.chmsee */
         config->home = g_build_filename(g_get_home_dir(), ".chmsee", NULL);
         if (!g_file_test(config->home, G_FILE_TEST_IS_DIR))

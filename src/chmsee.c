@@ -151,6 +151,7 @@ static void on_recent_files(GtkRecentChooser *, Chmsee *);
 static void on_open_new_tab(GtkWidget *, Chmsee *);
 static void on_close_current_tab(GtkWidget *, Chmsee *);
 
+static void on_menu_file(GtkWidget *, Chmsee *);
 static void on_menu_edit(GtkWidget *, Chmsee *);
 static void on_home(GtkWidget *, Chmsee *);
 static void on_back(GtkWidget *, Chmsee *);
@@ -182,7 +183,7 @@ static void unfullscreen(Chmsee *);
 
 /* Normal items */
 static const GtkActionEntry entries[] = {
-        { "FileMenu", NULL, N_("_File") },
+        { "FileMenu", NULL, N_("_File"), NULL, NULL, G_CALLBACK(on_menu_file) },
         { "EditMenu", NULL, N_("_Edit"), NULL, NULL, G_CALLBACK(on_menu_edit) },
         { "ViewMenu", NULL, N_("_View") },
         { "HelpMenu", NULL, N_("_Help") },
@@ -435,6 +436,7 @@ book_message_notify_cb(Chmsee *self, GParamSpec *pspec, CsBook *book)
         gchar *message;
         g_object_get(book, "book-message", &message, NULL);
 
+        g_debug("Chmsee >>> book message notify %s", message);
         update_status_bar(self, message);
         g_free(message);
 }
@@ -502,7 +504,6 @@ static void
 on_recent_files(GtkRecentChooser *chooser, Chmsee *self)
 {
         gchar *uri = gtk_recent_chooser_get_current_uri(chooser);
-        g_debug("Chmsee >>> On Recent File %s", uri);
 
         if (uri != NULL)
         {
@@ -517,8 +518,6 @@ on_recent_files(GtkRecentChooser *chooser, Chmsee *self)
 static void
 on_copy(GtkWidget *widget, Chmsee *self)
 {
-        g_debug("Chmsee >>> On Copy");
-
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_copy(CS_BOOK (priv->book));
 }
@@ -526,8 +525,6 @@ on_copy(GtkWidget *widget, Chmsee *self)
 static void
 on_select_all(GtkWidget *widget, Chmsee *self)
 {
-        g_debug("Chmsee >>> On Select All");
-
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_select_all(CS_BOOK (priv->book));
 }
@@ -541,7 +538,6 @@ on_setup(GtkWidget *widget, Chmsee *self)
 static void
 on_back(GtkWidget *widget, Chmsee *self)
 {
-        g_debug("Chmsee >>> On back");
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_go_back(CS_BOOK (priv->book));
 }
@@ -549,15 +545,21 @@ on_back(GtkWidget *widget, Chmsee *self)
 static void
 on_forward(GtkWidget *widget, Chmsee *self)
 {
-        g_debug("Chmsee >>> On forward");
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_go_forward(CS_BOOK (priv->book));
 }
 
 static void
+on_menu_file(GtkWidget *widget, Chmsee *self)
+{
+        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
+        gboolean can_close_tab = cs_book_can_close_tab(CS_BOOK (priv->book));
+        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "CloseTab"), can_close_tab);
+}
+
+static void
 on_menu_edit(GtkWidget *widget, Chmsee *self)
 {
-        g_debug("Chmsee >>> On Menu Edit");
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         gboolean can_copy = cs_book_can_copy(CS_BOOK (priv->book));
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Copy"), can_copy);
@@ -573,14 +575,12 @@ on_home(GtkWidget *widget, Chmsee *self)
 static void
 on_zoom_in(GtkWidget *widget, Chmsee *self)
 {
-        g_debug("Chmsee >>> On zoom in");
         cs_book_zoom_in(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
 static void
 on_zoom_out(GtkWidget *widget, Chmsee *self)
 {
-        g_debug("Chmsee >>> On zoom out");
         cs_book_zoom_out(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
@@ -619,7 +619,6 @@ on_about(GtkWidget *widget)
 static void
 on_open_new_tab(GtkWidget *widget, Chmsee *self)
 {
-        g_debug("Chmsee >>> Open new tab");
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
         gchar *location = cs_book_get_location(CS_BOOK (priv->book));
@@ -630,14 +629,12 @@ on_open_new_tab(GtkWidget *widget, Chmsee *self)
 static void
 on_close_current_tab(GtkWidget *widget, Chmsee *self)
 {
-        g_debug("Chmsee >>> close current tab");
         cs_book_close_current_tab(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
 static void
 on_keyboard_escape(GtkWidget *widget, Chmsee *self)
 {
-        g_debug("Chmsee >>> press ESC key");
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
         cs_book_findbar_hide(CS_BOOK (priv->book));
@@ -675,7 +672,6 @@ on_sidepane_toggled(GtkWidget *menu, Chmsee *self)
 static void
 on_find(GtkWidget *widget, Chmsee *self)
 {
-        g_debug("Chmsee >>> On Find");
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_findbar_show(CS_BOOK (priv->book));
 }
