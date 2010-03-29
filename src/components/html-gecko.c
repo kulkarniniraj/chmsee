@@ -249,6 +249,19 @@ gecko_mouse_click_cb(GtkMozEmbed *widget, gpointer dom_event, CsHtmlGecko *html)
                         g_signal_emit(html, signals[CONTEXT_NORMAL], 0);
 
                 return TRUE;
+        }  else if (button == 1) {
+                if (priv->current_url && strlen(priv->current_url)) {
+                        char *scheme = g_uri_parse_scheme(priv->current_url);
+                        if (scheme && (!g_strcmp0(scheme, "http") || !g_strcmp0(scheme, "https"))) {
+                                GError *error = NULL;
+                                g_debug("CS_HTML_GECKO >>> mouse click callback, call gtk_show_uri = %s", priv->current_url);
+                                /* call default browser to show external link */
+                                gtk_show_uri(NULL, priv->current_url, gtk_get_current_event_time(), &error);
+
+                                if (error == NULL)
+                                        return TRUE;
+                        }
+                }
         }
 
         return FALSE;
@@ -261,7 +274,6 @@ gecko_link_message_cb(GtkMozEmbed *widget, CsHtmlGecko *html)
 
         g_free(priv->current_url);
         priv->current_url = gtk_moz_embed_get_link_message(widget);
-        g_debug("CS_HTML_GECKO >>> link message callback current_url = %s", priv->current_url);
         g_signal_emit(html, signals[LINK_MESSAGE], 0, priv->current_url);
 }
 

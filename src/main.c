@@ -86,8 +86,6 @@ callback_quiet(const gchar *option_name,
 CsConfig *
 load_config()
 {
-        GError *error = NULL;
-
         g_message("Main >>> load config");
         CsConfig *config = g_slice_new(CsConfig);
 
@@ -126,16 +124,16 @@ load_config()
         rv = g_key_file_load_from_file(keyfile, config_file, G_KEY_FILE_NONE, NULL);
 
         if (rv) {
-                config->lang      = g_key_file_get_integer(keyfile, "ChmSee", "LANG", &error);
-                config->last_file = g_key_file_get_string (keyfile, "ChmSee", "LAST_FILE", &error);
+                config->lang      = g_key_file_get_integer(keyfile, "ChmSee", "LANG", NULL);
+                config->last_file = g_key_file_get_string (keyfile, "ChmSee", "LAST_FILE", NULL);
 
-                config->pos_x      = g_key_file_get_integer(keyfile, "ChmSee", "POS_X", &error);
-                config->pos_y      = g_key_file_get_integer(keyfile, "ChmSee", "POS_Y", &error);
-                config->width      = g_key_file_get_integer(keyfile, "ChmSee", "WIDTH", &error);
-                config->height     = g_key_file_get_integer(keyfile, "ChmSee", "HEIGHT", &error);
-                config->hpaned_pos = g_key_file_get_integer(keyfile, "ChmSee", "HPANED_POSITION", &error);
-                config->fullscreen       = g_key_file_get_boolean(keyfile, "ChmSee", "FULLSCREEN", &error);
-                config->startup_lastfile = g_key_file_get_boolean(keyfile, "ChmSee", "STARTUP_LASTFILE", &error);
+                config->pos_x      = g_key_file_get_integer(keyfile, "ChmSee", "POS_X", NULL);
+                config->pos_y      = g_key_file_get_integer(keyfile, "ChmSee", "POS_Y", NULL);
+                config->width      = g_key_file_get_integer(keyfile, "ChmSee", "WIDTH", NULL);
+                config->height     = g_key_file_get_integer(keyfile, "ChmSee", "HEIGHT", NULL);
+                config->hpaned_pos = g_key_file_get_integer(keyfile, "ChmSee", "HPANED_POSITION", NULL);
+                config->fullscreen       = g_key_file_get_boolean(keyfile, "ChmSee", "FULLSCREEN", NULL);
+                config->startup_lastfile = g_key_file_get_boolean(keyfile, "ChmSee", "STARTUP_LASTFILE", NULL);
 
                 if (!config->hpaned_pos)
                         config->hpaned_pos = 200;
@@ -150,8 +148,7 @@ load_config()
 void
 save_config(CsConfig *config)
 {
-        gsize  length = 0;
-        GError *error = NULL;
+        gsize length = 0;
 
         g_message("Main >>> save config");
         gchar *config_file = g_build_filename(config->home, CHMSEE_CONFIG_FILE, NULL);
@@ -170,8 +167,8 @@ save_config(CsConfig *config)
         g_key_file_set_boolean(keyfile, "ChmSee", "FULLSCREEN", config->fullscreen);
         g_key_file_set_boolean(keyfile, "ChmSee", "STARTUP_LASTFILE", config->startup_lastfile);
 
-        gchar *contents = g_key_file_to_data(keyfile, &length, &error);
-        g_file_set_contents(config_file, contents, length, &error);
+        gchar *contents = g_key_file_to_data(keyfile, &length, NULL);
+        g_file_set_contents(config_file, contents, length, NULL);
 
         g_key_file_free(keyfile);
         g_free(contents);

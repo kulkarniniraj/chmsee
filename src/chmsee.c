@@ -436,7 +436,6 @@ book_message_notify_cb(Chmsee *self, GParamSpec *pspec, CsBook *book)
         gchar *message;
         g_object_get(book, "book-message", &message, NULL);
 
-        g_debug("Chmsee >>> book message notify %s", message);
         update_status_bar(self, message);
         g_free(message);
 }

@@ -693,7 +693,6 @@ cs_book_get_property(GObject *object, guint property_id, GValue *value, GParamSp
 static void
 update_book_message(CsBook *self, const gchar *message)
 {
-        g_debug("CS_BOOK >>> update book message = %s", message);
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         if (priv->book_message)
                 g_free(priv->book_message);

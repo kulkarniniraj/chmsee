@@ -238,8 +238,6 @@ _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
                 LONGINT64 len, remain = ui->length;
                 LONGUINT64 offset = 0;
 
-                gchar *file_ext = g_strrstr(g_path_get_basename(ui->path), ".");
-
                 if ((fout = fopen(fname, "wb")) == NULL) {
                         /* make sure that it isn't just a missing directory before we abort */
                         char newbuf[32768];
@@ -784,7 +782,6 @@ load_bookinfo(CsChmfile *self)
 
         g_debug("CS_CHMFILE >>> read bookinfo file = %s", bookinfo_file);
 
-        GError     *error = NULL;
         GKeyFile *keyfile = g_key_file_new();
 
         gboolean rv = g_key_file_load_from_file(keyfile, bookinfo_file, G_KEY_FILE_NONE, NULL);
@@ -796,13 +793,13 @@ load_bookinfo(CsChmfile *self)
         rv = g_key_file_load_from_file(keyfile, bookinfo_file, G_KEY_FILE_NONE, NULL);
 
         if (rv) {
-                priv->hhc           = g_key_file_get_string(keyfile, "Bookinfo", "hhc", &error);
-                priv->hhk           = g_key_file_get_string(keyfile, "Bookinfo", "hhk", &error);
-                priv->homepage      = g_key_file_get_string(keyfile, "Bookinfo", "homepage", &error);
-                priv->bookname      = g_key_file_get_string(keyfile, "Bookinfo", "bookname", &error);
-                priv->encoding      = g_key_file_get_string(keyfile, "Bookinfo", "encoding", &error);
-                priv->variable_font = g_key_file_get_string(keyfile, "Bookinfo", "variable_font", &error);
-                priv->fixed_font    = g_key_file_get_string(keyfile, "Bookinfo", "fixed_font", &error);
+                priv->hhc           = g_key_file_get_string(keyfile, "Bookinfo", "hhc", NULL);
+                priv->hhk           = g_key_file_get_string(keyfile, "Bookinfo", "hhk", NULL);
+                priv->homepage      = g_key_file_get_string(keyfile, "Bookinfo", "homepage", NULL);
+                priv->bookname      = g_key_file_get_string(keyfile, "Bookinfo", "bookname", NULL);
+                priv->encoding      = g_key_file_get_string(keyfile, "Bookinfo", "encoding", NULL);
+                priv->variable_font = g_key_file_get_string(keyfile, "Bookinfo", "variable_font", NULL);
+                priv->fixed_font    = g_key_file_get_string(keyfile, "Bookinfo", "fixed_font", NULL);
         }
 
         g_key_file_free(keyfile);
@@ -833,9 +830,8 @@ save_bookinfo(CsChmfile *self)
         g_key_file_set_string(keyfile, "Bookinfo", "fixed_font", priv->fixed_font);
 
         gsize    length = 0;
-        GError   *error = NULL;
-        gchar *contents = g_key_file_to_data(keyfile, &length, &error);
-        g_file_set_contents(bookinfo_file, contents, length, &error);
+        gchar *contents = g_key_file_to_data(keyfile, &length, NULL);
+        g_file_set_contents(bookinfo_file, contents, length, NULL);
 
         g_key_file_free(keyfile);
         g_free(contents);
