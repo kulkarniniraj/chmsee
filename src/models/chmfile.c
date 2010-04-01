@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <gcrypt.h>
 #include <chm_lib.h>
 
