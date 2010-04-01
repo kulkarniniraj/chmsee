@@ -70,23 +70,19 @@ on_window_close(GtkButton *button, Chmsee *chmsee)
 static void
 variable_font_set_cb(GtkFontButton *button, Chmsee *chmsee)
 {
-        gchar *font_name = g_strdup(gtk_font_button_get_font_name(button));
+        const gchar *font_name = gtk_font_button_get_font_name(button);
 
         g_debug("SETUP >>> variable font set: %s", font_name);
-
         chmsee_set_variable_font(chmsee, font_name);
-        g_free(font_name);
 }
 
 static void
 fixed_font_set_cb(GtkFontButton *button, Chmsee *chmsee)
 {
-        gchar *font_name = g_strdup(gtk_font_button_get_font_name(button));
+        const gchar *font_name = gtk_font_button_get_font_name(button);
 
         g_debug("SETUP >>> fixed font set: %s", font_name);
-
         chmsee_set_fixed_font(chmsee, font_name);
-        g_free(font_name);
 }
 
 static void

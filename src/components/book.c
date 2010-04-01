@@ -23,13 +23,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <gtkmozembed.h>
-
 #include <glib.h>
-#include <glib/gstdio.h>
-#include <gdk/gdkkeysyms.h>
-#include <gtk/gtkmarshal.h>
+#include <gtkmozembed.h>
 
 #include "book.h"
 #include "toc.h"
@@ -144,6 +139,10 @@ static const char *ui_description =
         "  <popup name='HtmlContextNormal'>"
         "    <menuitem action='Back'/>"
         "    <menuitem action='Forward'/>"
+        "    <menuitem action='SelectAll'/>"
+        "    <menuitem action='CopyPageLocation'/>"
+        "  </popup>"
+        "  <popup name='HtmlContextNormalCopy'>"
         "    <menuitem action='Copy'/>"
         "    <menuitem action='SelectAll'/>"
         "    <menuitem action='CopyPageLocation'/>"
@@ -498,8 +497,12 @@ html_context_normal_cb(CsHtmlGecko *html, CsBook *self)
         gboolean can_forward = cs_book_can_go_forward(self);
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Forward"), can_forward);
 
-        gtk_menu_popup(GTK_MENU(gtk_ui_manager_get_widget(priv->ui_manager, "/HtmlContextNormal")),
-                       NULL, NULL, NULL, NULL, 0, GDK_CURRENT_TIME);
+        if (can_copy)
+                gtk_menu_popup(GTK_MENU(gtk_ui_manager_get_widget(priv->ui_manager, "/HtmlContextNormalCopy")),
+                               NULL, NULL, NULL, NULL, 0, GDK_CURRENT_TIME);
+        else
+                gtk_menu_popup(GTK_MENU(gtk_ui_manager_get_widget(priv->ui_manager, "/HtmlContextNormal")),
+                               NULL, NULL, NULL, NULL, 0, GDK_CURRENT_TIME);
 }
 
 static void

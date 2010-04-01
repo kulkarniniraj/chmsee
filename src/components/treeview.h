@@ -20,7 +20,6 @@
 #ifndef __CS_TREE_VIEW_H__
 #define __CS_TREE_VIEW_H__
 
-#include <glib-object.h>
 #include <gtk/gtk.h>
 
 #include "models/link.h"

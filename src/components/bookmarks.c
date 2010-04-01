@@ -196,7 +196,7 @@ on_bookmarks_add(CsBookmarks *self)
         if (!priv->current_uri)
                 return;
 
-        gchar *name = g_strdup(gtk_entry_get_text(GTK_ENTRY (priv->entry)));
+        const gchar *name = gtk_entry_get_text(GTK_ENTRY (priv->entry));
         GList *found_link = g_list_find_custom(priv->links, priv->current_uri, link_uri_compare);
 
         Link  *link;
@@ -218,8 +218,6 @@ on_bookmarks_add(CsBookmarks *self)
 
                 cs_tree_view_add_link(CS_TREE_VIEW (priv->treeview), link);
         }
-
-        g_free(name);
 }
 
 static void

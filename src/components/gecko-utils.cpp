@@ -50,10 +50,8 @@
 #include <nsStringAPI.h>
 #include <nsILocalFile.h>
 #include <nsIPrefService.h>
-#include <nsIDragService.h>
 #include <nsICommandManager.h>
 #include <nsIDOMMouseEvent.h>
-#include <nsIClipboardDragDropHooks.h>
 #include <nsIWebBrowserChrome.h>
 
 // For zoom
@@ -82,6 +80,12 @@ static const gchar *lang[] = {
         "ukprob"
 };
 
+static nsresult gecko_utils_init_prefs(void);
+static gboolean util_split_font_string(const gchar *, gchar **, gint *);
+static gboolean gecko_prefs_set_bool(const gchar *, gboolean);
+static gboolean gecko_prefs_set_string(const gchar *, const gchar *);
+static gboolean gecko_prefs_set_int(const gchar *, gint);
+
 static gboolean
 util_split_font_string(const gchar *font_name, gchar **name, gint *size)
 {
@@ -101,8 +105,8 @@ util_split_font_string(const gchar *font_name, gchar **name, gint *size)
         }
 
         if ((pango_font_description_get_set_fields(desc) & mask) == mask) {
-                *size = PANGO_PIXELS(pango_font_description_get_size (desc));
-                *name = g_strdup(pango_font_description_get_family (desc));
+                *size = PANGO_PIXELS(pango_font_description_get_size(desc));
+                *name = g_strdup(pango_font_description_get_family(desc));
                 retval = TRUE;
         }
 
@@ -110,7 +114,6 @@ util_split_font_string(const gchar *font_name, gchar **name, gint *size)
 
         return retval;
 }
-
 
 static gboolean
 gecko_prefs_set_bool(const gchar *key, gboolean value)
@@ -179,6 +182,8 @@ gecko_utils_init_prefs(void)
 
         return rv;
 }
+
+/* External functions */
 
 extern "C" gboolean
 gecko_utils_init(void)
@@ -339,7 +344,7 @@ gecko_utils_find(GtkMozEmbed *embed, const gchar *str, gboolean backward, gboole
                 finder->SetMatchCase(match_case);
                 finder->SetWrapFind(PR_TRUE);
 
-                nsString sstr = NS_ConvertASCIItoUTF16(str);
+                nsString sstr = NS_ConvertUTF8toUTF16(str);
                 finder->SetSearchString(PromiseFlatString(sstr).get());
 
                 PRBool rv;

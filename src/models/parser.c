@@ -23,8 +23,8 @@
 #include <libxml/HTMLparser.h>
 
 #include "parser.h"
-#include "models/link.h"
 #include "utils.h"
+#include "models/link.h"
 
 static gint     depth = -1;
 static gint     prev_depth = -1;
@@ -150,9 +150,10 @@ endElementHH(void *ctx, const xmlChar *name_)
                 if (!tree_item)
                         return;
 
-                if (local == NULL) {
+                if (title == NULL)
+                        title = g_strdup( _("No Title"));
+                if (local == NULL)
                         local = g_strdup(CHMSEE_NO_LINK);
-                }
 
                 /* g_debug("prev_depth = %d", prev_depth); */
                 /* g_debug("depth = %d", depth); */
@@ -160,9 +161,7 @@ endElementHH(void *ctx, const xmlChar *name_)
                 /* g_debug("title = %s", title); */
                 /* g_debug("local = %s", local); */
 
-                link = link_new(LINK_TYPE_PAGE,
-                                title ? title : "default title",
-                                local ? local : "default local");
+                link = link_new(LINK_TYPE_PAGE, title, local);
                 node = g_node_new(link);
 
                 if (depth == 0) {

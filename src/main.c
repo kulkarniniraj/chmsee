@@ -185,7 +185,7 @@ int
 main(int argc, char *argv[])
 {
         const gchar *filename = NULL;
-        const gchar *bookshelf = NULL;
+        /* const gchar *bookshelf = NULL; */
 
         GError *error = NULL;
         gboolean option_version = FALSE;
@@ -209,11 +209,11 @@ main(int argc, char *argv[])
                  _("be quiet, repeat 2 times to disable all info"),
                  NULL
                 },
-                {"bookshelf", 0,
-                 G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME, &bookshelf,
-                 "specify bookshelf directory, default is " CHMSEE_BOOKSHELF_DEFAULT,
-                 _("Bookshelf")
-                },
+                /* {"bookshelf", 0, */
+                /*  G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME, &bookshelf, */
+                /*  "specify bookshelf directory, default is " CHMSEE_BOOKSHELF_DEFAULT, */
+                /*  _("Bookshelf") */
+                /* }, */
                 {NULL}
         };
 
@@ -253,9 +253,9 @@ main(int argc, char *argv[])
 
         CsConfig *config = load_config();
 
-        if (bookshelf != NULL) {
-                config->bookshelf = g_strdup(bookshelf);
-        }
+        /* if (bookshelf != NULL) { */
+        /*         config->bookshelf = g_strdup(bookshelf); */
+        /* } */
 
         Chmsee *chmsee = chmsee_new(config);
 

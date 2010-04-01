@@ -18,7 +18,6 @@
  */
 
 #include <string.h>
-#include <gtk/gtkmarshal.h>
 #include <gtkmozembed.h>
 
 #include "html-gecko.h"

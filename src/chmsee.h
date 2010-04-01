@@ -34,8 +34,6 @@
 #include <gtk/gtkwindow.h>
 #include <gtk/gtk.h>
 
-#include "models/chmfile.h"
-
 G_BEGIN_DECLS
 
 typedef struct _Chmsee      Chmsee;

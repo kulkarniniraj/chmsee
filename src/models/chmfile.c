@@ -25,14 +25,9 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <fcntl.h>
 #include <gcrypt.h>
-
-#include <glib/gstdio.h>
 #include <chm_lib.h>
-#include <gcrypt.h>
 
 #include "chmfile.h"
 #include "utils.h"
@@ -248,6 +243,7 @@ _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
 
                         if ((fout = fopen(fname, "wb")) == NULL) {
                                 g_debug("CS_CHMFILE: CHM_ENUMERATOR_FAILURE fopen");
+                                g_free(fname);
                                 return CHM_ENUMERATOR_FAILURE;
                         }
                 }
@@ -257,6 +253,7 @@ _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
                         if (len > 0) {
                                 if(fwrite(buffer, 1, (size_t)len, fout) != len) {
                                         g_debug("CS_CHMFILE: CHM_ENUMERATOR_FAILURE fwrite");
+                                        g_free(fname);
                                         return CHM_ENUMERATOR_FAILURE;
                                 }
                                 offset += len;
@@ -271,6 +268,7 @@ _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
         } else {
                 if (rmkdir(fname) == -1) {
                         g_debug("CS_CHMFILE >>> CHM_ENUMERATOR_FAILURE rmkdir");
+                        g_free(fname);
                         return CHM_ENUMERATOR_FAILURE;
                 }
         }
@@ -858,6 +856,25 @@ check_file_ncase(CsChmfile *self, gchar *path)
         return path;
 }
 
+/* see http://code.google.com/p/chmsee/issues/detail?id=12 */
+static void
+extract_post_file_write(const gchar *fname)
+{
+        gchar *basename = g_path_get_basename(fname);
+        gchar *pos = strchr(basename, ';');
+        if (pos) {
+                gchar *dirname = g_path_get_dirname(fname);
+                *pos = '\0';
+                gchar *newfname = g_build_filename(dirname, basename, NULL);
+                if (rename(fname, newfname) != 0) {
+                        g_error("rename \"%s\" to \"%s\" failed: %s", fname, newfname, strerror(errno));
+                }
+                g_free(dirname);
+                g_free(newfname);
+        }
+        g_free(basename);
+}
+
 /* External functions */
 
 CsChmfile *
@@ -907,7 +924,7 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
 
         /* parse hhk file */
         if (priv->hhk != NULL && priv->index_list == NULL) {
-                gchar* path = g_build_filename(priv->bookfolder, priv->hhk, NULL);
+                gchar *path = g_build_filename(priv->bookfolder, priv->hhk, NULL);
 
                 parse_hhk_file(self, path, priv->encoding);
                 g_debug("CS_CHMFILE >>> priv->index_list = %p", priv->index_list);
@@ -1015,21 +1032,4 @@ cs_chmfile_set_fixed_font(CsChmfile *self, const gchar *font_name)
         g_free(priv->fixed_font);
 
         priv->fixed_font = g_strdup(font_name);
-}
-
-/* see http://code.google.com/p/chmsee/issues/detail?id=12 */
-void extract_post_file_write(const gchar* fname) {
-        gchar* basename = g_path_get_basename(fname);
-        gchar* pos = strchr(basename, ';');
-        if(pos) {
-                gchar* dirname = g_path_get_dirname(fname);
-                *pos = '\0';
-                gchar* newfname = g_build_filename(dirname, basename, NULL);
-                if(g_rename(fname, newfname) != 0) {
-                        g_error("rename \"%s\" to \"%s\" failed: %s", fname, newfname, strerror(errno));
-                }
-                g_free(dirname);
-                g_free(newfname);
-        }
-        g_free(basename);
 }

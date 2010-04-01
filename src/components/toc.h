@@ -21,7 +21,6 @@
 #ifndef __CS_TOC_H__
 #define __CS_TOC_H__
 
-#include <glib.h>
 #include <gtk/gtk.h>
 
 #include "models/link.h"
