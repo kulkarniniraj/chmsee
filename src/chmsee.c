@@ -1047,7 +1047,9 @@ chmsee_get_lang(Chmsee *self)
 void
 chmsee_set_lang(Chmsee *self, int lang)
 {
-        CHMSEE_GET_PRIVATE (self)->config->lang = lang;
+        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
+        priv->config->lang = lang;
+        cs_html_gecko_set_default_lang(lang);
 }
 
 gboolean

@@ -425,12 +425,13 @@ get_encoding_by_lcid(guint32 lcid)
         case 0x0405:
         case 0x040e:
         case 0x0418:
-        case 0x0815:
         case 0x081a:
         case 0x041b:
         case 0x0424:
                 return "ISO-8859-2";
                 break;
+        case 0x0415:
+                return "WINDOWS-1250";
         case 0x0c01:
                 return "WINDOWS-1256";
         case 0x0401:
