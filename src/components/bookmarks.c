@@ -115,6 +115,7 @@ cs_bookmarks_init(CsBookmarks *self)
 
         /* bookmark title */
         priv->entry = gtk_entry_new();
+        gtk_entry_set_max_length(GTK_ENTRY (priv->entry), ENTRY_MAX_LENGTH);
 
         g_signal_connect(priv->entry,
                          "changed",

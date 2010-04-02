@@ -22,6 +22,7 @@
 
 #include "index.h"
 #include "treeview.h"
+#include "utils.h"
 #include "models/link.h"
 
 /* Signals */
@@ -70,6 +71,7 @@ cs_index_init(CsIndex* self)
         CsIndexPrivate *priv = CS_INDEX_GET_PRIVATE(self);
 
         priv->filter_entry = GTK_ENTRY (gtk_entry_new());
+        gtk_entry_set_max_length(GTK_ENTRY (priv->filter_entry), ENTRY_MAX_LENGTH);
         g_signal_connect(priv->filter_entry,
                          "changed",
                          G_CALLBACK (filter_changed_cb),

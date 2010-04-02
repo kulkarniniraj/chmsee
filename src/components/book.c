@@ -243,6 +243,7 @@ cs_book_init(CsBook *self)
         gtk_box_pack_start(GTK_BOX (priv->findbar), find_label, FALSE, FALSE, 0);
 
         GtkWidget *find_entry = gtk_entry_new();
+        gtk_entry_set_max_length(GTK_ENTRY (find_entry), ENTRY_MAX_LENGTH);
         gtk_box_pack_start(GTK_BOX (priv->findbar), find_entry, FALSE, FALSE, 0);
         g_object_set_data(G_OBJECT (priv->findbar), "find-entry", find_entry);
         g_signal_connect(find_entry,
