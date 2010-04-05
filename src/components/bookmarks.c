@@ -289,15 +289,16 @@ cs_bookmarks_set_current_link(CsBookmarks *self, const Link *link)
 
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
 
-        g_debug("CS_BOOKMARKS >>> set bookmarks entry text = %s", link->name);
-        gtk_entry_set_text(GTK_ENTRY (priv->entry), link->name);
+        g_debug("CS_BOOKMARKS >>> set bookmarks entry text = %s, length = %d", link->name, strlen(link->name));
+        gchar *entry_text = g_strndup(link->name, ENTRY_MAX_LENGTH - 1);
+        gtk_entry_set_text(GTK_ENTRY (priv->entry), entry_text);
+        g_free(entry_text);
 
         gtk_editable_set_position(GTK_EDITABLE (priv->entry), -1);
         gtk_editable_select_region(GTK_EDITABLE (priv->entry), -1, -1);
 
-        g_free(priv->current_uri);
-
         g_debug("CS_BOOKMARKS >>> set current link = %s", link->uri);
+        g_free(priv->current_uri);
         priv->current_uri = g_strdup(link->uri);
 }
 

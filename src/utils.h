@@ -46,7 +46,7 @@ G_BEGIN_DECLS
 #endif
 
 #define MAXLINE 1024
-#define ENTRY_MAX_LENGTH 30
+#define ENTRY_MAX_LENGTH 80
 
 #define RESOURCE_FILE(file) (CHMSEE_DATA_DIR G_DIR_SEPARATOR_S file)
 #define BUILDER_WIDGET(builder, widget) (GTK_WIDGET (gtk_builder_get_object(builder, widget)))
