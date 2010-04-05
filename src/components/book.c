@@ -363,7 +363,7 @@ static void
 link_selected_cb(GtkWidget *widget, Link *link, CsBook *self)
 {
         g_debug("CS_BOOK >>> link selected callback, url = %s", link->uri);
-        if (!g_ascii_strcasecmp(CHMSEE_NO_LINK, link->uri))
+        if (!g_ascii_strcasecmp(CHMSEE_NO_LINK, link->uri) || strlen(link->uri) == 0)
                 return;
 
         char *scheme = g_uri_parse_scheme(link->uri);
@@ -412,6 +412,9 @@ static gboolean
 html_open_uri_cb(CsHtmlGecko *html, const gchar *full_uri, CsBook *self)
 {
         g_debug("CS_BOOK >>> enter html_open_uri_cb with uri = %s", full_uri);
+        if (!full_uri || strlen(full_uri) == 0)
+                return TRUE;
+
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
         char *scheme = g_uri_parse_scheme(full_uri);
@@ -1023,6 +1026,10 @@ void
 cs_book_new_tab_with_fulluri(CsBook *self, const gchar *full_uri)
 {
         g_debug("CS_BOOK >>> new tab with full url %s", full_uri);
+
+        if (!full_uri || strlen(full_uri) == 0)
+                return;
+
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
         char *scheme = g_uri_parse_scheme(full_uri);
