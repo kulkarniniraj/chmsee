@@ -148,7 +148,6 @@ get_real_uri(const gchar *uri)
                 real_uri = g_strdup(uri);
 
         p = g_strrstr(real_uri, ";");
-        g_debug("check reserved character ';' p = %p", p);
 
         if (p) {
                 g_free(real_uri);
