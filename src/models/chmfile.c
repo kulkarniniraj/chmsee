@@ -419,17 +419,15 @@ get_encoding_by_lcid(guint32 lcid)
         case 0x041d:
         case 0x081d:
                 return "ISO-8859-1";
-                break;
         case 0x041c:
         case 0x041a:
         case 0x0405:
         case 0x040e:
         case 0x0418:
-        case 0x081a:
         case 0x041b:
         case 0x0424:
+        case 0x081a:
                 return "ISO-8859-2";
-                break;
         case 0x0415:
                 return "WINDOWS-1250";
         case 0x0c01:
@@ -452,41 +450,31 @@ get_encoding_by_lcid(guint32 lcid)
         case 0x0429:
         case 0x0420:
                 return "ISO-8859-6";
-                break;
         case 0x0408:
                 return "ISO-8859-7";
-                break;
         case 0x040d:
                 return "ISO-8859-8";
-                break;
         case 0x042c:
         case 0x041f:
         case 0x0443:
                 return "ISO-8859-9";
-                break;
         case 0x041e:
                 return "ISO-8859-11";
-                break;
         case 0x0425:
         case 0x0426:
         case 0x0427:
                 return "ISO-8859-13";
-                break;
         case 0x0411:
                 return "cp932";
-                break;
         case 0x0804:
         case 0x1004:
                 return "cp936";
-                break;
         case 0x0412:
                 return "cp949";
-                break;
         case 0x0404:
         case 0x0c04:
         case 0x1404:
                 return "cp950";
-                break;
         case 0x082c:
         case 0x0423:
         case 0x0402:
@@ -498,10 +486,8 @@ get_encoding_by_lcid(guint32 lcid)
         case 0x0422:
         case 0x0843:
                 return "cp1251";
-                break;
         default:
                 return "";
-                break;
         }
 }
 
@@ -544,9 +530,7 @@ chmfile_file_info(CsChmfile *self)
         /* convert encoding to UTF-8 */
         if (priv->encoding != NULL) {
                 if (priv->bookname) {
-                        gchar *bookname_utf8 = g_convert(priv->bookname, -1, "UTF-8",
-                                                         priv->encoding,
-                                                         NULL, NULL, NULL);
+                        gchar *bookname_utf8 = convert_string_to_utf8(priv->bookname, priv->encoding);
                         g_debug("CS_CHMFILE >>> priv->bookname = %s, bookname_utf8 = %s", priv->bookname, bookname_utf8);
                         g_free(priv->bookname);
                         priv->bookname = bookname_utf8;
@@ -562,6 +546,12 @@ chmfile_file_info(CsChmfile *self)
                         gchar *hhk_utf8 = convert_filename_to_utf8(priv->hhk, priv->encoding);
                         g_free(priv->hhk);
                         priv->hhk = hhk_utf8;
+                }
+
+                if (priv->homepage) {
+                        gchar *homepage_utf8 = convert_filename_to_utf8(priv->homepage, priv->encoding);
+                        g_free(priv->homepage);
+                        priv->homepage = homepage_utf8;
                 }
         }
 
