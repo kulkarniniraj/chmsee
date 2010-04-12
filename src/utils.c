@@ -197,11 +197,8 @@ file_exist_ncase(const gchar *path)
                 return NULL;
         }
 
-        g_debug("UTILS >>> dirname = %s", dirname);
-        gchar *filename = g_path_get_basename(path);
-        g_debug("UTILS >>> filename = %s", filename);
-
         /* check new dirname with basename */
+        gchar *filename = g_path_get_basename(path);
         gchar *newfile = g_strdup_printf("%s/%s", dirname, filename);
         if (g_file_test(newfile, G_FILE_TEST_EXISTS)) {
                 g_debug("UTILS >>> file_exist_ncase found newfile: %s", newfile);

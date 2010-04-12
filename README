@@ -10,7 +10,7 @@ Dependencies
 ============
 
 Compile ChmSee from source you need following packages:
- * cmake >= 2.6
+ * cmake >= 2.6(maybe need 2.8, I only tested with 2.8)
  * gtk2 >= 2.16
  * xulrunner >= 1.9
  * chmlib

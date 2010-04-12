@@ -1,5 +1,5 @@
-ChmSee 1.1.0-rc2 2010-04-05
----------------------------
+ChmSee 1.1.0 2010-04-12
+-----------------------
 * Only support Gecko > 1.9 (Firefox3)
 * Need gtk+ >= 2.16 (for using gtkbuilder and g_uri functions)
 * Add index page filter string (Thanks Mingxi Wu <mxwu@novell.com>)
