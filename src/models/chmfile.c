@@ -88,7 +88,7 @@ static void extract_post_file_write(const gchar *);
 
 static GNode *parse_hhc_file(const gchar *, const gchar*);
 static void parse_hhk_file(CsChmfile *, const gchar *, const gchar*);
-static void tree_to_list_callback(GNode *, gpointer);
+static gboolean tree_to_list_callback(GNode *, gpointer);
 static void free_list_data(gpointer, gpointer);
 static gchar *check_file_ncase(CsChmfile *, gchar *);
 
@@ -745,15 +745,20 @@ parse_hhk_file(CsChmfile *self, const gchar *file, const gchar *encoding)
         g_debug("CHMFILE >>> parse hhk file tree = %p", tree);
 
         /* convert GNode to GList */
-        g_node_children_foreach(tree, G_TRAVERSE_LEAVES, tree_to_list_callback, priv);
+        g_node_traverse(tree, G_PRE_ORDER, G_TRAVERSE_ALL, -1, tree_to_list_callback, priv);
         g_node_destroy(tree);
 }
 
-static void
+static gboolean
 tree_to_list_callback(GNode *node, gpointer data)
 {
         CsChmfilePrivate *priv = (CsChmfilePrivate *)data;
-        priv->index_list = g_list_append(priv->index_list, node->data);
+
+        if (node->parent) {
+                priv->index_list = g_list_append(priv->index_list, node->data);
+        }
+
+        return FALSE;
 }
 
 static void

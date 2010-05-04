@@ -29,11 +29,13 @@
 static gint     depth = -1;
 static gint     prev_depth = -1;
 static gboolean tree_item = FALSE;
-static gchar   *title = NULL;
-static gchar   *local = NULL;
+static gint     item_count = 0;
+static gchar   *title[MAXLINE];
+static gchar   *local[MAXLINE];
 static GNode   *parent = NULL;
 static GNode   *prev_node = NULL;
 
+static const gchar *get_attr(const gchar **, const gchar *);
 static void startDocumentHH(void *);
 static void endDocumentHH(void *);
 static void startElementHH(void *, const xmlChar *, const xmlChar **);
@@ -103,8 +105,8 @@ endDocumentHH(void *ctx)
 static void
 startElementHH(void *ctx, const xmlChar *name_, const xmlChar **atts_)
 {
-        const gchar*  name = (const gchar*) name_;
-        const gchar** atts = (const gchar**) atts_;
+        const gchar  *name = (const gchar  *)name_;
+        const gchar **atts = (const gchar **)atts_;
 
         /* g_debug("SAX.startElement(%s)", name); */
 
@@ -119,16 +121,23 @@ startElementHH(void *ctx, const xmlChar *name_, const xmlChar **atts_)
                 const gchar *param_name = get_attr(atts, "name");
                 const gchar *param_value = get_attr(atts, "value");
 
-                if(param_name == NULL
-                   || param_value == NULL) {
+                if (param_name == NULL || param_value == NULL) {
                         return;
                 }
 
                 if (tree_item) {
-                        if (g_ascii_strcasecmp("Name", param_name) == 0)
-                                title = g_strdup(param_value);
-                        else if (g_ascii_strcasecmp("Local", param_name) == 0)
-                                local = g_strdup(param_value);
+                        if (g_ascii_strcasecmp("Keyword", param_name) == 0) {
+                                title[item_count] = g_strdup(param_value);
+                        } else if (g_ascii_strcasecmp("Name", param_name) == 0) {
+                                if (title[item_count])
+                                        g_free(title[item_count]);
+                                title[item_count] = g_strdup(param_value);
+                        } else if (g_ascii_strcasecmp("Local", param_name) == 0) {
+                                local[item_count] = g_strdup(param_value);
+                        }
+
+                        if (title[item_count] && local[item_count])
+                                item_count++;
                 }
         }
 }
@@ -136,11 +145,11 @@ startElementHH(void *ctx, const xmlChar *name_, const xmlChar **atts_)
 static void
 endElementHH(void *ctx, const xmlChar *name_)
 {
-        const gchar* name = (const gchar*) name_;
+        const gchar *name = (const gchar *)name_;
 
         GNode *link_tree = (GNode *)ctx;
         GNode *node;
-        Link *link;
+        Link  *link;
 
         /* g_debug("SAX.endElement(%s)", name); */
 
@@ -150,40 +159,44 @@ endElementHH(void *ctx, const xmlChar *name_)
                 if (!tree_item)
                         return;
 
-                if (title == NULL)
-                        title = g_strdup( _("No Title"));
-                if (local == NULL)
-                        local = g_strdup(CHMSEE_NO_LINK);
-
                 /* g_debug("prev_depth = %d", prev_depth); */
                 /* g_debug("depth = %d", depth); */
-
-                /* g_debug("title = %s", title); */
-                /* g_debug("local = %s", local); */
-
-                link = link_new(LINK_TYPE_PAGE, title, local);
-                node = g_node_new(link);
 
                 if (depth == 0) {
                         parent = link_tree;
                 } else {
                         if (depth > prev_depth)
-                                parent = prev_node;
+                                parent = prev_node ? prev_node : link_tree;
                         else
                                 for (; depth < prev_depth; prev_depth--)
                                         parent = parent->parent;
                 }
 
-                g_node_append(parent, node);
-                prev_node = node;
+                gint i = 0;
+                for (; i < item_count; i++) {
+                        if (title[i] == NULL)
+                                title[i] = g_strdup( _("No Title"));
+                        if (local[i] == NULL)
+                                local[i] = g_strdup(CHMSEE_NO_LINK);
+
+                        /* g_debug("title[%d] = %s", i, title[i]); */
+                        /* g_debug("local[%d] = %s", i, local[i]); */
+
+                        link = link_new(LINK_TYPE_PAGE, title[i], local[i]);
+                        node = g_node_new(link);
+
+                        g_node_append(parent, node);
+                        prev_node = node;
+
+                        g_free(title[i]);
+                        g_free(local[i]);
+
+                        title[i] = local[i] = NULL;
+                }
 
                 prev_depth = depth;
                 tree_item = FALSE;
-
-                g_free(title);
-                g_free(local);
-
-                title = local = NULL;
+                item_count = 0;
         }
 }
 
@@ -192,6 +205,13 @@ cs_parse_file(const gchar *filename, const gchar *encoding)
 {
         htmlDocPtr doc = NULL;
         GNode    *tree = g_node_new(NULL);
+
+        depth = -1;
+        prev_depth = -1;
+        tree_item = FALSE;
+        item_count = 0;
+        parent = NULL;
+        prev_node = NULL;
 
         doc = htmlSAXParseFile(filename,
                                encoding,
