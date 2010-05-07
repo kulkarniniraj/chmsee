@@ -40,6 +40,7 @@ typedef struct _CsChmfilePrivate CsChmfilePrivate;
 
 struct _CsChmfilePrivate {
         GNode       *toc_tree;
+        GList       *toc_list;
         GList       *index_list;
         GList       *bookmarks_list;
 
@@ -86,8 +87,7 @@ static void load_bookinfo(CsChmfile *);
 static void save_bookinfo(CsChmfile *);
 static void extract_post_file_write(const gchar *);
 
-static GNode *parse_hhc_file(const gchar *, const gchar*);
-static void parse_hhk_file(CsChmfile *, const gchar *, const gchar*);
+static GList *convert_node_to_list(GNode *);
 static gboolean tree_to_list_callback(GNode *, gpointer);
 static void free_list_data(gpointer, gpointer);
 static gchar *check_file_ncase(CsChmfile *, gchar *);
@@ -727,35 +727,22 @@ chmfile_system_info(struct chmFile *cfd, CsChmfile *self)
         }
 }
 
-static GNode *
-parse_hhc_file(const gchar *file, const gchar *encoding)
+static GList *
+convert_node_to_list(GNode *tree)
 {
-        g_debug("CS_CHMFILE >>> parse hhc file = %s, encoding = %s", file, encoding);
-        return cs_parse_file(file, encoding);
-}
-
-static void
-parse_hhk_file(CsChmfile *self, const gchar *file, const gchar *encoding)
-{
-        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
-
-        g_debug("CHMFILE >>> parse hhk file = %s, encoding = %s", file, encoding);
-
-        GNode *tree = cs_parse_file(file, encoding);
-        g_debug("CHMFILE >>> parse hhk file tree = %p", tree);
-
-        /* convert GNode to GList */
-        g_node_traverse(tree, G_PRE_ORDER, G_TRAVERSE_ALL, -1, tree_to_list_callback, priv);
-        g_node_destroy(tree);
+        GList *root;
+        root->data = NULL;
+        g_node_traverse(tree, G_PRE_ORDER, G_TRAVERSE_ALL, -1, tree_to_list_callback, root);
+        return (GList *)root->data;
 }
 
 static gboolean
 tree_to_list_callback(GNode *node, gpointer data)
 {
-        CsChmfilePrivate *priv = (CsChmfilePrivate *)data;
+        GList *root = (GList *)data;
 
         if (node->parent) {
-                priv->index_list = g_list_append(priv->index_list, node->data);
+                root->data = g_list_append((GList *)root->data, node->data);
         }
 
         return FALSE;
@@ -915,17 +902,20 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
         if (priv->hhc != NULL && g_ascii_strcasecmp(priv->hhc, "(null)") != 0) {
                 gchar *hhcfile = g_build_filename(priv->bookfolder, priv->hhc, NULL);
 
-                priv->toc_tree = parse_hhc_file(hhcfile, priv->encoding);
+                priv->toc_tree = cs_parse_file(hhcfile, priv->encoding);
+                priv->toc_list = convert_node_to_list(priv->toc_tree);
                 g_free(hhcfile);
         }
 
         /* parse hhk file */
         if (priv->hhk != NULL && priv->index_list == NULL) {
-                gchar *path = g_build_filename(priv->bookfolder, priv->hhk, NULL);
+                gchar *hhkfile = g_build_filename(priv->bookfolder, priv->hhk, NULL);
 
-                parse_hhk_file(self, path, priv->encoding);
-                g_debug("CS_CHMFILE >>> priv->index_list = %p", priv->index_list);
-                g_free(path);
+                GNode *tree = cs_parse_file(hhkfile, priv->encoding);
+                priv->index_list = convert_node_to_list(tree);
+
+                g_node_destroy(tree);
+                g_free(hhkfile);
         }
 
         /* Load bookmarks */
@@ -942,6 +932,12 @@ GNode *
 cs_chmfile_get_toc_tree(CsChmfile *self)
 {
         return CS_CHMFILE_GET_PRIVATE (self)->toc_tree;
+}
+
+GList *
+cs_chmfile_get_toc_list(CsChmfile *self)
+{
+        return CS_CHMFILE_GET_PRIVATE (self)->toc_list;
 }
 
 GList *

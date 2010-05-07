@@ -59,9 +59,11 @@ void         cs_book_reload_current_page(CsBook *);
 gboolean     cs_book_has_homepage(CsBook *);
 void         cs_book_homepage(CsBook *);
 gboolean     cs_book_can_go_back(CsBook *);
-gboolean     cs_book_can_go_forward(CsBook *);
 void         cs_book_go_back(CsBook *);
+gboolean     cs_book_can_go_forward(CsBook *);
 void         cs_book_go_forward(CsBook *);
+void         cs_book_go_prev(CsBook *);
+void         cs_book_go_next(CsBook *);
 
 void         cs_book_zoom_in(CsBook *);
 void         cs_book_zoom_out(CsBook *);

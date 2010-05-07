@@ -101,6 +101,8 @@ static const char *ui_description =
         "      <menuitem action='Home'/>"
         "      <menuitem action='Back'/>"
         "      <menuitem action='Forward'/>"
+        "      <menuitem action='Prev'/>"
+        "      <menuitem action='Next'/>"
         "      <separator/>"
         "      <menuitem action='ZoomIn'/>"
         "      <menuitem action='ZoomReset'/>"
@@ -118,6 +120,8 @@ static const char *ui_description =
         "    <toolitem action='Back'/>"
         "    <toolitem action='Forward'/>"
         "    <toolitem action='Home'/>"
+        "    <toolitem action='Prev'/>"
+        "    <toolitem action='Next'/>"
         "    <toolitem action='ZoomIn'/>"
         "    <toolitem action='ZoomReset'/>"
         "    <toolitem action='ZoomOut'/>"
@@ -156,6 +160,8 @@ static void on_menu_edit(GtkWidget *, Chmsee *);
 static void on_home(GtkWidget *, Chmsee *);
 static void on_back(GtkWidget *, Chmsee *);
 static void on_forward(GtkWidget *, Chmsee *);
+static void on_prev(GtkWidget *, Chmsee *);
+static void on_next(GtkWidget *, Chmsee *);
 static void on_zoom_in(GtkWidget *, Chmsee *);
 static void on_zoom_reset(GtkWidget *, Chmsee *);
 static void on_zoom_out(GtkWidget *, Chmsee *);
@@ -205,6 +211,8 @@ static const GtkActionEntry entries[] = {
         { "Home", GTK_STOCK_HOME, N_("_Home"), NULL, NULL, G_CALLBACK(on_home)},
         { "Back", GTK_STOCK_GO_BACK, N_("_Back"), "<alt>Left", NULL, G_CALLBACK(on_back)},
         { "Forward", GTK_STOCK_GO_FORWARD, N_("_Forward"), "<alt>Right", NULL, G_CALLBACK(on_forward)},
+        { "Prev", GTK_STOCK_GO_UP, N_("_Prev"), "<alt>Up", NULL, G_CALLBACK(on_prev)},
+        { "Next", GTK_STOCK_GO_DOWN, N_("_Next"), "<alt>Down", NULL, G_CALLBACK(on_next)},
 
         { "About", GTK_STOCK_ABOUT, N_("_About"), NULL, N_("About ChmSee"), G_CALLBACK(on_about)},
 
@@ -403,6 +411,8 @@ book_model_changed_cb(Chmsee *self, CsChmfile *chmfile, const gchar *filename)
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "ZoomReset"), has_model);
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Back"), has_model);
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Forward"), has_model);
+        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Prev"), has_model);
+        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Next"), has_model);
 
         gtk_widget_set_sensitive(priv->book, has_model);
 
@@ -546,6 +556,20 @@ on_forward(GtkWidget *widget, Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_go_forward(CS_BOOK (priv->book));
+}
+
+static void
+on_prev(GtkWidget *widget, Chmsee *self)
+{
+        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
+        cs_book_go_prev(CS_BOOK (priv->book));
+}
+
+static void
+on_next(GtkWidget *widget, Chmsee *self)
+{
+        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
+        cs_book_go_next(CS_BOOK (priv->book));
 }
 
 static void
@@ -745,6 +769,8 @@ populate_windows(Chmsee *self)
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "Home"), FALSE);
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "Back"), FALSE);
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "Forward"), FALSE);
+        gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "Prev"), FALSE);
+        gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "Next"), FALSE);
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "SidePane"), FALSE);
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "ZoomIn"), FALSE);
         gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "ZoomOut"), FALSE);

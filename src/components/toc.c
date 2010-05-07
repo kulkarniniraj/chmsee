@@ -397,7 +397,7 @@ cs_toc_select_uri(CsToc *self, const gchar *uri)
         }
 
         if (!data.found) {
-                g_debug("CS_TOC >>> select uri: cannot found data");
+                g_debug("CS_TOC >>> select uri: cannot find data");
                 return;
         }
 
@@ -480,4 +480,53 @@ cs_toc_get_selected_book_title(CsToc *self)
                            -1);
 
         return link->name;
+}
+
+const gchar *
+cs_toc_get_next_uri(CsToc *self)
+{
+        g_debug("CS_TOC >>> get next uri");
+        g_return_val_if_fail(IS_CS_TOC (self), NULL);
+
+        CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
+        GtkTreeModel *model = GTK_TREE_MODEL (priv->store);
+        GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview));
+
+        GtkTreeIter current_iter;
+        if (!gtk_tree_selection_get_selected(selection, NULL, &current_iter))
+                return NULL;
+
+        /* GtkTreePath *path = gtk_tree_model_get_path(model, &current_iter); */
+        /* g_debug("CS_TOC >>> current path = %s", gtk_tree_path_to_string(path)); */
+        /* gtk_tree_path_free(path); */
+
+        GtkTreeIter next_iter = current_iter;
+        if (!gtk_tree_model_iter_children(model, &next_iter, &current_iter)) {
+                next_iter = current_iter;
+                if (!gtk_tree_model_iter_next(model, &next_iter)) {
+                        gboolean has_next_iter = FALSE;
+                        GtkTreeIter iter = current_iter;
+                        while (!has_next_iter) {
+                                GtkTreeIter parent_iter = iter;
+                                if (!gtk_tree_model_iter_parent(model, &parent_iter, &iter))
+                                        return NULL;
+
+                                next_iter = iter = parent_iter;
+                                if (gtk_tree_model_iter_next(model, &next_iter))
+                                        has_next_iter = TRUE;
+                        }
+                }
+        }
+
+        /* GtkTreePath *next_path = gtk_tree_model_get_path(model, &next_iter); */
+        /* g_debug("CS_TOC >>> next path = %s", gtk_tree_path_to_string(next_path)); */
+        /* gtk_tree_path_free(next_path); */
+
+        Link *link;
+        gtk_tree_model_get(model, &next_iter,
+                           COL_LINK, &link,
+                           -1);
+
+        g_debug("CS_TOC >>> next uri = %s", link->uri);
+        return NULL;
 }
