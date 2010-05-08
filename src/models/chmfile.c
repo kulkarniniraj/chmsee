@@ -29,6 +29,8 @@
 #include <sys/stat.h>
 #include <gcrypt.h>
 #include <chm_lib.h>
+#include <gtk/gtkwindow.h>
+#include <gtk/gtk.h>
 
 #include "chmfile.h"
 #include "utils.h"
@@ -63,6 +65,13 @@ struct extract_context
         const char *hhk_file;
 };
 
+struct extract_data
+{
+        const gchar *filename;
+        const gchar *bookfolder;
+        int          rval;
+};
+
 #define CS_CHMFILE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), CS_TYPE_CHMFILE, CsChmfilePrivate))
 
 #define UINT16ARRAY(x) ((unsigned char)(x)[0] | ((u_int16_t)(x)[1] << 8))
@@ -91,6 +100,8 @@ static GList *convert_node_to_list(GNode *);
 static gboolean tree_to_list_callback(GNode *, gpointer);
 static void free_list_data(gpointer, gpointer);
 static gchar *check_file_ncase(CsChmfile *, gchar *);
+
+static void extract_file(struct extract_data *);
 
 /* GObject functions */
 
@@ -167,6 +178,19 @@ cs_chmfile_finalize(GObject *object)
 }
 
 /* Internal functions */
+
+static void
+extract_file(struct extract_data *data)
+{
+        gboolean rval = extract_chm(data->filename, data->bookfolder);
+
+        gdk_threads_enter();
+        if (rval)
+                data->rval = 0;
+        else
+                data->rval = 1;
+        gdk_threads_leave();
+}
 
 static int
 dir_exists(const char *path)
@@ -882,7 +906,46 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
         if (g_file_test(priv->bookfolder, G_FILE_TEST_IS_DIR)) {
                 load_bookinfo(self);
         } else {
-                if (!extract_chm(filename, priv->bookfolder)) {
+                GtkWidget *popup_window = gtk_window_new(GTK_WINDOW_POPUP);
+                GtkWidget *progress = gtk_progress_bar_new();
+
+                gtk_container_add(GTK_CONTAINER (popup_window), progress);
+                gtk_window_set_position(GTK_WINDOW (popup_window), GTK_WIN_POS_CENTER);
+                gtk_widget_set_size_request(popup_window, 300, 40);
+                gtk_widget_show_all(popup_window);
+
+                struct extract_data data;
+
+                data.filename = filename;
+                data.bookfolder = priv->bookfolder;
+                data.rval = -1;
+
+                g_thread_create((GThreadFunc) (extract_file), &data, FALSE, NULL);
+
+                gdouble percent = 0.0;
+                while (data.rval < 0 && percent <= 100.0) {
+                        gchar *message = g_strdup_printf(_("Processing... %.0f%% complete"), percent);
+                        gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR (progress), percent / 100.0);
+                        gtk_progress_bar_set_text(GTK_PROGRESS_BAR (progress), message);
+
+                        while (gtk_events_pending())
+                                gtk_main_iteration();
+
+                        g_usleep(100000);
+                        percent += 5.0;
+                        g_free(message);
+                }
+
+                gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR (progress), 1.0);
+                gtk_progress_bar_set_text(GTK_PROGRESS_BAR (progress), _("Processing done. Loading..."));
+
+                while (gtk_events_pending())
+                        gtk_main_iteration();
+                g_usleep(200000);
+
+                gtk_widget_destroy(GTK_WIDGET (popup_window));
+
+                if (data.rval == 1) {
                         g_warning("CS_CHMFILE >>> extract_chm failed: %s", filename);
                         return NULL;
                 }

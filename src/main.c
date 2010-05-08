@@ -193,6 +193,8 @@ main(int argc, char *argv[])
         if (!g_thread_supported())
                 g_thread_init(NULL);
 
+        gdk_threads_init();
+
         GOptionEntry options[] = {
                 {"version", 0,
                  0, G_OPTION_ARG_NONE, &option_version,
@@ -248,14 +250,16 @@ main(int argc, char *argv[])
         bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
         textdomain(GETTEXT_PACKAGE);
 
-        /* Show splash screen */
-        startup_popup_new();
-
         CsConfig *config = load_config();
 
         /* if (bookshelf != NULL) { */
         /*         config->bookshelf = g_strdup(bookshelf); */
         /* } */
+
+        gdk_threads_enter();
+
+        /* Show splash screen */
+        startup_popup_new();
 
         Chmsee *chmsee = chmsee_new(config);
 
@@ -270,6 +274,8 @@ main(int argc, char *argv[])
                 chmsee_open_file(chmsee, config->last_file);
 
         gtk_main();
+
+        gdk_threads_leave();
 
         save_config(config);
 
