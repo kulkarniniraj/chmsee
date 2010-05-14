@@ -948,8 +948,6 @@ chmsee_new(CsConfig *config)
 
         priv->config = config;
 
-        cs_html_gecko_set_default_lang(config->lang);
-
         if (config->pos_x >= 0 && config->pos_y >= 0)
                 gtk_window_move(GTK_WINDOW (self), config->pos_x, config->pos_y);
 
@@ -1064,20 +1062,6 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
         }
 }
 
-int
-chmsee_get_lang(Chmsee *self)
-{
-        return CHMSEE_GET_PRIVATE (self)->config->lang;
-}
-
-void
-chmsee_set_lang(Chmsee *self, int lang)
-{
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        priv->config->lang = lang;
-        cs_html_gecko_set_default_lang(lang);
-}
-
 gboolean
 chmsee_get_startup_lastfile(Chmsee *self)
 {
@@ -1120,6 +1104,21 @@ chmsee_set_fixed_font(Chmsee *self, const gchar *font_name)
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_html_gecko_set_fixed_font(font_name);
         cs_chmfile_set_fixed_font(priv->chmfile, font_name);
+}
+
+const gchar *
+chmsee_get_charset(Chmsee *self)
+{
+        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
+        return cs_chmfile_get_charset(priv->chmfile);
+}
+
+void
+chmsee_set_charset(Chmsee *self, const gchar *charset)
+{
+        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
+        cs_chmfile_set_charset(priv->chmfile, charset);
+        cs_book_reload_current_page(CS_BOOK (priv->book));
 }
 
 gboolean

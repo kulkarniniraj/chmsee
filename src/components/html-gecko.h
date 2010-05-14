@@ -73,9 +73,10 @@ gboolean     cs_html_gecko_find(CsHtmlGecko *, const gchar *, gboolean, gboolean
 gboolean     cs_html_gecko_init_system(void);
 void         cs_html_gecko_shutdown_system(void);
 
-void         cs_html_gecko_set_default_lang(gint);
 void         cs_html_gecko_set_variable_font(const gchar *);
 void         cs_html_gecko_set_fixed_font(const gchar *);
+
+void         cs_html_gecko_set_charset(CsHtmlGecko *, const gchar *);
 
 G_END_DECLS
 

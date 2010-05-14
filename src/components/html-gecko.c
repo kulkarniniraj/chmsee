@@ -479,12 +479,6 @@ cs_html_gecko_shutdown_system()
 }
 
 void
-cs_html_gecko_set_default_lang(gint lang)
-{
-        gecko_utils_set_default_lang(lang);
-}
-
-void
 cs_html_gecko_set_variable_font(const gchar *font_name)
 {
         g_debug("CS_HTML_GECKO >>> set variable font %s", font_name);
@@ -496,4 +490,12 @@ cs_html_gecko_set_fixed_font(const gchar *font_name)
 {
         g_debug("CS_HTML_GECKO >>> set fixed font %s", font_name);
         gecko_utils_set_font(GECKO_PREF_FONT_FIXED, font_name);
+}
+
+void
+cs_html_gecko_set_charset(CsHtmlGecko *html, const gchar *charset)
+{
+        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
+
+        gecko_utils_set_charset(priv->gecko, charset);
 }

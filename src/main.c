@@ -98,7 +98,6 @@ load_config()
         if (!g_file_test(config->bookshelf, G_FILE_TEST_IS_DIR))
                 mkdir(config->bookshelf, 0755);
 
-        config->lang       = 0;
         config->last_file  = NULL;
         config->pos_x      = -100;
         config->pos_y      = -100;
@@ -124,7 +123,6 @@ load_config()
         rv = g_key_file_load_from_file(keyfile, config_file, G_KEY_FILE_NONE, NULL);
 
         if (rv) {
-                config->lang      = g_key_file_get_integer(keyfile, "ChmSee", "LANG", NULL);
                 config->last_file = g_key_file_get_string (keyfile, "ChmSee", "LAST_FILE", NULL);
 
                 config->pos_x      = g_key_file_get_integer(keyfile, "ChmSee", "POS_X", NULL);
@@ -154,7 +152,6 @@ save_config(CsConfig *config)
         gchar *config_file = g_build_filename(config->home, CHMSEE_CONFIG_FILE, NULL);
 
         GKeyFile *keyfile = g_key_file_new();
-        g_key_file_set_integer(keyfile, "ChmSee", "LANG", config->lang);
 
         if (config->last_file)
                 g_key_file_set_string (keyfile, "ChmSee", "LAST_FILE", config->last_file);

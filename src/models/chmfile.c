@@ -53,9 +53,10 @@ struct _CsChmfilePrivate {
 
         gchar       *bookname;
         gchar       *homepage;
-        gchar       *encoding;
+        gchar       *encoding;       /* retrieved from chmfile */
         gchar       *variable_font;
         gchar       *fixed_font;
+        gchar       *charset;        /* user specified on setup window */
 };
 
 struct extract_context
@@ -137,6 +138,7 @@ cs_chmfile_init(CsChmfile *self)
         priv->encoding       = g_strdup("UTF-8");
         priv->variable_font  = g_strdup("Sans 12");
         priv->fixed_font     = g_strdup("Monospace 12");
+        priv->charset        = g_strdup("");
 }
 
 static void
@@ -159,6 +161,7 @@ cs_chmfile_finalize(GObject *object)
         g_free(priv->encoding);
         g_free(priv->variable_font);
         g_free(priv->fixed_font);
+        g_free(priv->charset);
 
         if (priv->index_list) {
                 g_list_foreach(priv->index_list, (GFunc)free_list_data, NULL);
@@ -806,6 +809,7 @@ load_bookinfo(CsChmfile *self)
                 priv->encoding      = g_key_file_get_string(keyfile, "Bookinfo", "encoding", NULL);
                 priv->variable_font = g_key_file_get_string(keyfile, "Bookinfo", "variable_font", NULL);
                 priv->fixed_font    = g_key_file_get_string(keyfile, "Bookinfo", "fixed_font", NULL);
+                priv->charset       = g_key_file_get_string(keyfile, "Bookinfo", "charset", NULL);
         }
 
         g_key_file_free(keyfile);
@@ -834,6 +838,7 @@ save_bookinfo(CsChmfile *self)
         g_key_file_set_string(keyfile, "Bookinfo", "encoding", priv->encoding);
         g_key_file_set_string(keyfile, "Bookinfo", "variable_font", priv->variable_font);
         g_key_file_set_string(keyfile, "Bookinfo", "fixed_font", priv->fixed_font);
+        g_key_file_set_string(keyfile, "Bookinfo", "charset", priv->charset);
 
         gsize    length = 0;
         gchar *contents = g_key_file_to_data(keyfile, &length, NULL);
@@ -1088,4 +1093,21 @@ cs_chmfile_set_fixed_font(CsChmfile *self, const gchar *font_name)
         g_free(priv->fixed_font);
 
         priv->fixed_font = g_strdup(font_name);
+}
+
+const gchar *
+cs_chmfile_get_charset(CsChmfile *self)
+{
+        g_debug("CS_CHMFILE >>> get charset %p charset %p", self, CS_CHMFILE_GET_PRIVATE (self)->charset);
+        return CS_CHMFILE_GET_PRIVATE (self)->charset;
+}
+
+void
+cs_chmfile_set_charset(CsChmfile *self, const gchar *charset)
+{
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+
+        g_free(priv->charset);
+
+        priv->charset = g_strdup(charset);
 }

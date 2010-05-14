@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-08 17:18+0800\n"
+"POT-Creation-Date: 2010-05-14 15:24+0800\n"
 "PO-Revision-Date: 2009-04-13 22:36+0000\n"
 "Last-Translator: Pierre Slamich <pierre.slamich@gmail.com>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -53,12 +53,13 @@ msgid "<b>Cache</b>"
 msgstr "<b>Cache</b>"
 
 #: ../data/setup-window.ui.h:2
-msgid "<b>Charset</b>"
-msgstr "<b>Encodage</b>"
-
-#: ../data/setup-window.ui.h:3
 msgid "<b>Font</b>"
 msgstr "<b>Police</b>"
+
+#: ../data/setup-window.ui.h:3
+#, fuzzy
+msgid "<b>Language</b>"
+msgstr "<b>Cache</b>"
 
 #: ../data/setup-window.ui.h:4
 #, fuzzy
@@ -66,10 +67,6 @@ msgid "<b>Startup</b>"
 msgstr "<b>Encodage</b>"
 
 #: ../data/setup-window.ui.h:5
-msgid "Auto-Detect:"
-msgstr "Détection auto. :"
-
-#: ../data/setup-window.ui.h:6
 msgid ""
 "CHM files extracted in this cache folder, you can press Clear button to free "
 "disk space.\n"
@@ -82,47 +79,24 @@ msgstr ""
 "Note : si vous êtes en train de visualiser un fichier CHM, il vous faudra "
 "l'ouvrir à nouveau."
 
+#: ../data/setup-window.ui.h:8
+#, fuzzy
+msgid "Charset:"
+msgstr "<b>Encodage</b>"
+
 #: ../data/setup-window.ui.h:9
 msgid "Fixed Width:"
 msgstr "Chasse fixe :"
 
 #: ../data/setup-window.ui.h:10
-msgid "Japanese"
-msgstr ""
-
-#: ../data/setup-window.ui.h:11
-msgid "Korean"
-msgstr ""
-
-#: ../data/setup-window.ui.h:12
 msgid "Load last opened file."
 msgstr ""
 
-#: ../data/setup-window.ui.h:13
-msgid "Russian"
-msgstr ""
-
-#: ../data/setup-window.ui.h:14
+#: ../data/setup-window.ui.h:11
 msgid "Setup"
 msgstr "Paramètres"
 
-#: ../data/setup-window.ui.h:15
-msgid "Simplified Chinese"
-msgstr ""
-
-#: ../data/setup-window.ui.h:16
-msgid "Traditional Chinese"
-msgstr ""
-
-#: ../data/setup-window.ui.h:17
-msgid "Ukrainian"
-msgstr ""
-
-#: ../data/setup-window.ui.h:18
-msgid "Universal"
-msgstr ""
-
-#: ../data/setup-window.ui.h:19
+#: ../data/setup-window.ui.h:12
 msgid "Variable Width:"
 msgstr ""
 
@@ -260,27 +234,374 @@ msgstr "Tous les fichiers"
 msgid "Ready!"
 msgstr "Prêt !"
 
-#: ../src/chmsee.c:1060
+#: ../src/chmsee.c:1058
 #, fuzzy, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Le fichier chm %s n'a pas pu être ouvert."
 
-#: ../src/main.c:201
+#: ../src/main.c:198
 msgid "Display the version and exit"
 msgstr "Afficher la version et quitter"
 
-#: ../src/main.c:206
+#: ../src/main.c:203
 msgid "be verbose, repeat 3 times to get all info"
 msgstr ""
 
-#: ../src/main.c:211
+#: ../src/main.c:208
 msgid "be quiet, repeat 2 times to disable all info"
 msgstr ""
 
-#: ../src/main.c:242
+#: ../src/main.c:239
 #, c-format
 msgid "more than 1 argument\n"
 msgstr "plus d'un argument\n"
+
+#: ../src/setup.c:130
+#, fuzzy
+msgid "Auto"
+msgstr "À propos"
+
+#: ../src/setup.c:131
+msgid "West European"
+msgstr ""
+
+#: ../src/setup.c:132
+msgid "East European"
+msgstr ""
+
+#: ../src/setup.c:133
+msgid "East Asian"
+msgstr ""
+
+#: ../src/setup.c:134
+msgid "SE & SW Asian"
+msgstr ""
+
+#: ../src/setup.c:135
+msgid "Middle Eastern"
+msgstr ""
+
+#: ../src/setup.c:136
+msgid "Unicode"
+msgstr ""
+
+#: ../src/setup.c:140
+msgid "Western (ISO-8859-1)"
+msgstr ""
+
+#. index = 0
+#: ../src/setup.c:141
+msgid "Western (ISO-8859-15)"
+msgstr ""
+
+#: ../src/setup.c:142
+msgid "Western (IBM-850)"
+msgstr ""
+
+#: ../src/setup.c:143
+msgid "Western (MacRoman)"
+msgstr ""
+
+#: ../src/setup.c:144
+msgid "Western (Windows-1252)"
+msgstr ""
+
+#: ../src/setup.c:145
+msgid "Celtic (ISO-8859-14)"
+msgstr ""
+
+#: ../src/setup.c:146
+msgid "Greek (ISO-8859-7)"
+msgstr ""
+
+#: ../src/setup.c:147
+msgid "Greek (MacGreek)"
+msgstr ""
+
+#: ../src/setup.c:148
+msgid "Greek (Windows-1253)"
+msgstr ""
+
+#: ../src/setup.c:149
+msgid "Icelandic (MacIcelandic)"
+msgstr ""
+
+#: ../src/setup.c:150
+msgid "Nordic (ISO-8859-10)"
+msgstr ""
+
+#: ../src/setup.c:151
+msgid "South European (ISO-8859-3)"
+msgstr ""
+
+#: ../src/setup.c:152
+msgid "Baltic (ISO-8859-4)"
+msgstr ""
+
+#. index = 12
+#: ../src/setup.c:153
+msgid "Baltic (ISO-8859-13)"
+msgstr ""
+
+#: ../src/setup.c:154
+msgid "Baltic (Windows-1257)"
+msgstr ""
+
+#: ../src/setup.c:155
+msgid "Central European (IBM-852)"
+msgstr ""
+
+#: ../src/setup.c:156
+msgid "Central European (ISO-8859-2)"
+msgstr ""
+
+#: ../src/setup.c:157
+msgid "Central European (MacCE)"
+msgstr ""
+
+#: ../src/setup.c:158
+msgid "Central European (Windows-1250)"
+msgstr ""
+
+#: ../src/setup.c:159
+msgid "Croatian (MacCroatian)"
+msgstr ""
+
+#: ../src/setup.c:160
+msgid "Cyrillic (IBM-855)"
+msgstr ""
+
+#: ../src/setup.c:161
+msgid "Cyrillic (ISO-8895-5)"
+msgstr ""
+
+#: ../src/setup.c:162
+msgid "Cyrillic (ISO-IR-111)"
+msgstr ""
+
+#: ../src/setup.c:163
+msgid "Cyrillic (KOI8-R)"
+msgstr ""
+
+#: ../src/setup.c:164
+msgid "Cyrillic (MacCyrillic)"
+msgstr ""
+
+#: ../src/setup.c:165
+msgid "Cyrillic (Windows-1251)"
+msgstr ""
+
+#: ../src/setup.c:166
+msgid "Cyrillic/Russian (CP-866)"
+msgstr ""
+
+#: ../src/setup.c:167
+msgid "Cyrillic/Ukrainian (KOI8-U)"
+msgstr ""
+
+#: ../src/setup.c:168
+msgid "Romanian (ISO-8859-16)"
+msgstr ""
+
+#: ../src/setup.c:169
+msgid "Romanian (MacRomanian)"
+msgstr ""
+
+#: ../src/setup.c:170
+msgid "Chinese Simplified (GB2312)"
+msgstr ""
+
+#. index = 30
+#: ../src/setup.c:171
+msgid "Chinese Simplified (GBK)"
+msgstr ""
+
+#: ../src/setup.c:172
+msgid "Chinese Simplified (GB18030)"
+msgstr ""
+
+#: ../src/setup.c:173
+msgid "Chinese Simplified (HZ)"
+msgstr ""
+
+#: ../src/setup.c:174
+msgid "Chinese Simplified (ISO-2022-CN)"
+msgstr ""
+
+#: ../src/setup.c:175
+msgid "Chinese Traditional (Big5)"
+msgstr ""
+
+#: ../src/setup.c:176
+msgid "Chinese Traditional (Big5-HKSCS)"
+msgstr ""
+
+#: ../src/setup.c:177
+msgid "Chinese Traditional (EUC-TW)"
+msgstr ""
+
+#: ../src/setup.c:178
+msgid "Japanese (EUC-JP)"
+msgstr ""
+
+#: ../src/setup.c:179
+msgid "Japanese (ISO-2022-JP)"
+msgstr ""
+
+#: ../src/setup.c:180
+msgid "Japanese (Shift_JIS)"
+msgstr ""
+
+#: ../src/setup.c:181
+msgid "Korean (EUC-KR)"
+msgstr ""
+
+#: ../src/setup.c:182
+msgid "Korean (UHC)"
+msgstr ""
+
+#: ../src/setup.c:183
+msgid "Korean (JOHAB)"
+msgstr ""
+
+#: ../src/setup.c:184
+msgid "Korean (ISO-2022-KR)"
+msgstr ""
+
+#: ../src/setup.c:185
+msgid "Armenian (ARMSCII-8)"
+msgstr ""
+
+#. index = 45
+#: ../src/setup.c:186
+msgid "Georgian (GEOSTD8)"
+msgstr ""
+
+#: ../src/setup.c:187
+msgid "Thai (TIS-620)"
+msgstr ""
+
+#: ../src/setup.c:188
+msgid "Thai (ISO-8859-11)"
+msgstr ""
+
+#: ../src/setup.c:189
+msgid "Thai (Windows-874)"
+msgstr ""
+
+#: ../src/setup.c:190
+msgid "Thai (IBM-874)"
+msgstr ""
+
+#: ../src/setup.c:191
+msgid "Turkish (IBM-857)"
+msgstr ""
+
+#: ../src/setup.c:192
+msgid "Turkish (ISO-8859-9)"
+msgstr ""
+
+#: ../src/setup.c:193
+msgid "Turkish (MacTurkish)"
+msgstr ""
+
+#: ../src/setup.c:194
+msgid "Turkish (Windows-1254)"
+msgstr ""
+
+#: ../src/setup.c:195
+msgid "Vietnamese (TCVN)"
+msgstr ""
+
+#: ../src/setup.c:196
+msgid "Vietnamese (VISCII)"
+msgstr ""
+
+#: ../src/setup.c:197
+msgid "Vietnamese (VPS)"
+msgstr ""
+
+#: ../src/setup.c:198
+msgid "Vietnamese (Windows-1258)"
+msgstr ""
+
+#: ../src/setup.c:199
+msgid "Hindi (MacDevanagari)"
+msgstr ""
+
+#: ../src/setup.c:200
+msgid "Gujarati (MacGujarati)"
+msgstr ""
+
+#: ../src/setup.c:201
+msgid "Gurmukhi (MacGurmukhi)"
+msgstr ""
+
+#: ../src/setup.c:202
+msgid "Arabic (ISO-8859-6)"
+msgstr ""
+
+#. index = 62
+#: ../src/setup.c:203
+msgid "Arabic (Windows-1256)"
+msgstr ""
+
+#: ../src/setup.c:204
+msgid "Arabic (IBM-864)"
+msgstr ""
+
+#: ../src/setup.c:205
+msgid "Arabic (MacArabic)"
+msgstr ""
+
+#: ../src/setup.c:206
+msgid "Farsi (MacFarsi)"
+msgstr ""
+
+#: ../src/setup.c:207
+msgid "Hebrew (ISO-8859-8-I)"
+msgstr ""
+
+#: ../src/setup.c:208
+msgid "Hebrew (Windows-1255)"
+msgstr ""
+
+#: ../src/setup.c:209
+msgid "Hebrew Visual (ISO-8859-8)"
+msgstr ""
+
+#: ../src/setup.c:210
+msgid "Hebrew (IBM-862)"
+msgstr ""
+
+#: ../src/setup.c:211
+msgid "Hebrew (MacHebrew)"
+msgstr ""
+
+#: ../src/setup.c:212
+msgid "Unicode (UTF-8)"
+msgstr ""
+
+#. index = 72
+#: ../src/setup.c:213
+msgid "Unicode (UTF-16LE)"
+msgstr ""
+
+#: ../src/setup.c:214
+msgid "Unicode (UTF-16BE)"
+msgstr ""
+
+#: ../src/setup.c:215
+msgid "Unicode (UTF-32)"
+msgstr ""
+
+#: ../src/setup.c:216
+msgid "Unicode (UTF-32LE)"
+msgstr ""
+
+#: ../src/setup.c:217
+msgid "Unicode (UTF-32BE)"
+msgstr ""
 
 #: ../src/components/book.c:123
 msgid "Open Link in New _Tab"
@@ -311,63 +632,63 @@ msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:462 ../src/components/book.c:739
+#: ../src/components/book.c:463 ../src/components/book.c:740
 #: ../src/models/parser.c:178
 msgid "No Title"
 msgstr "Sans titre"
 
-#: ../src/components/book.c:919
+#: ../src/components/book.c:920
 msgid "Topics"
 msgstr "Rubriques"
 
-#: ../src/components/book.c:936
+#: ../src/components/book.c:937
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:952
+#: ../src/components/book.c:953
 msgid "Bookmarks"
 msgstr "Marque-pages"
 
-#: ../src/components/book.c:1024
+#: ../src/components/book.c:1029
 #, c-format
 msgid "Can not find link target file at \"%s\""
 msgstr ""
 
-#: ../src/models/chmfile.c:314
+#: ../src/models/chmfile.c:317
 #, fuzzy, c-format
 msgid "Cannot open chmfile: %s"
 msgstr "Le fichier chm %s n'a pas pu être ouvert."
 
-#: ../src/models/chmfile.c:324
+#: ../src/models/chmfile.c:327
 #, c-format
 msgid "Extract chmfile failed: %s"
 msgstr "Échec à l'extraction du fichier CHM : '%s'"
 
-#: ../src/models/chmfile.c:349
+#: ../src/models/chmfile.c:352
 #, fuzzy, c-format
 msgid "Open \"%s\" failed: %s"
 msgstr "Échec à l'ouverture de '%s' : '%s'"
 
-#: ../src/models/chmfile.c:539
+#: ../src/models/chmfile.c:542
 #, c-format
 msgid "Can not open chm file %s."
 msgstr "Le fichier chm %s n'a pas pu être ouvert."
 
-#: ../src/models/chmfile.c:927
+#: ../src/models/chmfile.c:932
 #, c-format
 msgid "Processing... %.0f%% complete"
 msgstr ""
 
-#: ../src/models/chmfile.c:940
+#: ../src/models/chmfile.c:945
 msgid "Processing done. Loading..."
 msgstr ""
+
+#~ msgid "Auto-Detect:"
+#~ msgstr "Détection auto. :"
 
 #, fuzzy
 #~ msgid "Copy"
 #~ msgstr "_Copier"
-
-#~ msgid "About"
-#~ msgstr "À propos"
 
 #, fuzzy
 #~ msgid "CS_CHMFILE >>> cannot open chmfile: %s"

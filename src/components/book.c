@@ -393,7 +393,8 @@ html_notebook_switch_page_cb(GtkNotebook *notebook, GtkNotebookPage *page, guint
         if (new_page) {
                 g_debug("CS_BOOK >>> switch page callback, set active_html = %p", priv->active_html);
                 priv->active_html = CS_HTML_GECKO (new_page);
-                cs_html_gecko_reload(priv->active_html);
+                cs_book_reload_current_page(self);
+                /* cs_html_gecko_reload(priv->active_html); */
         }
 
         g_signal_emit(self, signals[HTML_CHANGED], 0, self);
@@ -1011,6 +1012,10 @@ cs_book_load_url(CsBook *self, const gchar *uri)
 
         if (has_file) {
                 g_debug("CS_BOOK >>> cs_book_load_url html = %p, full_uri = %s", priv->active_html, full_uri);
+                gchar *charset = cs_chmfile_get_charset(CS_CHMFILE (priv->model));
+                if (charset && strlen(charset))
+                        cs_html_gecko_set_charset(priv->active_html, charset);
+
                 g_signal_handlers_block_by_func(priv->active_html, html_open_uri_cb, self);
                 cs_html_gecko_load_url(priv->active_html, full_uri);
                 g_signal_handlers_unblock_by_func(priv->active_html, html_open_uri_cb, self);
@@ -1104,8 +1109,12 @@ cs_book_reload_current_page(CsBook *self)
         g_debug("CS_BOOK >>> Reload current page");
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
-        if (priv->model)
+        if (priv->model) {
+                gchar *charset = cs_chmfile_get_charset(CS_CHMFILE (priv->model));
+                if (charset && strlen(charset))
+                        cs_html_gecko_set_charset(priv->active_html, charset);
                 cs_html_gecko_reload(priv->active_html);
+        }
 }
 
 void

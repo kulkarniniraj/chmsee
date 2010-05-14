@@ -2,35 +2,6 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy toplevel-contextual -->
-  <object class="GtkListStore" id="model1">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Universal</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Simplified Chinese</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Traditional Chinese</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Japanese</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Korean</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Russian</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Ukrainian</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkWindow" id="setup_window">
     <property name="visible">True</property>
     <property name="border_width">5</property>
@@ -219,7 +190,7 @@ NOTE: If you are viewing a CHM file, you need reopen it after cleaning.</propert
                     <child>
                       <object class="GtkLabel" id="label7">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Auto-Detect:</property>
+                        <property name="label" translatable="yes">Charset:</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -230,14 +201,8 @@ NOTE: If you are viewing a CHM file, you need reopen it after cleaning.</propert
                     </child>
                     <child>
                       <object class="GtkComboBox" id="cmb_default_lang">
+                        <property name="sensitive">False</property>
                         <property name="visible">True</property>
-                        <property name="model">model1</property>
-                        <child>
-                          <object class="GtkCellRendererText" id="renderer1"/>
-                          <attributes>
-                            <attribute name="text">0</attribute>
-                          </attributes>
-                        </child>
                       </object>
                       <packing>
                         <property name="padding">5</property>
@@ -251,7 +216,7 @@ NOTE: If you are viewing a CHM file, you need reopen it after cleaning.</propert
             <child type="label">
               <object class="GtkLabel" id="label6">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">&lt;b&gt;Charset&lt;/b&gt;</property>
+                <property name="label" translatable="yes">&lt;b&gt;Language&lt;/b&gt;</property>
                 <property name="use_markup">True</property>
               </object>
             </child>

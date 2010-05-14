@@ -65,20 +65,10 @@
 #include <nsIInterfaceRequestorUtils.h>
 #include <nsComponentManagerUtils.h>
 
+#include <nsIDocCharset.h>
+
 #include "gecko-utils.h"
 #include "utils.h"
-
-#define LANG_TYPES_NUM 7
-
-static const gchar *lang[] = {
-        "universal_charset_detector",
-        "zhcn_parallel_state_machine",
-        "zhtw_parallel_state_machine",
-        "jp_parallel_state_machine",
-        "ko_parallel_state_machine",
-        "ruprob",
-        "ukprob"
-};
 
 static nsresult gecko_utils_init_prefs(void);
 static gboolean util_split_font_string(const gchar *, gchar **, gint *);
@@ -322,14 +312,6 @@ gecko_utils_set_font(gint type, const gchar *fontname)
         g_free(name);
 }
 
-extern "C" void
-gecko_utils_set_default_lang(gint type)
-{
-        g_debug("GECKO_UTILS >>> set default lang");
-        if (type < LANG_TYPES_NUM)
-                gecko_prefs_set_string("intl.charset.detector", lang[type]);
-}
-
 extern "C" gboolean
 gecko_utils_find(GtkMozEmbed *embed, const gchar *str, gboolean backward, gboolean match_case)
 {
@@ -439,4 +421,34 @@ gecko_utils_set_zoom(GtkMozEmbed *embed, gfloat zoom)
         }
 
         domWindow->SetTextZoom(zoom);
+}
+
+extern "C" void
+gecko_utils_set_charset(GtkMozEmbed *embed, const char *charset)
+{
+        nsCOMPtr<nsIWebBrowser> webBrowser;
+        gtk_moz_embed_get_nsIWebBrowser(embed, getter_AddRefs(webBrowser));
+
+        nsCOMPtr<nsIDocCharset> docCharset = do_GetInterface(webBrowser);
+        if (docCharset) {
+                g_debug("GECKO_UTILS >>> set docCharset to %s", charset);
+                docCharset->SetCharset(charset);
+         }
+}
+
+extern "C" char *
+gecko_utils_get_charset(GtkMozEmbed *embed)
+{
+        nsCOMPtr<nsIWebBrowser> webBrowser;
+        gtk_moz_embed_get_nsIWebBrowser(embed, getter_AddRefs(webBrowser));
+
+        char *charset = NULL;
+
+        nsCOMPtr<nsIDocCharset> docCharset = do_GetInterface(webBrowser);
+        if (docCharset) {
+                docCharset->GetCharset(&charset);
+                g_debug("GECKO_UTILS >>> get docCharset : %s", charset);
+         }
+
+        return charset;
 }

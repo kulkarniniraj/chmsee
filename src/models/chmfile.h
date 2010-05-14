@@ -62,5 +62,7 @@ const gchar *cs_chmfile_get_variable_font(CsChmfile *);
 void         cs_chmfile_set_variable_font(CsChmfile *, const gchar *);
 const gchar *cs_chmfile_get_fixed_font(CsChmfile *);
 void         cs_chmfile_set_fixed_font(CsChmfile *, const gchar *);
+const gchar *cs_chmfile_get_charset(CsChmfile *);
+void         cs_chmfile_set_charset(CsChmfile *, const gchar *);
 
 #endif /* !__CS_CHMFILE_H__ */
