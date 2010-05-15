@@ -1012,7 +1012,7 @@ cs_book_load_url(CsBook *self, const gchar *uri)
 
         if (has_file) {
                 g_debug("CS_BOOK >>> cs_book_load_url html = %p, full_uri = %s", priv->active_html, full_uri);
-                gchar *charset = cs_chmfile_get_charset(CS_CHMFILE (priv->model));
+                const gchar *charset = cs_chmfile_get_charset(CS_CHMFILE (priv->model));
                 if (charset && strlen(charset))
                         cs_html_gecko_set_charset(priv->active_html, charset);
 
@@ -1110,7 +1110,7 @@ cs_book_reload_current_page(CsBook *self)
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
         if (priv->model) {
-                gchar *charset = cs_chmfile_get_charset(CS_CHMFILE (priv->model));
+                const gchar *charset = cs_chmfile_get_charset(CS_CHMFILE (priv->model));
                 if (charset && strlen(charset))
                         cs_html_gecko_set_charset(priv->active_html, charset);
                 cs_html_gecko_reload(priv->active_html);

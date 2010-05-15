@@ -757,10 +757,10 @@ chmfile_system_info(struct chmFile *cfd, CsChmfile *self)
 static GList *
 convert_node_to_list(GNode *tree)
 {
-        GList *root;
-        root->data = NULL;
-        g_node_traverse(tree, G_PRE_ORDER, G_TRAVERSE_ALL, -1, tree_to_list_callback, root);
-        return (GList *)root->data;
+        GList root;
+        root.data = NULL;
+        g_node_traverse(tree, G_PRE_ORDER, G_TRAVERSE_ALL, -1, tree_to_list_callback, &root);
+        return (GList *)root.data;
 }
 
 static gboolean

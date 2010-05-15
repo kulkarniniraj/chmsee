@@ -100,11 +100,13 @@ fixed_font_set_cb(GtkFontButton *button, Chmsee *chmsee)
 static void
 cmb_lang_changed_cb(GtkComboBox *combo_box, Chmsee *chmsee)
 {
-        GtkTreeModel *model = gtk_combo_box_get_model(combo_box);
         GtkTreeIter iter;
         gchar *charset;
 
         gtk_combo_box_get_active_iter(combo_box, &iter);
+
+        GtkTreeModel *model = gtk_combo_box_get_model(combo_box);
+
         gtk_tree_model_get(model, &iter,
                            0, &charset,
                            -1);
@@ -217,7 +219,7 @@ create_lang_model(void)
                 {"UTF-32BE", _("Unicode (UTF-32BE)")} // index = 77
         };
 
-        GtkTreeStore *store = gtk_tree_store_new(2, G_TYPE_INT, G_TYPE_STRING);
+        GtkTreeStore *store = gtk_tree_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 
         GtkTreeIter r_iter, c_iter;
         gint i, j, base, top;
