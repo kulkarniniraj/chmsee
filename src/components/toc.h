@@ -51,8 +51,7 @@ GType        cs_toc_get_type(void);
 GtkWidget   *cs_toc_new(void);
 void         cs_toc_set_model(CsToc *, GNode *);
 
-void         cs_toc_select_uri(CsToc *, const gchar *);
-gboolean     cs_toc_select_link_by_name(CsToc *, const gchar *);
+void         cs_toc_sync(CsToc *, const gchar *);
 const gchar *cs_toc_get_selected_book_title(CsToc *);
 
 G_END_DECLS

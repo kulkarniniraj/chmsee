@@ -1098,7 +1098,6 @@ cs_chmfile_set_fixed_font(CsChmfile *self, const gchar *font_name)
 const gchar *
 cs_chmfile_get_charset(CsChmfile *self)
 {
-        g_debug("CS_CHMFILE >>> get charset %p charset %p", self, CS_CHMFILE_GET_PRIVATE (self)->charset);
         return CS_CHMFILE_GET_PRIVATE (self)->charset;
 }
 

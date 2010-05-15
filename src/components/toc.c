@@ -77,7 +77,6 @@ static GtkTreeViewColumn *create_columns(void);
 static void insert_node(CsToc *, GNode *, GtkTreeIter *);
 
 static gboolean find_uri_foreach(GtkTreeModel *, GtkTreePath *, GtkTreeIter *, FindURIData *);
-static gboolean find_name_foreach(GtkTreeModel *, GtkTreePath *, GtkTreeIter *, FindURIData *);
 
 #define CS_TOC_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), CS_TYPE_TOC, CsTocPrivate))
 
@@ -324,22 +323,6 @@ find_uri_foreach(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, Find
         return data->found;
 }
 
-static gboolean
-find_name_foreach(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, FindURIData *data)
-{
-        Link *link;
-
-        gtk_tree_model_get(model, iter, COL_LINK, &link, -1);
-
-        if (g_strcmp0(data->uri, link->name) == 0) {
-                data->found = TRUE;
-                data->iter = *iter;
-                data->path = gtk_tree_path_copy(path);
-        }
-
-        return data->found;
-}
-
 /* External functions */
 
 GtkWidget *
@@ -369,9 +352,9 @@ cs_toc_set_model(CsToc *self, GNode *model)
 }
 
 void
-cs_toc_select_uri(CsToc *self, const gchar *uri)
+cs_toc_sync(CsToc *self, const gchar *uri)
 {
-        g_debug("CS_TOC >>> select uri toc = %p, uri = %s", self, uri);
+        g_debug("CS_TOC >>> sync uri %s", uri);
         g_return_if_fail(IS_CS_TOC (self));
 
         CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
@@ -397,7 +380,7 @@ cs_toc_select_uri(CsToc *self, const gchar *uri)
         }
 
         if (!data.found) {
-                g_debug("CS_TOC >>> select uri: cannot find data");
+                g_debug("CS_TOC >>> sync: cannot find link uri");
                 return;
         }
 
@@ -416,117 +399,4 @@ cs_toc_select_uri(CsToc *self, const gchar *uri)
                                           self);
 
         gtk_tree_path_free(data.path);
-}
-
-gboolean
-cs_toc_select_link_by_name(CsToc* self, const gchar* name)
-{
-        g_return_val_if_fail(IS_CS_TOC (self), FALSE);
-
-        CsTocPrivate      *priv = CS_TOC_GET_PRIVATE (self);
-
-        FindURIData        data;
-        data.found = FALSE;
-        data.uri = name;
-
-        gtk_tree_model_foreach(GTK_TREE_MODEL (priv->store),
-                               (GtkTreeModelForeachFunc) find_name_foreach,
-                               &data);
-
-        if (!data.found) {
-                g_debug("toc select link by name: cannot found data");
-                return FALSE;
-        }
-
-        GtkTreeSelection  *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview));
-
-        gtk_tree_view_expand_to_path(GTK_TREE_VIEW (priv->treeview), data.path);
-        gtk_tree_selection_select_iter(selection, &data.iter);
-        gtk_tree_view_set_cursor(GTK_TREE_VIEW (priv->treeview), data.path, NULL, 0);
-
-        gtk_tree_path_free(data.path);
-        return TRUE;
-}
-
-const gchar *
-cs_toc_get_selected_book_title(CsToc *self)
-{
-        GtkTreeSelection *selection;
-        GtkTreeModel     *model;
-        GtkTreeIter       iter;
-        GtkTreePath      *path;
-        Link             *link;
-
-        g_return_val_if_fail(IS_CS_TOC (self), NULL);
-
-        CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
-
-        selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview));
-
-        if (!gtk_tree_selection_get_selected(selection, &model, &iter))
-                return NULL;
-
-        path = gtk_tree_model_get_path(model, &iter);
-
-        /* Get the book node for this link. */
-        while (gtk_tree_path_get_depth(path) > 1)
-                gtk_tree_path_up(path);
-
-        gtk_tree_model_get_iter(model, &iter, path);
-        gtk_tree_path_free(path);
-
-        gtk_tree_model_get(model, &iter,
-                           COL_LINK, &link,
-                           -1);
-
-        return link->name;
-}
-
-const gchar *
-cs_toc_get_next_uri(CsToc *self)
-{
-        g_debug("CS_TOC >>> get next uri");
-        g_return_val_if_fail(IS_CS_TOC (self), NULL);
-
-        CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
-        GtkTreeModel *model = GTK_TREE_MODEL (priv->store);
-        GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview));
-
-        GtkTreeIter current_iter;
-        if (!gtk_tree_selection_get_selected(selection, NULL, &current_iter))
-                return NULL;
-
-        /* GtkTreePath *path = gtk_tree_model_get_path(model, &current_iter); */
-        /* g_debug("CS_TOC >>> current path = %s", gtk_tree_path_to_string(path)); */
-        /* gtk_tree_path_free(path); */
-
-        GtkTreeIter next_iter = current_iter;
-        if (!gtk_tree_model_iter_children(model, &next_iter, &current_iter)) {
-                next_iter = current_iter;
-                if (!gtk_tree_model_iter_next(model, &next_iter)) {
-                        gboolean has_next_iter = FALSE;
-                        GtkTreeIter iter = current_iter;
-                        while (!has_next_iter) {
-                                GtkTreeIter parent_iter = iter;
-                                if (!gtk_tree_model_iter_parent(model, &parent_iter, &iter))
-                                        return NULL;
-
-                                next_iter = iter = parent_iter;
-                                if (gtk_tree_model_iter_next(model, &next_iter))
-                                        has_next_iter = TRUE;
-                        }
-                }
-        }
-
-        /* GtkTreePath *next_path = gtk_tree_model_get_path(model, &next_iter); */
-        /* g_debug("CS_TOC >>> next path = %s", gtk_tree_path_to_string(next_path)); */
-        /* gtk_tree_path_free(next_path); */
-
-        Link *link;
-        gtk_tree_model_get(model, &next_iter,
-                           COL_LINK, &link,
-                           -1);
-
-        g_debug("CS_TOC >>> next uri = %s", link->uri);
-        return NULL;
 }
