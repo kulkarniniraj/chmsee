@@ -49,7 +49,8 @@ struct _CsChmfilePrivate {
         gchar       *hhc;
         gchar       *hhk;
         gchar       *bookfolder;     /* the folder CHM file extracted to */
-        gchar       *filename;       /* opened CHM file name */
+        gchar       *chm;            /* opened CHM file name */
+        gchar       *page;           /* :: specified page */
 
         gchar       *bookname;
         gchar       *homepage;
@@ -103,6 +104,7 @@ static void free_list_data(gpointer, gpointer);
 static gchar *check_file_ncase(CsChmfile *, gchar *);
 
 static void extract_file(struct extract_data *);
+static void parse_filename(CsChmfile *, const gchar *);
 
 /* GObject functions */
 
@@ -130,7 +132,8 @@ cs_chmfile_init(CsChmfile *self)
         priv->hhc            = NULL;
         priv->hhk            = NULL;
         priv->bookfolder     = NULL;
-        priv->filename       = NULL;
+        priv->chm            = NULL;
+        priv->page           = NULL;
 
         priv->bookname       = NULL;
         priv->homepage       = NULL;
@@ -154,7 +157,8 @@ cs_chmfile_finalize(GObject *object)
         g_free(priv->hhc);
         g_free(priv->hhk);
         g_free(priv->bookfolder);
-        g_free(priv->filename);
+        g_free(priv->chm);
+        g_free(priv->page);
 
         g_free(priv->bookname);
         g_free(priv->homepage);
@@ -536,10 +540,10 @@ chmfile_file_info(CsChmfile *self)
 {
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
-        struct chmFile *cfd = chm_open(priv->filename);
+        struct chmFile *cfd = chm_open(priv->chm);
 
         if (cfd == NULL) {
-                g_error(_("Can not open chm file %s."), priv->filename);
+                g_error(_("Can not open chm file %s."), priv->chm);
                 return;
         }
 
@@ -583,7 +587,7 @@ chmfile_file_info(CsChmfile *self)
         }
 
         if (priv->bookname == NULL)
-                priv->bookname = g_path_get_basename(priv->filename);
+                priv->bookname = g_path_get_basename(priv->chm);
 
         chm_close(cfd);
 }
@@ -888,6 +892,20 @@ extract_post_file_write(const gchar *fname)
         g_free(basename);
 }
 
+static void
+parse_filename(CsChmfile *self, const gchar *filename)
+{
+        CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
+        gchar *p = g_strrstr(filename, "::");
+        if (p) {
+                priv->chm = g_strndup(filename, p - filename);
+                priv->page = g_strdup(p + 2);
+        } else {
+                priv->chm = g_strdup(filename);
+        }
+        g_debug("CS_CHMFILE >>> priv->chm = %s, priv->page = %s", priv->chm, priv->page);
+}
+
 /* External functions */
 
 CsChmfile *
@@ -896,14 +914,15 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
         CsChmfile        *self = g_object_new(CS_TYPE_CHMFILE, NULL);
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
+        parse_filename(self, filename);
+
         /* use chm file's MD5 as folder name */
-        gchar *md5 = MD5File(filename, NULL);
+        gchar *md5 = MD5File(priv->chm, NULL);
         if(!md5) {
                 g_warning("CS_CHMFILE >>> Oops!! cannot calculate chmfile's MD5 value.");
                 return NULL;
         }
 
-        priv->filename = g_strdup(filename);
         priv->bookfolder = g_build_filename(bookshelf, md5, NULL);
         g_debug("CS_CHMFILE >>> book folder = %s", priv->bookfolder);
 
@@ -921,12 +940,13 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
 
                 struct extract_data data;
 
-                data.filename = filename;
+                data.filename = priv->chm;
                 data.bookfolder = priv->bookfolder;
                 data.rval = -1;
 
                 g_thread_create((GThreadFunc) (extract_file), &data, FALSE, NULL);
 
+                /* display a faked progress bar */
                 gdouble percent = 0.0;
                 while (data.rval < 0 && percent <= 100.0) {
                         gchar *message = g_strdup_printf(_("Processing... %.0f%% complete"), percent);
@@ -951,7 +971,7 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
                 gtk_widget_destroy(GTK_WIDGET (popup_window));
 
                 if (data.rval == 1) {
-                        g_warning("CS_CHMFILE >>> extract_chm failed: %s", filename);
+                        g_warning("CS_CHMFILE >>> extract_chm failed: %s", priv->chm);
                         return NULL;
                 }
 
@@ -1038,7 +1058,7 @@ cs_chmfile_update_bookmarks_list(CsChmfile *self, GList *links)
 const gchar *
 cs_chmfile_get_filename(CsChmfile *self)
 {
-        return CS_CHMFILE_GET_PRIVATE (self)->filename;
+        return CS_CHMFILE_GET_PRIVATE (self)->chm;
 }
 
 const gchar *
@@ -1059,6 +1079,14 @@ cs_chmfile_get_homepage(CsChmfile *self)
         g_return_val_if_fail(IS_CS_CHMFILE (self), NULL);
 
         return CS_CHMFILE_GET_PRIVATE (self)->homepage;
+}
+
+const gchar *
+cs_chmfile_get_page(CsChmfile *self)
+{
+        g_return_val_if_fail(IS_CS_CHMFILE (self), NULL);
+
+        return CS_CHMFILE_GET_PRIVATE (self)->page;
 }
 
 const gchar *

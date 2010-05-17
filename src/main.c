@@ -220,7 +220,7 @@ main(int argc, char *argv[])
                 "[chmfile]\n"
                 "\n"
                 "GTK+ based CHM file viewer\n"
-                "Example: chmsee FreeBSD_Handbook.chm";
+                "Example: chmsee Handbook.chm::toc.html";
 
         if (!gtk_init_with_args(&argc, &argv, params, options, GETTEXT_PACKAGE, &error)) {
                 g_printerr("%s\n", error->message);

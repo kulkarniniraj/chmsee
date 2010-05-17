@@ -57,6 +57,7 @@ const gchar *cs_chmfile_get_bookfolder(CsChmfile *);
 const gchar *cs_chmfile_get_filename(CsChmfile *);
 const gchar *cs_chmfile_get_bookname(CsChmfile *);
 const gchar *cs_chmfile_get_homepage(CsChmfile *);
+const gchar *cs_chmfile_get_page(CsChmfile *);
 
 const gchar *cs_chmfile_get_variable_font(CsChmfile *);
 void         cs_chmfile_set_variable_font(CsChmfile *, const gchar *);

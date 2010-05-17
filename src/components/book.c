@@ -972,7 +972,15 @@ cs_book_set_model(CsBook *self, CsChmfile *model)
         gtk_notebook_set_current_page(GTK_NOTEBOOK (priv->html_notebook), cur_page);
         gtk_widget_show_all(priv->html_notebook);
 
-        cs_book_homepage(self);
+        const gchar *page = cs_chmfile_get_page(model);
+        if (page) {
+                gboolean file_exist = cs_book_load_url(self, page);
+
+                if (file_exist && priv->toc_page)
+                        cs_toc_sync(CS_TOC (priv->toc_page), page);
+        } else {
+                cs_book_homepage(self);
+        }
 
         g_signal_emit(self, signals[MODEL_CHANGED], 0, model, NULL);
 }
