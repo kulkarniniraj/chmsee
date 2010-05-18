@@ -422,12 +422,12 @@ html_open_uri_cb(CsHtmlGecko *html, const gchar *full_uri, CsBook *self)
         if (scheme) {
                 const gchar *bookfolder = cs_chmfile_get_bookfolder(priv->model);
 
-                if (!g_strcmp0(scheme, "file") && g_strrstr(full_uri, bookfolder)) {
+                if (!g_strcmp0(scheme, "file")) {
                         /* DND chmfile check */
                         if (g_str_has_suffix(full_uri, ".chm") || g_str_has_suffix(full_uri, ".CHM")) {
                                 g_debug("CS_BOOK >>> open chm file = %s", full_uri);
                                 g_signal_emit(self, signals[MODEL_CHANGED], 0, NULL, full_uri);
-                        } else {
+                        } else if (g_strrstr(full_uri, bookfolder)) {
                                 gchar *uri = get_short_uri(priv->model, full_uri);
 
                                 g_debug("CS_BOOK >>> html_open_uri call load url = %s", uri);
