@@ -14,3 +14,5 @@ install(FILES
         about-dialog.ui openfile-dialog.ui setup-window.ui
         default-prefs.js
         DESTINATION share/chmsee)
+
+add_subdirectory(icons)
