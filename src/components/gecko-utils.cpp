@@ -234,7 +234,7 @@ gecko_utils_init(void)
 
         gecko_utils_init_prefs();
 
-        g_debug("GECKO_UTILS >>> initilize finished.");
+        g_debug("GECKO_UTILS >>> initialization finished.");
         return TRUE;
 }
 

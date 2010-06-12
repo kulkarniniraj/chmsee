@@ -301,6 +301,20 @@ chmsee_dispose(GObject *gobject)
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
         if (priv->chmfile) {
+                /* save last opened page */
+                const gchar *bookfolder = cs_chmfile_get_bookfolder(priv->chmfile);
+                gchar *location = cs_book_get_location(CS_BOOK (priv->book));
+                gchar *page = g_strrstr(location, bookfolder);
+
+                if (page) {
+                        page = page + strlen(bookfolder);
+                        gchar *last_file = g_strdup_printf("%s::%s", priv->config->last_file, page);
+                        g_free(priv->config->last_file);
+                        priv->config->last_file = last_file;
+                }
+
+                g_free(location);
+
                 g_object_unref(priv->chmfile);
                 priv->chmfile = NULL;
         }
@@ -707,20 +721,6 @@ chmsee_quit(Chmsee *self)
         g_message("Chmsee >>> quit");
 
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-
-        /* save last opened page */
-        const gchar *bookfolder = cs_chmfile_get_bookfolder(priv->chmfile);
-        gchar *location = cs_book_get_location(CS_BOOK (priv->book));
-        gchar *page = g_strrstr(location, bookfolder);
-
-        if (page) {
-                page = page + strlen(bookfolder);
-                gchar *last_file = g_strdup_printf("%s::%s", priv->config->last_file, page);
-                g_free(priv->config->last_file);
-                priv->config->last_file = last_file;
-        }
-
-        g_free(location);
 
         cs_html_gecko_shutdown_system();
         priv->config->hpaned_pos = cs_book_get_hpaned_position(CS_BOOK (priv->book));

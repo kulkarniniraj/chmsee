@@ -114,7 +114,6 @@ load_config()
 
         GKeyFile *keyfile = g_key_file_new();
         gboolean rv = g_key_file_load_from_file(keyfile, config_file, G_KEY_FILE_NONE, NULL);
-        g_debug("Main >>> chmsee load config file return = %d", rv);
 
         if (!rv) {
                 convert_old_config_file(config_file, "[ChmSee]\n");
@@ -195,17 +194,17 @@ main(int argc, char *argv[])
         GOptionEntry options[] = {
                 {"version", 0,
                  0, G_OPTION_ARG_NONE, &option_version,
-                 _("Display the version and exit"),
+                 _("Display ChmSee version"),
                  NULL
                 },
                 {"verbose", 'v',
                  G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK, (void*)callback_verbose,
-                 _("be verbose, repeat 3 times to get all info"),
+                 _("Be verbose, repeat 3 times to get all infomation"),
                  NULL
                 },
                 {"quiet", 'q',
                  G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK, (void*)callback_quiet,
-                 _("be quiet, repeat 2 times to disable all info"),
+                 _("Be quiet, repeat 2 times to disable all infomation"),
                  NULL
                 },
                 /* {"bookshelf", 0, */
@@ -261,7 +260,7 @@ main(int argc, char *argv[])
         Chmsee *chmsee = chmsee_new(config);
 
         if (chmsee == NULL) {
-                g_warning("Create chmsee main window failed!");
+                g_warning("Creating chmsee main window failed!");
                 return 1;
         }
 

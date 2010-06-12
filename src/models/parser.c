@@ -129,9 +129,8 @@ startElementHH(void *ctx, const xmlChar *name_, const xmlChar **atts_)
                         if (g_ascii_strcasecmp("Keyword", param_name) == 0) {
                                 title[item_count] = g_strdup(param_value);
                         } else if (g_ascii_strcasecmp("Name", param_name) == 0) {
-                                if (title[item_count])
-                                        g_free(title[item_count]);
-                                title[item_count] = g_strdup(param_value);
+                                if (!title[item_count])
+                                        title[item_count] = g_strdup(param_value);
                         } else if (g_ascii_strcasecmp("Local", param_name) == 0) {
                                 local[item_count] = g_strdup(param_value);
                         }
@@ -171,6 +170,9 @@ endElementHH(void *ctx, const xmlChar *name_)
                                 for (; depth < prev_depth; prev_depth--)
                                         parent = parent->parent;
                 }
+
+                if (item_count == 0 && title[0]) /* Manually increase no link item */
+                        item_count = 1;
 
                 gint i = 0;
                 for (; i < item_count; i++) {
@@ -223,7 +225,7 @@ cs_parse_file(const gchar *filename, const gchar *encoding)
                 xmlFreeDoc(doc);
         }
 
-        g_debug("CS_PARSER >>> Parsing file finish.");
+        g_debug("CS_PARSER >>> Parsing file %s finished", filename);
 
         return tree;
 }
