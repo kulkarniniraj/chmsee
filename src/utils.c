@@ -31,7 +31,7 @@ convert_filename_to_utf8(const gchar *filename, const gchar *codeset)
 {
         gchar * filename_utf8;
 
-        g_debug("Convert filename to UTF8.");
+        g_debug("UTILS >>> Convert filename to UTF8.");
 
         if (g_utf8_validate(filename, -1, NULL)) {
                 filename_utf8 = g_strdup(filename);
@@ -52,12 +52,12 @@ convert_string_to_utf8(const gchar *string, const gchar *codeset)
 {
         gchar * string_utf8;
 
-        g_debug("Convert string to UTF8.");
+        g_debug("UTILS >>> Convert string to UTF8.");
         if (g_utf8_validate(string, -1, NULL)) {
-                g_debug("string is utf8");
+                g_debug("UTILS >>> string is utf8");
                 string_utf8 = g_strdup(string);
         } else {
-                g_debug("string is not utf8");
+                g_debug("UTILS >>> string is not utf8");
                 string_utf8 = g_convert(string, -1, "UTF-8",
                                         codeset,
                                         NULL, NULL, NULL);
