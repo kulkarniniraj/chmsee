@@ -600,8 +600,11 @@ chmfile_file_info(CsChmfile *self)
                 }
         }
 
-        if (priv->bookname == NULL)
-                priv->bookname = g_path_get_basename(priv->chm);
+        if (priv->bookname == NULL) {
+                gchar *bookname = g_path_get_basename(priv->chm);
+                priv->bookname = g_strdup(bookname);
+                g_free(bookname);
+        }
 
         chm_close(cfd);
 }
@@ -787,7 +790,9 @@ tree_to_list_callback(GNode *node, gpointer data)
         GList *root = (GList *)data;
 
         if (node->parent) {
-                root->data = g_list_append((GList *)root->data, node->data);
+                Link *link = (Link *)node->data;
+                if (g_ascii_strcasecmp(CHMSEE_NO_LINK, link->uri) && strlen(link->uri))
+                        root->data = g_list_append((GList *)root->data, node->data);
         }
 
         return FALSE;
@@ -879,8 +884,9 @@ check_file_ncase(CsChmfile *self, const gchar *file)
         if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
                 gchar *found = file_exist_ncase(filename);
                 if (found) {
-                        new_file = g_strdup(g_path_get_basename(found));
-
+                        gchar *basename = g_path_get_basename(found);
+                        new_file = g_strdup(basename);
+                        g_free(basename);
                         g_free(found);
                 }
         }

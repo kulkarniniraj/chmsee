@@ -386,17 +386,17 @@ cs_toc_sync(CsToc *self, const gchar *uri)
 
         GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview));
 
-        g_signal_handlers_block_by_func(selection,
-                                        selection_changed_cb,
-                                        self);
+        /* g_signal_handlers_block_by_func(selection, */
+        /*                                 selection_changed_cb, */
+        /*                                 self); */
 
         gtk_tree_view_expand_to_path(GTK_TREE_VIEW (priv->treeview), data.path);
         gtk_tree_selection_select_iter(selection, &data.iter);
         gtk_tree_view_set_cursor(GTK_TREE_VIEW (priv->treeview), data.path, NULL, 0);
 
-        g_signal_handlers_unblock_by_func(selection,
-                                          selection_changed_cb,
-                                          self);
+        /* g_signal_handlers_unblock_by_func(selection, */
+        /*                                   selection_changed_cb, */
+        /*                                   self); */
 
         gtk_tree_path_free(data.path);
 }

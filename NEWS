@@ -1,10 +1,11 @@
-ChmSee 1.2.0-rc1 2010-05-30
+ChmSee 1.2.0-rc2 2010-xx-xx
 ---------------------------
 * Add previous and next page function
 * Improve language charset setting
 * Open specified page in file.chm::page.html format
 * Display progress bar during file extraction
 * Fix hhk keyword parse problem
+* Fix filename case insensitive checking bug
 
 ChmSee 1.1.0 2010-04-12
 -----------------------

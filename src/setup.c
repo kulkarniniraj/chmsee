@@ -223,6 +223,7 @@ create_lang_model(void)
 
         GtkTreeIter r_iter, c_iter;
         gint i, j, base, top;
+        base = top = 0;
 
         for (i = 0; i < 7; i++) {
                 gtk_tree_store_append(store, &r_iter, NULL);
@@ -251,7 +252,7 @@ create_lang_model(void)
                         top  = 77;
                 }
 
-                for (j = base ; i != 0 && j <= top; j++ ) {
+                for (j = base; i != 0 && j <= top; j++ ) {
                         gtk_tree_store_append(store, &c_iter, &r_iter);
                         gtk_tree_store_set(store, &c_iter,
                                            0, charset[j][0],
@@ -339,26 +340,6 @@ setup_window_new(Chmsee *chmsee)
                                            cell_layout_data_func,
                                            NULL, NULL);
 
-        g_signal_connect(G_OBJECT (cmb_lang),
-                         "changed",
-                         G_CALLBACK (cmb_lang_changed_cb),
-                         chmsee);
-        /* gtk_combo_box_set_active(GTK_COMBO_BOX (cmb_lang), 0); */
-
-        /* startup load lastfile */
-        GtkWidget *startup_lastfile_chkbtn = BUILDER_WIDGET (builder, "startup_lastfile_chkbtn");
-        g_signal_connect(G_OBJECT (startup_lastfile_chkbtn),
-                         "toggled",
-                         G_CALLBACK (startup_lastfile_toggled_cb),
-                         chmsee);
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON (startup_lastfile_chkbtn), chmsee_get_startup_lastfile(chmsee));
-
-        GtkWidget *close_button = BUILDER_WIDGET (builder, "setup_close");
-        g_signal_connect(G_OBJECT (close_button),
-                         "clicked",
-                         G_CALLBACK (on_window_close),
-                         chmsee);
-
         if (chmsee_has_book(chmsee)) {
                 gtk_font_button_set_font_name(GTK_FONT_BUTTON (variable_font_button),
                                               chmsee_get_variable_font(chmsee));
@@ -385,6 +366,25 @@ setup_window_new(Chmsee *chmsee)
 
                 gtk_widget_set_sensitive(cmb_lang, TRUE);
         }
+
+        g_signal_connect(G_OBJECT (cmb_lang),
+                         "changed",
+                         G_CALLBACK (cmb_lang_changed_cb),
+                         chmsee);
+
+        /* startup load lastfile */
+        GtkWidget *startup_lastfile_chkbtn = BUILDER_WIDGET (builder, "startup_lastfile_chkbtn");
+        g_signal_connect(G_OBJECT (startup_lastfile_chkbtn),
+                         "toggled",
+                         G_CALLBACK (startup_lastfile_toggled_cb),
+                         chmsee);
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON (startup_lastfile_chkbtn), chmsee_get_startup_lastfile(chmsee));
+
+        GtkWidget *close_button = BUILDER_WIDGET (builder, "setup_close");
+        g_signal_connect(G_OBJECT (close_button),
+                         "clicked",
+                         G_CALLBACK (on_window_close),
+                         chmsee);
 
         g_object_unref(builder);
 }

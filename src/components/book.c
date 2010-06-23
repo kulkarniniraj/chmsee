@@ -394,7 +394,6 @@ html_notebook_switch_page_cb(GtkNotebook *notebook, GtkNotebookPage *page, guint
                 g_debug("CS_BOOK >>> switch page callback, set active_html = %p", priv->active_html);
                 priv->active_html = CS_HTML_GECKO (new_page);
                 cs_book_reload_current_page(self);
-                /* cs_html_gecko_reload(priv->active_html); */
         }
 
         g_signal_emit(self, signals[HTML_CHANGED], 0, self);
