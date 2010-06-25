@@ -372,11 +372,7 @@ link_selected_cb(GtkWidget *widget, Link *link, CsBook *self)
                 update_book_message(self, message);
                 g_free(message);
         } else {
-                gboolean file_exist = cs_book_load_url(self, link->uri);
-                CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-
-                if (file_exist && widget != priv->toc_page)
-                        cs_toc_sync(CS_TOC (priv->toc_page), link->uri);
+                cs_book_load_url(self, link->uri);
         }
         g_free(scheme);
 }
@@ -405,6 +401,24 @@ html_location_changed_cb(CsHtmlGecko *html, const gchar *location, CsBook *self)
         g_debug("CS_BOOK >>> html location changed cb: %s", location);
 
         g_signal_emit(self, signals[HTML_CHANGED], 0, self);
+
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+
+        char *scheme = g_uri_parse_scheme(location);
+
+        if (!g_strcmp0(scheme, "file") && priv->toc_page) {
+                gchar *real_uri = get_real_uri(location);
+                gchar *filename = g_filename_from_uri(real_uri, NULL, NULL);
+
+                gchar *uri = get_short_uri(priv->model, filename);
+                gchar *toc_uri = g_strdup_printf("%s%s", uri, location + strlen(real_uri));
+
+                cs_toc_sync(CS_TOC (priv->toc_page), toc_uri);
+
+                g_free(real_uri);
+                g_free(filename);
+                g_free(toc_uri);
+        }
 }
 
 static gboolean
@@ -430,22 +444,7 @@ html_open_uri_cb(CsHtmlGecko *html, const gchar *full_uri, CsBook *self)
                                 gchar *uri = get_short_uri(priv->model, full_uri);
 
                                 g_debug("CS_BOOK >>> html_open_uri call load url = %s", uri);
-                                gboolean file_exist = cs_book_load_url(self, uri);
-
-                                if (file_exist && priv->toc_page) {
-                                        gchar *real_uri = get_real_uri(full_uri);
-                                        gchar *filename = g_filename_from_uri(real_uri, NULL, NULL);
-
-                                        g_debug("CS_BOOK >>> html_open_uri filename = %s", filename);
-                                        uri = get_short_uri(priv->model, filename);
-
-                                        gchar *toc_uri = g_strdup_printf("%s%s", uri, full_uri+strlen(real_uri));
-                                        g_debug("CS_BOOK >>> html_open_uri toc_uri= %s", toc_uri);
-                                        cs_toc_sync(CS_TOC (priv->toc_page), toc_uri);
-                                        g_free(real_uri);
-                                        g_free(filename);
-                                        g_free(toc_uri);
-                                }
+                                cs_book_load_url(self, uri);
                         }
                 } else if (!g_strcmp0(scheme, "about") || !g_strcmp0(scheme, "jar")) {
                         return FALSE;
@@ -973,10 +972,7 @@ cs_book_set_model(CsBook *self, CsChmfile *model)
 
         const gchar *page = cs_chmfile_get_page(model);
         if (page) {
-                gboolean file_exist = cs_book_load_url(self, page);
-
-                if (file_exist && priv->toc_page)
-                        cs_toc_sync(CS_TOC (priv->toc_page), page);
+                cs_book_load_url(self, page);
         } else {
                 cs_book_homepage(self);
         }
@@ -1052,8 +1048,6 @@ cs_book_load_url(CsBook *self, const gchar *uri)
         g_free(real_uri);
         g_free(filename);
 
-        g_message("CS_BOOK >>> load url return %d", file_exist);
-
         return file_exist;
 }
 
@@ -1079,10 +1073,7 @@ cs_book_new_tab_with_fulluri(CsBook *self, const gchar *full_uri)
                 update_tab_label_state(self);
 
                 gchar *uri = get_short_uri(priv->model, full_uri);
-                gboolean file_exist = cs_book_load_url(self, uri);
-
-                if (file_exist && priv->toc_page)
-                        cs_toc_sync(CS_TOC (priv->toc_page), uri);
+                cs_book_load_url(self, uri);
         }
         g_free(scheme);
 }
@@ -1144,10 +1135,7 @@ cs_book_homepage(CsBook *self)
         const gchar *homepage = cs_chmfile_get_homepage(priv->model);
 
         if (homepage) {
-                gboolean file_exist = cs_book_load_url(self, homepage);
-
-                if (file_exist && priv->toc_page)
-                        cs_toc_sync(CS_TOC (priv->toc_page), homepage);
+                cs_book_load_url(self, homepage);
         }
 }
 
@@ -1216,10 +1204,7 @@ cs_book_go_prev(CsBook *self)
 
         if (current && current->prev) {
                 gchar *uri = ((Link *)current->prev->data)->uri;
-                gboolean file_exist = cs_book_load_url(self, uri);
-
-                if (file_exist && priv->toc_page)
-                        cs_toc_sync(CS_TOC (priv->toc_page), uri);
+                cs_book_load_url(self, uri);
         }
 }
 
@@ -1239,10 +1224,7 @@ cs_book_go_next(CsBook *self)
 
         if (current && current->next) {
                 gchar *uri = ((Link *)current->next->data)->uri;
-                gboolean file_exist = cs_book_load_url(self, uri);
-
-                if (file_exist && priv->toc_page)
-                        cs_toc_sync(CS_TOC (priv->toc_page), uri);
+                cs_book_load_url(self, uri);
         }
 }
 

@@ -148,9 +148,7 @@ cs_toc_init(CsToc *self)
                          G_CALLBACK(row_activated_cb),
                          NULL);
 
-        /* put treeview into scrollwindow */
         gtk_container_add(GTK_CONTAINER (toc_sw), GTK_WIDGET (priv->treeview));
-        /* put scrollwindow into my vbox */
         gtk_box_pack_start(GTK_BOX (self), toc_sw, TRUE, TRUE, 0);
 
         gtk_widget_show_all(GTK_WIDGET (self));
@@ -312,8 +310,8 @@ find_uri_foreach(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, Find
         gtk_tree_model_get(model, iter, COL_LINK, &link, -1);
 
         if (!ncase_compare_utf8_string(data->uri, link->uri)) {
-                g_debug("CS_TOC >>> found data->uri: %s", data->uri);
-                g_debug("CS_TOC >>> found link->uri: %s", link->uri);
+                /* g_debug("CS_TOC >>> found data->uri: %s", data->uri); */
+                /* g_debug("CS_TOC >>> found link->uri: %s", link->uri); */
 
                 data->found = TRUE;
                 data->iter = *iter;
@@ -385,18 +383,16 @@ cs_toc_sync(CsToc *self, const gchar *uri)
         }
 
         GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview));
-
-        /* g_signal_handlers_block_by_func(selection, */
-        /*                                 selection_changed_cb, */
-        /*                                 self); */
+        g_signal_handlers_block_by_func(selection,
+                                        selection_changed_cb,
+                                        self);
 
         gtk_tree_view_expand_to_path(GTK_TREE_VIEW (priv->treeview), data.path);
-        gtk_tree_selection_select_iter(selection, &data.iter);
         gtk_tree_view_set_cursor(GTK_TREE_VIEW (priv->treeview), data.path, NULL, 0);
 
-        /* g_signal_handlers_unblock_by_func(selection, */
-        /*                                   selection_changed_cb, */
-        /*                                   self); */
+        g_signal_handlers_unblock_by_func(selection,
+                                          selection_changed_cb,
+                                          self);
 
         gtk_tree_path_free(data.path);
 }
