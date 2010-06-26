@@ -140,7 +140,6 @@ static void chmsee_finalize(GObject *);
 static void chmsee_dispose(GObject *);
 
 static gboolean delete_cb(GtkWidget *, GdkEvent *, Chmsee *);
-static void destroy_cb(GtkWidget *, Chmsee *);
 static gboolean window_state_event_cb(Chmsee *, GdkEventWindowState *);
 static gboolean configure_event_cb(GtkWidget *, GdkEventConfigure *, Chmsee *);
 static void book_model_changed_cb(Chmsee *, CsChmfile *, const gchar *);
@@ -155,6 +154,7 @@ static void on_recent_files(GtkRecentChooser *, Chmsee *);
 static void on_open_new_tab(GtkWidget *, Chmsee *);
 static void on_close_current_tab(GtkWidget *, Chmsee *);
 
+static void on_quit(GtkAction *, Chmsee *);
 static void on_menu_file(GtkWidget *, Chmsee *);
 static void on_menu_edit(GtkWidget *, Chmsee *);
 static void on_home(GtkWidget *, Chmsee *);
@@ -174,7 +174,6 @@ static void on_keyboard_escape(GtkWidget *, Chmsee *);
 static void on_fullscreen_toggled(GtkWidget *, Chmsee *);
 static void on_sidepane_toggled(GtkWidget *, Chmsee *);
 
-static void chmsee_quit(Chmsee *);
 static void populate_windows(Chmsee *);
 static void chmsee_set_fullscreen(Chmsee *, gboolean);
 static void show_sidepane(Chmsee *);
@@ -199,7 +198,7 @@ static const GtkActionEntry entries[] = {
 
         { "NewTab", NULL, N_("New _Tab"), "<control>T", NULL, G_CALLBACK(on_open_new_tab)},
         { "CloseTab", NULL, N_("_Close Tab"), "<control>W", NULL, G_CALLBACK(on_close_current_tab)},
-        { "Exit", GTK_STOCK_QUIT, N_("E_xit"), "<control>Q", N_("Exit ChmSee"), G_CALLBACK(destroy_cb)},
+        { "Exit", GTK_STOCK_QUIT, N_("E_xit"), "<control>Q", N_("Exit ChmSee"), G_CALLBACK(on_quit)},
 
         { "Copy", NULL, N_("_Copy"), NULL, NULL, G_CALLBACK(on_copy)},
         { "SelectAll", NULL, N_("Select _All"), NULL, NULL, G_CALLBACK(on_select_all)},
@@ -279,10 +278,6 @@ chmsee_init(Chmsee *self)
                          "delete-event",
                          G_CALLBACK (delete_cb),
                          self);
-        g_signal_connect(G_OBJECT (self),
-                         "destroy-event",
-                         G_CALLBACK (destroy_cb),
-                         self);
 
         /* startup html render engine */
         if(!cs_html_gecko_init_system()) {
@@ -326,7 +321,7 @@ chmsee_dispose(GObject *gobject)
                 priv->ui_manager = NULL;
         }
 
-        G_OBJECT_CLASS(chmsee_parent_class)->dispose(gobject);
+        G_OBJECT_CLASS (chmsee_parent_class)->dispose(gobject);
 }
 
 static void
@@ -343,15 +338,8 @@ static gboolean
 delete_cb(GtkWidget *widget, GdkEvent *event, Chmsee *self)
 {
         g_debug("Chmsee >>> window delete");
-        chmsee_quit(self);
-        return FALSE;
-}
-
-static void
-destroy_cb(GtkWidget *widget, Chmsee *self)
-{
-        g_debug("Chmsee >>> window destroy");
-        chmsee_quit(self);
+        on_quit(NULL, self);
+        return TRUE;
 }
 
 static gboolean
@@ -716,7 +704,7 @@ on_find(GtkWidget *widget, Chmsee *self)
 /* internal functions */
 
 static void
-chmsee_quit(Chmsee *self)
+on_quit(GtkAction *action, Chmsee *self)
 {
         g_message("Chmsee >>> quit");
 
@@ -730,8 +718,8 @@ chmsee_quit(Chmsee *self)
 }
 
 static void
-chmsee_drag_data_received (GtkWidget *widget, GdkDragContext *context, gint x, gint y,
-                           GtkSelectionData *selection_data, guint info, guint time)
+chmsee_drag_data_received(GtkWidget *widget, GdkDragContext *context, gint x, gint y,
+                          GtkSelectionData *selection_data, guint info, guint time)
 {
         gchar  **uris;
         gint     i = 0;
