@@ -1002,7 +1002,6 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
 
         g_debug("CS_CHMFILE >>> priv->hhc = %s", priv->hhc);
         g_debug("CS_CHMFILE >>> priv->hhk = %s", priv->hhk);
-        g_debug("CS_CHMFILE >>> priv->hhk p= %p", priv->hhk);
         g_debug("CS_CHMFILE >>> priv->homepage = %s", priv->homepage);
         g_debug("CS_CHMFILE >>> priv->bookname = %s", priv->bookname);
         g_debug("CS_CHMFILE >>> priv->endcoding = %s", priv->encoding);

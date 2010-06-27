@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6.2 FATAL_ERROR)
 
 set(PACKAGE_VERSION "1.2.0-rc2" )
 
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 
 find_package(PkgConfig)
 

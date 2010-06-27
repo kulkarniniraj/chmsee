@@ -149,30 +149,30 @@ static void book_message_notify_cb(Chmsee *, GParamSpec *, CsBook *);
 static void open_file_response_cb(GtkWidget *, gint, Chmsee *);
 static void about_response_cb(GtkDialog *, gint, gpointer);
 
-static void on_open_file(GtkWidget *, Chmsee *);
+static void on_open_file(GtkAction *, Chmsee *);
 static void on_recent_files(GtkRecentChooser *, Chmsee *);
-static void on_open_new_tab(GtkWidget *, Chmsee *);
-static void on_close_current_tab(GtkWidget *, Chmsee *);
+static void on_open_new_tab(GtkAction *, Chmsee *);
+static void on_close_current_tab(GtkAction *, Chmsee *);
 
 static void on_quit(GtkAction *, Chmsee *);
-static void on_menu_file(GtkWidget *, Chmsee *);
-static void on_menu_edit(GtkWidget *, Chmsee *);
-static void on_home(GtkWidget *, Chmsee *);
-static void on_back(GtkWidget *, Chmsee *);
-static void on_forward(GtkWidget *, Chmsee *);
-static void on_prev(GtkWidget *, Chmsee *);
-static void on_next(GtkWidget *, Chmsee *);
-static void on_zoom_in(GtkWidget *, Chmsee *);
-static void on_zoom_reset(GtkWidget *, Chmsee *);
-static void on_zoom_out(GtkWidget *, Chmsee *);
-static void on_setup(GtkWidget *, Chmsee *);
-static void on_about(GtkWidget *);
-static void on_copy(GtkWidget *, Chmsee *);
-static void on_select_all(GtkWidget *, Chmsee *);
-static void on_find(GtkWidget *, Chmsee *);
-static void on_keyboard_escape(GtkWidget *, Chmsee *);
-static void on_fullscreen_toggled(GtkWidget *, Chmsee *);
-static void on_sidepane_toggled(GtkWidget *, Chmsee *);
+static void on_menu_file(GtkAction *, Chmsee *);
+static void on_menu_edit(GtkAction *, Chmsee *);
+static void on_home(GtkAction *, Chmsee *);
+static void on_back(GtkAction *, Chmsee *);
+static void on_forward(GtkAction *, Chmsee *);
+static void on_prev(GtkAction *, Chmsee *);
+static void on_next(GtkAction *, Chmsee *);
+static void on_zoom_in(GtkAction *, Chmsee *);
+static void on_zoom_reset(GtkAction *, Chmsee *);
+static void on_zoom_out(GtkAction *, Chmsee *);
+static void on_setup(GtkAction *, Chmsee *);
+static void on_about(GtkAction *);
+static void on_copy(GtkAction *, Chmsee *);
+static void on_select_all(GtkAction *, Chmsee *);
+static void on_find(GtkAction *, Chmsee *);
+static void on_keyboard_escape(GtkAction *, Chmsee *);
+static void on_fullscreen_toggled(GtkToggleAction *, Chmsee *);
+static void on_sidepane_toggled(GtkToggleAction *, Chmsee *);
 
 static void populate_windows(Chmsee *);
 static void chmsee_set_fullscreen(Chmsee *, gboolean);
@@ -471,7 +471,7 @@ open_file_response_cb(GtkWidget *widget, gint response_id, Chmsee *self)
 /* Toolbar button events */
 
 static void
-on_open_file(GtkWidget *widget, Chmsee *self)
+on_open_file(GtkAction *action, Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
@@ -527,55 +527,55 @@ on_recent_files(GtkRecentChooser *chooser, Chmsee *self)
 }
 
 static void
-on_copy(GtkWidget *widget, Chmsee *self)
+on_copy(GtkAction *action, Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_copy(CS_BOOK (priv->book));
 }
 
 static void
-on_select_all(GtkWidget *widget, Chmsee *self)
+on_select_all(GtkAction *action, Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_select_all(CS_BOOK (priv->book));
 }
 
 static void
-on_setup(GtkWidget *widget, Chmsee *self)
+on_setup(GtkAction *action, Chmsee *self)
 {
         setup_window_new(self);
 }
 
 static void
-on_back(GtkWidget *widget, Chmsee *self)
+on_back(GtkAction *action, Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_go_back(CS_BOOK (priv->book));
 }
 
 static void
-on_forward(GtkWidget *widget, Chmsee *self)
+on_forward(GtkAction *action, Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_go_forward(CS_BOOK (priv->book));
 }
 
 static void
-on_prev(GtkWidget *widget, Chmsee *self)
+on_prev(GtkAction *action, Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_go_prev(CS_BOOK (priv->book));
 }
 
 static void
-on_next(GtkWidget *widget, Chmsee *self)
+on_next(GtkAction *action, Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_go_next(CS_BOOK (priv->book));
 }
 
 static void
-on_menu_file(GtkWidget *widget, Chmsee *self)
+on_menu_file(GtkAction *action, Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         gboolean can_close_tab = cs_book_can_close_tab(CS_BOOK (priv->book));
@@ -583,7 +583,7 @@ on_menu_file(GtkWidget *widget, Chmsee *self)
 }
 
 static void
-on_menu_edit(GtkWidget *widget, Chmsee *self)
+on_menu_edit(GtkAction *action, Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         gboolean can_copy = cs_book_can_copy(CS_BOOK (priv->book));
@@ -591,26 +591,26 @@ on_menu_edit(GtkWidget *widget, Chmsee *self)
 }
 
 static void
-on_home(GtkWidget *widget, Chmsee *self)
+on_home(GtkAction *action, Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_homepage(CS_BOOK (priv->book));
 }
 
 static void
-on_zoom_in(GtkWidget *widget, Chmsee *self)
+on_zoom_in(GtkAction *action, Chmsee *self)
 {
         cs_book_zoom_in(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
 static void
-on_zoom_out(GtkWidget *widget, Chmsee *self)
+on_zoom_out(GtkAction *action, Chmsee *self)
 {
         cs_book_zoom_out(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
 static void
-on_zoom_reset(GtkWidget *widget, Chmsee *self)
+on_zoom_reset(GtkAction *action, Chmsee *self)
 {
         cs_book_zoom_reset(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
@@ -623,7 +623,7 @@ about_response_cb(GtkDialog *dialog, gint response_id, gpointer user_data)
 }
 
 static void
-on_about(GtkWidget *widget)
+on_about(GtkAction *action)
 {
 
         GtkBuilder *builder = gtk_builder_new();
@@ -642,7 +642,7 @@ on_about(GtkWidget *widget)
 }
 
 static void
-on_open_new_tab(GtkWidget *widget, Chmsee *self)
+on_open_new_tab(GtkAction *action, Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
@@ -652,13 +652,13 @@ on_open_new_tab(GtkWidget *widget, Chmsee *self)
 }
 
 static void
-on_close_current_tab(GtkWidget *widget, Chmsee *self)
+on_close_current_tab(GtkAction *action, Chmsee *self)
 {
         cs_book_close_current_tab(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
 static void
-on_keyboard_escape(GtkWidget *widget, Chmsee *self)
+on_keyboard_escape(GtkAction *action, Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
@@ -666,27 +666,20 @@ on_keyboard_escape(GtkWidget *widget, Chmsee *self)
 }
 
 static void
-on_fullscreen_toggled(GtkWidget *menu, Chmsee *self)
+on_fullscreen_toggled(GtkToggleAction *action, Chmsee *self)
 {
         g_return_if_fail(IS_CHMSEE(self));
 
-        gboolean active;
-        g_object_get(G_OBJECT (menu),
-                     "active", &active,
-                     NULL);
-        g_debug("Chmsee >>> enter on_fullscreen_toggled with menu.active = %d", active);
+        gboolean active = gtk_toggle_action_get_active(action);
         chmsee_set_fullscreen(self, active);
 }
 
 static void
-on_sidepane_toggled(GtkWidget *menu, Chmsee *self)
+on_sidepane_toggled(GtkToggleAction *action, Chmsee *self)
 {
         g_return_if_fail(IS_CHMSEE (self));
 
-        gboolean active;
-        g_object_get(G_OBJECT (menu),
-                     "active", &active,
-                     NULL);
+        gboolean active = gtk_toggle_action_get_active(action);
         if (active) {
                 show_sidepane(self);
         } else {
@@ -695,7 +688,7 @@ on_sidepane_toggled(GtkWidget *menu, Chmsee *self)
 }
 
 static void
-on_find(GtkWidget *widget, Chmsee *self)
+on_find(GtkAction *action, Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
         cs_book_findbar_show(CS_BOOK (priv->book));

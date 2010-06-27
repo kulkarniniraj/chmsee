@@ -95,13 +95,13 @@ static void html_open_new_tab_cb(CsHtmlGecko *, const gchar *, CsBook *);
 static void html_link_message_cb(CsHtmlGecko *, const gchar *, CsBook *);
 
 static void on_tab_close(GtkWidget *, CsBook *);
-static void on_copy(GtkWidget *, CsBook *);
-static void on_copy_page_location(GtkWidget *, CsBook *);
-static void on_select_all(GtkWidget *, CsBook *);
-static void on_back(GtkWidget *, CsBook *);
-static void on_forward(GtkWidget *, CsBook *);
-static void on_context_new_tab(GtkWidget *, CsBook *);
-static void on_context_copy_link(GtkWidget *, CsBook *);
+static void on_copy(GtkAction *, CsBook *);
+static void on_copy_page_location(GtkAction *, CsBook *);
+static void on_select_all(GtkAction *, CsBook *);
+static void on_back(GtkAction *, CsBook *);
+static void on_forward(GtkAction *, CsBook *);
+static void on_context_new_tab(GtkAction *, CsBook *);
+static void on_context_copy_link(GtkAction *, CsBook *);
 static void on_findbar_hide(GtkWidget *, CsBook *);
 static void on_findbar_back(GtkWidget *, CsBook *);
 static void on_findbar_forward(GtkWidget *, CsBook *);
@@ -559,13 +559,13 @@ on_tab_close(GtkWidget *widget, CsBook *self)
 }
 
 static void
-on_copy(GtkWidget *widget, CsBook *self)
+on_copy(GtkAction *action, CsBook *self)
 {
         cs_book_copy(self);
 }
 
 static void
-on_copy_page_location(GtkWidget *widget, CsBook *self)
+on_copy_page_location(GtkAction *action, CsBook *self)
 {
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
@@ -584,25 +584,25 @@ on_copy_page_location(GtkWidget *widget, CsBook *self)
 }
 
 static void
-on_select_all(GtkWidget *widget, CsBook *self)
+on_select_all(GtkAction *action, CsBook *self)
 {
         cs_book_select_all(self);
 }
 
 static void
-on_back(GtkWidget *widget, CsBook *self)
+on_back(GtkAction *action, CsBook *self)
 {
         cs_book_go_back(self);
 }
 
 static void
-on_forward(GtkWidget *widget, CsBook *self)
+on_forward(GtkAction *action, CsBook *self)
 {
         cs_book_go_forward(self);
 }
 
 static void
-on_context_new_tab(GtkWidget *widget, CsBook *self)
+on_context_new_tab(GtkAction *action, CsBook *self)
 {
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         g_debug("CS_BOOK >>> On context open new tab: %s", priv->context_menu_link);
@@ -613,7 +613,7 @@ on_context_new_tab(GtkWidget *widget, CsBook *self)
 }
 
 static void
-on_context_copy_link(GtkWidget *widget, CsBook *self)
+on_context_copy_link(GtkAction *action, CsBook *self)
 {
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
         g_debug("CS_BOOK >>> On context copy link: %s", priv->context_menu_link);
