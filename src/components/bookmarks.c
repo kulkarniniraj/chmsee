@@ -289,7 +289,7 @@ cs_bookmarks_set_current_link(CsBookmarks *self, const Link *link)
 
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
 
-        g_debug("CS_BOOKMARKS >>> set bookmarks entry text = %s, length = %d", link->name, strlen(link->name));
+        g_debug("CS_BOOKMARKS >>> set bookmarks entry text = %s", link->name);
         gchar *entry_text = g_strndup(link->name, ENTRY_MAX_LENGTH - 1);
         gtk_entry_set_text(GTK_ENTRY (priv->entry), entry_text);
         g_free(entry_text);

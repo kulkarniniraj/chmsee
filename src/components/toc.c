@@ -69,8 +69,8 @@ static void cs_toc_init(CsToc *);
 static void cs_toc_dispose(GObject *);
 static void cs_toc_finalize(GObject *);
 
-static void selection_changed_cb(GtkTreeSelection *, CsToc *);
 static void row_activated_cb(GtkTreeView *, GtkTreePath *, GtkTreeViewColumn *);
+static void cursor_changed_cb(GtkTreeView *, CsToc *);
 
 static TocPixbufs *create_pixbufs(void);
 static GtkTreeViewColumn *create_columns(void);
@@ -138,15 +138,15 @@ cs_toc_init(CsToc *self)
 
         GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview));
         gtk_tree_selection_set_mode(selection, GTK_SELECTION_BROWSE);
-        g_signal_connect(selection,
-                         "changed",
-                         G_CALLBACK (selection_changed_cb),
-                         self);
 
         g_signal_connect(G_OBJECT (priv->treeview),
                          "row-activated",
                          G_CALLBACK(row_activated_cb),
                          NULL);
+        g_signal_connect(G_OBJECT (priv->treeview),
+                         "cursor-changed",
+                         G_CALLBACK(cursor_changed_cb),
+                         self);
 
         gtk_container_add(GTK_CONTAINER (toc_sw), GTK_WIDGET (priv->treeview));
         gtk_box_pack_start(GTK_BOX (self), toc_sw, TRUE, TRUE, 0);
@@ -187,12 +187,24 @@ cs_toc_finalize(GObject *object)
 /* Callbacks */
 
 static void
-selection_changed_cb(GtkTreeSelection *selection, CsToc *self)
+row_activated_cb(GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn *column)
 {
+        if (gtk_tree_view_row_expanded(treeview, path))
+                gtk_tree_view_collapse_row(treeview, path);
+        else
+                gtk_tree_view_expand_row(treeview, path, FALSE);
+}
+
+static void
+cursor_changed_cb(GtkTreeView *treeview, CsToc *self)
+{
+        g_debug("CS_TOC >>> cursor changed callback");
+        CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
+
+        GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview));
+
         GtkTreeIter   iter;
         Link         *link;
-
-        CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
 
         if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
                 gtk_tree_model_get(GTK_TREE_MODEL (priv->store),
@@ -201,17 +213,6 @@ selection_changed_cb(GtkTreeSelection *selection, CsToc *self)
                 g_debug("CS_TOC >>> emiting link-selected signal '%s'", link->uri);
                 g_signal_emit(self, signals[LINK_SELECTED], 0, link);
         }
-}
-
-static void
-row_activated_cb(GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn *column)
-{
-        g_debug("CS_TOC >>> row_activated callback");
-
-        if (gtk_tree_view_row_expanded(treeview, path))
-                gtk_tree_view_collapse_row(treeview, path);
-        else
-                gtk_tree_view_expand_row(treeview, path, FALSE);
 }
 
 /* Internal functions */
@@ -382,16 +383,15 @@ cs_toc_sync(CsToc *self, const gchar *uri)
                 return;
         }
 
-        GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview));
-        g_signal_handlers_block_by_func(selection,
-                                        selection_changed_cb,
+        g_signal_handlers_block_by_func(priv->treeview,
+                                        cursor_changed_cb,
                                         self);
 
-        gtk_tree_view_expand_to_path(GTK_TREE_VIEW (priv->treeview), data.path);
+        gtk_tree_view_expand_row(GTK_TREE_VIEW (priv->treeview), data.path, FALSE);
         gtk_tree_view_set_cursor(GTK_TREE_VIEW (priv->treeview), data.path, NULL, 0);
 
-        g_signal_handlers_unblock_by_func(selection,
-                                          selection_changed_cb,
+        g_signal_handlers_unblock_by_func(priv->treeview,
+                                          cursor_changed_cb,
                                           self);
 
         gtk_tree_path_free(data.path);
