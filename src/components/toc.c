@@ -387,7 +387,7 @@ cs_toc_sync(CsToc *self, const gchar *uri)
                                         cursor_changed_cb,
                                         self);
 
-        gtk_tree_view_expand_row(GTK_TREE_VIEW (priv->treeview), data.path, FALSE);
+        gtk_tree_view_expand_to_path(GTK_TREE_VIEW (priv->treeview), data.path);
         gtk_tree_view_set_cursor(GTK_TREE_VIEW (priv->treeview), data.path, NULL, 0);
 
         g_signal_handlers_unblock_by_func(priv->treeview,
