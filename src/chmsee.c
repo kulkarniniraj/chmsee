@@ -1071,6 +1071,19 @@ chmsee_set_startup_lastfile(Chmsee *self, gboolean state)
         CHMSEE_GET_PRIVATE (self)->config->startup_lastfile = state;
 }
 
+gboolean
+chmsee_get_splash(Chmsee *self)
+{
+        return CHMSEE_GET_PRIVATE (self)->config->splash;
+}
+
+void
+chmsee_set_splash(Chmsee *self, gboolean state)
+{
+        g_debug("Chmsee >>> set splash = %d", state);
+        CHMSEE_GET_PRIVATE (self)->config->splash = state;
+}
+
 const gchar *
 chmsee_get_variable_font(Chmsee *self)
 {
