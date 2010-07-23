@@ -15,7 +15,7 @@ Compile ChmSee from source, the following packages should have been
 installed on your system:
 
  * cmake >= 2.8
- * gtk2 >= 2.16
+ * gtk2 >= 2.20
  * xulrunner >= 1.9
  * chmlib
  * libxml2

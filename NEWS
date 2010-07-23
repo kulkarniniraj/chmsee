@@ -1,11 +1,12 @@
-ChmSee 1.2.0-rc2 2010-06-28
----------------------------
+ChmSee 1.2.0 2010-07-23
+-----------------------
 * Add previous and next page function
 * Improve language charset setting
 * Open specified page in file.chm::page.html format
 * Display progress bar during file extraction
 * Fix hhk keyword parse problem
 * Fix filename case insensitive checking bug
+* Need gtk+ >= 2.20 for gecko multi-threads compatible
 
 ChmSee 1.1.0 2010-04-12
 -----------------------

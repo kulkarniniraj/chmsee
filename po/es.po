@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-27 09:41+0800\n"
+"POT-Creation-Date: 2010-07-23 16:21+0800\n"
 "PO-Revision-Date: 2009-08-14 00:51+0000\n"
 "Last-Translator: Mauro de Carvalho <mauro.dec@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -236,22 +236,22 @@ msgstr "¡Listo!"
 msgid "Error: Can not open spectified file '%s'"
 msgstr "No se puede abrir el archivo chm %s."
 
-#: ../src/main.c:197
+#: ../src/main.c:200
 #, fuzzy
 msgid "Display ChmSee version"
 msgstr "Mostrar la versión y salir"
 
-#: ../src/main.c:202
+#: ../src/main.c:205
 #, fuzzy
 msgid "Be verbose, repeat 3 times to get all infomation"
 msgstr "ser más explícito, repítalo 3 veces para obtener toda la información"
 
-#: ../src/main.c:207
+#: ../src/main.c:210
 #, fuzzy
 msgid "Be quiet, repeat 2 times to disable all infomation"
 msgstr "ser silencioso, repítalo 2 veces para deshabilitar toda la información"
 
-#: ../src/main.c:238
+#: ../src/main.c:241
 #, c-format
 msgid "more than 1 argument\n"
 msgstr "más de un argumento\n"
@@ -632,24 +632,24 @@ msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:464 ../src/components/book.c:741
+#: ../src/components/book.c:464 ../src/components/book.c:739
 #: ../src/models/parser.c:180
 msgid "No Title"
 msgstr "Sin título"
 
-#: ../src/components/book.c:921
+#: ../src/components/book.c:917
 msgid "Topics"
 msgstr "Temas"
 
-#: ../src/components/book.c:938
+#: ../src/components/book.c:934
 msgid "Index"
 msgstr "Índice"
 
-#: ../src/components/book.c:954
+#: ../src/components/book.c:950
 msgid "Bookmarks"
 msgstr "Marcadores"
 
-#: ../src/components/book.c:1039
+#: ../src/components/book.c:1037
 #, c-format
 msgid "Can not find link target file at \"%s\""
 msgstr ""

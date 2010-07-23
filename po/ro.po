@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-27 09:41+0800\n"
+"POT-Creation-Date: 2010-07-23 16:21+0800\n"
 "PO-Revision-Date: 2009-06-16 19:30+0000\n"
 "Last-Translator: bitter <Unknown>\n"
 "Language-Team: Romanian <ro@li.org>\n"
@@ -235,22 +235,22 @@ msgstr "Gata!"
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Nu se poate deschide fișierul chm %s."
 
-#: ../src/main.c:197
+#: ../src/main.c:200
 #, fuzzy
 msgid "Display ChmSee version"
 msgstr "Afișare versiune și ieșire."
 
-#: ../src/main.c:202
+#: ../src/main.c:205
 #, fuzzy
 msgid "Be verbose, repeat 3 times to get all infomation"
 msgstr "fii guraliv, repetă de 3 ori pentru a obține toate informațiile"
 
-#: ../src/main.c:207
+#: ../src/main.c:210
 #, fuzzy
 msgid "Be quiet, repeat 2 times to disable all infomation"
 msgstr "fii tăcut, repetă de 2 ori pentru a elimina toate informațiile"
 
-#: ../src/main.c:238
+#: ../src/main.c:241
 #, c-format
 msgid "more than 1 argument\n"
 msgstr "mai mult de 1 argument\n"
@@ -631,24 +631,24 @@ msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:464 ../src/components/book.c:741
+#: ../src/components/book.c:464 ../src/components/book.c:739
 #: ../src/models/parser.c:180
 msgid "No Title"
 msgstr "Nici un Titlu"
 
-#: ../src/components/book.c:921
+#: ../src/components/book.c:917
 msgid "Topics"
 msgstr "Subiecte"
 
-#: ../src/components/book.c:938
+#: ../src/components/book.c:934
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:954
+#: ../src/components/book.c:950
 msgid "Bookmarks"
 msgstr "Semne de carte"
 
-#: ../src/components/book.c:1039
+#: ../src/components/book.c:1037
 #, c-format
 msgid "Can not find link target file at \"%s\""
 msgstr ""

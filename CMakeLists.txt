@@ -1,13 +1,13 @@
 project(chmsee)
 cmake_minimum_required(VERSION 2.6.2 FATAL_ERROR)
 
-set(PACKAGE_VERSION "1.2.0-rc2" )
+set(PACKAGE_VERSION "1.2.0" )
 
 set(CMAKE_BUILD_TYPE Release)
 
 find_package(PkgConfig)
 
-pkg_check_modules (CHMSEE REQUIRED gthread-2.0 glib-2.0 libxml-2.0 gtk+-2.0>=2.16 nspr)
+pkg_check_modules (CHMSEE REQUIRED gthread-2.0>=2.24 glib-2.0>=2.24 libxml-2.0 gtk+-2.0>=2.20 nspr)
 pkg_search_module(XULRUNNER REQUIRED mozilla-gtkmozembed-embedding>=1.9 xulrunner-gtkmozembed>=1.9)
 
 set(CHMSEE_INCLUDE_DIRS ${CHMSEE_INCLUDE_DIRS} ${XULRUNNER_INCLUDE_DIRS})
@@ -50,7 +50,7 @@ add_subdirectory(data)
 add_subdirectory(po)
 #add_subdirectory(gtkmoz)
 
-SET(CPACK_SOURCE_PACKAGE_FILE_NAME "chmsee-1.2.0-rc2")
+SET(CPACK_SOURCE_PACKAGE_FILE_NAME "chmsee-1.2.0")
 SET(CPACK_SOURCE_GENERATOR "TGZ")
 SET(CPACK_SOURCE_IGNORE_FILES ".*~;/.git/;.gitignore;ID;TAGS;/gtkmoz/")
 
