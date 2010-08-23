@@ -9,7 +9,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/chmsee.desktop DESTINATION share/appli
 install(FILES chmsee.mime chmsee.keys DESTINATION share/mime-info)
 install(FILES chmsee-icon.png DESTINATION share/pixmaps)
 install(FILES
-        book-closed.png book-open.png chmsee-icon.png chmsee-splash.png
+        book-closed.png book-open.png chmsee-icon.png
         helpdoc.png hide-pane.png show-pane.png
         about-dialog.ui openfile-dialog.ui setup-window.ui
         default-prefs.js

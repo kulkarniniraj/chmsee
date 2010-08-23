@@ -13,7 +13,6 @@ link_directories(
 
 set(CHMSEE_SRCS
         chmsee.h chmsee.c
-        startup.h startup.c
         setup.h setup.c
         utils.h utils.c
         )

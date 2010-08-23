@@ -68,7 +68,6 @@ struct _CsConfig {
         gint     hpaned_pos;
         gboolean fullscreen;
         gboolean startup_lastfile;
-        gboolean splash;
 };
 
 GType        chmsee_get_type(void);

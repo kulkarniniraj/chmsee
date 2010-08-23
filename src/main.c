@@ -41,7 +41,6 @@
 #include <pthread.h>
 
 #include "chmsee.h"
-#include "startup.h"
 #include "utils.h"
 
 static int log_level = 2; /* only show WARNING, CRITICAL, ERROR */
@@ -109,7 +108,6 @@ load_config()
         config->hpaned_pos = 200;
         config->fullscreen       = FALSE;
         config->startup_lastfile = FALSE;
-        config->splash = TRUE;
 
         gchar *config_file = g_build_filename(config->home, CHMSEE_CONFIG_FILE, NULL);
         g_debug("Main >>> chmsee config file path = %s", config_file);
@@ -135,7 +133,6 @@ load_config()
                 config->hpaned_pos = g_key_file_get_integer(keyfile, "ChmSee", "HPANED_POSITION", NULL);
                 config->fullscreen       = g_key_file_get_boolean(keyfile, "ChmSee", "FULLSCREEN", NULL);
                 config->startup_lastfile = g_key_file_get_boolean(keyfile, "ChmSee", "STARTUP_LASTFILE", NULL);
-                config->splash           = g_key_file_get_boolean(keyfile, "ChmSee", "SPLASH", NULL);
 
                 if (!config->hpaned_pos)
                         config->hpaned_pos = 200;
@@ -167,7 +164,6 @@ save_config(CsConfig *config)
         g_key_file_set_integer(keyfile, "ChmSee", "HPANED_POSITION", config->hpaned_pos);
         g_key_file_set_boolean(keyfile, "ChmSee", "FULLSCREEN", config->fullscreen);
         g_key_file_set_boolean(keyfile, "ChmSee", "STARTUP_LASTFILE", config->startup_lastfile);
-        g_key_file_set_boolean(keyfile, "ChmSee", "SPLASH", config->splash);
 
         gchar *contents = g_key_file_to_data(keyfile, &length, NULL);
         g_file_set_contents(config_file, contents, length, NULL);
@@ -259,10 +255,6 @@ main(int argc, char *argv[])
         /* } */
 
         gdk_threads_enter();
-
-        /* Show splash screen */
-        if(config->splash)
-                startup_popup_new();
 
         Chmsee *chmsee = chmsee_new(config);
 
