@@ -223,8 +223,9 @@ gecko_utils_init(void)
 
         gtk_moz_embed_set_path(xpcomLocation);
 
-        gchar *profile_dir = g_build_filename(g_get_home_dir(),
-                                              ".chmsee",
+        /* gecko config directory, default location is ~/.config/chmsee/mozilla  */
+        gchar *profile_dir = g_build_filename(g_get_user_config_dir(),
+                                              PACKAGE,
                                               NULL);
 
         gtk_moz_embed_set_profile_path(profile_dir, "mozilla");

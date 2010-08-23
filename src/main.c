@@ -89,12 +89,15 @@ load_config()
         g_message("Main >>> load config");
         CsConfig *config = g_slice_new(CsConfig);
 
-        /* ChmSee HOME directory ~/.chmsee */
-        config->home = g_build_filename(g_get_home_dir(), ".chmsee", NULL);
+        /* ChmSee HOME directory, based on $XDG_CONFIG_HOME, default location is ~/.config/chmsee */
+        config->home = g_build_filename(g_get_user_config_dir(), PACKAGE, NULL);
         if (!g_file_test(config->home, G_FILE_TEST_IS_DIR))
                 mkdir(config->home, 0755);
 
-        config->bookshelf = g_build_filename(config->home, CHMSEE_BOOKSHELF_DEFAULT, NULL);
+        /* ChmSee bookshelf directory, based on $XDG_CACHE_HOME, default location is ~/.cache/chmsee/bookshelf */
+        config->bookshelf = g_build_filename(g_get_user_cache_dir(),
+                                             PACKAGE,
+                                             CHMSEE_BOOKSHELF_DEFAULT, NULL);
         if (!g_file_test(config->bookshelf, G_FILE_TEST_IS_DIR))
                 mkdir(config->bookshelf, 0755);
 
