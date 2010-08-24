@@ -7,7 +7,6 @@ data/chmsee.desktop.in
 src/chmsee.c
 src/main.c
 src/setup.c
-src/startup.c
 src/utils.c
 src/components/book.c
 src/components/bookmarks.c

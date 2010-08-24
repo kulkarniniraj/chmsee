@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-23 16:21+0800\n"
+"POT-Creation-Date: 2010-08-24 16:37+0800\n"
 "PO-Revision-Date: 2009-08-14 00:51+0000\n"
 "Last-Translator: Mauro de Carvalho <mauro.dec@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -236,22 +236,22 @@ msgstr "¡Listo!"
 msgid "Error: Can not open spectified file '%s'"
 msgstr "No se puede abrir el archivo chm %s."
 
-#: ../src/main.c:200
+#: ../src/main.c:199
 #, fuzzy
 msgid "Display ChmSee version"
 msgstr "Mostrar la versión y salir"
 
-#: ../src/main.c:205
+#: ../src/main.c:204
 #, fuzzy
-msgid "Be verbose, repeat 3 times to get all infomation"
+msgid "Be verbose, repeat 3 times to get all information"
 msgstr "ser más explícito, repítalo 3 veces para obtener toda la información"
 
-#: ../src/main.c:210
+#: ../src/main.c:209
 #, fuzzy
-msgid "Be quiet, repeat 2 times to disable all infomation"
+msgid "Be quiet, repeat 2 times to disable all information"
 msgstr "ser silencioso, repítalo 2 veces para deshabilitar toda la información"
 
-#: ../src/main.c:241
+#: ../src/main.c:240
 #, c-format
 msgid "more than 1 argument\n"
 msgstr "más de un argumento\n"

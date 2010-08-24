@@ -201,12 +201,12 @@ main(int argc, char *argv[])
                 },
                 {"verbose", 'v',
                  G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK, (void*)callback_verbose,
-                 _("Be verbose, repeat 3 times to get all infomation"),
+                 _("Be verbose, repeat 3 times to get all information"),
                  NULL
                 },
                 {"quiet", 'q',
                  G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK, (void*)callback_quiet,
-                 _("Be quiet, repeat 2 times to disable all infomation"),
+                 _("Be quiet, repeat 2 times to disable all information"),
                  NULL
                 },
                 /* {"bookshelf", 0, */

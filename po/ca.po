@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-23 16:21+0800\n"
+"POT-Creation-Date: 2010-08-24 16:37+0800\n"
 "PO-Revision-Date: 2009-06-07 00:29+0000\n"
 "Last-Translator: el_libre XDDDDDDDDDDDDDDDDDDDDDDDDDDD <el.libre@gmail.com>\n"
 "Language-Team: Catalan <ca@li.org>\n"
@@ -229,19 +229,19 @@ msgstr ""
 msgid "Error: Can not open spectified file '%s'"
 msgstr ""
 
-#: ../src/main.c:200
+#: ../src/main.c:199
 msgid "Display ChmSee version"
 msgstr ""
 
-#: ../src/main.c:205
-msgid "Be verbose, repeat 3 times to get all infomation"
+#: ../src/main.c:204
+msgid "Be verbose, repeat 3 times to get all information"
 msgstr ""
 
-#: ../src/main.c:210
-msgid "Be quiet, repeat 2 times to disable all infomation"
+#: ../src/main.c:209
+msgid "Be quiet, repeat 2 times to disable all information"
 msgstr ""
 
-#: ../src/main.c:241
+#: ../src/main.c:240
 #, c-format
 msgid "more than 1 argument\n"
 msgstr ""

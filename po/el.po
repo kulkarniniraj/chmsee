@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-23 16:21+0800\n"
+"POT-Creation-Date: 2010-08-24 16:37+0800\n"
 "PO-Revision-Date: 2009-05-16 00:23+0000\n"
 "Last-Translator: Μάριος Ζηντίλης <m.zindilis@dmajor.org>\n"
 "Language-Team: Greek <el@li.org>\n"
@@ -236,23 +236,23 @@ msgstr "Έτοιμο!"
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Αδύνατο το άνοιγμα του chm αρχείου %s."
 
-#: ../src/main.c:200
+#: ../src/main.c:199
 #, fuzzy
 msgid "Display ChmSee version"
 msgstr "Εμφάνιση της έκδοσης και έξοδος"
 
-#: ../src/main.c:205
+#: ../src/main.c:204
 #, fuzzy
-msgid "Be verbose, repeat 3 times to get all infomation"
+msgid "Be verbose, repeat 3 times to get all information"
 msgstr "να είναι αναλυτικό, επανάληψη 3 φορές για λήψη όλων των πληροφοριών"
 
-#: ../src/main.c:210
+#: ../src/main.c:209
 #, fuzzy
-msgid "Be quiet, repeat 2 times to disable all infomation"
+msgid "Be quiet, repeat 2 times to disable all information"
 msgstr ""
 "να είναι σιωπηλό, επανάληψη 2 φορές για απενεργοποίηση όλων των πληροφοριών"
 
-#: ../src/main.c:241
+#: ../src/main.c:240
 #, c-format
 msgid "more than 1 argument\n"
 msgstr "περισσότερα από 1 ορίσματα\n"

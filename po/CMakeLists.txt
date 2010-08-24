@@ -2,11 +2,13 @@ set(CATALOGS bn ca cs da de el en_GB es fr he id it ms nb pl pt pt_BR ro ru sk s
 set(UPDATE_PO_TARGETS )
 set(COMPILE_PO_TARGETS )
 
+file(REMOVE ${CMAKE_CURRENT_SOURCE_DIR}/chmsee.pot)
+
 add_custom_command(
         OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/chmsee.pot
         COMMAND intltool-update -p -g chmsee
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Generate chmsee.pot file")
+        DEPENDS POTFILES.in
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 foreach(catalog ${CATALOGS})
         add_custom_command(
