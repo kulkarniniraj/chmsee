@@ -139,8 +139,8 @@ cs_chmfile_init(CsChmfile *self)
         priv->homepage       = NULL;
 
         priv->encoding       = g_strdup("UTF-8");
-        priv->variable_font  = g_strdup("Sans 12");
-        priv->fixed_font     = g_strdup("Monospace 12");
+        priv->variable_font  = g_strdup("");
+        priv->fixed_font     = g_strdup("");
         priv->charset        = g_strdup("");
 }
 
@@ -830,9 +830,24 @@ load_bookinfo(CsChmfile *self)
                 priv->homepage      = g_key_file_get_string(keyfile, "Bookinfo", "homepage", NULL);
                 priv->bookname      = g_key_file_get_string(keyfile, "Bookinfo", "bookname", NULL);
                 priv->encoding      = g_key_file_get_string(keyfile, "Bookinfo", "encoding", NULL);
-                priv->variable_font = g_key_file_get_string(keyfile, "Bookinfo", "variable_font", NULL);
-                priv->fixed_font    = g_key_file_get_string(keyfile, "Bookinfo", "fixed_font", NULL);
-                priv->charset       = g_key_file_get_string(keyfile, "Bookinfo", "charset", NULL);
+
+                gchar *vfont = g_key_file_get_string(keyfile, "Bookinfo", "variable_font", NULL);
+                if (vfont) {
+                        g_free(priv->variable_font);
+                        priv->variable_font = vfont;
+                }
+
+                gchar *ffont = g_key_file_get_string(keyfile, "Bookinfo", "fixed_font", NULL);
+                if (ffont) {
+                        g_free(priv->fixed_font);
+                        priv->fixed_font = ffont;
+                }
+
+                gchar *charset = g_key_file_get_string(keyfile, "Bookinfo", "charset", NULL);
+                if (charset) {
+                        g_free(priv->charset);
+                        priv->charset = charset;
+                }
         }
 
         g_key_file_free(keyfile);
@@ -1122,7 +1137,6 @@ cs_chmfile_set_variable_font(CsChmfile *self, const gchar *font_name)
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
         g_free(priv->variable_font);
-
         priv->variable_font = g_strdup(font_name);
 }
 
@@ -1139,7 +1153,6 @@ cs_chmfile_set_fixed_font(CsChmfile *self, const gchar *font_name)
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
         g_free(priv->fixed_font);
-
         priv->fixed_font = g_strdup(font_name);
 }
 
@@ -1155,6 +1168,5 @@ cs_chmfile_set_charset(CsChmfile *self, const gchar *charset)
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
         g_free(priv->charset);
-
         priv->charset = g_strdup(charset);
 }

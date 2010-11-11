@@ -984,6 +984,14 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
         /* create chmfile, get file infomation */
         priv->chmfile = cs_chmfile_new(filename, priv->config->bookshelf);
 
+        /* set global charset and font to this file */
+        if (!strlen(cs_chmfile_get_charset(priv->chmfile)) && strlen(priv->config->charset))
+                cs_chmfile_set_charset(priv->chmfile, priv->config->charset);
+        if (!strlen(cs_chmfile_get_variable_font(priv->chmfile)))
+                cs_chmfile_set_variable_font(priv->chmfile, priv->config->variable_font);
+        if (!strlen(cs_chmfile_get_fixed_font(priv->chmfile)))
+                cs_chmfile_set_fixed_font(priv->chmfile, priv->config->fixed_font);
+
         if (priv->chmfile) {
                 priv->state = CHMSEE_STATE_LOADING;
 
@@ -1075,7 +1083,10 @@ const gchar *
 chmsee_get_variable_font(Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        return cs_chmfile_get_variable_font(priv->chmfile);
+        if (priv->chmfile)
+                return cs_chmfile_get_variable_font(priv->chmfile);
+        else
+                return priv->config->variable_font;
 }
 
 void
@@ -1083,38 +1094,63 @@ chmsee_set_variable_font(Chmsee *self, const gchar *font_name)
 {
         g_debug("Chmsee >>> set variable font = %s", font_name);
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        cs_html_gecko_set_variable_font(font_name);
-        cs_chmfile_set_variable_font(priv->chmfile, font_name);
+
+        if (priv->chmfile) {
+                cs_html_gecko_set_variable_font(font_name);
+                cs_chmfile_set_variable_font(priv->chmfile, font_name);
+        } else {
+                g_free(priv->config->variable_font);
+                priv->config->variable_font = g_strdup(font_name);
+        }
 }
 
 const gchar *
 chmsee_get_fixed_font(Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        return cs_chmfile_get_fixed_font(priv->chmfile);
+
+        if (priv->chmfile)
+                return cs_chmfile_get_fixed_font(priv->chmfile);
+        else
+                return priv->config->fixed_font;
 }
 
 void
 chmsee_set_fixed_font(Chmsee *self, const gchar *font_name)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        cs_html_gecko_set_fixed_font(font_name);
-        cs_chmfile_set_fixed_font(priv->chmfile, font_name);
+
+        if (priv->chmfile) {
+                cs_html_gecko_set_fixed_font(font_name);
+                cs_chmfile_set_fixed_font(priv->chmfile, font_name);
+        } else {
+                g_free(priv->config->fixed_font);
+                priv->config->fixed_font = g_strdup(font_name);
+        }
 }
 
 const gchar *
 chmsee_get_charset(Chmsee *self)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        return cs_chmfile_get_charset(priv->chmfile);
+        if (priv->chmfile)
+                return cs_chmfile_get_charset(priv->chmfile);
+        else
+                return priv->config->charset;
 }
 
 void
 chmsee_set_charset(Chmsee *self, const gchar *charset)
 {
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        cs_chmfile_set_charset(priv->chmfile, charset);
-        cs_book_reload_current_page(CS_BOOK (priv->book));
+
+        if (priv->chmfile) {
+                cs_chmfile_set_charset(priv->chmfile, charset);
+                cs_book_reload_current_page(CS_BOOK (priv->book));
+        } else {
+                g_free(priv->config->charset);
+                priv->config->charset = g_strdup(charset);
+        }
 }
 
 gboolean

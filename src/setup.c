@@ -340,31 +340,25 @@ setup_window_new(Chmsee *chmsee)
                                            cell_layout_data_func,
                                            NULL, NULL);
 
-        if (chmsee_has_book(chmsee)) {
-                gtk_font_button_set_font_name(GTK_FONT_BUTTON (variable_font_button),
-                                              chmsee_get_variable_font(chmsee));
-                gtk_font_button_set_font_name(GTK_FONT_BUTTON (fixed_font_button),
-                                              chmsee_get_fixed_font(chmsee));
-                gtk_widget_set_sensitive(variable_font_button, TRUE);
-                gtk_widget_set_sensitive(fixed_font_button, TRUE);
+        gtk_font_button_set_font_name(GTK_FONT_BUTTON (variable_font_button),
+                                      chmsee_get_variable_font(chmsee));
+        gtk_font_button_set_font_name(GTK_FONT_BUTTON (fixed_font_button),
+                                      chmsee_get_fixed_font(chmsee));
 
-                const gchar *charset = chmsee_get_charset(chmsee);
-                g_debug("SETUP >>> chmsee_get_charset = %s", charset);
-                if (charset && strlen(charset)) {
-                        FindCharsetData *data = g_new(FindCharsetData, sizeof(FindCharsetData));
+        const gchar *charset = chmsee_get_charset(chmsee);
+        g_debug("SETUP >>> chmsee_get_charset = %s", charset);
+        if (charset && strlen(charset)) {
+                FindCharsetData *data = g_new(FindCharsetData, sizeof(FindCharsetData));
 
-                        data->combobox = GTK_COMBO_BOX (cmb_lang);
-                        data->charset = charset;
+                data->combobox = GTK_COMBO_BOX (cmb_lang);
+                data->charset = charset;
 
-                        gtk_tree_model_foreach(GTK_TREE_MODEL (cmb_model),
-                                               (GtkTreeModelForeachFunc) find_charset_func,
-                                               data);
-                        g_free(data);
-                } else {
-                        gtk_combo_box_set_active(GTK_COMBO_BOX (cmb_lang), 0);
-                }
-
-                gtk_widget_set_sensitive(cmb_lang, TRUE);
+                gtk_tree_model_foreach(GTK_TREE_MODEL (cmb_model),
+                                       (GtkTreeModelForeachFunc) find_charset_func,
+                                       data);
+                g_free(data);
+        } else {
+                gtk_combo_box_set_active(GTK_COMBO_BOX (cmb_lang), 0);
         }
 
         g_signal_connect(G_OBJECT (cmb_lang),

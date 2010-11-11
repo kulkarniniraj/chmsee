@@ -45,10 +45,6 @@ pref("security.warn_viewing_mixed.show_once", false);
 // fonts
 pref("browser.display.use_document_fonts", 0);
 pref("font.size.unit", "pt");
-pref("font.size.fixed.x-western", 12);
-pref("font.size.fixed.zh-CN", 12);
-pref("font.size.variable.x-western", 12);
-pref("font.size.variable.zh-CN", 12);
 
 // protocols
 pref("network.protocol-handler.external-default", false);

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-24 16:37+0800\n"
+"POT-Creation-Date: 2010-11-11 22:37+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -209,24 +209,24 @@ msgstr ""
 msgid "Ready!"
 msgstr ""
 
-#: ../src/chmsee.c:1054
+#: ../src/chmsee.c:1062
 #, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr ""
 
-#: ../src/main.c:199
+#: ../src/main.c:221
 msgid "Display ChmSee version"
 msgstr ""
 
-#: ../src/main.c:204
+#: ../src/main.c:226
 msgid "Be verbose, repeat 3 times to get all information"
 msgstr ""
 
-#: ../src/main.c:209
+#: ../src/main.c:231
 msgid "Be quiet, repeat 2 times to disable all information"
 msgstr ""
 
-#: ../src/main.c:240
+#: ../src/main.c:262
 #, c-format
 msgid "more than 1 argument\n"
 msgstr ""
@@ -648,11 +648,11 @@ msgstr ""
 msgid "Can not open chm file %s."
 msgstr ""
 
-#: ../src/models/chmfile.c:973
+#: ../src/models/chmfile.c:988
 #, c-format
 msgid "Processing... %.0f%% complete"
 msgstr ""
 
-#: ../src/models/chmfile.c:986
+#: ../src/models/chmfile.c:1001
 msgid "Processing done. Loading..."
 msgstr ""

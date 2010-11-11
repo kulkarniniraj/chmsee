@@ -60,6 +60,9 @@ struct _CsConfig {
         gchar   *home;
         gchar   *bookshelf;
         gchar   *last_file;
+        gchar   *charset;
+        gchar   *variable_font;
+        gchar   *fixed_font;
 
         gint     pos_x;
         gint     pos_y;

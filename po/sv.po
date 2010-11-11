@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-24 16:37+0800\n"
+"POT-Creation-Date: 2010-11-11 22:37+0800\n"
 "PO-Revision-Date: 2009-08-26 11:45+0000\n"
 "Last-Translator: Martin Lindhe <Unknown>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -233,27 +233,27 @@ msgstr "Alla filer"
 msgid "Ready!"
 msgstr "Redo!"
 
-#: ../src/chmsee.c:1054
+#: ../src/chmsee.c:1062
 #, fuzzy, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Kan inte öppna chm-fil %s."
 
-#: ../src/main.c:199
+#: ../src/main.c:221
 #, fuzzy
 msgid "Display ChmSee version"
 msgstr "Visa versionen och avsluta"
 
-#: ../src/main.c:204
+#: ../src/main.c:226
 #, fuzzy
 msgid "Be verbose, repeat 3 times to get all information"
 msgstr "var detaljerad, upprepa 3 gånger för att visa all information"
 
-#: ../src/main.c:209
+#: ../src/main.c:231
 #, fuzzy
 msgid "Be quiet, repeat 2 times to disable all information"
 msgstr "var tyst, upprepa 2 gånger för att stänga av all information"
 
-#: ../src/main.c:240
+#: ../src/main.c:262
 #, c-format
 msgid "more than 1 argument\n"
 msgstr "mer än ett argument\n"
@@ -676,12 +676,12 @@ msgstr "Misslyckades att öppna \"%s\": %s"
 msgid "Can not open chm file %s."
 msgstr "Kan inte öppna chm-fil %s."
 
-#: ../src/models/chmfile.c:973
+#: ../src/models/chmfile.c:988
 #, c-format
 msgid "Processing... %.0f%% complete"
 msgstr ""
 
-#: ../src/models/chmfile.c:986
+#: ../src/models/chmfile.c:1001
 msgid "Processing done. Loading..."
 msgstr ""
 

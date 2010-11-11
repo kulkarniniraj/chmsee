@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee 1.0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-24 16:37+0800\n"
+"POT-Creation-Date: 2010-11-11 22:37+0800\n"
 "PO-Revision-Date: 2009-07-14 15:36+0000\n"
 "Last-Translator: Wei-Lun Chao <chaoweilun@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -231,27 +231,27 @@ msgstr "所有檔案"
 msgid "Ready!"
 msgstr "就緒！"
 
-#: ../src/chmsee.c:1054
+#: ../src/chmsee.c:1062
 #, fuzzy, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "無法開啟 chm 檔案 %s。"
 
-#: ../src/main.c:199
+#: ../src/main.c:221
 #, fuzzy
 msgid "Display ChmSee version"
 msgstr "顯示版本然後離開"
 
-#: ../src/main.c:204
+#: ../src/main.c:226
 #, fuzzy
 msgid "Be verbose, repeat 3 times to get all information"
 msgstr "細節模式，重複三次以取得所有資訊"
 
-#: ../src/main.c:209
+#: ../src/main.c:231
 #, fuzzy
 msgid "Be quiet, repeat 2 times to disable all information"
 msgstr "安靜模式，重複兩次以停用全部資訊"
 
-#: ../src/main.c:240
+#: ../src/main.c:262
 #, c-format
 msgid "more than 1 argument\n"
 msgstr "多於一項引數\n"
@@ -674,12 +674,12 @@ msgstr "開啟「%s」時失敗：%s"
 msgid "Can not open chm file %s."
 msgstr "無法開啟 chm 檔案 %s。"
 
-#: ../src/models/chmfile.c:973
+#: ../src/models/chmfile.c:988
 #, c-format
 msgid "Processing... %.0f%% complete"
 msgstr ""
 
-#: ../src/models/chmfile.c:986
+#: ../src/models/chmfile.c:1001
 msgid "Processing done. Loading..."
 msgstr ""
 

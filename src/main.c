@@ -100,12 +100,15 @@ load_config()
         if (!g_file_test(config->bookshelf, G_FILE_TEST_IS_DIR))
                 mkdir(config->bookshelf, 0755);
 
-        config->last_file  = NULL;
-        config->pos_x      = -100;
-        config->pos_y      = -100;
-        config->width      = 0;
-        config->height     = 0;
-        config->hpaned_pos = 200;
+        config->last_file     = NULL;
+        config->charset       = NULL;
+        config->variable_font = NULL;
+        config->fixed_font    = NULL;
+        config->pos_x         = -100;
+        config->pos_y         = -100;
+        config->width         = 0;
+        config->height        = 0;
+        config->hpaned_pos    = 200;
         config->fullscreen       = FALSE;
         config->startup_lastfile = FALSE;
 
@@ -124,7 +127,10 @@ load_config()
         rv = g_key_file_load_from_file(keyfile, config_file, G_KEY_FILE_NONE, NULL);
 
         if (rv) {
-                config->last_file = g_key_file_get_string (keyfile, "ChmSee", "LAST_FILE", NULL);
+                config->last_file     = g_key_file_get_string(keyfile, "ChmSee", "LAST_FILE", NULL);
+                config->charset       = g_key_file_get_string(keyfile, "ChmSee", "CHARSET", NULL);
+                config->variable_font = g_key_file_get_string(keyfile, "ChmSee", "VARIABLE_FONT", NULL);
+                config->fixed_font    = g_key_file_get_string(keyfile, "ChmSee", "FIXED_FONT", NULL);
 
                 config->pos_x      = g_key_file_get_integer(keyfile, "ChmSee", "POS_X", NULL);
                 config->pos_y      = g_key_file_get_integer(keyfile, "ChmSee", "POS_Y", NULL);
@@ -141,6 +147,14 @@ load_config()
         g_key_file_free(keyfile);
         g_free(config_file);
 
+        /* global default value */
+        if (!config->charset)
+                config->charset = g_strdup("");
+        if (!config->variable_font)
+                config->variable_font = g_strdup("Sans 12");
+        if (!config->fixed_font)
+                config->fixed_font = g_strdup("Monospace 12");
+
         return config;
 }
 
@@ -155,7 +169,11 @@ save_config(CsConfig *config)
         GKeyFile *keyfile = g_key_file_new();
 
         if (config->last_file)
-                g_key_file_set_string (keyfile, "ChmSee", "LAST_FILE", config->last_file);
+                g_key_file_set_string(keyfile, "ChmSee", "LAST_FILE", config->last_file);
+
+        g_key_file_set_string(keyfile, "ChmSee", "CHARSET", config->charset);
+        g_key_file_set_string(keyfile, "ChmSee", "VARIABLE_FONT", config->variable_font);
+        g_key_file_set_string(keyfile, "ChmSee", "FIXED_FONT", config->fixed_font);
 
         g_key_file_set_integer(keyfile, "ChmSee", "POS_X", config->pos_x);
         g_key_file_set_integer(keyfile, "ChmSee", "POS_Y", config->pos_y);
@@ -175,6 +193,10 @@ save_config(CsConfig *config)
         g_free(config->home);
         g_free(config->bookshelf);
         g_free(config->last_file);
+
+        g_free(config->charset);
+        g_free(config->variable_font);
+        g_free(config->fixed_font);
 
         g_slice_free(CsConfig, config);
 }
