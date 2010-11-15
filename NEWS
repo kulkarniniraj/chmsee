@@ -2,6 +2,7 @@ ChmSee 1.3.0 2010-xx-xx
 -----------------------
 * Use XDG Base Directory Specification for config and bookshelf
 * Remove starup splash screen
+* Add global font setting
 
 ChmSee 1.2.0 2010-07-23
 -----------------------

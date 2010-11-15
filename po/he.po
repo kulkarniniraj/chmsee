@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-11 22:37+0800\n"
+"POT-Creation-Date: 2010-11-15 22:48+0800\n"
 "PO-Revision-Date: 2009-01-11 09:27+0000\n"
 "Last-Translator: Yaron <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
@@ -18,15 +18,11 @@ msgstr ""
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: ../data/about-dialog.ui.h:1
-msgid "The HTML Help(CHM) viewer for Unix/Linux"
-msgstr "תוכנה המציגה קבצי עזרה ב־HTML דחוסים (CHM) עבור יוניקס/לינוקס"
-
-#: ../data/about-dialog.ui.h:2
 msgid "http://code.google.com/p/chmsee"
 msgstr ""
 
 #. TRANSLATORS: Replace this string with your names, one name per line.
-#: ../data/about-dialog.ui.h:4
+#: ../data/about-dialog.ui.h:3
 msgid "translator-credits"
 msgstr ""
 "Launchpad Contributions:\n"
@@ -228,30 +224,33 @@ msgstr "קבצי CHM"
 msgid "All Files"
 msgstr "כל הקבצים"
 
-#: ../src/chmsee.c:845
+#: ../src/chmsee.c:640
+msgid "(Build with xulrunner "
+msgstr ""
+
+#: ../src/chmsee.c:640
+msgid ")"
+msgstr ""
+
+#: ../src/chmsee.c:846
 msgid "Ready!"
 msgstr "מוכן!"
 
-#: ../src/chmsee.c:1062
+#: ../src/chmsee.c:1065
 #, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr ""
 
-#: ../src/main.c:221
+#: ../src/main.c:220
 msgid "Display ChmSee version"
 msgstr ""
 
-#: ../src/main.c:226
+#: ../src/main.c:225
 msgid "Be verbose, repeat 3 times to get all information"
 msgstr ""
 
-#: ../src/main.c:231
+#: ../src/main.c:230
 msgid "Be quiet, repeat 2 times to disable all information"
-msgstr ""
-
-#: ../src/main.c:262
-#, c-format
-msgid "more than 1 argument\n"
 msgstr ""
 
 #: ../src/setup.c:132
@@ -673,14 +672,17 @@ msgstr ""
 msgid "Can not open chm file %s."
 msgstr ""
 
-#: ../src/models/chmfile.c:988
+#: ../src/models/chmfile.c:990
 #, c-format
 msgid "Processing... %.0f%% complete"
 msgstr ""
 
-#: ../src/models/chmfile.c:1001
+#: ../src/models/chmfile.c:1003
 msgid "Processing done. Loading..."
 msgstr ""
+
+#~ msgid "The HTML Help(CHM) viewer for Unix/Linux"
+#~ msgstr "תוכנה המציגה קבצי עזרה ב־HTML דחוסים (CHM) עבור יוניקס/לינוקס"
 
 #~ msgid "Auto-Detect:"
 #~ msgstr "זיהוי־אוטומטי"

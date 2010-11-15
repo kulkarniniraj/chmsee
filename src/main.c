@@ -46,10 +46,10 @@
 static int log_level = 2; /* only show WARNING, CRITICAL, ERROR */
 
 static void
-dummy_log_handler (const gchar *log_domain,
+dummy_log_handler (const gchar   *log_domain,
                    GLogLevelFlags log_level,
-                   const gchar *message,
-                   gpointer unused_data)
+                   const gchar   *message,
+                   gpointer       unused_data)
 {}
 
 static void
@@ -65,8 +65,8 @@ init_log(int log_level)
 static gboolean
 callback_verbose(const gchar *option_name,
                  const gchar *value,
-                 gpointer data,
-                 GError **error)
+                 gpointer     data,
+                 GError     **error)
 {
         log_level++;
         return TRUE;
@@ -75,8 +75,8 @@ callback_verbose(const gchar *option_name,
 static gboolean
 callback_quiet(const gchar *option_name,
                const gchar *value,
-               gpointer data,
-               GError **error)
+               gpointer     data,
+               GError     **error)
 {
         log_level--;
         return TRUE;
@@ -104,11 +104,11 @@ load_config()
         config->charset       = NULL;
         config->variable_font = NULL;
         config->fixed_font    = NULL;
-        config->pos_x         = -100;
-        config->pos_y         = -100;
-        config->width         = 0;
-        config->height        = 0;
-        config->hpaned_pos    = 200;
+        config->pos_x      = -100;
+        config->pos_y      = -100;
+        config->width      = 0;
+        config->height     = 0;
+        config->hpaned_pos = 200;
         config->fullscreen       = FALSE;
         config->startup_lastfile = FALSE;
 
@@ -205,7 +205,6 @@ int
 main(int argc, char *argv[])
 {
         const gchar *filename = NULL;
-        /* const gchar *bookshelf = NULL; */
 
         GError *error = NULL;
         gboolean option_version = FALSE;
@@ -231,11 +230,6 @@ main(int argc, char *argv[])
                  _("Be quiet, repeat 2 times to disable all information"),
                  NULL
                 },
-                /* {"bookshelf", 0, */
-                /*  G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME, &bookshelf, */
-                /*  "specify bookshelf directory, default is " CHMSEE_BOOKSHELF_DEFAULT, */
-                /*  _("Bookshelf") */
-                /* }, */
                 {NULL}
         };
 
@@ -256,11 +250,8 @@ main(int argc, char *argv[])
         }
 
         if (argc == 1) {
-        } else if (argc == 2) {
-                filename = argv[1];
-        } else {
-                g_printerr(_("more than 1 argument\n"));
-                return 1;
+        } else if (argc >= 2) {
+                filename = argv[1]; // only open first file
         }
 
         init_log(log_level);
@@ -271,10 +262,6 @@ main(int argc, char *argv[])
         textdomain(GETTEXT_PACKAGE);
 
         CsConfig *config = load_config();
-
-        /* if (bookshelf != NULL) { */
-        /*         config->bookshelf = g_strdup(bookshelf); */
-        /* } */
 
         gdk_threads_enter();
 

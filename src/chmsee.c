@@ -637,6 +637,7 @@ on_about(GtkAction *action)
                          NULL);
 
         gtk_about_dialog_set_version(GTK_ABOUT_DIALOG (dialog), PACKAGE_VERSION);
+        gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG (dialog), _("(Build with xulrunner " XULRUNNER_VERSION ")"));
 
         g_object_unref(builder);
 }
@@ -976,23 +977,25 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
         g_message("Chmsee >>> open file = %s", filename);
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        /* close currently opened book */
-        if (priv->chmfile) {
-                g_object_unref(priv->chmfile);
-        }
-
         /* create chmfile, get file infomation */
-        priv->chmfile = cs_chmfile_new(filename, priv->config->bookshelf);
+        CsChmfile *new_chmfile = cs_chmfile_new(filename, priv->config->bookshelf);
 
-        /* set global charset and font to this file */
-        if (!strlen(cs_chmfile_get_charset(priv->chmfile)) && strlen(priv->config->charset))
-                cs_chmfile_set_charset(priv->chmfile, priv->config->charset);
-        if (!strlen(cs_chmfile_get_variable_font(priv->chmfile)))
-                cs_chmfile_set_variable_font(priv->chmfile, priv->config->variable_font);
-        if (!strlen(cs_chmfile_get_fixed_font(priv->chmfile)))
-                cs_chmfile_set_fixed_font(priv->chmfile, priv->config->fixed_font);
+        if (new_chmfile) {
+                /* close currently opened book */
+                if (priv->chmfile) {
+                        g_object_unref(priv->chmfile);
+                }
 
-        if (priv->chmfile) {
+                priv->chmfile = new_chmfile;
+
+                /* set global charset and font to this file */
+                if (!strlen(cs_chmfile_get_charset(priv->chmfile)) && strlen(priv->config->charset))
+                        cs_chmfile_set_charset(priv->chmfile, priv->config->charset);
+                if (!strlen(cs_chmfile_get_variable_font(priv->chmfile)))
+                        cs_chmfile_set_variable_font(priv->chmfile, priv->config->variable_font);
+                if (!strlen(cs_chmfile_get_fixed_font(priv->chmfile)))
+                        cs_chmfile_set_fixed_font(priv->chmfile, priv->config->fixed_font);
+
                 priv->state = CHMSEE_STATE_LOADING;
 
                 cs_book_set_model(CS_BOOK (priv->book), priv->chmfile);
@@ -1061,6 +1064,7 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
                                                     GTK_BUTTONS_CLOSE,
                                                     _("Error: Can not open spectified file '%s'"),
                                                     filename);
+                gtk_window_set_position(GTK_WINDOW (msg_dialog), GTK_WIN_POS_CENTER);
                 gtk_dialog_run(GTK_DIALOG (msg_dialog));
                 gtk_widget_destroy(msg_dialog);
         }

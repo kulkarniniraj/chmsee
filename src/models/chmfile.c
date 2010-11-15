@@ -939,7 +939,6 @@ parse_filename(CsChmfile *self, const gchar *filename)
         } else {
                 priv->chm = g_strdup(filename);
         }
-        g_debug("CS_CHMFILE >>> priv->chm = %s, priv->page = %s", priv->chm, priv->page);
 }
 
 /* External functions */
@@ -952,10 +951,13 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
 
         parse_filename(self, filename);
 
+        if (!g_str_has_suffix(priv->chm, ".CHM") && !g_str_has_suffix(priv->chm, ".chm"))
+                return NULL;
+
         /* use chm file's MD5 as folder name */
         gchar *md5 = MD5File(priv->chm, NULL);
         if(!md5) {
-                g_warning("CS_CHMFILE >>> Oops!! cannot calculate chmfile's MD5 value.");
+                g_warning("CS_CHMFILE >>> Oops!! Cannot calculate chmfile's MD5!");
                 return NULL;
         }
 

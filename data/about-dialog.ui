@@ -6,7 +6,6 @@
     <property name="visible">True</property>
     <property name="window_position">center</property>
     <property name="type_hint">normal</property>
-    <property name="comments" translatable="yes">The HTML Help(CHM) viewer for Unix/Linux</property>
     <property name="website">http://code.google.com/p/chmsee</property>
     <property name="website_label" translatable="yes">http://code.google.com/p/chmsee</property>
     <property name="authors">Ji YongGang &lt;jungleji@gmail.com&gt;

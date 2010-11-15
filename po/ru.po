@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-11 22:37+0800\n"
+"POT-Creation-Date: 2010-11-15 22:48+0800\n"
 "PO-Revision-Date: 2009-08-11 00:08+0000\n"
 "Last-Translator: Dmitry Korzhenevsky <Lynx@programist.Ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -18,15 +18,11 @@ msgstr ""
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: ../data/about-dialog.ui.h:1
-msgid "The HTML Help(CHM) viewer for Unix/Linux"
-msgstr "Просмоторщик файлов HTML Help (СHM) для Unix\\Linux"
-
-#: ../data/about-dialog.ui.h:2
 msgid "http://code.google.com/p/chmsee"
 msgstr "http://code.google.com/p/chmsee"
 
 #. TRANSLATORS: Replace this string with your names, one name per line.
-#: ../data/about-dialog.ui.h:4
+#: ../data/about-dialog.ui.h:3
 msgid "translator-credits"
 msgstr ""
 "Launchpad Contributions:\n"
@@ -235,34 +231,37 @@ msgstr "Файлы CHM"
 msgid "All Files"
 msgstr "Все файлы"
 
-#: ../src/chmsee.c:845
+#: ../src/chmsee.c:640
+msgid "(Build with xulrunner "
+msgstr ""
+
+#: ../src/chmsee.c:640
+msgid ")"
+msgstr ""
+
+#: ../src/chmsee.c:846
 msgid "Ready!"
 msgstr "Готов!"
 
-#: ../src/chmsee.c:1062
+#: ../src/chmsee.c:1065
 #, fuzzy, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Не удалось открыть chm файл %s."
 
-#: ../src/main.c:221
+#: ../src/main.c:220
 #, fuzzy
 msgid "Display ChmSee version"
 msgstr "Отобразить версию и выйти"
 
-#: ../src/main.c:226
+#: ../src/main.c:225
 #, fuzzy
 msgid "Be verbose, repeat 3 times to get all information"
 msgstr "подробно, для вывода всей информации повторить 3 раза"
 
-#: ../src/main.c:231
+#: ../src/main.c:230
 #, fuzzy
 msgid "Be quiet, repeat 2 times to disable all information"
 msgstr "тихо, для отключения вывода всей информации повторить 2 раза"
-
-#: ../src/main.c:262
-#, c-format
-msgid "more than 1 argument\n"
-msgstr "больше чем 1 аргумент\n"
 
 #: ../src/setup.c:132
 #, fuzzy
@@ -682,14 +681,20 @@ msgstr "при открытии \"%s\" ошибка: %s"
 msgid "Can not open chm file %s."
 msgstr "Не удалось открыть chm файл %s."
 
-#: ../src/models/chmfile.c:988
+#: ../src/models/chmfile.c:990
 #, c-format
 msgid "Processing... %.0f%% complete"
 msgstr ""
 
-#: ../src/models/chmfile.c:1001
+#: ../src/models/chmfile.c:1003
 msgid "Processing done. Loading..."
 msgstr ""
+
+#~ msgid "The HTML Help(CHM) viewer for Unix/Linux"
+#~ msgstr "Просмоторщик файлов HTML Help (СHM) для Unix\\Linux"
+
+#~ msgid "more than 1 argument\n"
+#~ msgstr "больше чем 1 аргумент\n"
 
 #~ msgid "Auto-Detect:"
 #~ msgstr "Автоопределение:"

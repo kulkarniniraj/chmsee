@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-11 22:37+0800\n"
+"POT-Creation-Date: 2010-11-15 22:48+0800\n"
 "PO-Revision-Date: 2009-05-16 00:23+0000\n"
 "Last-Translator: Μάριος Ζηντίλης <m.zindilis@dmajor.org>\n"
 "Language-Team: Greek <el@li.org>\n"
@@ -18,15 +18,11 @@ msgstr ""
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: ../data/about-dialog.ui.h:1
-msgid "The HTML Help(CHM) viewer for Unix/Linux"
-msgstr "Ο προβολέας βοήθειας HTML (CHM) για το Unix/Linux"
-
-#: ../data/about-dialog.ui.h:2
 msgid "http://code.google.com/p/chmsee"
 msgstr "http://code.google.com/p/chmsee"
 
 #. TRANSLATORS: Replace this string with your names, one name per line.
-#: ../data/about-dialog.ui.h:4
+#: ../data/about-dialog.ui.h:3
 msgid "translator-credits"
 msgstr ""
 "Launchpad Contributions:\n"
@@ -227,35 +223,38 @@ msgstr "Αρχεία CHM"
 msgid "All Files"
 msgstr "Όλα τα αρχεία"
 
-#: ../src/chmsee.c:845
+#: ../src/chmsee.c:640
+msgid "(Build with xulrunner "
+msgstr ""
+
+#: ../src/chmsee.c:640
+msgid ")"
+msgstr ""
+
+#: ../src/chmsee.c:846
 msgid "Ready!"
 msgstr "Έτοιμο!"
 
-#: ../src/chmsee.c:1062
+#: ../src/chmsee.c:1065
 #, fuzzy, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Αδύνατο το άνοιγμα του chm αρχείου %s."
 
-#: ../src/main.c:221
+#: ../src/main.c:220
 #, fuzzy
 msgid "Display ChmSee version"
 msgstr "Εμφάνιση της έκδοσης και έξοδος"
 
-#: ../src/main.c:226
+#: ../src/main.c:225
 #, fuzzy
 msgid "Be verbose, repeat 3 times to get all information"
 msgstr "να είναι αναλυτικό, επανάληψη 3 φορές για λήψη όλων των πληροφοριών"
 
-#: ../src/main.c:231
+#: ../src/main.c:230
 #, fuzzy
 msgid "Be quiet, repeat 2 times to disable all information"
 msgstr ""
 "να είναι σιωπηλό, επανάληψη 2 φορές για απενεργοποίηση όλων των πληροφοριών"
-
-#: ../src/main.c:262
-#, c-format
-msgid "more than 1 argument\n"
-msgstr "περισσότερα από 1 ορίσματα\n"
 
 #: ../src/setup.c:132
 #, fuzzy
@@ -675,14 +674,20 @@ msgstr "το άνοιγμα του \"%s\" απέτυχε: %s"
 msgid "Can not open chm file %s."
 msgstr "Αδύνατο το άνοιγμα του chm αρχείου %s."
 
-#: ../src/models/chmfile.c:988
+#: ../src/models/chmfile.c:990
 #, c-format
 msgid "Processing... %.0f%% complete"
 msgstr ""
 
-#: ../src/models/chmfile.c:1001
+#: ../src/models/chmfile.c:1003
 msgid "Processing done. Loading..."
 msgstr ""
+
+#~ msgid "The HTML Help(CHM) viewer for Unix/Linux"
+#~ msgstr "Ο προβολέας βοήθειας HTML (CHM) για το Unix/Linux"
+
+#~ msgid "more than 1 argument\n"
+#~ msgstr "περισσότερα από 1 ορίσματα\n"
 
 #~ msgid "Auto-Detect:"
 #~ msgstr "Αυτόματος εντοπισμός:"

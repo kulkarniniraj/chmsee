@@ -11,13 +11,13 @@ Homepage: http://code.google.com/p/chmsee
 Dependencies
 ============
 
-Compile ChmSee from source, the following packages should have been
-installed on your system:
+To compile ChmSee from source, the following packages should have been
+installed and met their version on your system:
 
  * cmake >= 2.8
  * gtk2 >= 2.20
  * xulrunner >= 1.9
- * chmlib
+ * chmlib >= 0.39
  * libxml2
  * libgcrypt
 
@@ -31,17 +31,17 @@ $ cmake ../chmsee-$VERSION
 $ make
 # make install
 
-Source repository
-=================
+Source code repository
+======================
 
-You can use git command to retrive develping ChmSee code:
+You can use git command below to retrive develping ChmSee code:
 
 $ git clone git://github.com/jungleji/chmsee.git
 
 Report bug
 ==========
 
-If you encounter any problem, please report them to
+If you encounter any ChmSee problem, please report them to
 http://code.google.com/p/chmsee/issues/entry, thanks.
 
 About ChmSee logo
