@@ -55,28 +55,29 @@ static void
 on_bookshelf_clear(GtkWidget *widget, Chmsee *chmsee)
 {
         char *argv[4];
-        gchar *bookshelf = g_strdup(chmsee_get_bookshelf(chmsee));
+        const gchar *bookshelf = chmsee_get_bookshelf(chmsee);
 
-        chmsee_close_book(chmsee);
+        if (bookshelf && g_file_test(bookshelf, G_FILE_TEST_EXISTS)) {
+                chmsee_close_book(chmsee);
 
-        g_return_if_fail(g_file_test(bookshelf, G_FILE_TEST_EXISTS));
+                gchar *dir = strdup(bookshelf);
+                argv[0] = "rm";
+                argv[1] = "-rf";
+                argv[2] = dir;
+                argv[3] = NULL;
 
-        argv[0] = "rm";
-        argv[1] = "-rf";
-        argv[2] = bookshelf;
-        argv[3] = NULL;
-
-        g_spawn_async(g_get_tmp_dir(), argv, NULL,
-                      G_SPAWN_SEARCH_PATH,
-                      NULL, NULL, NULL,
-                      NULL);
-        g_free(bookshelf);
+                g_spawn_async(g_get_tmp_dir(), argv, NULL,
+                              G_SPAWN_SEARCH_PATH,
+                              NULL, NULL, NULL,
+                              NULL);
+                g_free(dir);
+        }
 }
 
 static void
 on_window_close(GtkButton *button, Chmsee *chmsee)
 {
-        gtk_widget_destroy(gtk_widget_get_toplevel (GTK_WIDGET(button)));
+        gtk_widget_destroy(gtk_widget_get_toplevel(GTK_WIDGET (button)));
 }
 
 static void
@@ -268,8 +269,7 @@ static void
 cell_layout_data_func(GtkCellLayout *layout, GtkCellRenderer *renderer,
                       GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
 {
-        gboolean sensitive = !gtk_tree_model_iter_has_child(model, iter);
-        gtk_cell_renderer_set_sensitive(renderer, sensitive);
+        gtk_cell_renderer_set_sensitive(renderer, !gtk_tree_model_iter_has_child(model, iter));
 }
 
 static gboolean
@@ -372,7 +372,9 @@ setup_window_new(Chmsee *chmsee)
                          "toggled",
                          G_CALLBACK (startup_lastfile_toggled_cb),
                          chmsee);
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON (startup_lastfile_chkbtn), chmsee_get_startup_lastfile(chmsee));
+
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON (startup_lastfile_chkbtn),
+                                     chmsee_get_startup_lastfile(chmsee));
 
         GtkWidget *close_button = BUILDER_WIDGET (builder, "setup_close");
         g_signal_connect(G_OBJECT (close_button),

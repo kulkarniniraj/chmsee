@@ -143,11 +143,7 @@ get_real_uri(const gchar *uri)
         gchar *p;
 
         p = g_strrstr(uri, "#");
-
-        if (p)
-                real_uri = g_strndup(uri, p - uri);
-        else
-                real_uri = g_strdup(uri);
+        real_uri = p ? g_strndup(uri, p - uri) : g_strdup(uri);
 
         p = g_strrstr(real_uri, ";");
 

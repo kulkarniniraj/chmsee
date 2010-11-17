@@ -650,14 +650,11 @@ cs_book_set_property(GObject *object, guint property_id, const GValue *value, GP
 {
         CsBook *self = CS_BOOK(object);
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        GtkWidget *pane = gtk_paned_get_child1(GTK_PANED (priv->hpaned));
 
         switch (property_id) {
         case PROP_SIDEPANE_VISIBLE:
-                if (g_value_get_boolean(value)) {
-                        gtk_widget_show(gtk_paned_get_child1(GTK_PANED (priv->hpaned)));
-                } else {
-                        gtk_widget_hide(gtk_paned_get_child1(GTK_PANED (priv->hpaned)));
-                }
+                g_value_get_boolean(value) ? gtk_widget_show(pane) : gtk_widget_hide(pane);
                 break;
         default:
                 G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);

@@ -114,37 +114,37 @@ load_config()
 
         gchar *config_file = g_build_filename(config->home, CHMSEE_CONFIG_FILE, NULL);
         g_debug("Main >>> chmsee config file path = %s", config_file);
-        if (!g_file_test(config_file, G_FILE_TEST_EXISTS))
-                return config;
 
-        GKeyFile *keyfile = g_key_file_new();
-        gboolean rv = g_key_file_load_from_file(keyfile, config_file, G_KEY_FILE_NONE, NULL);
+        if (g_file_test(config_file, G_FILE_TEST_EXISTS)) {
+                GKeyFile *keyfile = g_key_file_new();
+                gboolean rv = g_key_file_load_from_file(keyfile, config_file, G_KEY_FILE_NONE, NULL);
 
-        if (!rv) {
-                convert_old_config_file(config_file, "[ChmSee]\n");
+                if (!rv) {
+                        convert_old_config_file(config_file, "[ChmSee]\n");
+                }
+
+                rv = g_key_file_load_from_file(keyfile, config_file, G_KEY_FILE_NONE, NULL);
+
+                if (rv) {
+                        config->last_file     = g_key_file_get_string(keyfile, "ChmSee", "LAST_FILE", NULL);
+                        config->charset       = g_key_file_get_string(keyfile, "ChmSee", "CHARSET", NULL);
+                        config->variable_font = g_key_file_get_string(keyfile, "ChmSee", "VARIABLE_FONT", NULL);
+                        config->fixed_font    = g_key_file_get_string(keyfile, "ChmSee", "FIXED_FONT", NULL);
+
+                        config->pos_x      = g_key_file_get_integer(keyfile, "ChmSee", "POS_X", NULL);
+                        config->pos_y      = g_key_file_get_integer(keyfile, "ChmSee", "POS_Y", NULL);
+                        config->width      = g_key_file_get_integer(keyfile, "ChmSee", "WIDTH", NULL);
+                        config->height     = g_key_file_get_integer(keyfile, "ChmSee", "HEIGHT", NULL);
+                        config->hpaned_pos = g_key_file_get_integer(keyfile, "ChmSee", "HPANED_POSITION", NULL);
+                        config->fullscreen       = g_key_file_get_boolean(keyfile, "ChmSee", "FULLSCREEN", NULL);
+                        config->startup_lastfile = g_key_file_get_boolean(keyfile, "ChmSee", "STARTUP_LASTFILE", NULL);
+
+                        if (!config->hpaned_pos)
+                                config->hpaned_pos = 200;
+                }
+
+                g_key_file_free(keyfile);
         }
-
-        rv = g_key_file_load_from_file(keyfile, config_file, G_KEY_FILE_NONE, NULL);
-
-        if (rv) {
-                config->last_file     = g_key_file_get_string(keyfile, "ChmSee", "LAST_FILE", NULL);
-                config->charset       = g_key_file_get_string(keyfile, "ChmSee", "CHARSET", NULL);
-                config->variable_font = g_key_file_get_string(keyfile, "ChmSee", "VARIABLE_FONT", NULL);
-                config->fixed_font    = g_key_file_get_string(keyfile, "ChmSee", "FIXED_FONT", NULL);
-
-                config->pos_x      = g_key_file_get_integer(keyfile, "ChmSee", "POS_X", NULL);
-                config->pos_y      = g_key_file_get_integer(keyfile, "ChmSee", "POS_Y", NULL);
-                config->width      = g_key_file_get_integer(keyfile, "ChmSee", "WIDTH", NULL);
-                config->height     = g_key_file_get_integer(keyfile, "ChmSee", "HEIGHT", NULL);
-                config->hpaned_pos = g_key_file_get_integer(keyfile, "ChmSee", "HPANED_POSITION", NULL);
-                config->fullscreen       = g_key_file_get_boolean(keyfile, "ChmSee", "FULLSCREEN", NULL);
-                config->startup_lastfile = g_key_file_get_boolean(keyfile, "ChmSee", "STARTUP_LASTFILE", NULL);
-
-                if (!config->hpaned_pos)
-                        config->hpaned_pos = 200;
-        }
-
-        g_key_file_free(keyfile);
         g_free(config_file);
 
         /* global default value */
