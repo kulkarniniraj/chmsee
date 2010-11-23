@@ -79,25 +79,20 @@ escape_parse(gchar *str)
                 return NULL;
 
         j = 0;
-
         for(i = 0; i < strlen(str); i++) {
                 c = str[i];
                 if (c == '\\') {
                         i++;
                         switch (str[i]) {
-
                         case 'n':
                                 c = '\n';
                                 break;
-
                         case 't':
                                 c = '\t';
                                 break;
-
                         case 'b':
                                 c = '\b';
                                 break;
-
                         default:
                                 c = str[i];
                         }
@@ -108,7 +103,6 @@ escape_parse(gchar *str)
         }
 
         tmp[j] = '\0';
-
         strcpy(str, tmp);
 
         return(str);
@@ -141,11 +135,8 @@ parse_line(gchar *iline, gchar *id, gchar *value)
                 return 1;
 
         /* Now strip quotes from string */
-        p = tmp;
-        if (*p == '\"')
-                p2 = p+1;
-        else
-                p2 = p;
+        p  = tmp;
+        p2 = *p == '\"' ? p+1 : p;
 
         if (p[strlen(p)-1] == '\"')
                 p[strlen(p)-1] = '\0';
@@ -214,7 +205,7 @@ cs_bookmarks_file_save(GList *links, const gchar *path)
 
         FILE *fd = fopen(path, "w");
 
-        if (!fd) {
+        if (fd == NULL) {
                 g_warning("CS_BOOKMARKS_FILE >>> Faild to save bookmarks file: %s", path);
                 return;
         }

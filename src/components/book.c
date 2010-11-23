@@ -114,7 +114,8 @@ static void update_tab_label_state(CsBook *);
 static void set_context_menu_link(CsBook *, const gchar *);
 static void find_text(GtkWidget *, CsBook *, gboolean);
 static gint uri_compare(gconstpointer, gconstpointer);
-static gchar *get_short_uri(CsChmfile *, const gchar *);
+static const gchar *get_short_uri(CsChmfile *, const gchar *);
+static GList *get_toc_current(CsBook *);
 
 static const GtkActionEntry entries[] = {
         { "Copy", GTK_STOCK_COPY, N_("_Copy"), "<control>C", NULL, G_CALLBACK(on_copy)},
@@ -201,7 +202,7 @@ cs_book_class_init(CsBookClass *klass)
 static void
 cs_book_init(CsBook *self)
 {
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
 
         priv->context_menu_link = NULL;
 
@@ -238,8 +239,7 @@ cs_book_init(CsBook *self)
                          self);
         gtk_box_pack_start(GTK_BOX (priv->findbar), close_button, FALSE, FALSE, 0);
 
-        GtkWidget *find_label = gtk_label_new(_("Find:"));
-        gtk_box_pack_start(GTK_BOX (priv->findbar), find_label, FALSE, FALSE, 0);
+        gtk_box_pack_start(GTK_BOX (priv->findbar), gtk_label_new(_("Find:")), FALSE, FALSE, 0);
 
         GtkWidget *find_entry = gtk_entry_new();
         gtk_entry_set_max_length(GTK_ENTRY (find_entry), ENTRY_MAX_LENGTH);
@@ -281,24 +281,21 @@ cs_book_init(CsBook *self)
         gtk_box_pack_start(GTK_BOX (self), priv->findbar, FALSE, FALSE, 0);
 
         /* HTML content popup menu */
-        GtkActionGroup* action_group = gtk_action_group_new("BookActions");
-        priv->action_group = action_group;
+        priv->action_group = gtk_action_group_new("BookActions");
         gtk_action_group_set_translation_domain(priv->action_group, NULL);
-        gtk_action_group_add_actions(action_group, entries, G_N_ELEMENTS (entries), self);
+        gtk_action_group_add_actions(priv->action_group, entries, G_N_ELEMENTS (entries), self);
 
-        gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "Back"), FALSE);
-        gtk_action_set_sensitive(gtk_action_group_get_action(action_group, "Forward"), FALSE);
+        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Back"), FALSE);
+        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Forward"), FALSE);
 
-        GtkUIManager* ui_manager = gtk_ui_manager_new();
-        priv->ui_manager = ui_manager;
-        gtk_ui_manager_insert_action_group(ui_manager, action_group, 0);
+        priv->ui_manager = gtk_ui_manager_new();
+        gtk_ui_manager_insert_action_group(priv->ui_manager, priv->action_group, 0);
 
         GError* error = NULL;
-        if (!gtk_ui_manager_add_ui_from_string(ui_manager, ui_description, -1, &error))
-        {
+        if (!gtk_ui_manager_add_ui_from_string(priv->ui_manager, ui_description, -1, &error)) {
                 g_warning("CS_BOOK >>> building menus failed %s", error->message);
-                g_error_free (error);
-                exit (EXIT_FAILURE);
+                g_error_free(error);
+                exit(EXIT_FAILURE);
         }
 
         gtk_box_set_homogeneous(GTK_BOX (self), FALSE);
@@ -311,9 +308,9 @@ cs_book_dispose(GObject* gobject)
         g_debug("CS_BOOK >>> dispose");
 
         CsBook *self = CS_BOOK(gobject);
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
 
-        if (priv->model) {
+        if (priv->model != NULL) {
                 GList *old_list = cs_bookmarks_get_model(CS_BOOKMARKS (priv->bookmarks_page));
                 cs_chmfile_update_bookmarks_list(priv->model, old_list);
 
@@ -321,7 +318,7 @@ cs_book_dispose(GObject* gobject)
                 priv->model = NULL;
         }
 
-        if (priv->action_group) {
+        if (priv->action_group != NULL) {
                 g_object_unref(priv->action_group);
                 g_object_unref(priv->ui_manager);
                 priv->action_group = NULL;
@@ -335,8 +332,7 @@ static void
 cs_book_finalize(GObject *object)
 {
         g_debug("CS_BOOK >>> finalize");
-        CsBook *self = CS_BOOK(object);
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (CS_BOOK(object));
 
         g_free(priv->context_menu_link);
         g_free(priv->book_message);
@@ -381,12 +377,12 @@ static void
 html_notebook_switch_page_cb(GtkNotebook *notebook, GtkNotebookPage *page, guint new_page_num, CsBook *self)
 {
         g_debug("CS_BOOK >>> enter switch page callback");
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
 
         GtkWidget *new_page = gtk_notebook_get_nth_page(notebook, new_page_num);
         g_debug("CS_BOOK >>> switch page new_page_num = %d, new_page = %p", new_page_num, new_page);
 
-        if (new_page) {
+        if (new_page != NULL) {
                 g_debug("CS_BOOK >>> switch page callback, set active_html = %p", priv->active_html);
                 priv->active_html = CS_HTML_GECKO (new_page);
                 cs_book_reload_current_page(self);
@@ -402,7 +398,7 @@ html_location_changed_cb(CsHtmlGecko *html, const gchar *location, CsBook *self)
 
         g_signal_emit(self, signals[HTML_CHANGED], 0, self);
 
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
 
         char *scheme = g_uri_parse_scheme(location);
 
@@ -410,7 +406,7 @@ html_location_changed_cb(CsHtmlGecko *html, const gchar *location, CsBook *self)
                 gchar *real_uri = get_real_uri(location);
                 gchar *filename = g_filename_from_uri(real_uri, NULL, NULL);
 
-                gchar *uri = get_short_uri(priv->model, filename);
+                const gchar *uri = get_short_uri(priv->model, filename);
                 gchar *toc_uri = g_strdup_printf("%s%s", uri, location + strlen(real_uri));
 
                 cs_toc_sync(CS_TOC (priv->toc_page), toc_uri);
@@ -425,14 +421,14 @@ static gboolean
 html_open_uri_cb(CsHtmlGecko *html, const gchar *full_uri, CsBook *self)
 {
         g_debug("CS_BOOK >>> enter html_open_uri_cb with uri = %s", full_uri);
-        if (!full_uri || strlen(full_uri) == 0)
+        if (full_uri == NULL || strlen(full_uri) == 0)
                 return TRUE;
 
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
 
         char *scheme = g_uri_parse_scheme(full_uri);
 
-        if (scheme) {
+        if (scheme != NULL) {
                 const gchar *bookfolder = cs_chmfile_get_bookfolder(priv->model);
 
                 if (!g_strcmp0(scheme, "file")) {
@@ -441,7 +437,7 @@ html_open_uri_cb(CsHtmlGecko *html, const gchar *full_uri, CsBook *self)
                                 g_debug("CS_BOOK >>> open chm file = %s", full_uri);
                                 g_signal_emit(self, signals[MODEL_CHANGED], 0, NULL, full_uri);
                         } else if (g_strrstr(full_uri, bookfolder)) {
-                                gchar *uri = get_short_uri(priv->model, full_uri);
+                                const gchar *uri = get_short_uri(priv->model, full_uri);
 
                                 g_debug("CS_BOOK >>> html_open_uri call load url = %s", uri);
                                 cs_book_load_url(self, uri, TRUE);
@@ -459,7 +455,7 @@ html_title_changed_cb(CsHtmlGecko *html, const gchar *title, CsBook *self)
 {
         g_debug("CS_BOOK >>> html title changed cb title = %s", title);
 
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
 
         const gchar *label_text = _("No Title");
 
@@ -472,10 +468,10 @@ html_title_changed_cb(CsHtmlGecko *html, const gchar *title, CsBook *self)
         gchar *location = cs_html_gecko_get_location(html);
 
         if (location != NULL && strlen(location)) {
-                gboolean about = g_str_has_prefix(location, "about:");
-                if (!about) {
-                        gchar *uri = get_short_uri(priv->model, location);
-                        Link *link = link_new(LINK_TYPE_PAGE, label_text, uri);
+                if (!g_str_has_prefix(location, "about:")) {
+                        Link *link = link_new(LINK_TYPE_PAGE,
+                                              label_text,
+                                              get_short_uri(priv->model, location));
 
                         cs_bookmarks_set_current_link(CS_BOOKMARKS (priv->bookmarks_page), link);
                         link_free(link);
@@ -489,23 +485,19 @@ html_context_normal_cb(CsHtmlGecko *html, CsBook *self)
 {
         g_debug("CS_BOOK >>> html context-normal event");
 
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
 
         gboolean can_copy = cs_html_gecko_can_copy_selection(priv->active_html);
-        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Copy"), can_copy);
+        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Copy"),
+                                 can_copy);
+        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Back"),
+                                 cs_book_can_go_back(self));
+        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Forward"),
+                                 cs_book_can_go_forward(self));
 
-        gboolean can_back = cs_book_can_go_back(self);
-        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Back"), can_back);
-
-        gboolean can_forward = cs_book_can_go_forward(self);
-        gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "Forward"), can_forward);
-
-        if (can_copy)
-                gtk_menu_popup(GTK_MENU(gtk_ui_manager_get_widget(priv->ui_manager, "/HtmlContextNormalCopy")),
-                               NULL, NULL, NULL, NULL, 0, GDK_CURRENT_TIME);
-        else
-                gtk_menu_popup(GTK_MENU(gtk_ui_manager_get_widget(priv->ui_manager, "/HtmlContextNormal")),
-                               NULL, NULL, NULL, NULL, 0, GDK_CURRENT_TIME);
+        const gchar *pop_menu = can_copy ? "/HtmlContextNormalCopy" : "/HtmlContextNormal";
+        gtk_menu_popup(GTK_MENU (gtk_ui_manager_get_widget(priv->ui_manager, pop_menu)),
+                       NULL, NULL, NULL, NULL, 0, GDK_CURRENT_TIME);
 }
 
 static void
@@ -513,7 +505,7 @@ html_context_link_cb(CsHtmlGecko *html, const gchar *link, CsBook *self)
 {
         g_debug("CS_BOOK >>> html context-link event: %s", link);
 
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
 
         set_context_menu_link(self, link);
         gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, "OpenLinkInNewTab"),
@@ -539,21 +531,19 @@ html_link_message_cb(CsHtmlGecko *html, const gchar *url, CsBook *self)
 static void
 on_tab_close(GtkWidget *widget, CsBook *self)
 {
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
 
-        if (gtk_notebook_get_n_pages(GTK_NOTEBOOK (priv->html_notebook)) == 1)
-            return;
+        if (gtk_notebook_get_n_pages(GTK_NOTEBOOK (priv->html_notebook)) >= 1) {
+                GtkWidget *hbox = gtk_widget_get_ancestor(widget, GTK_TYPE_HBOX);
+                GtkWidget *html = g_object_get_data(G_OBJECT (hbox), "html");
 
-        GtkWidget *hbox = gtk_widget_get_ancestor(widget, GTK_TYPE_HBOX);
-        GtkWidget *html = g_object_get_data(G_OBJECT (hbox), "html");
+                gint num = gtk_notebook_page_num(GTK_NOTEBOOK (priv->html_notebook), html);
+                g_debug("CS_BOOK >>> close tab find page %d", num);
+                if (num >= 0)
+                        gtk_notebook_remove_page(GTK_NOTEBOOK (priv->html_notebook), num);
 
-        gint num = gtk_notebook_page_num(GTK_NOTEBOOK (priv->html_notebook), html);
-        g_debug("CS_BOOK >>> close tab find page %d", num);
-        if (num >= 0) {
-                gtk_notebook_remove_page(GTK_NOTEBOOK (priv->html_notebook), num);
+                update_tab_label_state(self);
         }
-
-        update_tab_label_state(self);
 }
 
 static void
@@ -565,20 +555,10 @@ on_copy(GtkAction *action, CsBook *self)
 static void
 on_copy_page_location(GtkAction *action, CsBook *self)
 {
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-
-        gchar *location = cs_html_gecko_get_location(priv->active_html);
-        if (location) {
-                gtk_clipboard_set_text(
-                        gtk_clipboard_get(GDK_SELECTION_PRIMARY),
-                        location,
-                        -1);
-                gtk_clipboard_set_text(
-                        gtk_clipboard_get(GDK_SELECTION_CLIPBOARD),
-                        location,
-                        -1);
-                g_free(location);
-        }
+        gchar *location = cs_html_gecko_get_location(CS_BOOK_GET_PRIVATE (self)->active_html);
+        GdkAtom selection = location != NULL ? GDK_SELECTION_PRIMARY : GDK_SELECTION_CLIPBOARD;
+        gtk_clipboard_set_text(gtk_clipboard_get(selection), location, -1);
+        g_free(location);
 }
 
 static void
@@ -602,33 +582,26 @@ on_forward(GtkAction *action, CsBook *self)
 static void
 on_context_new_tab(GtkAction *action, CsBook *self)
 {
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
         g_debug("CS_BOOK >>> On context open new tab: %s", priv->context_menu_link);
 
-        if (priv->context_menu_link != NULL) {
+        if (priv->context_menu_link != NULL)
                 cs_book_new_tab_with_fulluri(self, priv->context_menu_link);
-        }
 }
 
 static void
 on_context_copy_link(GtkAction *action, CsBook *self)
 {
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
         g_debug("CS_BOOK >>> On context copy link: %s", priv->context_menu_link);
-
-        if (priv->context_menu_link != NULL) {
-                gtk_clipboard_set_text(gtk_clipboard_get(GDK_SELECTION_PRIMARY),
-                                       priv->context_menu_link, -1);
-                gtk_clipboard_set_text(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD),
-                                       priv->context_menu_link, -1);
-        }
+        GdkAtom selection = priv->context_menu_link != NULL ? GDK_SELECTION_PRIMARY : GDK_SELECTION_CLIPBOARD;
+        gtk_clipboard_set_text(gtk_clipboard_get(selection), priv->context_menu_link, -1);
 }
 
 static void
 on_findbar_hide(GtkWidget *widget, CsBook *self)
 {
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        gtk_widget_hide(priv->findbar);
+        gtk_widget_hide(CS_BOOK_GET_PRIVATE (self)->findbar);
 }
 
 static void
@@ -648,9 +621,7 @@ on_findbar_forward(GtkWidget *widget, CsBook *self)
 static void
 cs_book_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
-        CsBook *self = CS_BOOK(object);
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        GtkWidget *pane = gtk_paned_get_child1(GTK_PANED (priv->hpaned));
+        GtkWidget *pane = gtk_paned_get_child1(GTK_PANED (CS_BOOK_GET_PRIVATE (CS_BOOK (object))->hpaned));
 
         switch (property_id) {
         case PROP_SIDEPANE_VISIBLE:
@@ -665,8 +636,7 @@ cs_book_set_property(GObject *object, guint property_id, const GValue *value, GP
 static void
 cs_book_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
-        CsBook *self = CS_BOOK(object);
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (CS_BOOK (object));
 
         switch (property_id) {
         case PROP_SIDEPANE_VISIBLE:
@@ -684,7 +654,7 @@ cs_book_get_property(GObject *object, guint property_id, GValue *value, GParamSp
 static void
 update_book_message(CsBook *self, const gchar *message)
 {
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
         if (priv->book_message)
                 g_free(priv->book_message);
 
@@ -698,7 +668,7 @@ new_html_tab(CsBook *self)
         g_debug("CS_BOOK >>> cs_book_new_tab");
         g_return_val_if_fail(IS_CS_BOOK (self), 0);
 
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
 
         GtkWidget *html = cs_html_gecko_new();
         gtk_widget_show(html);
@@ -784,9 +754,8 @@ static void
 update_tab_title(CsBook *self, CsHtmlGecko *html, const gchar *title)
 {
         g_debug("CS_BOOK >>> update tab title = %s", title);
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-
-        GtkWidget *widget = gtk_notebook_get_tab_label(GTK_NOTEBOOK (priv->html_notebook), GTK_WIDGET (html));
+        GtkWidget *widget = gtk_notebook_get_tab_label(GTK_NOTEBOOK (CS_BOOK_GET_PRIVATE (self)->html_notebook),
+                                                       GTK_WIDGET (html));
         GtkWidget *label = g_object_get_data(G_OBJECT (widget), "label");
         gtk_label_set_text(GTK_LABEL (label), title);
 }
@@ -794,7 +763,7 @@ update_tab_title(CsBook *self, CsHtmlGecko *html, const gchar *title)
 static void
 set_context_menu_link(CsBook *self, const gchar *link)
 {
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
         g_free(priv->context_menu_link);
         priv->context_menu_link = g_strdup(link);
 }
@@ -809,7 +778,6 @@ find_text(GtkWidget *widget, CsBook *self, gboolean backward)
 
         GtkWidget *find_entry = g_object_get_data(G_OBJECT (priv->findbar), "find-entry");
         const gchar *text = gtk_entry_get_text(GTK_ENTRY (find_entry));
-        gint length = strlen(text);
 
         if (GTK_IS_BUTTON (widget) && backward && mcase) {
                 if (g_str_has_prefix(text, "gecko:about:")) {
@@ -819,7 +787,6 @@ find_text(GtkWidget *widget, CsBook *self, gboolean backward)
                 }
         }
 
-        g_debug("CS_BOOK >>> find string = %s, length = %d, backward = %d, match_case = %d", text, length, backward, mcase);
         cs_html_gecko_find(priv->active_html, text, backward, mcase);
 }
 
@@ -827,11 +794,9 @@ static void
 update_tab_label_state(CsBook *self)
 {
         CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
-        if (gtk_notebook_get_n_pages(GTK_NOTEBOOK (priv->html_notebook)) > 1) {
-                gtk_notebook_set_show_tabs(GTK_NOTEBOOK (priv->html_notebook), TRUE);
-        } else {
-                gtk_notebook_set_show_tabs(GTK_NOTEBOOK (priv->html_notebook), FALSE);
-        }
+
+        gboolean show = gtk_notebook_get_n_pages(GTK_NOTEBOOK (priv->html_notebook)) > 1 ? TRUE : FALSE;
+        gtk_notebook_set_show_tabs(GTK_NOTEBOOK (priv->html_notebook), show);
 }
 
 static gint
@@ -840,13 +805,13 @@ uri_compare(gconstpointer a, gconstpointer b)
         return ncase_compare_utf8_string(((Link *)a)->uri, (gchar *)b);
 }
 
-static gchar *
+static const gchar *
 get_short_uri(CsChmfile *chmfile, const gchar *uri)
 {
         const gchar *bookfolder = cs_chmfile_get_bookfolder(chmfile);
-        gchar *short_uri = g_strrstr(uri, bookfolder);
 
-        if (!short_uri)
+        const gchar *short_uri = g_strrstr(uri, bookfolder);
+        if (short_uri == NULL)
                 short_uri = uri;
         else
                 short_uri = short_uri + strlen(bookfolder);
@@ -857,13 +822,26 @@ get_short_uri(CsChmfile *chmfile, const gchar *uri)
         return short_uri;
 }
 
+static GList *get_toc_current(CsBook *self)
+{
+        g_return_val_if_fail(IS_CS_BOOK (self), NULL);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
+
+        GList *toc_list = cs_chmfile_get_toc_list(priv->model);
+        gchar *location = cs_html_gecko_get_location(priv->active_html);
+        const gchar *short_uri = get_short_uri(priv->model, location);
+        GList *current = g_list_find_custom(toc_list, short_uri, uri_compare);
+        g_free(location);
+
+        return current;
+}
+
 /* External functions*/
 
 GtkWidget *
 cs_book_new(void)
 {
         g_debug("CS_BOOK >>> create");
-
         return GTK_WIDGET (g_object_new(CS_TYPE_BOOK, NULL));
 }
 
@@ -871,11 +849,10 @@ void
 cs_book_set_model(CsBook *self, CsChmfile *model)
 {
         g_return_if_fail(IS_CS_BOOK (self));
-        g_return_if_fail(IS_CS_CHMFILE (model));
 
         g_debug("CS_BOOK >>> set model, file = %p", model);
 
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
 
         /* close opened book */
         if (priv->model) {
@@ -908,7 +885,7 @@ cs_book_set_model(CsBook *self, CsChmfile *model)
         GNode *toc_tree = cs_chmfile_get_toc_tree(model);
         if (toc_tree != NULL) {
                 priv->toc_page = GTK_WIDGET (cs_toc_new());
-                cs_toc_set_model(CS_TOC(priv->toc_page), toc_tree);
+                cs_toc_set_model(CS_TOC (priv->toc_page), toc_tree);
                 cur_page = gtk_notebook_append_page(GTK_NOTEBOOK (priv->control_notebook),
                                                     priv->toc_page,
                                                     gtk_label_new(_("Topics")));
@@ -925,7 +902,7 @@ cs_book_set_model(CsBook *self, CsChmfile *model)
         GList* index_list = cs_chmfile_get_index_list(model);
         if(index_list != NULL) {
                 priv->index_page = GTK_WIDGET (cs_index_new());
-                cs_index_set_model(CS_INDEX(priv->index_page), index_list);
+                cs_index_set_model(CS_INDEX (priv->index_page), index_list);
                 cur_page = gtk_notebook_append_page(GTK_NOTEBOOK (priv->control_notebook),
                                                     priv->index_page,
                                                     gtk_label_new(_("Index")));
@@ -941,7 +918,7 @@ cs_book_set_model(CsBook *self, CsChmfile *model)
         /* bookmarks */
         GList *bookmarks_list = cs_chmfile_get_bookmarks_list(model);
         priv->bookmarks_page = GTK_WIDGET (cs_bookmarks_new());
-        cs_bookmarks_set_model(CS_BOOKMARKS(priv->bookmarks_page), bookmarks_list);
+        cs_bookmarks_set_model(CS_BOOKMARKS (priv->bookmarks_page), bookmarks_list);
         cur_page = gtk_notebook_append_page(GTK_NOTEBOOK (priv->control_notebook),
                                             priv->bookmarks_page,
                                             gtk_label_new (_("Bookmarks")));
@@ -977,32 +954,32 @@ void
 cs_book_load_url(CsBook *self, const gchar *uri, gboolean force_reload)
 {
         g_debug("CS_BOOK >>> load uri %s", uri);
+
         g_return_if_fail(IS_CS_BOOK (self));
 
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        gchar *full_uri;
+        if (uri == NULL || strlen(uri) == 0)
+                return;
 
-        /* assemble input uri with bookfolder */
-        if (strlen(uri)) {
-                if (uri[0] == '/')
-                        full_uri = g_strdup_printf("file://%s%s", cs_chmfile_get_bookfolder(priv->model), uri);
-                else
-                        full_uri = g_strdup_printf("file://%s/%s", cs_chmfile_get_bookfolder(priv->model), uri);
-        } else {
-                return; /* empty page do nothing*/
-        }
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
 
-        /* check file exist */
+        /* Concatenate bookfolder and short uri */
+        const gchar *pattern = NULL;
+        if (uri[0] == '/')
+                pattern = "file://%s%s";
+        else
+                pattern = "file://%s/%s";
+
+        gchar *full_uri = g_strdup_printf(pattern, cs_chmfile_get_bookfolder(priv->model), uri);
+
+        /* Check file exist */
         gchar *real_uri = get_real_uri(full_uri);
         gchar *filename = g_filename_from_uri(real_uri, NULL, NULL);
-        gboolean file_exist = FALSE;
+        gboolean file_exist = g_file_test(filename, G_FILE_TEST_EXISTS);
 
-        if (g_file_test(filename, G_FILE_TEST_EXISTS)) {
-                file_exist = TRUE;
-        } else {
+        if (!file_exist) {
                 /* search again with case insensitive name */
                 gchar *found = file_exist_ncase(filename);
-                if (found) {
+                if (found != NULL) {
                         g_free(full_uri);
 
                         full_uri = g_strdup_printf("file://%s%s", found, full_uri+strlen(real_uri));
@@ -1049,10 +1026,12 @@ cs_book_new_tab_with_fulluri(CsBook *self, const gchar *full_uri)
 {
         g_debug("CS_BOOK >>> new tab with full url %s", full_uri);
 
-        if (!full_uri || strlen(full_uri) == 0)
+        g_return_if_fail(IS_CS_BOOK (self));
+
+        if (full_uri == NULL || strlen(full_uri) == 0)
                 return;
 
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
 
         char *scheme = g_uri_parse_scheme(full_uri);
         if (scheme && g_strcmp0(scheme, "file")) {
@@ -1061,12 +1040,13 @@ cs_book_new_tab_with_fulluri(CsBook *self, const gchar *full_uri)
                 update_book_message(self, message);
                 g_free(message);
         } else {
-                gint page_num = new_html_tab(self);
-                gtk_notebook_set_current_page(GTK_NOTEBOOK (priv->html_notebook), page_num);
+                gtk_notebook_set_current_page(GTK_NOTEBOOK (priv->html_notebook),
+                                              new_html_tab(self));
                 update_tab_label_state(self);
 
-                gchar *uri = get_short_uri(priv->model, full_uri);
-                cs_book_load_url(self, uri, TRUE);
+                cs_book_load_url(self,
+                                 get_short_uri(priv->model, full_uri),
+                                 TRUE);
         }
         g_free(scheme);
 }
@@ -1076,12 +1056,7 @@ cs_book_can_close_tab(CsBook *self)
 {
         g_return_val_if_fail(IS_CS_BOOK (self), FALSE);
 
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-
-        if (gtk_notebook_get_n_pages(GTK_NOTEBOOK (priv->html_notebook)) > 1)
-                return TRUE;
-        else
-                return FALSE;
+        return (gtk_notebook_get_n_pages(GTK_NOTEBOOK (CS_BOOK_GET_PRIVATE (self)->html_notebook)) > 1);
 }
 
 void
@@ -1089,7 +1064,7 @@ cs_book_close_current_tab(CsBook *self)
 {
         g_return_if_fail(IS_CS_BOOK (self));
 
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
 
         if (gtk_notebook_get_n_pages(GTK_NOTEBOOK (priv->html_notebook)) == 1)
                 return;
@@ -1097,9 +1072,8 @@ cs_book_close_current_tab(CsBook *self)
         gint page_num = gtk_notebook_get_current_page(GTK_NOTEBOOK (priv->html_notebook));
         g_debug("CS_BOOK >>> cs_book_close_current_tab current page No = %d", page_num);
 
-        if (page_num >= 0) {
+        if (page_num >= 0)
                 gtk_notebook_remove_page(GTK_NOTEBOOK (priv->html_notebook), page_num);
-        }
 
         update_tab_label_state(self);
 }
@@ -1107,11 +1081,12 @@ cs_book_close_current_tab(CsBook *self)
 void
 cs_book_reload_current_page(CsBook *self)
 {
-        g_return_if_fail(IS_CS_BOOK (self));
         g_debug("CS_BOOK >>> Reload current page");
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
+        g_return_if_fail(IS_CS_BOOK (self));
 
-        if (priv->model) {
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
+
+        if (priv->model != NULL) {
                 const gchar *charset = cs_chmfile_get_charset(CS_CHMFILE (priv->model));
                 if (charset && strlen(charset))
                         cs_html_gecko_set_charset(priv->active_html, charset);
@@ -1123,26 +1098,19 @@ void
 cs_book_homepage(CsBook *self)
 {
         g_return_if_fail(IS_CS_BOOK (self));
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
-        const gchar *homepage = cs_chmfile_get_homepage(priv->model);
+        const gchar *homepage = cs_chmfile_get_homepage(CS_BOOK_GET_PRIVATE (self)->model);
 
-        if (homepage) {
+        if (homepage != NULL)
                 cs_book_load_url(self, homepage, FALSE);
-        }
 }
 
 gboolean
 cs_book_has_homepage(CsBook *self)
 {
         g_return_val_if_fail(IS_CS_BOOK (self), FALSE);
-        gboolean has_homepage = FALSE;
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
 
-        if (cs_chmfile_get_homepage(priv->model))
-                has_homepage = TRUE;
-
-        return has_homepage;
+        return cs_chmfile_get_homepage(CS_BOOK_GET_PRIVATE (self)->model) != NULL ? TRUE : FALSE;
 }
 
 gboolean
@@ -1150,8 +1118,7 @@ cs_book_can_go_back(CsBook *self)
 {
         g_return_val_if_fail(IS_CS_BOOK (self), FALSE);
 
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        return cs_html_gecko_can_go_back(priv->active_html);
+        return cs_html_gecko_can_go_back(CS_BOOK_GET_PRIVATE (self)->active_html);
 }
 
 gboolean
@@ -1159,25 +1126,23 @@ cs_book_can_go_forward(CsBook *self)
 {
         g_return_val_if_fail(IS_CS_BOOK (self), FALSE);
 
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        return cs_html_gecko_can_go_forward(priv->active_html);
+        return cs_html_gecko_can_go_forward(CS_BOOK_GET_PRIVATE (self)->active_html);
 }
 
 void
 cs_book_go_back(CsBook *self)
 {
-        g_debug("CS_BOOK >>> go back");
         g_return_if_fail(IS_CS_BOOK (self));
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        cs_html_gecko_go_back(priv->active_html);
+
+        cs_html_gecko_go_back(CS_BOOK_GET_PRIVATE (self)->active_html);
 }
 
 void
 cs_book_go_forward(CsBook *self)
 {
         g_return_if_fail(IS_CS_BOOK (self));
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        cs_html_gecko_go_forward(priv->active_html);
+
+        cs_html_gecko_go_forward(CS_BOOK_GET_PRIVATE (self)->active_html);
 }
 
 void
@@ -1186,14 +1151,7 @@ cs_book_go_prev(CsBook *self)
         g_debug("CS_BOOK >>> go prev");
         g_return_if_fail(IS_CS_BOOK (self));
 
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-
-        GList *toc_list = cs_chmfile_get_toc_list(priv->model);
-        gchar *location = cs_html_gecko_get_location(priv->active_html);
-        gchar *short_uri = get_short_uri(priv->model, location);
-        GList *current = g_list_find_custom(toc_list, short_uri, uri_compare);
-
-        g_free(location);
+        GList *current = get_toc_current(self);
 
         if (current && current->prev) {
                 gchar *uri = ((Link *)current->prev->data)->uri;
@@ -1207,13 +1165,7 @@ cs_book_go_next(CsBook *self)
         g_debug("CS_BOOK >>> go next");
         g_return_if_fail(IS_CS_BOOK (self));
 
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-
-        GList *toc_list = cs_chmfile_get_toc_list(priv->model);
-        gchar *location = cs_html_gecko_get_location(priv->active_html);
-        gchar *short_uri = get_short_uri(priv->model, location);
-        GList *current = g_list_find_custom(toc_list, short_uri, uri_compare);
-        g_free(location);
+        GList *current = get_toc_current(self);
 
         if (current && current->next) {
                 gchar *uri = ((Link *)current->next->data)->uri;
@@ -1225,92 +1177,94 @@ void
 cs_book_zoom_in(CsBook *self)
 {
         g_return_if_fail(IS_CS_BOOK (self));
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        cs_html_gecko_increase_size(priv->active_html);
+
+        cs_html_gecko_increase_size(CS_BOOK_GET_PRIVATE (self)->active_html);
 }
 
 void
 cs_book_zoom_out(CsBook *self)
 {
         g_return_if_fail(IS_CS_BOOK (self));
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        cs_html_gecko_decrease_size(priv->active_html);
+
+        cs_html_gecko_decrease_size(CS_BOOK_GET_PRIVATE (self)->active_html);
 }
 
 void
 cs_book_zoom_reset(CsBook *self)
 {
         g_return_if_fail(IS_CS_BOOK (self));
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        cs_html_gecko_reset_size(priv->active_html);
+
+        cs_html_gecko_reset_size(CS_BOOK_GET_PRIVATE (self)->active_html);
 }
 
 gboolean
 cs_book_can_copy(CsBook *self)
 {
         g_return_val_if_fail(IS_CS_BOOK (self), FALSE);
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        if (!priv->active_html)
-                return FALSE;
-        else
+
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
+
+        if (priv->active_html != NULL)
                 return cs_html_gecko_can_copy_selection(priv->active_html);
+        else
+                return FALSE;
 }
 
 void
 cs_book_copy(CsBook *self)
 {
         g_return_if_fail(IS_CS_BOOK (self));
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        cs_html_gecko_copy_selection(priv->active_html);
+
+        cs_html_gecko_copy_selection(CS_BOOK_GET_PRIVATE (self)->active_html);
 }
 
 void
 cs_book_select_all(CsBook *self)
 {
         g_return_if_fail(IS_CS_BOOK (self));
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        cs_html_gecko_select_all(priv->active_html);
+
+        cs_html_gecko_select_all(CS_BOOK_GET_PRIVATE (self)->active_html);
 }
 
 gchar *
 cs_book_get_location(CsBook *self)
 {
         g_return_val_if_fail(IS_CS_BOOK (self), NULL);
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
-        return cs_html_gecko_get_location(priv->active_html);
+
+        return cs_html_gecko_get_location(CS_BOOK_GET_PRIVATE (self)->active_html);
 }
 
 int
 cs_book_get_hpaned_position(CsBook *self)
 {
         g_return_val_if_fail(IS_CS_BOOK (self), 0);
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
-        return gtk_paned_get_position(GTK_PANED (priv->hpaned));
+
+        return gtk_paned_get_position(GTK_PANED (CS_BOOK_GET_PRIVATE (self)->hpaned));
 }
 
 void
 cs_book_set_hpaned_position(CsBook *self, gint position)
 {
         g_return_if_fail(IS_CS_BOOK (self));
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
-        gtk_paned_set_position(GTK_PANED (priv->hpaned), position);
+
+        gtk_paned_set_position(GTK_PANED (CS_BOOK_GET_PRIVATE (self)->hpaned), position);
 }
 
 void
 cs_book_findbar_show(CsBook *self)
 {
         g_return_if_fail(IS_CS_BOOK (self));
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        gtk_widget_show(priv->findbar);
 
-        GtkWidget *find_entry = g_object_get_data(G_OBJECT (priv->findbar), "find-entry");
-        gtk_widget_grab_focus(find_entry);
+        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE (self);
+
+        gtk_widget_show(priv->findbar);
+        gtk_widget_grab_focus(g_object_get_data(G_OBJECT (priv->findbar), "find-entry"));
 }
 
 void
 cs_book_findbar_hide(CsBook *self)
 {
         g_return_if_fail(IS_CS_BOOK (self));
-        CsBookPrivate *priv = CS_BOOK_GET_PRIVATE(self);
-        gtk_widget_hide(priv->findbar);
+
+        gtk_widget_hide(CS_BOOK_GET_PRIVATE (self)->findbar);
 }

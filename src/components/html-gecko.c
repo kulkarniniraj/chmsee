@@ -188,8 +188,7 @@ cs_html_gecko_init(CsHtmlGecko *html)
 static void
 cs_html_gecko_finalize(GObject *object)
 {
-        CsHtmlGecko *self = CS_HTML_GECKO (object);
-        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (self);
+        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (CS_HTML_GECKO (object));
 
         g_free(priv->render_name);
         g_free(priv->current_url);
@@ -330,112 +329,98 @@ void
 cs_html_gecko_reload(CsHtmlGecko *html)
 {
         g_return_if_fail(IS_CS_HTML_GECKO (html));
-        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
-        gtk_moz_embed_reload(priv->gecko, GTK_MOZ_EMBED_FLAG_RELOADNORMAL);
+        gtk_moz_embed_reload(CS_HTML_GECKO_GET_PRIVATE (html)->gecko, GTK_MOZ_EMBED_FLAG_RELOADNORMAL);
 }
 
 gboolean
 cs_html_gecko_can_go_forward(CsHtmlGecko *html)
 {
         g_return_val_if_fail(IS_CS_HTML_GECKO (html), FALSE);
-        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
-        return gtk_moz_embed_can_go_forward(priv->gecko);
+        return gtk_moz_embed_can_go_forward(CS_HTML_GECKO_GET_PRIVATE (html)->gecko);
 }
 
 gboolean
 cs_html_gecko_can_go_back(CsHtmlGecko *html)
 {
         g_return_val_if_fail(IS_CS_HTML_GECKO (html), FALSE);
-        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
-        return gtk_moz_embed_can_go_back(priv->gecko);
+        return gtk_moz_embed_can_go_back(CS_HTML_GECKO_GET_PRIVATE (html)->gecko);
 }
 
 void
 cs_html_gecko_go_forward(CsHtmlGecko *html)
 {
         g_return_if_fail(IS_CS_HTML_GECKO (html));
-        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
-        gtk_moz_embed_go_forward(priv->gecko);
+        gtk_moz_embed_go_forward(CS_HTML_GECKO_GET_PRIVATE (html)->gecko);
 }
 
 void
 cs_html_gecko_go_back(CsHtmlGecko *html)
 {
         g_return_if_fail(IS_CS_HTML_GECKO (html));
-        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
-        gtk_moz_embed_go_back(priv->gecko);
+        gtk_moz_embed_go_back(CS_HTML_GECKO_GET_PRIVATE (html)->gecko);
 }
 
 gchar *
 cs_html_gecko_get_title(CsHtmlGecko *html)
 {
         g_return_val_if_fail(IS_CS_HTML_GECKO (html), NULL);
-        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
-        return gtk_moz_embed_get_title(priv->gecko);
+        return gtk_moz_embed_get_title(CS_HTML_GECKO_GET_PRIVATE (html)->gecko);
 }
 
 gchar *
 cs_html_gecko_get_location(CsHtmlGecko *html)
 {
         g_return_val_if_fail(IS_CS_HTML_GECKO (html), NULL);
-        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
-        return gtk_moz_embed_get_location(priv->gecko);
+        return gtk_moz_embed_get_location(CS_HTML_GECKO_GET_PRIVATE (html)->gecko);
 }
 
 gboolean
 cs_html_gecko_can_copy_selection(CsHtmlGecko *html)
 {
         g_return_val_if_fail(IS_CS_HTML_GECKO (html), FALSE);
-        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
-        return gecko_utils_can_copy_selection(priv->gecko);
+        return gecko_utils_can_copy_selection(CS_HTML_GECKO_GET_PRIVATE (html)->gecko);
 }
 
 void
 cs_html_gecko_copy_selection(CsHtmlGecko *html)
 {
         g_return_if_fail(IS_CS_HTML_GECKO (html));
-        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
-        gecko_utils_copy_selection(priv->gecko);
+        gecko_utils_copy_selection(CS_HTML_GECKO_GET_PRIVATE (html)->gecko);
 }
 
 void
 cs_html_gecko_select_all(CsHtmlGecko *html)
 {
         g_return_if_fail(IS_CS_HTML_GECKO (html));
-        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
-        gecko_utils_select_all(priv->gecko);
+        gecko_utils_select_all(CS_HTML_GECKO_GET_PRIVATE (html)->gecko);
 }
 
 gboolean
 cs_html_gecko_find(CsHtmlGecko *html, const gchar *sstr, gboolean backward, gboolean match_case)
 {
         g_return_val_if_fail(IS_CS_HTML_GECKO (html), FALSE);
-        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
-        gboolean rv = gecko_utils_find(priv->gecko, sstr, backward, match_case);
-
-        return rv;
+        return gecko_utils_find(CS_HTML_GECKO_GET_PRIVATE (html)->gecko, sstr, backward, match_case);
 }
 
 void
 cs_html_gecko_increase_size(CsHtmlGecko *html)
 {
-        gfloat zoom;
-
         g_return_if_fail(IS_CS_HTML_GECKO (html));
+
         CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
-        zoom = gecko_utils_get_zoom(priv->gecko);
+        gfloat zoom = gecko_utils_get_zoom(priv->gecko);
         zoom *= 1.2;
 
         gecko_utils_set_zoom(priv->gecko, zoom);
@@ -445,20 +430,18 @@ void
 cs_html_gecko_reset_size(CsHtmlGecko *html)
 {
         g_return_if_fail(IS_CS_HTML_GECKO (html));
-        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
-        gecko_utils_set_zoom(priv->gecko, 1.0);
+        gecko_utils_set_zoom(CS_HTML_GECKO_GET_PRIVATE (html)->gecko, 1.0);
 }
 
 void
 cs_html_gecko_decrease_size(CsHtmlGecko *html)
 {
-        gfloat zoom;
-
         g_return_if_fail(IS_CS_HTML_GECKO (html));
+
         CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
 
-        zoom = gecko_utils_get_zoom(priv->gecko);
+        gfloat zoom = gecko_utils_get_zoom(priv->gecko);
         zoom /= 1.2;
 
         gecko_utils_set_zoom(priv->gecko, zoom);
@@ -495,7 +478,7 @@ cs_html_gecko_set_fixed_font(const gchar *font_name)
 void
 cs_html_gecko_set_charset(CsHtmlGecko *html, const gchar *charset)
 {
-        CsHtmlGeckoPrivate *priv = CS_HTML_GECKO_GET_PRIVATE (html);
+        g_return_if_fail(IS_CS_HTML_GECKO (html));
 
-        gecko_utils_set_charset(priv->gecko, charset);
+        gecko_utils_set_charset(CS_HTML_GECKO_GET_PRIVATE (html)->gecko, charset);
 }

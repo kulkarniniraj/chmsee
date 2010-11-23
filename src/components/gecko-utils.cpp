@@ -83,20 +83,19 @@ util_split_font_string(const gchar *font_name, gchar **name, gint *size)
         PangoFontMask         mask;
         gboolean              retval = FALSE;
 
-        if (font_name == NULL) {
+        if (font_name == NULL)
                 return FALSE;
-        }
 
         mask = (PangoFontMask) (PANGO_FONT_MASK_FAMILY | PANGO_FONT_MASK_SIZE);
 
         desc = pango_font_description_from_string(font_name);
-        if (!desc) {
+        if (!desc)
                 return FALSE;
-        }
 
         if ((pango_font_description_get_set_fields(desc) & mask) == mask) {
                 *size = PANGO_PIXELS(pango_font_description_get_size(desc));
                 *name = g_strdup(pango_font_description_get_family(desc));
+
                 retval = TRUE;
         }
 
@@ -166,8 +165,9 @@ gecko_utils_init_prefs(void)
                                    PR_TRUE, getter_AddRefs(file));
         NS_ENSURE_SUCCESS (rv, rv);
 
-        rv = prefService->ReadUserPrefs(file);
+        rv  = prefService->ReadUserPrefs(file);
         rv |= prefService->ReadUserPrefs(nsnull);
+
         NS_ENSURE_SUCCESS (rv, rv);
 
         return rv;
@@ -189,30 +189,26 @@ gecko_utils_init(void)
 
         rv = GRE_GetGREPathWithProperties(&greVersion, 1, nsnull, 0,
                                           xpcomLocation, sizeof(xpcomLocation));
-        if (NS_FAILED (rv))
-        {
+        if (NS_FAILED (rv)) {
                 g_warning("GECKO_UTILS >>> Couldn't find a compatible GRE!\n");
                 return FALSE;
         }
 
         // Startup the XPCOM Glue that links us up with XPCOM.
         rv = XPCOMGlueStartup(xpcomLocation);
-        if (NS_FAILED (rv))
-        {
+        if (NS_FAILED (rv)) {
                 g_warning("GECKO_UTILS >>> Couldn't start XPCOM!\n");
                 return FALSE;
         }
 
         rv = GTKEmbedGlueStartup();
-        if (NS_FAILED (rv))
-        {
+        if (NS_FAILED (rv)) {
                 g_warning("GECKO_UTILS >>> Couldn't find GTKMozEmbed symbols!\n");
                 return FALSE;
         }
 
         rv = GTKEmbedGlueStartupInternal();
-        if (NS_FAILED (rv))
-        {
+        if (NS_FAILED (rv)) {
                 g_warning("GECKO_UTILS >>> Could not startup embed glue (internal)!\n");
                 return FALSE;
         }
@@ -273,15 +269,14 @@ gecko_utils_get_mouse_event_modifiers(gpointer event)
         aMouseEvent->GetMetaKey(&meta);
 
         mask = 0;
-        if (ctrl) {
+        if (ctrl)
                 mask |= GDK_CONTROL_MASK;
-        }
-        if (alt || meta) {
+
+        if (alt || meta)
                 mask |= GDK_MOD1_MASK;
-        }
-        if (shift) {
+
+        if (shift)
                 mask |= GDK_SHIFT_MASK;
-        }
 
         return mask;
 }

@@ -136,8 +136,8 @@ cs_toc_init(CsToc *self)
         priv->pixbufs = create_pixbufs();
         gtk_tree_view_append_column(GTK_TREE_VIEW (priv->treeview), create_columns());
 
-        GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview));
-        gtk_tree_selection_set_mode(selection, GTK_SELECTION_BROWSE);
+        gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview)),
+                                    GTK_SELECTION_BROWSE);
 
         g_signal_connect(G_OBJECT (priv->treeview),
                          "row-activated",
@@ -176,8 +176,7 @@ static void
 cs_toc_finalize(GObject *object)
 {
         g_debug("CS_TOC >>> finalize");
-        CsToc        *self = CS_TOC (object);
-        CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
+        CsTocPrivate *priv = CS_TOC_GET_PRIVATE (CS_TOC (object));
 
         g_slice_free(TocPixbufs, priv->pixbufs);
 
@@ -203,10 +202,9 @@ cursor_changed_cb(GtkTreeView *treeview, CsToc *self)
 
         GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (priv->treeview));
 
-        GtkTreeIter   iter;
-        Link         *link;
-
+        GtkTreeIter iter;
         if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
+                Link *link;
                 gtk_tree_model_get(GTK_TREE_MODEL (priv->store),
                                    &iter, COL_LINK, &link, -1);
 
@@ -234,12 +232,9 @@ create_pixbufs(void)
 static GtkTreeViewColumn *
 create_columns(void)
 {
-        GtkCellRenderer   *cell;
-        GtkTreeViewColumn *column;
+        GtkTreeViewColumn *column = gtk_tree_view_column_new();
+        GtkCellRenderer *cell = gtk_cell_renderer_pixbuf_new();
 
-        column = gtk_tree_view_column_new();
-
-        cell = gtk_cell_renderer_pixbuf_new();
         gtk_tree_view_column_pack_start(column, cell, FALSE);
         gtk_tree_view_column_set_attributes(
                 column,
@@ -265,16 +260,14 @@ create_columns(void)
 static void
 insert_node(CsToc *self, GNode *node, GtkTreeIter *parent_iter)
 {
-        GtkTreeIter        iter;
-        Link              *link;
-        GNode             *child;
         CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
 
-        link = node->data;
+        Link *link = node->data;
 
         if (g_node_n_children(node))
                 link_change_type(link, LINK_TYPE_BOOK);
 
+        GtkTreeIter iter;
         gtk_tree_store_append(priv->store, &iter, parent_iter);
 
         /* g_debug("CS_TOC >>> insert node::name = %s", link->name); */
@@ -296,6 +289,7 @@ insert_node(CsToc *self, GNode *node, GtkTreeIter *parent_iter)
                                    -1);
         }
 
+        GNode *child;
         for (child = g_node_first_child(node);
              child;
              child = g_node_next_sibling(child)) {
@@ -307,7 +301,6 @@ static gboolean
 find_uri_foreach(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, FindURIData *data)
 {
         Link *link;
-
         gtk_tree_model_get(model, iter, COL_LINK, &link, -1);
 
         if (!ncase_compare_utf8_string(data->uri, link->uri)) {
@@ -338,11 +331,9 @@ cs_toc_set_model(CsToc *self, GNode *model)
 {
         g_return_if_fail(IS_CS_TOC (self));
 
-        CsTocPrivate *priv = CS_TOC_GET_PRIVATE (self);
-        GNode        *node;
+        gtk_tree_store_clear(CS_TOC_GET_PRIVATE (self)->store);
 
-        gtk_tree_store_clear(priv->store);
-
+        GNode *node;
         for (node = g_node_first_child(model);
              node;
              node = g_node_next_sibling(node)) {

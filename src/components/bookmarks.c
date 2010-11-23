@@ -154,8 +154,8 @@ static void
 cs_bookmarks_finalize(GObject *object)
 {
         g_debug("CS_BOOKMARKS >>> finalize");
-        CsBookmarks        *self = CS_BOOKMARKS (object);
-        CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
+
+        CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (CS_BOOKMARKS (object));
 
         g_free(priv->current_uri);
         priv->links = NULL;
@@ -168,10 +168,10 @@ cs_bookmarks_finalize(GObject *object)
 static void
 link_selected_cb(CsBookmarks *self, Link *link)
 {
-        if (link) {
-                g_debug("CS_BOOKMARKS >>> Emiting link-selected signal");
+        g_debug("CS_BOOKMARKS >>> Emiting link-selected signal");
+
+        if (link)
                 g_signal_emit(self, signals[LINK_SELECTED], 0, link);
-        }
 }
 
 static void
@@ -180,12 +180,9 @@ entry_changed_cb(GtkEntry *entry, CsBookmarks *self)
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
 
         const gchar *name = gtk_entry_get_text(entry);
-        gint length = strlen(name);
+        gboolean sensitive = strlen(name) > 2 ? TRUE : FALSE;
 
-        if (length >= 3)
-                gtk_widget_set_sensitive(priv->add_button, TRUE);
-        else
-                gtk_widget_set_sensitive(priv->add_button, FALSE);
+        gtk_widget_set_sensitive(priv->add_button, sensitive);
 }
 
 static void
@@ -194,7 +191,7 @@ on_bookmarks_add(CsBookmarks *self)
         CsBookmarksPrivate *priv = CS_BOOKMARKS_GET_PRIVATE (self);
         g_debug("CS_BOOKMARKS >>> add button clicked, current_uri = %p", priv->current_uri);
 
-        if (!priv->current_uri)
+        if (priv->current_uri == NULL)
                 return;
 
         const gchar *name = gtk_entry_get_text(GTK_ENTRY (priv->entry));

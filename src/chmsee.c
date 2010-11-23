@@ -294,16 +294,15 @@ static void
 chmsee_dispose(GObject *gobject)
 {
         g_debug("Chmsee >>> dispose");
-        Chmsee        *self = CHMSEE(gobject);
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
+        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (CHMSEE (gobject));
 
-        if (priv->chmfile) {
+        if (priv->chmfile != NULL) {
                 /* save last opened page */
                 const gchar *bookfolder = cs_chmfile_get_bookfolder(priv->chmfile);
                 gchar *location = cs_book_get_location(CS_BOOK (priv->book));
                 gchar *page = g_strrstr(location, bookfolder);
 
-                if (page) {
+                if (page != NULL) {
                         page = page + strlen(bookfolder);
                         gchar *last_file = g_strdup_printf("%s::%s", priv->config->last_file, page);
                         g_free(priv->config->last_file);
@@ -316,7 +315,7 @@ chmsee_dispose(GObject *gobject)
                 priv->chmfile = NULL;
         }
 
-        if (priv->action_group) {
+        if (priv->action_group != NULL) {
                 g_object_unref(priv->action_group);
                 g_object_unref(priv->ui_manager);
                 priv->action_group = NULL;
@@ -457,7 +456,7 @@ open_file_response_cb(GtkWidget *widget, gint response_id, Chmsee *self)
 
         gtk_widget_destroy(widget);
 
-        if (filename) {
+        if (filename != NULL) {
                 chmsee_open_file(self, filename);
                 g_free(filename);
         }
@@ -511,7 +510,7 @@ on_recent_files(GtkRecentChooser *chooser, Chmsee *self)
 {
         gchar *uri = gtk_recent_chooser_get_current_uri(chooser);
 
-        if (uri) {
+        if (uri != NULL) {
                 gchar *filename = g_filename_from_uri(uri, NULL, NULL);
 
                 chmsee_open_file(self, filename);
@@ -523,15 +522,13 @@ on_recent_files(GtkRecentChooser *chooser, Chmsee *self)
 static void
 on_copy(GtkAction *action, Chmsee *self)
 {
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        cs_book_copy(CS_BOOK (priv->book));
+        cs_book_copy(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
 static void
 on_select_all(GtkAction *action, Chmsee *self)
 {
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        cs_book_select_all(CS_BOOK (priv->book));
+        cs_book_select_all(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
 static void
@@ -543,29 +540,25 @@ on_setup(GtkAction *action, Chmsee *self)
 static void
 on_back(GtkAction *action, Chmsee *self)
 {
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        cs_book_go_back(CS_BOOK (priv->book));
+        cs_book_go_back(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
 static void
 on_forward(GtkAction *action, Chmsee *self)
 {
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        cs_book_go_forward(CS_BOOK (priv->book));
+        cs_book_go_forward(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
 static void
 on_prev(GtkAction *action, Chmsee *self)
 {
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        cs_book_go_prev(CS_BOOK (priv->book));
+        cs_book_go_prev(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
 static void
 on_next(GtkAction *action, Chmsee *self)
 {
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        cs_book_go_next(CS_BOOK (priv->book));
+        cs_book_go_next(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
 static void
@@ -589,8 +582,7 @@ on_menu_edit(GtkAction *action, Chmsee *self)
 static void
 on_home(GtkAction *action, Chmsee *self)
 {
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        cs_book_homepage(CS_BOOK (priv->book));
+        cs_book_homepage(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
 static void
@@ -632,7 +624,8 @@ on_about(GtkAction *action)
                          NULL);
 
         gtk_about_dialog_set_version(GTK_ABOUT_DIALOG (dialog), PACKAGE_VERSION);
-        gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG (dialog), _("(Build with xulrunner " XULRUNNER_VERSION ")"));
+        gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG (dialog),
+                                      _("(Build with xulrunner " XULRUNNER_VERSION ")"));
 
         g_object_unref(builder);
 }
@@ -656,37 +649,25 @@ on_close_current_tab(GtkAction *action, Chmsee *self)
 static void
 on_keyboard_escape(GtkAction *action, Chmsee *self)
 {
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-
-        cs_book_findbar_hide(CS_BOOK (priv->book));
+        cs_book_findbar_hide(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
 static void
 on_fullscreen_toggled(GtkToggleAction *action, Chmsee *self)
 {
-        g_return_if_fail(IS_CHMSEE (self));
-
         set_fullscreen(self, gtk_toggle_action_get_active(action));
 }
 
 static void
 on_sidepane_toggled(GtkToggleAction *action, Chmsee *self)
 {
-        g_return_if_fail(IS_CHMSEE (self));
-
-        gboolean active = gtk_toggle_action_get_active(action);
-        if (active) {
-                set_sidepane_state(self, TRUE); //show
-        } else {
-                set_sidepane_state(self, FALSE); //hide
-        }
+        set_sidepane_state(self, gtk_toggle_action_get_active(action));
 }
 
 static void
 on_find(GtkAction *action, Chmsee *self)
 {
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        cs_book_findbar_show(CS_BOOK (priv->book));
+        cs_book_findbar_show(CS_BOOK (CHMSEE_GET_PRIVATE (self)->book));
 }
 
 /* internal functions */
@@ -710,14 +691,14 @@ drag_data_received(GtkWidget *widget, GdkDragContext *context, gint x, gint y,
                    GtkSelectionData *selection_data, guint info, guint time)
 {
         gchar **uris;
-        gint i = 0;
 
         uris = gtk_selection_data_get_uris(selection_data);
-        if (!uris) {
+        if (uris == NULL) {
                 gtk_drag_finish(context, FALSE, FALSE, time);
                 return;
         }
 
+        gint i;
         for (i = 0; uris[i]; i++) {
                 gchar *uri = uris[i];
                 if (g_str_has_prefix(uri, "file://")
@@ -747,39 +728,34 @@ populate_windows(Chmsee *self)
 
         GtkWidget *vbox = GTK_WIDGET (gtk_vbox_new(FALSE, 2));
 
-        GtkActionGroup *action_group = gtk_action_group_new("MenuActions");
-        priv->action_group = action_group;
+        priv->action_group = gtk_action_group_new("MenuActions");
         gtk_action_group_set_translation_domain(priv->action_group, NULL);
-        gtk_action_group_add_actions(action_group, entries, G_N_ELEMENTS (entries), self);
-        gtk_action_group_add_toggle_actions(action_group, toggle_entries, G_N_ELEMENTS (toggle_entries), self);
+        gtk_action_group_add_actions(priv->action_group, entries, G_N_ELEMENTS (entries), self);
+        gtk_action_group_add_toggle_actions(priv->action_group, toggle_entries, G_N_ELEMENTS (toggle_entries), self);
 
         gint n = 0;
         while (strlen(active_actions[n])) {
                 gtk_action_set_sensitive(gtk_action_group_get_action(priv->action_group, active_actions[n++]), FALSE);
         }
 
-        GtkUIManager *ui_manager = gtk_ui_manager_new();
-        priv->ui_manager = ui_manager;
-        gtk_ui_manager_insert_action_group(ui_manager, action_group, 0);
+        priv->ui_manager = gtk_ui_manager_new();
+        gtk_ui_manager_insert_action_group(priv->ui_manager, priv->action_group, 0);
 
-        GtkAccelGroup *accel_group = gtk_ui_manager_get_accel_group(ui_manager);
-        gtk_window_add_accel_group(GTK_WINDOW (self), accel_group);
+        gtk_window_add_accel_group(GTK_WINDOW (self),
+                                   gtk_ui_manager_get_accel_group(priv->ui_manager));
 
         GError *error = NULL;
-        if (!gtk_ui_manager_add_ui_from_string(ui_manager, ui_description, -1, &error)) {
+        if (!gtk_ui_manager_add_ui_from_string(priv->ui_manager, ui_description, -1, &error)) {
                 g_warning("Chmsee >>> building menus failed: %s", error->message);
                 g_error_free(error);
                 exit(EXIT_FAILURE);
         }
 
-        GtkWidget *menubar = gtk_handle_box_new();
-        priv->menubar = menubar;
-        gtk_container_add(GTK_CONTAINER (menubar), gtk_ui_manager_get_widget(ui_manager, "/MainMenu"));
-        gtk_box_pack_start(GTK_BOX (vbox), menubar, FALSE, FALSE, 0);
+        priv->menubar = gtk_handle_box_new();
+        gtk_container_add(GTK_CONTAINER (priv->menubar), gtk_ui_manager_get_widget(priv->ui_manager, "/MainMenu"));
+        gtk_box_pack_start(GTK_BOX (vbox), priv->menubar, FALSE, FALSE, 0);
 
-        GtkRecentManager *manager = gtk_recent_manager_get_default();
-        GtkWidget *recent_menu = gtk_recent_chooser_menu_new_for_manager(manager);
-
+        GtkWidget *recent_menu = gtk_recent_chooser_menu_new_for_manager(gtk_recent_manager_get_default());
         gtk_recent_chooser_set_show_not_found(GTK_RECENT_CHOOSER (recent_menu), FALSE);
         gtk_recent_chooser_set_local_only(GTK_RECENT_CHOOSER (recent_menu), TRUE);
         gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER (recent_menu), 10);
@@ -796,17 +772,16 @@ populate_windows(Chmsee *self)
                          G_CALLBACK (on_recent_files),
                          self);
 
-        GtkWidget *widget = gtk_ui_manager_get_widget(ui_manager, "/MainMenu/FileMenu/RecentFiles");
-        gtk_menu_item_set_submenu(GTK_MENU_ITEM (widget), recent_menu);
+        gtk_menu_item_set_submenu(GTK_MENU_ITEM (gtk_ui_manager_get_widget(priv->ui_manager, "/MainMenu/FileMenu/RecentFiles")),
+                                  recent_menu);
 
-        GtkWidget *toolbar = gtk_handle_box_new();
-        priv->toolbar = toolbar;
-        gtk_container_add(GTK_CONTAINER(toolbar), gtk_ui_manager_get_widget(ui_manager, "/toolbar"));
-        gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
+        priv->toolbar = gtk_handle_box_new();
+        gtk_container_add(GTK_CONTAINER (priv->toolbar), gtk_ui_manager_get_widget(priv->ui_manager, "/toolbar"));
+        gtk_box_pack_start(GTK_BOX (vbox), priv->toolbar, FALSE, FALSE, 0);
         /* gtk_toolbar_set_style(GTK_TOOLBAR (gtk_ui_manager_get_widget(ui_manager, "/toolbar")), */
         /*                       GTK_TOOLBAR_ICONS);// FIXME: issue 43 */
         gtk_tool_button_set_icon_widget(
-                GTK_TOOL_BUTTON(gtk_ui_manager_get_widget(ui_manager, "/toolbar/sidepane")),
+                GTK_TOOL_BUTTON(gtk_ui_manager_get_widget(priv->ui_manager, "/toolbar/sidepane")),
                 gtk_image_new_from_file(RESOURCE_FILE ("show-pane.png")));
 
         priv->book = cs_book_new();
@@ -823,9 +798,6 @@ populate_windows(Chmsee *self)
         priv->scid_default = gtk_statusbar_get_context_id(GTK_STATUSBAR (priv->statusbar), "default");
 
         gtk_container_add(GTK_CONTAINER (self), vbox);
-
-        accel_group = g_object_new(GTK_TYPE_ACCEL_GROUP, NULL);
-        gtk_window_add_accel_group(GTK_WINDOW (self), accel_group);
 
         update_status_bar(self, _("Ready!"));
         gtk_widget_show_all(GTK_WIDGET (self));
@@ -893,10 +865,11 @@ chmsee_new(CsConfig *config)
         if (config->pos_x >= 0 && config->pos_y >= 0)
                 gtk_window_move(GTK_WINDOW (self), config->pos_x, config->pos_y);
 
-        if (config->width > 0 && config->height > 0)
-                gtk_window_resize(GTK_WINDOW (self), config->width, config->height);
-        else
-                gtk_window_resize(GTK_WINDOW (self), DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        if (config->width <= 0 || config->height <= 0) {
+                config->width = DEFAULT_WIDTH;
+                config->height = DEFAULT_HEIGHT;
+        }
+        gtk_window_resize(GTK_WINDOW (self), config->width, config->height);
 
         gtk_window_set_title(GTK_WINDOW (self), "ChmSee");
         gtk_window_set_icon_from_file(GTK_WINDOW (self), RESOURCE_FILE ("chmsee-icon.png"), NULL);
@@ -925,9 +898,9 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
         /* create chmfile, get file infomation */
         CsChmfile *new_chmfile = cs_chmfile_new(filename, priv->config->bookshelf);
 
-        if (new_chmfile) {
+        if (new_chmfile != NULL) {
                 /* close currently opened book */
-                if (priv->chmfile)
+                if (priv->chmfile != NULL)
                         g_object_unref(priv->chmfile);
 
                 priv->chmfile = new_chmfile;
@@ -963,7 +936,7 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
                 g_free(window_title);
 
                 /* record last opened file */
-                if (priv->config->last_file)
+                if (priv->config->last_file != NULL)
                         g_free(priv->config->last_file);
 
                 priv->config->last_file = g_strdup(cs_chmfile_get_filename(priv->chmfile));
@@ -974,7 +947,7 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
                 gsize length;
 
                 if (g_file_get_contents(filename, &content, &length, NULL)) {
-                        static gchar *groups[2] = {
+                        static gchar *groups[] = {
                                 "CHM Viewer",
                                 NULL
                         };
@@ -983,8 +956,8 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
                         data->display_name = NULL;
                         data->description = NULL;
                         data->mime_type = "application/x-chm";
-                        data->app_name = (gchar*) g_get_application_name();
-                        data->app_exec = g_strjoin(" ", g_get_prgname (), "%u", NULL);
+                        data->app_name = (gchar*)g_get_application_name();
+                        data->app_exec = g_strjoin(" ", g_get_prgname(), "%u", NULL);
                         data->groups = groups;
                         data->is_private = FALSE;
 
@@ -1000,6 +973,8 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
 
                 priv->state = CHMSEE_STATE_NORMAL;
         } else {
+                g_warning("CS_BOOK >>> Can not open spectified file %s", filename);
+
                 /* Popup an error message dialog */
                 GtkWidget *msg_dialog;
 
@@ -1038,7 +1013,7 @@ chmsee_get_variable_font(Chmsee *self)
         g_return_val_if_fail(IS_CHMSEE (self), NULL);
 
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        if (priv->chmfile)
+        if (priv->chmfile != NULL)
                 return cs_chmfile_get_variable_font(priv->chmfile);
         else
                 return priv->config->variable_font;
@@ -1052,7 +1027,7 @@ chmsee_set_variable_font(Chmsee *self, const gchar *font_name)
         g_debug("Chmsee >>> set variable font = %s", font_name);
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        if (priv->chmfile) {
+        if (priv->chmfile != NULL) {
                 cs_html_gecko_set_variable_font(font_name);
                 cs_chmfile_set_variable_font(priv->chmfile, font_name);
         } else {
@@ -1068,7 +1043,7 @@ chmsee_get_fixed_font(Chmsee *self)
 
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        if (priv->chmfile)
+        if (priv->chmfile != NULL)
                 return cs_chmfile_get_fixed_font(priv->chmfile);
         else
                 return priv->config->fixed_font;
@@ -1081,7 +1056,7 @@ chmsee_set_fixed_font(Chmsee *self, const gchar *font_name)
 
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        if (priv->chmfile) {
+        if (priv->chmfile != NULL) {
                 cs_html_gecko_set_fixed_font(font_name);
                 cs_chmfile_set_fixed_font(priv->chmfile, font_name);
         } else {
@@ -1096,7 +1071,7 @@ chmsee_get_charset(Chmsee *self)
         g_return_val_if_fail(IS_CHMSEE (self), NULL);
 
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        if (priv->chmfile)
+        if (priv->chmfile != NULL)
                 return cs_chmfile_get_charset(priv->chmfile);
         else
                 return priv->config->charset;
@@ -1109,7 +1084,7 @@ chmsee_set_charset(Chmsee *self, const gchar *charset)
 
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        if (priv->chmfile) {
+        if (priv->chmfile != NULL) {
                 cs_chmfile_set_charset(priv->chmfile, charset);
                 cs_book_reload_current_page(CS_BOOK (priv->book));
         } else {
@@ -1123,8 +1098,7 @@ chmsee_has_book(Chmsee *self)
 {
         g_return_val_if_fail(IS_CHMSEE (self), FALSE);
 
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        return priv->chmfile != NULL;
+        return CHMSEE_GET_PRIVATE (self)->chmfile != NULL;
 }
 
 void
@@ -1134,13 +1108,12 @@ chmsee_close_book(Chmsee *self)
 
         ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
 
-        if (priv->chmfile) {
+        if (priv->chmfile != NULL) {
                 g_object_unref(priv->chmfile);
                 priv->chmfile = NULL;
         }
 
         book_model_changed_cb(self, NULL, NULL);
-
         priv->state = CHMSEE_STATE_NORMAL;
 }
 
@@ -1149,6 +1122,5 @@ chmsee_get_bookshelf(Chmsee *self)
 {
         g_return_val_if_fail(IS_CHMSEE (self), NULL);
 
-        ChmseePrivate *priv = CHMSEE_GET_PRIVATE (self);
-        return priv->config->bookshelf;
+        return CHMSEE_GET_PRIVATE (self)->config->bookshelf;
 }

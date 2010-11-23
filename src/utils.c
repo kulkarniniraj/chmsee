@@ -140,14 +140,14 @@ gchar *
 get_real_uri(const gchar *uri)
 {
         gchar *real_uri;
-        gchar *p;
+        gchar *p = NULL;
 
         p = g_strrstr(uri, "#");
         real_uri = p ? g_strndup(uri, p - uri) : g_strdup(uri);
 
         p = g_strrstr(real_uri, ";");
 
-        if (p) {
+        if (p != NULL) {
                 g_free(real_uri);
                 real_uri = g_strndup(real_uri, p - real_uri);
         }
@@ -190,7 +190,7 @@ file_exist_ncase(const gchar *path)
 
         gchar *old_dir = g_path_get_dirname(path);
         gchar *dirname = file_exist_ncase(old_dir);
-        if (!dirname) {
+        if (dirname == NULL) {
                 g_free(old_dir);
                 return NULL;
         }
@@ -208,7 +208,7 @@ file_exist_ncase(const gchar *path)
 
         gchar *found = NULL;
         GDir *dir = g_dir_open(dirname, 0, NULL);
-        if (dir) {
+        if (dir != NULL) {
                 const gchar *entry;
 
                 while ((entry = g_dir_read_name(dir))) {

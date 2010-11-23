@@ -55,11 +55,14 @@ dummy_log_handler (const gchar   *log_domain,
 static void
 init_log(int log_level)
 {
-        if (log_level < 1) g_log_set_handler(NULL, G_LOG_LEVEL_CRITICAL, dummy_log_handler, NULL);
-        if (log_level < 2) g_log_set_handler(NULL, G_LOG_LEVEL_WARNING,  dummy_log_handler, NULL);
-        if (log_level < 3) g_log_set_handler(NULL, G_LOG_LEVEL_MESSAGE,  dummy_log_handler, NULL);
-        if (log_level < 4) g_log_set_handler(NULL, G_LOG_LEVEL_INFO,     dummy_log_handler, NULL);
-        if (log_level < 5) g_log_set_handler(NULL, G_LOG_LEVEL_DEBUG,    dummy_log_handler, NULL);
+        GLogLevelFlags log_levels = G_LOG_LEVEL_ERROR;
+        if (log_level < 1) log_levels |= G_LOG_LEVEL_CRITICAL;
+        if (log_level < 2) log_levels |= G_LOG_LEVEL_WARNING;
+        if (log_level < 3) log_levels |= G_LOG_LEVEL_MESSAGE;
+        if (log_level < 4) log_levels |= G_LOG_LEVEL_INFO;
+        if (log_level < 5) log_levels |= G_LOG_LEVEL_DEBUG;
+
+        g_log_set_handler(NULL, log_levels, dummy_log_handler, NULL);
 }
 
 static gboolean
@@ -88,12 +91,12 @@ load_config()
         g_message("Main >>> load config");
         CsConfig *config = g_slice_new(CsConfig);
 
-        /* ChmSee HOME directory, based on $XDG_CONFIG_HOME, default location is ~/.config/chmsee */
+        /* ChmSee's HOME directory, based on $XDG_CONFIG_HOME, defaultly locate in ~/.config/chmsee */
         config->home = g_build_filename(g_get_user_config_dir(), PACKAGE, NULL);
         if (!g_file_test(config->home, G_FILE_TEST_IS_DIR))
                 mkdir(config->home, 0755);
 
-        /* ChmSee bookshelf directory, based on $XDG_CACHE_HOME, default location is ~/.cache/chmsee/bookshelf */
+        /* ChmSee's bookshelf directory, based on $XDG_CACHE_HOME, defaultly locate in ~/.cache/chmsee/bookshelf */
         config->bookshelf = g_build_filename(g_get_user_cache_dir(),
                                              PACKAGE,
                                              CHMSEE_BOOKSHELF_DEFAULT, NULL);
@@ -119,9 +122,8 @@ load_config()
                 GKeyFile *keyfile = g_key_file_new();
                 gboolean rv = g_key_file_load_from_file(keyfile, config_file, G_KEY_FILE_NONE, NULL);
 
-                if (!rv) {
+                if (!rv)
                         convert_old_config_file(config_file, "[ChmSee]\n");
-                }
 
                 rv = g_key_file_load_from_file(keyfile, config_file, G_KEY_FILE_NONE, NULL);
 
@@ -139,7 +141,7 @@ load_config()
                         config->fullscreen       = g_key_file_get_boolean(keyfile, "ChmSee", "FULLSCREEN", NULL);
                         config->startup_lastfile = g_key_file_get_boolean(keyfile, "ChmSee", "STARTUP_LASTFILE", NULL);
 
-                        if (!config->hpaned_pos)
+                        if (config->hpaned_pos <= 0)
                                 config->hpaned_pos = 200;
                 }
 
@@ -148,11 +150,11 @@ load_config()
         g_free(config_file);
 
         /* global default value */
-        if (!config->charset)
+        if (config->charset == NULL)
                 config->charset = g_strdup("");
-        if (!config->variable_font)
+        if (config->variable_font == NULL)
                 config->variable_font = g_strdup("Sans 12");
-        if (!config->fixed_font)
+        if (config->fixed_font == NULL)
                 config->fixed_font = g_strdup("Monospace 12");
 
         return config;
@@ -168,7 +170,7 @@ save_config(CsConfig *config)
 
         GKeyFile *keyfile = g_key_file_new();
 
-        if (config->last_file)
+        if (config->last_file != NULL)
                 g_key_file_set_string(keyfile, "ChmSee", "LAST_FILE", config->last_file);
 
         g_key_file_set_string(keyfile, "ChmSee", "CHARSET", config->charset);
@@ -249,10 +251,8 @@ main(int argc, char *argv[])
                 return 0;
         }
 
-        if (argc == 1) {
-        } else if (argc >= 2) {
-                filename = argv[1]; // only open first file
-        }
+        if (argc >= 2)
+                filename = argv[1]; // only open the first specified file
 
         init_log(log_level);
 
@@ -272,7 +272,7 @@ main(int argc, char *argv[])
                 return 1;
         }
 
-        if (filename)
+        if (filename != NULL)
                 chmsee_open_file(chmsee, filename);
         else if (config->startup_lastfile && config->last_file)
                 chmsee_open_file(chmsee, config->last_file);

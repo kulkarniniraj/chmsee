@@ -108,9 +108,8 @@ link_selected_cb(CsIndex* self, Link* link)
 static void
 filter_changed_cb(GtkEntry *entry, CsIndex *self)
 {
-        CsIndexPrivate *priv = CS_INDEX_GET_PRIVATE (self);
-
-        cs_tree_view_set_filter_string(CS_TREE_VIEW (priv->treeview), gtk_entry_get_text(entry));
+        cs_tree_view_set_filter_string(CS_TREE_VIEW (CS_INDEX_GET_PRIVATE (self)->treeview),
+                                       gtk_entry_get_text(entry));
 }
 
 /* External functions */

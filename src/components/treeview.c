@@ -131,8 +131,8 @@ static void
 cs_tree_view_dispose(GObject *object)
 {
         g_debug("CS_TREE_VIEW >>> dispose");
-        CsTreeView        *self = CS_TREE_VIEW (object);
-        CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
+
+        CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (CS_TREE_VIEW (object));
 
         if (priv->store) {
                 g_object_unref(priv->store);
@@ -151,8 +151,8 @@ static void
 cs_tree_view_finalize(GObject *object)
 {
         g_debug("CS_TREE_VIEW >>> finalize");
-        CsTreeView        *self = CS_TREE_VIEW (object);
-        CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
+
+        CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (CS_TREE_VIEW (object));
 
         if (priv->filter_string)
                 g_free(priv->filter_string);
@@ -201,17 +201,17 @@ visible_func(GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
         if (priv->filter_string == NULL)
                 return TRUE;
 
-        gchar *text;
+        gchar *text = NULL;
 
         gtk_tree_model_get(model, iter, COL_TITLE, &text, -1);
 
         gboolean ret = FALSE;
-        gchar   *key = priv->filter_string;
 
-        if (text) {
+        if (text != NULL) {
                 gchar *normalized_string = g_utf8_normalize(text, -1, G_NORMALIZE_ALL);
                 gchar *case_normalized_string = g_utf8_casefold(normalized_string, -1);
 
+                gchar *key = priv->filter_string;
                 if (!strncasecmp(key, case_normalized_string, strlen(key)))
                         ret = TRUE;
 

@@ -192,10 +192,7 @@ extract_file(struct extract_data *data)
         gboolean rval = extract_chm(data->filename, data->bookfolder);
 
         gdk_threads_enter();
-        if (rval)
-                data->rval = 0;
-        else
-                data->rval = 1;
+        data->rval = rval ? 0 : 1;
         gdk_threads_leave();
 }
 
@@ -368,7 +365,7 @@ MD5File(const char *filename, char *buf)
         if (buf == NULL)
                 buf = malloc(33);
         if (buf == NULL)
-                return (NULL);
+                return NULL;
 
         digest = (unsigned char*)gcry_md_read(hd, 0);
 
@@ -553,7 +550,7 @@ chmfile_file_info(CsChmfile *self)
         if (priv->hhc != NULL) {
                 gchar *new_hhc = check_file_ncase(self, priv->hhc);
 
-                if (new_hhc) {
+                if (new_hhc != NULL) {
                         g_free(priv->hhc);
                         priv->hhc = new_hhc;
                 }
@@ -562,7 +559,7 @@ chmfile_file_info(CsChmfile *self)
         if (priv->hhk != NULL) {
                 gchar *new_hhk = check_file_ncase(self, priv->hhk);
 
-                if (new_hhk) {
+                if (new_hhk != NULL) {
                         g_free(priv->hhk);
                         priv->hhk = new_hhk;
                 }
@@ -811,25 +808,21 @@ load_bookinfo(CsChmfile *self)
         CsChmfilePrivate *priv = CS_CHMFILE_GET_PRIVATE (self);
 
         gchar *bookinfo_file = g_build_filename(priv->bookfolder, CHMSEE_BOOKINFO_FILE, NULL);
-
         g_debug("CS_CHMFILE >>> read bookinfo file = %s", bookinfo_file);
-
         GKeyFile *keyfile = g_key_file_new();
-
         gboolean rv = g_key_file_load_from_file(keyfile, bookinfo_file, G_KEY_FILE_NONE, NULL);
 
-        if (!rv) {
+        if (!rv)
                 convert_old_config_file(bookinfo_file, "[Bookinfo]\n");
-        }
 
         rv = g_key_file_load_from_file(keyfile, bookinfo_file, G_KEY_FILE_NONE, NULL);
 
         if (rv) {
-                priv->hhc           = g_key_file_get_string(keyfile, "Bookinfo", "hhc", NULL);
-                priv->hhk           = g_key_file_get_string(keyfile, "Bookinfo", "hhk", NULL);
-                priv->homepage      = g_key_file_get_string(keyfile, "Bookinfo", "homepage", NULL);
-                priv->bookname      = g_key_file_get_string(keyfile, "Bookinfo", "bookname", NULL);
-                priv->encoding      = g_key_file_get_string(keyfile, "Bookinfo", "encoding", NULL);
+                priv->hhc      = g_key_file_get_string(keyfile, "Bookinfo", "hhc", NULL);
+                priv->hhk      = g_key_file_get_string(keyfile, "Bookinfo", "hhk", NULL);
+                priv->homepage = g_key_file_get_string(keyfile, "Bookinfo", "homepage", NULL);
+                priv->bookname = g_key_file_get_string(keyfile, "Bookinfo", "bookname", NULL);
+                priv->encoding = g_key_file_get_string(keyfile, "Bookinfo", "encoding", NULL);
 
                 gchar *vfont = g_key_file_get_string(keyfile, "Bookinfo", "variable_font", NULL);
                 if (vfont) {

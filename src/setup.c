@@ -54,17 +54,13 @@ static gboolean find_charset_func(GtkTreeModel *, GtkTreePath *,
 static void
 on_bookshelf_clear(GtkWidget *widget, Chmsee *chmsee)
 {
-        char *argv[4];
         const gchar *bookshelf = chmsee_get_bookshelf(chmsee);
 
         if (bookshelf && g_file_test(bookshelf, G_FILE_TEST_EXISTS)) {
                 chmsee_close_book(chmsee);
 
                 gchar *dir = strdup(bookshelf);
-                argv[0] = "rm";
-                argv[1] = "-rf";
-                argv[2] = dir;
-                argv[3] = NULL;
+                char *argv[] = {"rm", "-rf", dir, NULL};
 
                 g_spawn_async(g_get_tmp_dir(), argv, NULL,
                               G_SPAWN_SEARCH_PATH,
@@ -120,8 +116,7 @@ static void
 startup_lastfile_toggled_cb(GtkWidget *widget, Chmsee *chmsee)
 {
         g_debug("SETUP >>> startup_lastfile toggled");
-        GtkToggleButton *toggle_button = GTK_TOGGLE_BUTTON (widget);
-        gboolean state = gtk_toggle_button_get_active(toggle_button);
+        gboolean state = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (widget));
 
         chmsee_set_startup_lastfile(chmsee, state);
 }
