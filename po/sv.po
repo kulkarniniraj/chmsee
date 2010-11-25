@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-17 23:36+0800\n"
+"POT-Creation-Date: 2010-11-25 16:04+0800\n"
 "PO-Revision-Date: 2009-08-26 11:45+0000\n"
 "Last-Translator: Martin Lindhe <Unknown>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -143,11 +143,11 @@ msgstr ""
 msgid "Exit ChmSee"
 msgstr "ChmSee"
 
-#: ../src/chmsee.c:199 ../src/components/book.c:120
+#: ../src/chmsee.c:199 ../src/components/book.c:121
 msgid "_Copy"
 msgstr "_Kopiera"
 
-#: ../src/chmsee.c:200 ../src/components/book.c:125
+#: ../src/chmsee.c:200 ../src/components/book.c:126
 msgid "Select _All"
 msgstr "Markera _allt"
 
@@ -167,11 +167,11 @@ msgstr ""
 msgid "_Home"
 msgstr "_Hem"
 
-#: ../src/chmsee.c:207 ../src/components/book.c:121
+#: ../src/chmsee.c:207 ../src/components/book.c:122
 msgid "_Back"
 msgstr "_Bakåt"
 
-#: ../src/chmsee.c:208 ../src/components/book.c:122
+#: ../src/chmsee.c:208 ../src/components/book.c:123
 msgid "_Forward"
 msgstr "_Framåt"
 
@@ -217,406 +217,406 @@ msgstr "_Helskärm"
 msgid "Side _Pane"
 msgstr "Sido_panel"
 
-#: ../src/chmsee.c:487
+#: ../src/chmsee.c:486
 msgid "CHM Files"
 msgstr "CHM-filer"
 
-#: ../src/chmsee.c:492
+#: ../src/chmsee.c:491
 msgid "All Files"
 msgstr "Alla filer"
 
-#: ../src/chmsee.c:635
+#: ../src/chmsee.c:628
 msgid "(Build with xulrunner "
 msgstr ""
 
-#: ../src/chmsee.c:635
+#: ../src/chmsee.c:628
 msgid ")"
 msgstr ""
 
-#: ../src/chmsee.c:830
+#: ../src/chmsee.c:802
 msgid "Ready!"
 msgstr "Redo!"
 
-#: ../src/chmsee.c:1010
+#: ../src/chmsee.c:985
 #, fuzzy, c-format
 msgid "Error: Can not open spectified file '%s'"
 msgstr "Kan inte öppna chm-fil %s."
 
-#: ../src/main.c:220
+#: ../src/main.c:222
 #, fuzzy
 msgid "Display ChmSee version"
 msgstr "Visa versionen och avsluta"
 
-#: ../src/main.c:225
+#: ../src/main.c:227
 #, fuzzy
 msgid "Be verbose, repeat 3 times to get all information"
 msgstr "var detaljerad, upprepa 3 gånger för att visa all information"
 
-#: ../src/main.c:230
+#: ../src/main.c:232
 #, fuzzy
 msgid "Be quiet, repeat 2 times to disable all information"
 msgstr "var tyst, upprepa 2 gånger för att stänga av all information"
 
-#: ../src/setup.c:133
+#: ../src/setup.c:128
 #, fuzzy
 msgid "Auto"
 msgstr "Om"
 
-#: ../src/setup.c:134
+#: ../src/setup.c:129
 msgid "West European"
 msgstr ""
 
-#: ../src/setup.c:135
+#: ../src/setup.c:130
 msgid "East European"
 msgstr ""
 
-#: ../src/setup.c:136
+#: ../src/setup.c:131
 msgid "East Asian"
 msgstr ""
 
-#: ../src/setup.c:137
+#: ../src/setup.c:132
 msgid "SE & SW Asian"
 msgstr ""
 
-#: ../src/setup.c:138
+#: ../src/setup.c:133
 msgid "Middle Eastern"
 msgstr ""
 
-#: ../src/setup.c:139
+#: ../src/setup.c:134
 msgid "Unicode"
 msgstr ""
 
-#: ../src/setup.c:143
+#: ../src/setup.c:138
 msgid "Western (ISO-8859-1)"
 msgstr ""
 
 #. index = 0
-#: ../src/setup.c:144
+#: ../src/setup.c:139
 msgid "Western (ISO-8859-15)"
 msgstr ""
 
-#: ../src/setup.c:145
+#: ../src/setup.c:140
 msgid "Western (IBM-850)"
 msgstr ""
 
-#: ../src/setup.c:146
+#: ../src/setup.c:141
 msgid "Western (MacRoman)"
 msgstr ""
 
-#: ../src/setup.c:147
+#: ../src/setup.c:142
 msgid "Western (Windows-1252)"
 msgstr ""
 
-#: ../src/setup.c:148
+#: ../src/setup.c:143
 msgid "Celtic (ISO-8859-14)"
 msgstr ""
 
-#: ../src/setup.c:149
+#: ../src/setup.c:144
 msgid "Greek (ISO-8859-7)"
 msgstr ""
 
-#: ../src/setup.c:150
+#: ../src/setup.c:145
 msgid "Greek (MacGreek)"
 msgstr ""
 
-#: ../src/setup.c:151
+#: ../src/setup.c:146
 msgid "Greek (Windows-1253)"
 msgstr ""
 
-#: ../src/setup.c:152
+#: ../src/setup.c:147
 msgid "Icelandic (MacIcelandic)"
 msgstr ""
 
-#: ../src/setup.c:153
+#: ../src/setup.c:148
 msgid "Nordic (ISO-8859-10)"
 msgstr ""
 
-#: ../src/setup.c:154
+#: ../src/setup.c:149
 msgid "South European (ISO-8859-3)"
 msgstr ""
 
-#: ../src/setup.c:155
+#: ../src/setup.c:150
 msgid "Baltic (ISO-8859-4)"
 msgstr ""
 
 #. index = 12
-#: ../src/setup.c:156
+#: ../src/setup.c:151
 msgid "Baltic (ISO-8859-13)"
 msgstr ""
 
-#: ../src/setup.c:157
+#: ../src/setup.c:152
 msgid "Baltic (Windows-1257)"
 msgstr ""
 
-#: ../src/setup.c:158
+#: ../src/setup.c:153
 msgid "Central European (IBM-852)"
 msgstr ""
 
-#: ../src/setup.c:159
+#: ../src/setup.c:154
 msgid "Central European (ISO-8859-2)"
 msgstr ""
 
-#: ../src/setup.c:160
+#: ../src/setup.c:155
 msgid "Central European (MacCE)"
 msgstr ""
 
-#: ../src/setup.c:161
+#: ../src/setup.c:156
 msgid "Central European (Windows-1250)"
 msgstr ""
 
-#: ../src/setup.c:162
+#: ../src/setup.c:157
 msgid "Croatian (MacCroatian)"
 msgstr ""
 
-#: ../src/setup.c:163
+#: ../src/setup.c:158
 msgid "Cyrillic (IBM-855)"
 msgstr ""
 
-#: ../src/setup.c:164
+#: ../src/setup.c:159
 msgid "Cyrillic (ISO-8895-5)"
 msgstr ""
 
-#: ../src/setup.c:165
+#: ../src/setup.c:160
 msgid "Cyrillic (ISO-IR-111)"
 msgstr ""
 
-#: ../src/setup.c:166
+#: ../src/setup.c:161
 msgid "Cyrillic (KOI8-R)"
 msgstr ""
 
-#: ../src/setup.c:167
+#: ../src/setup.c:162
 msgid "Cyrillic (MacCyrillic)"
 msgstr ""
 
-#: ../src/setup.c:168
+#: ../src/setup.c:163
 msgid "Cyrillic (Windows-1251)"
 msgstr ""
 
-#: ../src/setup.c:169
+#: ../src/setup.c:164
 msgid "Cyrillic/Russian (CP-866)"
 msgstr ""
 
-#: ../src/setup.c:170
+#: ../src/setup.c:165
 msgid "Cyrillic/Ukrainian (KOI8-U)"
 msgstr ""
 
-#: ../src/setup.c:171
+#: ../src/setup.c:166
 msgid "Romanian (ISO-8859-16)"
 msgstr ""
 
-#: ../src/setup.c:172
+#: ../src/setup.c:167
 msgid "Romanian (MacRomanian)"
 msgstr ""
 
-#: ../src/setup.c:173
+#: ../src/setup.c:168
 msgid "Chinese Simplified (GB2312)"
 msgstr ""
 
 #. index = 30
-#: ../src/setup.c:174
+#: ../src/setup.c:169
 msgid "Chinese Simplified (GBK)"
 msgstr ""
 
-#: ../src/setup.c:175
+#: ../src/setup.c:170
 msgid "Chinese Simplified (GB18030)"
 msgstr ""
 
-#: ../src/setup.c:176
+#: ../src/setup.c:171
 msgid "Chinese Simplified (HZ)"
 msgstr ""
 
-#: ../src/setup.c:177
+#: ../src/setup.c:172
 msgid "Chinese Simplified (ISO-2022-CN)"
 msgstr ""
 
-#: ../src/setup.c:178
+#: ../src/setup.c:173
 msgid "Chinese Traditional (Big5)"
 msgstr ""
 
-#: ../src/setup.c:179
+#: ../src/setup.c:174
 msgid "Chinese Traditional (Big5-HKSCS)"
 msgstr ""
 
-#: ../src/setup.c:180
+#: ../src/setup.c:175
 msgid "Chinese Traditional (EUC-TW)"
 msgstr ""
 
-#: ../src/setup.c:181
+#: ../src/setup.c:176
 msgid "Japanese (EUC-JP)"
 msgstr ""
 
-#: ../src/setup.c:182
+#: ../src/setup.c:177
 msgid "Japanese (ISO-2022-JP)"
 msgstr ""
 
-#: ../src/setup.c:183
+#: ../src/setup.c:178
 msgid "Japanese (Shift_JIS)"
 msgstr ""
 
-#: ../src/setup.c:184
+#: ../src/setup.c:179
 msgid "Korean (EUC-KR)"
 msgstr ""
 
-#: ../src/setup.c:185
+#: ../src/setup.c:180
 msgid "Korean (UHC)"
 msgstr ""
 
-#: ../src/setup.c:186
+#: ../src/setup.c:181
 msgid "Korean (JOHAB)"
 msgstr ""
 
-#: ../src/setup.c:187
+#: ../src/setup.c:182
 msgid "Korean (ISO-2022-KR)"
 msgstr ""
 
-#: ../src/setup.c:188
+#: ../src/setup.c:183
 msgid "Armenian (ARMSCII-8)"
 msgstr ""
 
 #. index = 45
-#: ../src/setup.c:189
+#: ../src/setup.c:184
 msgid "Georgian (GEOSTD8)"
 msgstr ""
 
-#: ../src/setup.c:190
+#: ../src/setup.c:185
 msgid "Thai (TIS-620)"
 msgstr ""
 
-#: ../src/setup.c:191
+#: ../src/setup.c:186
 msgid "Thai (ISO-8859-11)"
 msgstr ""
 
-#: ../src/setup.c:192
+#: ../src/setup.c:187
 msgid "Thai (Windows-874)"
 msgstr ""
 
-#: ../src/setup.c:193
+#: ../src/setup.c:188
 msgid "Thai (IBM-874)"
 msgstr ""
 
-#: ../src/setup.c:194
+#: ../src/setup.c:189
 msgid "Turkish (IBM-857)"
 msgstr ""
 
-#: ../src/setup.c:195
+#: ../src/setup.c:190
 msgid "Turkish (ISO-8859-9)"
 msgstr ""
 
-#: ../src/setup.c:196
+#: ../src/setup.c:191
 msgid "Turkish (MacTurkish)"
 msgstr ""
 
-#: ../src/setup.c:197
+#: ../src/setup.c:192
 msgid "Turkish (Windows-1254)"
 msgstr ""
 
-#: ../src/setup.c:198
+#: ../src/setup.c:193
 msgid "Vietnamese (TCVN)"
 msgstr ""
 
-#: ../src/setup.c:199
+#: ../src/setup.c:194
 msgid "Vietnamese (VISCII)"
 msgstr ""
 
-#: ../src/setup.c:200
+#: ../src/setup.c:195
 msgid "Vietnamese (VPS)"
 msgstr ""
 
-#: ../src/setup.c:201
+#: ../src/setup.c:196
 msgid "Vietnamese (Windows-1258)"
 msgstr ""
 
-#: ../src/setup.c:202
+#: ../src/setup.c:197
 msgid "Hindi (MacDevanagari)"
 msgstr ""
 
-#: ../src/setup.c:203
+#: ../src/setup.c:198
 msgid "Gujarati (MacGujarati)"
 msgstr ""
 
-#: ../src/setup.c:204
+#: ../src/setup.c:199
 msgid "Gurmukhi (MacGurmukhi)"
 msgstr ""
 
-#: ../src/setup.c:205
+#: ../src/setup.c:200
 msgid "Arabic (ISO-8859-6)"
 msgstr ""
 
 #. index = 62
-#: ../src/setup.c:206
+#: ../src/setup.c:201
 msgid "Arabic (Windows-1256)"
 msgstr ""
 
-#: ../src/setup.c:207
+#: ../src/setup.c:202
 msgid "Arabic (IBM-864)"
 msgstr ""
 
-#: ../src/setup.c:208
+#: ../src/setup.c:203
 msgid "Arabic (MacArabic)"
 msgstr ""
 
-#: ../src/setup.c:209
+#: ../src/setup.c:204
 msgid "Farsi (MacFarsi)"
 msgstr ""
 
-#: ../src/setup.c:210
+#: ../src/setup.c:205
 msgid "Hebrew (ISO-8859-8-I)"
 msgstr ""
 
-#: ../src/setup.c:211
+#: ../src/setup.c:206
 msgid "Hebrew (Windows-1255)"
 msgstr ""
 
-#: ../src/setup.c:212
+#: ../src/setup.c:207
 msgid "Hebrew Visual (ISO-8859-8)"
 msgstr ""
 
-#: ../src/setup.c:213
+#: ../src/setup.c:208
 msgid "Hebrew (IBM-862)"
 msgstr ""
 
-#: ../src/setup.c:214
+#: ../src/setup.c:209
 msgid "Hebrew (MacHebrew)"
 msgstr ""
 
-#: ../src/setup.c:215
+#: ../src/setup.c:210
 msgid "Unicode (UTF-8)"
 msgstr ""
 
 #. index = 72
-#: ../src/setup.c:216
+#: ../src/setup.c:211
 msgid "Unicode (UTF-16LE)"
 msgstr ""
 
-#: ../src/setup.c:217
+#: ../src/setup.c:212
 msgid "Unicode (UTF-16BE)"
 msgstr ""
 
-#: ../src/setup.c:218
+#: ../src/setup.c:213
 msgid "Unicode (UTF-32)"
 msgstr ""
 
-#: ../src/setup.c:219
+#: ../src/setup.c:214
 msgid "Unicode (UTF-32LE)"
 msgstr ""
 
-#: ../src/setup.c:220
+#: ../src/setup.c:215
 msgid "Unicode (UTF-32BE)"
 msgstr ""
 
-#: ../src/components/book.c:123
+#: ../src/components/book.c:124
 msgid "Open Link in New _Tab"
 msgstr "Öppna länk i ny _flik"
 
-#: ../src/components/book.c:124
+#: ../src/components/book.c:125
 msgid "_Copy Link Location"
 msgstr "_Kopiera länkadress"
 
-#: ../src/components/book.c:126
+#: ../src/components/book.c:127
 msgid "Copy Page _Location"
 msgstr "Kopiera sidans _sökväg"
 
-#: ../src/components/book.c:241
+#: ../src/components/book.c:242
 msgid "Find:"
 msgstr ""
 
@@ -633,54 +633,54 @@ msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:464 ../src/components/book.c:736
+#: ../src/components/book.c:460 ../src/components/book.c:706
 #: ../src/models/parser.c:180
 msgid "No Title"
 msgstr "Ingen titel"
 
-#: ../src/components/book.c:914
+#: ../src/components/book.c:891
 msgid "Topics"
 msgstr "Ämnen"
 
-#: ../src/components/book.c:931
+#: ../src/components/book.c:908
 msgid "Index"
 msgstr "Översikt"
 
-#: ../src/components/book.c:947
+#: ../src/components/book.c:924
 msgid "Bookmarks"
 msgstr "Bokmärken"
 
-#: ../src/components/book.c:1034
+#: ../src/components/book.c:1011
 #, c-format
 msgid "Can not find link target file at \"%s\""
 msgstr ""
 
-#: ../src/models/chmfile.c:321
+#: ../src/models/chmfile.c:313
 #, fuzzy, c-format
 msgid "Cannot open chmfile: %s"
 msgstr "Kan inte öppna chm-fil %s."
 
-#: ../src/models/chmfile.c:331
+#: ../src/models/chmfile.c:323
 #, c-format
 msgid "Extract chmfile failed: %s"
 msgstr "Misslyckades att packa upp chm-fil: %s"
 
-#: ../src/models/chmfile.c:356
+#: ../src/models/chmfile.c:348
 #, fuzzy, c-format
 msgid "Open \"%s\" failed: %s"
 msgstr "Misslyckades att öppna \"%s\": %s"
 
-#: ../src/models/chmfile.c:546
+#: ../src/models/chmfile.c:538
 #, c-format
 msgid "Can not open chm file %s."
 msgstr "Kan inte öppna chm-fil %s."
 
-#: ../src/models/chmfile.c:990
+#: ../src/models/chmfile.c:982
 #, c-format
 msgid "Processing... %.0f%% complete"
 msgstr ""
 
-#: ../src/models/chmfile.c:1003
+#: ../src/models/chmfile.c:995
 msgid "Processing done. Loading..."
 msgstr ""
 

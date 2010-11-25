@@ -207,11 +207,6 @@ dir_exists(const char *path)
 static int
 rmkdir(char *path)
 {
-        /*
-         * strip off trailing components unless we can stat the directory, or we
-         * have run out of components
-         */
-
         char *i = rindex(path, '/');
 
         if (path[0] == '\0'  ||  dir_exists(path))
@@ -228,7 +223,7 @@ rmkdir(char *path)
 }
 
 /*
- * callback function for enumerate API
+ * Callback function for enumerate API
  */
 static int
 _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
@@ -280,7 +275,7 @@ _extract_callback(struct chmFile *h, struct chmUnitInfo *ui, void *context)
                 while (remain != 0) {
                         len = chm_retrieve_object(h, ui, (unsigned char *)buffer, offset, 32768);
                         if (len > 0) {
-                                if(fwrite(buffer, 1, (size_t)len, fout) != len) {
+                                if (fwrite(buffer, 1, (size_t)len, fout) != len) {
                                         g_debug("CS_CHMFILE: CHM_ENUMERATOR_FAILURE fwrite");
                                         g_free(fname);
                                         return CHM_ENUMERATOR_FAILURE;
@@ -344,7 +339,7 @@ MD5File(const char *filename, char *buf)
         gcry_md_hd_t hd;
         int f, i;
 
-        if(filename == NULL)
+        if (filename == NULL)
                 return NULL;
 
         gcry_md_open(&hd, GCRY_MD_MD5, 0);
@@ -565,7 +560,7 @@ chmfile_file_info(CsChmfile *self)
                 }
         }
 
-        /* convert encoding to UTF-8 */
+        /* Convert encoding to UTF-8 */
         if (priv->encoding != NULL) {
                 if (priv->bookname) {
                         g_debug("CS_CHMFILE >>> priv->bookname = %s", priv->bookname);
@@ -653,6 +648,10 @@ chmfile_windows_info(struct chmFile *cfd, CsChmfile *self)
                 priv->hhk = g_strdup_printf("/%s", buffer + hhk);
         if (priv->homepage == NULL && homepage)
                 priv->homepage = g_strdup_printf("/%s", buffer + homepage);
+        if (g_strcmp0(priv->homepage, "/") == 0 && homepage) {
+                g_free(priv->homepage);
+                priv->homepage = g_strdup_printf("/%s", buffer + homepage);
+        }
 
         if (priv->bookname == NULL && bookname)
                 priv->bookname = g_strdup((char *)buffer + bookname);
@@ -685,7 +684,7 @@ chmfile_system_info(struct chmFile *cfd, CsChmfile *self)
         for(;;) {
                 // This condition won't hold if I process anything
                 // except NUL-terminated strings!
-                if(index > size - 1 - (long)sizeof(u_int16_t))
+                if (index > size - 1 - (long)sizeof(u_int16_t))
                         break;
 
                 cursor = buffer + index;
@@ -713,7 +712,7 @@ chmfile_system_info(struct chmFile *cfd, CsChmfile *self)
                         cursor = buffer + index;
 
                         priv->homepage = g_strdup_printf("/%s", buffer + index + 2);
-                        g_debug("CS_CHMFILE >>> homepage %s", priv->homepage);
+                        g_debug("CS_CHMFILE >>> SYSTEM homepage %s", priv->homepage);
 
                         break;
                 case 3:
@@ -721,7 +720,7 @@ chmfile_system_info(struct chmFile *cfd, CsChmfile *self)
                         cursor = buffer + index;
 
                         priv->bookname = g_strdup((char *)buffer + index + 2);
-                        g_debug("CS_CHMFILE >>> bookname %s", priv->bookname);
+                        g_debug("CS_CHMFILE >>> SYSTEM bookname %s", priv->bookname);
 
                         break;
                 case 4: // LCID stuff
@@ -731,7 +730,7 @@ chmfile_system_info(struct chmFile *cfd, CsChmfile *self)
                         lcid = UINT32ARRAY(buffer + index + 2);
                         g_debug("CS_CHMFILE >>> lcid %x", lcid);
 
-                        if(priv->encoding)
+                        if (priv->encoding)
                                 g_free(priv->encoding);
 
                         priv->encoding = g_strdup(get_encoding_by_lcid(lcid));
@@ -741,7 +740,7 @@ chmfile_system_info(struct chmFile *cfd, CsChmfile *self)
                         index += 2;
                         cursor = buffer + index;
 
-                        if(!priv->hhc) {
+                        if (!priv->hhc) {
                                 char *hhc, *hhk;
 
                                 hhc = g_strdup_printf("/%s.hhc", buffer + index + 2);
@@ -947,9 +946,9 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
         if (!g_str_has_suffix(priv->chm, ".CHM") && !g_str_has_suffix(priv->chm, ".chm"))
                 return NULL;
 
-        /* use chm file's MD5 as folder name */
+        /* Use chmfile's MD5 as the folder name */
         gchar *md5 = MD5File(priv->chm, NULL);
-        if(!md5) {
+        if (!md5) {
                 g_warning("CS_CHMFILE >>> Oops!! Cannot calculate chmfile's MD5!");
                 return NULL;
         }
@@ -957,7 +956,7 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
         priv->bookfolder = g_build_filename(bookshelf, md5, NULL);
         g_debug("CS_CHMFILE >>> book folder = %s", priv->bookfolder);
 
-        /* if this chmfile already exists in bookshelf, load it's bookinfo */
+        /* If this chmfile already exists in the bookshelf, load it's bookinfo file */
         if (g_file_test(priv->bookfolder, G_FILE_TEST_IS_DIR)) {
                 load_bookinfo(self);
         } else {
@@ -977,7 +976,7 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
 
                 g_thread_create((GThreadFunc) (extract_file), &data, FALSE, NULL);
 
-                /* display a faked progress bar */
+                /* Display a fake progress bar */
                 gdouble percent = 0.0;
                 while (data.rval < 0 && percent <= 100.0) {
                         gchar *message = g_strdup_printf(_("Processing... %.0f%% complete"), percent);
@@ -1016,7 +1015,7 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
         g_debug("CS_CHMFILE >>> priv->bookname = %s", priv->bookname);
         g_debug("CS_CHMFILE >>> priv->endcoding = %s", priv->encoding);
 
-        /* parse hhc file */
+        /* Parse hhc file */
         if (priv->hhc != NULL && g_ascii_strcasecmp(priv->hhc, "(null)") != 0) {
                 gchar *hhcfile = g_build_filename(priv->bookfolder, priv->hhc, NULL);
 
@@ -1025,7 +1024,7 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
                 g_free(hhcfile);
         }
 
-        /* parse hhk file */
+        /* Parse hhk file */
         if (priv->hhk != NULL && priv->index_list == NULL) {
                 gchar *hhkfile = g_build_filename(priv->bookfolder, priv->hhk, NULL);
 
