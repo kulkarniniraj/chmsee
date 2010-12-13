@@ -215,6 +215,8 @@ cs_book_init(CsBook *self)
         gtk_box_pack_start(GTK_BOX (self), priv->hpaned, TRUE, TRUE, 0);
 
         priv->control_notebook = gtk_notebook_new();
+        gtk_notebook_set_tab_vborder(GTK_NOTEBOOK (priv->control_notebook), 3);
+        gtk_notebook_set_show_border(GTK_NOTEBOOK (priv->control_notebook), FALSE);
         gtk_paned_add1(GTK_PANED(priv->hpaned), priv->control_notebook);
 
         priv->html_notebook = gtk_notebook_new();
@@ -223,6 +225,8 @@ cs_book_init(CsBook *self)
                          G_CALLBACK (html_notebook_switch_page_cb),
                          self);
 
+        gtk_notebook_set_tab_vborder(GTK_NOTEBOOK (priv->html_notebook), 0);
+        gtk_notebook_set_show_border(GTK_NOTEBOOK (priv->html_notebook), FALSE);
         gtk_paned_add2(GTK_PANED (priv->hpaned), priv->html_notebook);
 
         /* string find bar */
@@ -722,7 +726,7 @@ new_html_tab(CsBook *self)
 static GtkWidget*
 new_tab_label(CsBook *self, const gchar *str)
 {
-        GtkWidget *hbox  = gtk_hbox_new(FALSE, 3);
+        GtkWidget *hbox  = gtk_hbox_new(FALSE, 2);
 
         GtkWidget *label = gtk_label_new(str);
         gtk_label_set_ellipsize(GTK_LABEL (label), PANGO_ELLIPSIZE_END);
@@ -733,10 +737,14 @@ new_tab_label(CsBook *self, const gchar *str)
         g_object_set_data(G_OBJECT (hbox), "label", label);
 
         GtkWidget *close_button = gtk_button_new();
-        gtk_button_set_relief(GTK_BUTTON(close_button), GTK_RELIEF_NONE);
+        gtk_button_set_relief(GTK_BUTTON (close_button), GTK_RELIEF_NONE);
+        gtk_container_set_border_width(GTK_CONTAINER (close_button), 0);
 
         GtkWidget *close_image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
-        gtk_container_add(GTK_CONTAINER (close_button), close_image);
+        gtk_misc_set_padding(GTK_MISC (close_image), 0, 0);
+        gtk_button_set_image(GTK_BUTTON (close_button), close_image);
+
+        /* gtk_container_add(GTK_CONTAINER (close_button), close_image); */
 
         g_signal_connect(G_OBJECT (close_button),
                          "clicked",

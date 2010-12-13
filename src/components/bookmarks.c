@@ -95,7 +95,7 @@ cs_bookmarks_init(CsBookmarks *self)
 
         /* bookmarks list */
         GtkWidget *frame = gtk_frame_new(NULL);
-        gtk_frame_set_shadow_type(GTK_FRAME (frame), GTK_SHADOW_IN);
+        gtk_frame_set_shadow_type(GTK_FRAME (frame), GTK_SHADOW_NONE);
 
         GtkWidget *list_sw = gtk_scrolled_window_new(NULL, NULL);
         gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (list_sw),

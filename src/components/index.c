@@ -83,7 +83,7 @@ cs_index_init(CsIndex* self)
                                        GTK_POLICY_NEVER,
                                        GTK_POLICY_AUTOMATIC);
         gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW (index_sw),
-                                            GTK_SHADOW_IN);
+                                            GTK_SHADOW_NONE);
 
         priv->treeview = cs_tree_view_new(TRUE);
         g_signal_connect_swapped(priv->treeview,

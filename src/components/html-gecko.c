@@ -151,8 +151,7 @@ cs_html_gecko_init(CsHtmlGecko *html)
         priv->render_name = g_strdup("Mozilla Gecko");
         priv->current_url = NULL;
 
-        gtk_frame_set_shadow_type(GTK_FRAME (html), GTK_SHADOW_IN);
-        gtk_container_set_border_width(GTK_CONTAINER (html), 2);
+        gtk_frame_set_shadow_type(GTK_FRAME (html), GTK_SHADOW_NONE);
         gtk_container_add(GTK_CONTAINER (html), GTK_WIDGET (priv->gecko));
 
         g_signal_connect(G_OBJECT (priv->gecko),

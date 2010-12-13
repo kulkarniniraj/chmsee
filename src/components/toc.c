@@ -117,7 +117,7 @@ cs_toc_init(CsToc *self)
                                        GTK_POLICY_NEVER,
                                        GTK_POLICY_AUTOMATIC);
         gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW (toc_sw),
-                                            GTK_SHADOW_IN);
+                                            GTK_SHADOW_NONE);
 
         priv->treeview = GTK_TREE_VIEW (gtk_tree_view_new());
 
