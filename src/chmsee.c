@@ -206,8 +206,8 @@ static const GtkActionEntry entries[] = {
         { "Home", GTK_STOCK_HOME, N_("_Home"), NULL, NULL, G_CALLBACK(on_home)},
         { "Back", GTK_STOCK_GO_BACK, N_("_Back"), "<alt>Left", NULL, G_CALLBACK(on_back)},
         { "Forward", GTK_STOCK_GO_FORWARD, N_("_Forward"), "<alt>Right", NULL, G_CALLBACK(on_forward)},
-        { "Prev", GTK_STOCK_GO_UP, N_("_Prev"), "<alt>Up", NULL, G_CALLBACK(on_prev)},
-        { "Next", GTK_STOCK_GO_DOWN, N_("_Next"), "<alt>Down", NULL, G_CALLBACK(on_next)},
+        { "Prev", GTK_STOCK_GO_UP, N_("_Prev"), "<control>Up", NULL, G_CALLBACK(on_prev)},
+        { "Next", GTK_STOCK_GO_DOWN, N_("_Next"), "<control>Down", NULL, G_CALLBACK(on_next)},
 
         { "About", GTK_STOCK_ABOUT, N_("_About"), NULL, N_("About ChmSee"), G_CALLBACK(on_about)},
 
