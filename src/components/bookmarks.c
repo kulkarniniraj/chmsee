@@ -145,7 +145,6 @@ cs_bookmarks_init(CsBookmarks *self)
         gtk_box_pack_start(GTK_BOX (self), hbox, FALSE, FALSE, 2);
 
         gtk_box_set_spacing(GTK_BOX (self), 2);
-        gtk_container_set_border_width(GTK_CONTAINER (self), 2);
 
         gtk_widget_show_all(GTK_WIDGET (self));
 }

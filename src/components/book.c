@@ -215,7 +215,7 @@ cs_book_init(CsBook *self)
         gtk_box_pack_start(GTK_BOX (self), priv->hpaned, TRUE, TRUE, 0);
 
         priv->control_notebook = gtk_notebook_new();
-        gtk_notebook_set_tab_vborder(GTK_NOTEBOOK (priv->control_notebook), 3);
+        gtk_notebook_set_tab_vborder(GTK_NOTEBOOK (priv->control_notebook), 4);
         gtk_notebook_set_show_border(GTK_NOTEBOOK (priv->control_notebook), FALSE);
         gtk_paned_add1(GTK_PANED(priv->hpaned), priv->control_notebook);
 

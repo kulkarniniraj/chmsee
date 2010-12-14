@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ChmSee 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-25 16:04+0800\n"
+"POT-Creation-Date: 2010-12-14 14:53+0800\n"
 "PO-Revision-Date: 2010-08-24 16:31+0800\n"
 "Last-Translator: Ji YongGang <jungleji@gmail.com>\n"
 "Language-Team: szlug <szlug@googlegroups.com>\n"
@@ -597,41 +597,41 @@ msgstr "复制链接地址(_C)"
 msgid "Copy Page _Location"
 msgstr "复制页面地址(_L)"
 
-#: ../src/components/book.c:242
+#: ../src/components/book.c:246
 msgid "Find:"
 msgstr "搜寻："
 
-#: ../src/components/book.c:257
+#: ../src/components/book.c:261
 msgid "Previous"
 msgstr "前一个"
 
-#: ../src/components/book.c:267
+#: ../src/components/book.c:271
 msgid "Next"
 msgstr "后一个"
 
-#: ../src/components/book.c:277
+#: ../src/components/book.c:281
 msgid "Match case"
 msgstr "区分大小写字母"
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:460 ../src/components/book.c:706
+#: ../src/components/book.c:464 ../src/components/book.c:710
 #: ../src/models/parser.c:180
 msgid "No Title"
 msgstr "无标题"
 
-#: ../src/components/book.c:891
+#: ../src/components/book.c:899
 msgid "Topics"
 msgstr "目录"
 
-#: ../src/components/book.c:908
+#: ../src/components/book.c:916
 msgid "Index"
 msgstr "索引"
 
-#: ../src/components/book.c:924
+#: ../src/components/book.c:932
 msgid "Bookmarks"
 msgstr "书签"
 
-#: ../src/components/book.c:1011
+#: ../src/components/book.c:1019
 #, c-format
 msgid "Can not find link target file at \"%s\""
 msgstr "无法找到链接对应的文件 \"%s\""

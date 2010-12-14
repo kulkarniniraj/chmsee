@@ -42,7 +42,7 @@ typedef struct _CsTreeViewPrivate CsTreeViewPrivate;
 
 struct _CsTreeViewPrivate {
         GtkListStore       *store;
-        GtkTreeModelFilter *filter_model;
+        GtkTreeModel       *filter_model;
         gchar              *filter_string;
 };
 
@@ -166,11 +166,16 @@ static void
 row_activated_cb(CsTreeView *self, GtkTreePath *path, GtkTreeViewColumn *column)
 {
         g_debug("CS_TREE_VIEW >>> row_activate callback");
+
+        CsTreeViewPrivate *priv  = CS_TREE_VIEW_GET_PRIVATE (self);
+        GtkTreeModel      *model;
         GtkTreeIter        iter;
         gchar             *title, *uri;
 
-        CsTreeViewPrivate *priv  = CS_TREE_VIEW_GET_PRIVATE (self);
-        GtkTreeModel      *model = GTK_TREE_MODEL (priv->store);
+        if (priv->filter_model)
+                model = priv->filter_model;
+        else
+                model = GTK_TREE_MODEL (priv->store);
 
         gtk_tree_model_get_iter(model, &iter, path);
         gtk_tree_model_get(model,
@@ -195,32 +200,28 @@ selection_changed_cb(GtkTreeSelection *selection, CsTreeView *self)
 static gboolean
 visible_func(GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
 {
-        CsTreeView        *self = CS_TREE_VIEW (data);
-        CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
+        CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (CS_TREE_VIEW (data));
 
-        if (priv->filter_string == NULL)
+        if (priv->filter_string == NULL || strlen(priv->filter_string) == 0)
                 return TRUE;
 
         gchar *text = NULL;
+        gboolean visible = FALSE;
 
         gtk_tree_model_get(model, iter, COL_TITLE, &text, -1);
-
-        gboolean ret = FALSE;
 
         if (text != NULL) {
                 gchar *normalized_string = g_utf8_normalize(text, -1, G_NORMALIZE_ALL);
                 gchar *case_normalized_string = g_utf8_casefold(normalized_string, -1);
 
-                gchar *key = priv->filter_string;
-                if (!strncasecmp(key, case_normalized_string, strlen(key)))
-                        ret = TRUE;
+                if (!strncasecmp(priv->filter_string, case_normalized_string, strlen(priv->filter_string)))
+                        visible = TRUE;
 
-                g_free(text);
                 g_free(normalized_string);
                 g_free(case_normalized_string);
         }
 
-        return ret;
+        return visible;
 }
 
 static void
@@ -229,14 +230,13 @@ apply_filter_model(CsTreeView *self)
         g_debug("CS_TREEVIEW >>> apply filter model");
         CsTreeViewPrivate *priv = CS_TREE_VIEW_GET_PRIVATE (self);
 
-        priv->filter_model = GTK_TREE_MODEL_FILTER (gtk_tree_model_filter_new(GTK_TREE_MODEL (priv->store), NULL));
+        priv->filter_model = gtk_tree_model_filter_new(GTK_TREE_MODEL (priv->store), NULL);
 
-        gtk_tree_model_filter_set_visible_func(priv->filter_model,
+        gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER (priv->filter_model),
                                                visible_func,
                                                self,
                                                NULL);
-        gtk_tree_view_set_model(GTK_TREE_VIEW (self),
-                                GTK_TREE_MODEL (priv->filter_model));
+        gtk_tree_view_set_model(GTK_TREE_VIEW (self), priv->filter_model);
 }
 
 
@@ -389,5 +389,5 @@ cs_tree_view_set_filter_string(CsTreeView *self, const gchar *string)
         }
 
         priv->filter_string = g_strdup(string);
-        gtk_tree_model_filter_refilter(priv->filter_model);
+        gtk_tree_model_filter_refilter(GTK_TREE_MODEL_FILTER (priv->filter_model));
 }

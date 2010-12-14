@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chmsee\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-25 16:04+0800\n"
+"POT-Creation-Date: 2010-12-14 14:53+0800\n"
 "PO-Revision-Date: 2009-01-11 09:27+0000\n"
 "Last-Translator: Yaron <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
@@ -613,41 +613,41 @@ msgstr "העתק את _מיקום הקישור"
 msgid "Copy Page _Location"
 msgstr "העתק את _מיקום הקישור"
 
-#: ../src/components/book.c:242
+#: ../src/components/book.c:246
 msgid "Find:"
 msgstr ""
 
-#: ../src/components/book.c:257
+#: ../src/components/book.c:261
 msgid "Previous"
 msgstr ""
 
-#: ../src/components/book.c:267
+#: ../src/components/book.c:271
 msgid "Next"
 msgstr ""
 
-#: ../src/components/book.c:277
+#: ../src/components/book.c:281
 msgid "Match case"
 msgstr ""
 
 #. customized label, add a close button rightmost
-#: ../src/components/book.c:460 ../src/components/book.c:706
+#: ../src/components/book.c:464 ../src/components/book.c:710
 #: ../src/models/parser.c:180
 msgid "No Title"
 msgstr "אין כותרת"
 
-#: ../src/components/book.c:891
+#: ../src/components/book.c:899
 msgid "Topics"
 msgstr "נושאים"
 
-#: ../src/components/book.c:908
+#: ../src/components/book.c:916
 msgid "Index"
 msgstr ""
 
-#: ../src/components/book.c:924
+#: ../src/components/book.c:932
 msgid "Bookmarks"
 msgstr "סימניות"
 
-#: ../src/components/book.c:1011
+#: ../src/components/book.c:1019
 #, c-format
 msgid "Can not find link target file at \"%s\""
 msgstr ""
