@@ -29,8 +29,6 @@
 #include <sys/stat.h>
 #include <gcrypt.h>
 #include <chm_lib.h>
-#include <gtk/gtkwindow.h>
-#include <gtk/gtk.h>
 
 #include "chmfile.h"
 #include "utils.h"
@@ -67,13 +65,6 @@ struct extract_context
         const char *hhk_file;
 };
 
-struct extract_data
-{
-        const gchar *filename;
-        const gchar *bookfolder;
-        int          rval;
-};
-
 #define CS_CHMFILE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), CS_TYPE_CHMFILE, CsChmfilePrivate))
 
 #define UINT16ARRAY(x) ((unsigned char)(x)[0] | ((u_int16_t)(x)[1] << 8))
@@ -103,7 +94,6 @@ static gboolean tree_to_list_callback(GNode *, gpointer);
 static void free_list_data(gpointer, gpointer);
 static gchar *check_file_ncase(CsChmfile *, const gchar *);
 
-static void extract_file(struct extract_data *);
 static void parse_filename(CsChmfile *, const gchar *);
 
 /* GObject functions */
@@ -185,16 +175,6 @@ cs_chmfile_finalize(GObject *object)
 }
 
 /* Internal functions */
-
-static void
-extract_file(struct extract_data *data)
-{
-        gboolean rval = extract_chm(data->filename, data->bookfolder);
-
-        gdk_threads_enter();
-        data->rval = rval ? 0 : 1;
-        gdk_threads_leave();
-}
 
 static int
 dir_exists(const char *path)
@@ -453,6 +433,8 @@ get_encoding_by_lcid(guint32 lcid)
                 return "ISO-8859-2";
         case 0x0415:
                 return "WINDOWS-1250";
+        case 0x0419:
+                return "WINDOWS-1251";
         case 0x0c01:
                 return "WINDOWS-1256";
         case 0x0401:
@@ -503,7 +485,6 @@ get_encoding_by_lcid(guint32 lcid)
         case 0x0402:
         case 0x043f:
         case 0x042f:
-        case 0x0419:
         case 0x0c1a:
         case 0x0444:
         case 0x0422:
@@ -960,47 +941,7 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
         if (g_file_test(priv->bookfolder, G_FILE_TEST_IS_DIR)) {
                 load_bookinfo(self);
         } else {
-                GtkWidget *popup_window = gtk_window_new(GTK_WINDOW_POPUP);
-                GtkWidget *progress = gtk_progress_bar_new();
-
-                gtk_container_add(GTK_CONTAINER (popup_window), progress);
-                gtk_window_set_position(GTK_WINDOW (popup_window), GTK_WIN_POS_CENTER);
-                gtk_widget_set_size_request(popup_window, 300, 40);
-                gtk_widget_show_all(popup_window);
-
-                struct extract_data data;
-
-                data.filename = priv->chm;
-                data.bookfolder = priv->bookfolder;
-                data.rval = -1;
-
-                g_thread_create((GThreadFunc) (extract_file), &data, FALSE, NULL);
-
-                /* Display a fake progress bar */
-                gdouble percent = 0.0;
-                while (data.rval < 0 && percent <= 100.0) {
-                        gchar *message = g_strdup_printf(_("Processing... %.0f%% complete"), percent);
-                        gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR (progress), percent / 100.0);
-                        gtk_progress_bar_set_text(GTK_PROGRESS_BAR (progress), message);
-
-                        while (gtk_events_pending())
-                                gtk_main_iteration();
-
-                        g_usleep(100000);
-                        percent += 5.0;
-                        g_free(message);
-                }
-
-                gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR (progress), 1.0);
-                gtk_progress_bar_set_text(GTK_PROGRESS_BAR (progress), _("Processing done. Loading..."));
-
-                while (gtk_events_pending())
-                        gtk_main_iteration();
-                g_usleep(200000);
-
-                gtk_widget_destroy(GTK_WIDGET (popup_window));
-
-                if (data.rval == 1) {
+                if (!extract_chm(filename, priv->bookfolder)) {
                         g_warning("CS_CHMFILE >>> extract_chm failed: %s", priv->chm);
                         return NULL;
                 }
@@ -1013,7 +954,7 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
         g_debug("CS_CHMFILE >>> priv->hhk = %s", priv->hhk);
         g_debug("CS_CHMFILE >>> priv->homepage = %s", priv->homepage);
         g_debug("CS_CHMFILE >>> priv->bookname = %s", priv->bookname);
-        g_debug("CS_CHMFILE >>> priv->endcoding = %s", priv->encoding);
+        g_debug("CS_CHMFILE >>> priv->encoding = %s", priv->encoding);
 
         /* Parse hhc file */
         if (priv->hhc != NULL && g_ascii_strcasecmp(priv->hhc, "(null)") != 0) {

@@ -214,8 +214,6 @@ main(int argc, char *argv[])
         if (!g_thread_supported())
                 g_thread_init(NULL);
 
-        gdk_threads_init();
-
         GOptionEntry options[] = {
                 {"version", 0,
                  0, G_OPTION_ARG_NONE, &option_version,
@@ -263,8 +261,6 @@ main(int argc, char *argv[])
 
         CsConfig *config = load_config();
 
-        gdk_threads_enter();
-
         Chmsee *chmsee = chmsee_new(config);
 
         if (chmsee == NULL) {
@@ -278,8 +274,6 @@ main(int argc, char *argv[])
                 chmsee_open_file(chmsee, config->last_file);
 
         gtk_main();
-
-        gdk_threads_leave();
 
         save_config(config);
 
