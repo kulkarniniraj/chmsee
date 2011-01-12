@@ -3,6 +3,11 @@ pref("mousewheel.withcontrolkey.action", 3);
 pref("mousewheel.withcontrolkey.numlines", 1);
 pref("mousewheel.withcontrolkey.sysnumlines", false);
 
+// mouse wheel: using mozilla's shift+wheel smooth scrolling
+pref("mousewheel.withshiftkey.action", 0);
+pref("mousewheel.withshiftkey.numlines", 1);
+pref("mousewheel.withshiftkey.sysnumlines", false);
+
 // horizontal scroll with 2nd wheel
 pref("mousewheel.horizscroll.withnokey.action", 0);
 pref("mousewheel.horizscroll.withnokey.sysnumlines", true);
