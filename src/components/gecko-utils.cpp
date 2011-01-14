@@ -428,7 +428,7 @@ gecko_utils_set_charset(GtkMozEmbed *embed, const char *charset)
         nsCOMPtr<nsIDocCharset> docCharset = do_GetInterface(webBrowser);
         if (docCharset) {
                 g_debug("GECKO_UTILS >>> set docCharset to %s", charset);
-                docCharset->SetCharset(charset);
+                g_strcmp0(charset, "Auto") ? docCharset->SetCharset(charset) : docCharset->SetCharset("");
          }
 }
 

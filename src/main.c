@@ -151,7 +151,7 @@ load_config()
 
         /* global default value */
         if (config->charset == NULL)
-                config->charset = g_strdup("");
+                config->charset = g_strdup("Auto");
         if (config->variable_font == NULL)
                 config->variable_font = g_strdup("Sans 12");
         if (config->fixed_font == NULL)

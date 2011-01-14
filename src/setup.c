@@ -109,7 +109,10 @@ cmb_lang_changed_cb(GtkComboBox *combo_box, Chmsee *chmsee)
                            -1);
 
         g_debug("SETUP >>> select charset: %s", charset);
-        chmsee_set_charset(chmsee, charset);
+        if (charset && strlen(charset))
+                chmsee_set_charset(chmsee, charset);
+        else
+                chmsee_set_charset(chmsee, "Auto");
 }
 
 static void
@@ -342,7 +345,7 @@ setup_window_new(Chmsee *chmsee)
 
         const gchar *charset = chmsee_get_charset(chmsee);
         g_debug("SETUP >>> chmsee_get_charset = %s", charset);
-        if (charset && strlen(charset)) {
+        if (charset && strlen(charset) && g_strcmp0(charset, "Auto")) {
                 FindCharsetData *data = g_new(FindCharsetData, sizeof(FindCharsetData));
 
                 data->combobox = GTK_COMBO_BOX (cmb_lang);
