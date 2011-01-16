@@ -1,5 +1,5 @@
-ChmSee 1.3.0 2010-xx-xx
-----------------------------
+ChmSee 1.3.0 2011-01-16
+-----------------------
 * Use XDG Base Directory Specification for config and bookshelf cache
 * Starup splash screen removed
 * Add global font setting
