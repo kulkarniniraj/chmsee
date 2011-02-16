@@ -973,7 +973,7 @@ chmsee_open_file(Chmsee *self, const gchar *filename)
 
                 priv->state = CHMSEE_STATE_NORMAL;
         } else {
-                g_warning("CS_BOOK >>> Can not open spectified file %s", filename);
+                g_warning("CHMSEE >>> Can not open spectified file %s", filename);
 
                 /* Popup an error message dialog */
                 GtkWidget *msg_dialog;

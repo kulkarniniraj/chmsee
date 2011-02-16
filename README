@@ -20,6 +20,7 @@ installed and met their version on your system:
  * chmlib >= 0.39
  * libxml2
  * libgcrypt
+ * intltool
 
 Installation
 ============

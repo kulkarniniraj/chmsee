@@ -1,9 +1,9 @@
 project(chmsee)
 cmake_minimum_required(VERSION 2.6.4 FATAL_ERROR)
 
-set(PACKAGE_VERSION "1.3.0" )
+set(PACKAGE_VERSION "1.3.1" )
 
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
 
 find_package(PkgConfig)
 

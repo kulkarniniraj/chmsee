@@ -941,7 +941,7 @@ cs_chmfile_new(const gchar *filename, const gchar *bookshelf)
         if (g_file_test(priv->bookfolder, G_FILE_TEST_IS_DIR)) {
                 load_bookinfo(self);
         } else {
-                if (!extract_chm(filename, priv->bookfolder)) {
+                if (!extract_chm(priv->chm, priv->bookfolder)) {
                         g_warning("CS_CHMFILE >>> extract_chm failed: %s", priv->chm);
                         return NULL;
                 }
