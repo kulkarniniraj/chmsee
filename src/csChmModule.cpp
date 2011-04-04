@@ -1,6 +1,5 @@
 /*
- *  Copyright (C) 2010 Ji YongGang <jungleji@gmail.com>
- *  Copyright (C) 2009 LI Daobing <lidaobing@gmail.com>
+ *  Copyright (C) 2011 Ji YongGang <jungleji@gmail.com>
  *
  *  ChmSee is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,16 +17,29 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef __CS_BOOKMARKS_FILE_H__
-#define __CS_BOOKMARKS_FILE_H__
+#include "mozilla/ModuleUtils.h"
+#include "nsIClassInfoImpl.h"
 
-#include <glib.h>
+#include "csChm.h"
 
-G_BEGIN_DECLS
+NS_GENERIC_FACTORY_CONSTRUCTOR(csChm)
 
-GList *cs_bookmarks_file_load(const gchar *);
-void cs_bookmarks_file_save(GList *, const gchar *);
+NS_DEFINE_NAMED_CID(CS_CHM_CID);
 
-G_END_DECLS
+static const mozilla::Module::CIDEntry kcsChmCIDs[] = {
+        { &kCS_CHM_CID, false, NULL, csChmConstructor },
+        { NULL }
+};
 
-#endif /* !__CS_BOOKMARKS_FILE_H__ */
+static const mozilla::Module::ContractIDEntry kcsChmContracts[] = {
+        { CS_CHM_CONTRACTID, &kCS_CHM_CID },
+        { NULL }
+};
+
+static const mozilla::Module kcsChmModule = {
+        mozilla::Module::kVersion,
+        kcsChmCIDs,
+        kcsChmContracts
+};
+
+NSMODULE_DEFN(nscsChmModule) = &kcsChmModule;
