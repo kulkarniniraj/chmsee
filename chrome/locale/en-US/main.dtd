@@ -1,0 +1,19 @@
+<!ENTITY mainWindow.title "ChmSee 2.0">
+<!ENTITY fileMenu.label "File">
+<!ENTITY fileMenu.accesskey "f">
+<!ENTITY openCmd.label "Open">
+<!ENTITY openCmd.accesskey "o">
+<!ENTITY newTab.label "New Tab">
+<!ENTITY newTab.accesskey "t">
+<!ENTITY closeTab.label "Close Tab">
+<!ENTITY closeTab.accesskey "c">
+<!ENTITY quitCmd.label "Quit">
+<!ENTITY quitCmd.accesskey "q">
+<!ENTITY viewMenu.label "View">
+<!ENTITY viewMenu.accesskey "v">
+<!ENTITY fullScreen.label "Full screen">
+<!ENTITY fullScreen.accesskey "u">
+<!ENTITY helpMenu.label "Help">
+<!ENTITY helpMenu.accesskey "h">
+<!ENTITY about.label "About">
+<!ENTITY about.accesskey "a">

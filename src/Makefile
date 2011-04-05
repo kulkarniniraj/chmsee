@@ -1,4 +1,4 @@
-CHMSEE_ROOTDIR = ../..
+CHMSEE_ROOTDIR = ..
 COMPONENTSDIR = ${CHMSEE_ROOTDIR}/components
 
 TARGET = ${COMPONENTSDIR}/libxpcomchm.so

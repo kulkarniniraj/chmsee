@@ -16,3 +16,5 @@ TAGS
 tags
 src/csIChm.h
 src/csIChm.xpt
+components/xpcomchm.xpt
+components/libxpcomchm.so

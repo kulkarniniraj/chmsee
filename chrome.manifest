@@ -1,0 +1,3 @@
+manifest chrome/chrome.manifest
+manifest components/components.manifest
+manifest components/fuelApplication.manifest

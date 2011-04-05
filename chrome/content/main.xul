@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://chmsee/skin/main.css" type="text/css"?>
+<?xml-stylesheet href="chrome://chmsee/content/panelBindings.css" type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://chmsee/locale/main.dtd">
+
+<window id="main" title="&mainWindow.title;" width="300" height="300" onload="onWindowLoad();"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/javascript" src="chrome://chmsee/content/main.js"/>
+
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="bundle-main" src="chrome://chmsee/locale/main.properties"/>
+  </stringbundleset>
+
+  <keyset>
+    <key id="open-cmd" modifiers="accel" key="O" oncommand="openFile();"/>
+    <key id="close-cmd" modifiers="accel" key="Q" oncommand="window.close();"/>
+    <key id="open-tab-cmd" modifiers="accel" key="T" oncommand="newTab();"/>
+    <key id="close-tab-cmd" modifiers="accel" key="W" oncommand="closeTab();"/>
+  </keyset>
+
+  <vbox flex="1">
+    <toolbox>
+      <menubar id="main-menubar">
+        <menu id="file-menu" label="&fileMenu.label;" accesskey="&fileMenu.accesskey;">
+          <menupopup id="file-popup">
+            <menuitem label="&openCmd.label;" accesskey="&openCmd.accesskey;" key="open-cmd" oncommand="openFile();"/>
+            <menuitem label="&newTab.label;" accesskey="&newTab.accesskey;" key="open-tab-cmd" oncommand="newTab();"/>
+            <menuitem label="&closeTab.label;" accesskey="&closeTab.accesskey;" key="close-tab-cmd" oncommand="closeTab();"/>
+            <menuseparator />
+            <menuitem label="&quitCmd.label;" accesskey="&quitCmd.accesskey;" key="close-cmd" oncommand="window.close();" />
+          </menupopup>
+        </menu>
+        <menu id="view-menu" label="&viewMenu.label;" accesskey="&viewMenu.accesskey;">
+          <menupopup id="view-popup">
+            <menuitem label="&fullScreen.label;" accesskey="&fullScreen.accesskey;" />
+          </menupopup>
+        </menu>
+        <menu id="help-menu" label="&helpMenu.label;" accesskey="&helpMenu.accesskey;">
+          <menupopup id="help-popup">
+            <menuitem label="&about.label;" accesskey="&about.accesskey;"/>
+          </menupopup>
+        </menu>
+      </menubar>
+    </toolbox>
+
+    <tabbox id="content-tabbox" flex="1" />
+
+  </vbox>
+</window>

@@ -1,0 +1,7 @@
+tab.book-tab {
+    -moz-binding: url(chrome://chmsee/content/panelBindings.xml#book-tab);
+}
+
+tabpanel.book-tabpanel {
+    -moz-binding: url(chrome://chmsee/content/panelBindings.xml#book-tabpanel);
+}
