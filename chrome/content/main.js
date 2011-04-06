@@ -42,6 +42,8 @@ function Book() {
     this.title = "";
     this.hhc = null;
     this.hhcDS = null;
+    this.hhk = null;
+    this.hhkDS = null;
 
     this.initWithUrl = function(title, url) {
         this.title = title;
@@ -72,10 +74,14 @@ function Book() {
 
             if (chmobj.hhc != null) {
                 d("Book::initWithFile", "hhc = " + chmobj.hhc);
-                var hhcFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
                 this.hhc = this.folder + chmobj.hhc;
-                hhcFile.initWithPath(this.hhc);
-                this.hhcDS = getHhcDatasource(this.folder, hhcFile);
+                this.hhcDS = getRdfDatasource("hhc", this.folder, this.hhc);
+            }
+
+            if (chmobj.hhk != null) {
+                d("Book::initWithFile", "hhk = " + chmobj.hhk);
+                this.hhk = this.folder + chmobj.hhk;
+                this.hhkDS = getRdfDatasource("hhk", this.folder, this.hhk);
             }
 
             // Save loaded book info
@@ -95,6 +101,12 @@ function Book() {
             if (this.hhc != null) {
                 predicate = rdfService.GetResource("urn:chmsee:rdf#hhc");
                 object = rdfService.GetLiteral(this.hhc);
+                infoDS.Assert(res, predicate, object, true);
+            }
+
+            if (this.hhk != null) {
+                predicate = rdfService.GetResource("urn:chmsee:rdf#hhk");
+                object = rdfService.GetLiteral(this.hhk);
                 infoDS.Assert(res, predicate, object, true);
             }
 
@@ -147,10 +159,18 @@ function Book() {
 
         d("Book::initWithMd5", "hhc = " + this.hhc);
         if (this.hhc != null) {
-            var rdf = this.hhc.slice(0, this.hhc.lastIndexOf(".hhc")) + ".rdf";
+            var rdf = this.hhc.slice(0, this.hhc.lastIndexOf(".hhc")) + "_hhc.rdf";
             d("Book::initWithMd5", "rdf path = " + rdf);
 
             this.hhcDS = rdfService.GetDataSourceBlocking("file://" + rdf);
+        }
+
+        d("Book::initWithMd5", "hhk = " + this.hhk);
+        if (this.hhk != null) {
+            var rdf = this.hhk.slice(0, this.hhk.lastIndexOf(".hhk")) + "_hhk.rdf";
+            d("Book::initWithMd5", "rdf path = " + rdf);
+
+            this.hhkDS = rdfService.GetDataSourceBlocking("file://" + rdf);
         }
 
         return true;
@@ -160,7 +180,7 @@ function Book() {
 function onWindowLoad() {
     d("windowInit", "starter");
 
-    bookshelf = dirService.get("Home", Ci.nsIFile).path + "/.cache/chmsee/bookshelf/";
+    bookshelf = dirService.get("Home", Ci.nsIFile).path + "/.chmsee/bookshelf/";
 
     initTabbox();
 }
@@ -264,17 +284,11 @@ function goHome() {
 function md5Hash(file) {
     var istream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
 
-    // open for reading
     istream.init(file, 0x01, 0444, 0);
 
     var ch = Cc["@mozilla.org/security/hash;1"].createInstance(Ci.nsICryptoHash);
     ch.init(ch.MD5);
-
-    // this tells updateFromStream to read the entire file
-    const PR_UINT32_MAX = 0xffffffff;
-    ch.updateFromStream(istream, PR_UINT32_MAX);
-
-    // pass false here to get binary data back
+    ch.updateFromStream(istream, 0xffffffff);
     var hash = ch.finish(false);
 
     // return the two-digit hexadecimal code for a byte
@@ -282,19 +296,27 @@ function md5Hash(file) {
         return ("0" + charCode.toString(16)).slice(-2);
     }
 
-    // convert the binary hash data to a hex string.
-    var s = [toHexString(hash.charCodeAt(i)) for (i in hash)].join("");
-    return s;
+    var s = [];
+    for (var i = 0; i < hash.length; i++)
+        s.push(toHexString(hash.charCodeAt(i)));
+    return s.join("");
 }
 
 String.prototype.ncmp = function(str) {
-        return this.toLowerCase() == str.toLowerCase() ? true : false;
+    return this.toLowerCase() == str.toLowerCase() ? true : false;
 };
 
-function getHhcDatasource(bookfolder, file) {
-    var hhcPath = file.path;
-    var rdfPath = hhcPath.slice(0, hhcPath.lastIndexOf(".hhc")) + ".rdf";
-    d("getHhcDatasource", "rdfPath = " + rdfPath);
+function getRdfDatasource(type, bookfolder, path) {
+    var rdfPath;
+
+    if (type == "hhc")
+        rdfPath = path.slice(0, path.lastIndexOf(".hhc")) + "_hhc.rdf";
+    else if (type == "hhk")
+        rdfPath = path.slice(0, path.lastIndexOf(".hhk")) + "_hhk.rdf";
+    else
+        return null;
+
+    d("getRdfDatasource", "rdfPath = " + rdfPath);
 
     var datasource = rdfService.GetDataSourceBlocking("file://" + rdfPath);
 
@@ -302,7 +324,15 @@ function getHhcDatasource(bookfolder, file) {
     var sl = Cc["@mozilla.org/moz/jssubscript-loader;1"].createInstance(Ci.mozIJSSubScriptLoader);
     sl.loadSubScript("chrome://chmsee/content/rdfUtils.js", tmpNameSpace);
 
-    tmpNameSpace.generateRdf(file, bookfolder, datasource);
+    if (type == "hhc")
+        treeType = true;
+    else
+        treeType = false;
+
+    var sourceFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
+    sourceFile.initWithPath(path);
+
+    tmpNameSpace.generateRdf(treeType, sourceFile, bookfolder, datasource);
 
     datasource.QueryInterface(Ci.nsIRDFRemoteDataSource);
     datasource.Flush();

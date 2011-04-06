@@ -29,6 +29,7 @@ function ContentHandler(parseInfo) {
     this.local = "";
     this.containers = [];
     this.lastRes = null;
+    this.treeType = parseInfo.type; // false: list, true: tree
 }
 
 ContentHandler.prototype = {
@@ -38,13 +39,21 @@ ContentHandler.prototype = {
         if (tag.ncmp("ul")) {
             var resource = null;
 
-            if (this.containers.length == 0) {
-                resource = rdfService.GetResource("urn:chmsee:root");
+            if (this.treeType) {
+                if (this.containers.length == 0) {
+                    resource = rdfService.GetResource("urn:chmsee:root");
+                } else {
+                    resource = this.lastRes;
+                }
+                var container = rdfContainerUtils.MakeSeq(this.ds, resource);
+                this.containers.push(container);
             } else {
-                resource = this.lastRes;
+                if (this.containers.length == 0) {
+                    resource = rdfService.GetResource("urn:chmsee:root");
+                    var container = rdfContainerUtils.MakeSeq(this.ds, resource);
+                    this.containers.push(container);
+                }
             }
-            var container = rdfContainerUtils.MakeSeq(this.ds, resource);
-            this.containers.push(container);
         } else if (tag.ncmp("object")) {
             if (attrs.length > 0 && attrs[0].name.toLowerCase() == "type" && attrs[0].value.toLowerCase() == "text/sitemap") {
                 this.isItem = true;
@@ -61,8 +70,10 @@ ContentHandler.prototype = {
     endElement: function(tag) {
         d("Handler::endElement", "name = " + tag);
         if (tag.ncmp("ul")) {
-            if (this.containers.length > 0) {
-                this.containers.pop();
+            if (this.treeType) {
+                if (this.containers.length > 0) {
+                    this.containers.pop();
+                }
             }
         } else if (tag.toLowerCase() == "object" && this.isItem) {
             var res = rdfService.GetAnonymousResource();
@@ -91,7 +102,7 @@ ContentHandler.prototype = {
     },
 };
 
-function generateRdf(file, bookfolder, datasource)
+function generateRdf(treeType, file, bookfolder, datasource)
 {
     var data = "";
     var fstream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
@@ -114,6 +125,6 @@ function generateRdf(file, bookfolder, datasource)
     sl.loadSubScript("chrome://chmsee/content/simpleparser.js", tmpNameSpace);
 
     var parser = new tmpNameSpace.SimpleHtmlParser();
-    var pinfo = {folder: bookfolder, ds: datasource};
+    var pinfo = {folder: bookfolder, ds: datasource, type: treeType};
     parser.parse(data, new ContentHandler(pinfo));
 }
