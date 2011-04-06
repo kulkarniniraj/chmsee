@@ -1,3 +1,11 @@
+LIBXUL_SDK = /usr/pkg/lib/xulrunner-sdk
+
+NSPR_INCLUDES = /usr/pkg/include/xulrunner
+NSPR_LIBS = -Wl,-R/usr/pkg/lib/xulrunner -pthread -L/usr/pkg/lib/xulrunner -lplds4 -lplc4 -lnspr4
+
+CHMLIB_INCLUDES = /usr/pkg/include
+CHMLIB_LIBS = -Wl,-R/usr/pkg/lib -L/usr/pkg/lib -lchm
+
 CHMSEE_ROOTDIR = ..
 COMPONENTSDIR = ${CHMSEE_ROOTDIR}/components
 
@@ -10,7 +18,6 @@ INTERFACE = csIChm
 IDL = ${INTERFACE}.idl
 XPT = ${COMPONENTSDIR}/xpcomchm.xpt
 
-LIBXUL_SDK = /usr/pkg/lib/xulrunner-sdk
 SDK_IDL = ${LIBXUL_SDK}/idl
 XPIDL = ${LIBXUL_SDK}/bin/xpidl
 XPT_LINK = ${LIBXUL_SDK}/bin/xpt_link
@@ -18,7 +25,7 @@ XPT_LINK = ${LIBXUL_SDK}/bin/xpt_link
 MOZ_DEBUG_DISABLE_DEFS	= -DNDEBUG -DTRIMMED
 
 VISIBILITY_FLAGS = -fvisibility=hidden
-INCLUDES         = -I/usr/pkg/include -I/usr/include -I. -I${LIBXUL_SDK}/include
+INCLUDES         = -I/usr/include -I. -I${LIBXUL_SDK}/include -I${NSPR_INCLUDES} -I${CHMLIB_INCLUDES}
 DEFINES		 = -fno-rtti -fno-exceptions -Wall -Wpointer-arith -Woverloaded-virtual \
 		   -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wcast-align -Wno-invalid-offsetof -Wno-variadic-macros \
 		   -O2 -fno-strict-aliasing -Dunix -fshort-wchar -pthread -pipe
@@ -29,8 +36,6 @@ CXXFLAGS        += ${VISIBILITY_FLAGS} ${INCLUDES} ${DEFINES} ${LIBXUL_CXXFLAGS}
 
 
 XPCOM_FROZEN_LDOPTS = -Wl,-R${LIBXUL_SDK}/bin -L${LIBXUL_SDK}/bin -lxpcom -lmozalloc
-NSPR_LIBS           = -Wl,-R${LIBXUL_SDK}/lib -L${LIBXUL_SDK}/lib -lplds4 -lplc4 -lnspr4 -L/usr/pkg/lib -L/usr/lib -pthread
-CHM_LIB             = -Wl,-R/usr/pkg/lib -L/usr/pkg/lib -lchm
 
 LDFLAGS            += ${INCLUDES} \
 		      ${DEFINES} \
@@ -39,7 +44,7 @@ LDFLAGS            += ${INCLUDES} \
 		      ${LIBXUL_SDK}/lib/libxpcomglue_s.a \
 		      ${XPCOM_FROZEN_LDOPTS} \
 		      ${NSPR_LIBS} \
-		      ${CHM_LIB}
+		      ${CHMLIB_LIBS}
 
 
 all: ${TARGET}

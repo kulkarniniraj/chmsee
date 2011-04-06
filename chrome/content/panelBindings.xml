@@ -4,7 +4,7 @@
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <binding id="book-tab">
     <content>
-      <xul:tab xbl:inherits="label"/>
+      <xul:tab xbl:inherits="label=title"/>
     </content>
   </binding>
 
@@ -22,27 +22,33 @@
         </xul:toolbox>
 
         <xul:hbox flex="1">
-          <xul:tree seltype="single" flex="1" datasources="rdf:null" ref="urn:chmsee:root" 
-                    flags="dont-build-content" hidecolumnpicker="true" onselect="onTocSelected(document.getBindingParent(this));" treelines="true"
-                    width="10" persist="width">
-            <xul:treecols>
-              <xul:treecol label="Title" primary="true" flex="1"/>
-              <xul:treecol label="Local" hidden="true" flex="1"/>
-            </xul:treecols>
-            
-            <xul:template>
-              <xul:rule>
-                <xul:treechildren>
-                  <xul:treeitem uri="rdf:*">
-                    <xul:treerow>
-                      <xul:treecell label="rdf:urn:chmsee:rdf#name"/>
-                      <xul:treecell label="rdf:urn:chmsee:rdf#local"/>
-                    </xul:treerow>
-                  </xul:treeitem>
-                </xul:treechildren>
-              </xul:rule>
-            </xul:template>
-          </xul:tree>
+          <xul:tabbox>
+            <xul:tabs xbl:inherits="hidden=hiddenTocIndex">
+              <xul:tab label="TOC" onclick="tocClick(document.getBindingParent(this));"/>
+              <xul:tab label="Index" onclick="indexClick(document.getBindingParent(this));"/>
+            </xul:tabs>
+            <xul:tree seltype="single" flex="1" datasources="rdf:null" ref="urn:chmsee:root"
+                      flags="dont-build-content" hidecolumnpicker="true" onselect="onTocSelected(document.getBindingParent(this));" treelines="true"
+                      width="200" persist="width">
+              <xul:treecols>
+                <xul:treecol label="Title" primary="true" flex="1"/>
+                <xul:treecol label="Local" hidden="true" flex="1"/>
+              </xul:treecols>
+
+              <xul:template>
+                <xul:rule>
+                  <xul:treechildren>
+                    <xul:treeitem uri="rdf:*">
+                      <xul:treerow>
+                        <xul:treecell label="rdf:urn:chmsee:rdf#name"/>
+                        <xul:treecell label="rdf:urn:chmsee:rdf#local"/>
+                      </xul:treerow>
+                    </xul:treeitem>
+                  </xul:treechildren>
+                </xul:rule>
+              </xul:template>
+            </xul:tree>
+          </xul:tabbox>
 
           <xul:splitter state="collapsed" xbl:inherits="state=splitter" collapse="before">
             <xul:grippy/>
@@ -55,14 +61,14 @@
     </content>
     <implementation>
       <field name="book"/>
-      <property name="toc" read-only="true" onget="return document.getAnonymousNodes(this)[0].childNodes[1].childNodes[0];"/>
+      <property name="toc" read-only="true" onget="return document.getAnonymousNodes(this)[0].childNodes[1].childNodes[0].childNodes[1];"/>
       <property name="splitter" read-only="true" onget="return document.getAnonymousNodes(this)[0].childNodes[1].childNodes[1];"/>
       <property name="browser" read-only="true" onget="return document.getAnonymousNodes(this)[0].childNodes[1].childNodes[2];"/>
       <method name="setTree">
       <parameter name="ds"/>
       <body>
         <![CDATA[
-          var tree = document.getAnonymousNodes(this)[0].childNodes[1].childNodes[0];
+          var tree = document.getAnonymousNodes(this)[0].childNodes[1].childNodes[0].childNodes[1];
           var list = tree.database.GetDataSources();
           while (list.hasMoreElements()){
             var aDS = list.getNext();

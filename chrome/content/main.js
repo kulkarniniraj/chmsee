@@ -157,6 +157,11 @@ function Book() {
             this.hhc = target.Value;
         }
 
+        target = infoDS.GetTarget(res, rdfService.GetResource("urn:chmsee:rdf#hhk"), true);
+        if (target instanceof Ci.nsIRDFLiteral) {
+            this.hhk = target.Value;
+        }
+
         d("Book::initWithMd5", "hhc = " + this.hhc);
         if (this.hhc != null) {
             var rdf = this.hhc.slice(0, this.hhc.lastIndexOf(".hhc")) + "_hhc.rdf";
@@ -219,6 +224,7 @@ function initTabbox() {
 function createTab() {
     var tabbox = document.getElementById("content-tabbox");
     var tab = document.createElement("tab");
+    // tab.setAttribute("class", "book-tab");
     tabbox.tabs.appendChild(tab);
 
     var panel = document.createElement("tabpanel");
@@ -250,12 +256,16 @@ function updateTab(book) {
     panel.setAttribute("url", book.url);
     panel.book = book;
 
-    if (book.hhcDS == null) {
-        panel.setAttribute("splitter", "collapsed");
-    } else {
+    if (book.hhcDS != null && book.hhkDS != null)
+        panel.setAttribute("hiddenTocIndex", "false");
+    else
+        panel.setAttribute("hiddenTocIndex", "true");
+
+    if (book.hhcDS) {
         panel.setTree(book.hhcDS);
         panel.setAttribute("splitter", "open");
-    }
+    } else
+        panel.setAttribute("splitter", "collapsed");
 }
 
 function closeTab() {
@@ -387,4 +397,18 @@ function startDOMi()
     var sl = Cc["@mozilla.org/moz/jssubscript-loader;1"].createInstance(Ci.mozIJSSubScriptLoader);
     sl.loadSubScript("chrome://inspector/content/hooks.js", tmpNameSpace);
     tmpNameSpace.inspectDOMDocument(document);
+}
+
+function tocClick(panel) {
+    d("tocClick", "");
+    var book = panel.book;
+    if (book.hhcDS != null)
+        panel.setTree(book.hhcDS);
+}
+
+function indexClick(panel) {
+    d("indexClick", "");
+    var book = panel.book;
+    if (book.hhkDS != null)
+        panel.setTree(book.hhkDS);
 }
