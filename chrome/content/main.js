@@ -29,11 +29,6 @@ var bookshelf;
 
 const CsDebug = true;
 
-function d(f, s) {
-    if (CsDebug)
-        dump(f + " >>> " + s + "\n");
-}
-
 function Book() {
     this.md5 = "";
     this.folder = "";
@@ -65,7 +60,7 @@ function Book() {
             chmobj.QueryInterface(Ci.csIChm);
             chmobj.openChm(file, this.folder);
 
-            this.homepage = this.folder + chmobj.homepage;
+            this.homepage = this.folder + "/" + chmobj.homepage;
             d("Book::initWithFile", "chm homepage = " + this.homepage);
             this.url = "chmsee://" + this.homepage;
 
@@ -74,13 +69,13 @@ function Book() {
 
             if (chmobj.hhc != null) {
                 d("Book::initWithFile", "hhc = " + chmobj.hhc);
-                this.hhc = this.folder + chmobj.hhc;
+                this.hhc = this.folder + "/" + chmobj.hhc;
                 this.hhcDS = getRdfDatasource("hhc", this.folder, this.hhc);
             }
 
             if (chmobj.hhk != null) {
                 d("Book::initWithFile", "hhk = " + chmobj.hhk);
-                this.hhk = this.folder + chmobj.hhk;
+                this.hhk = this.folder + "/" +  chmobj.hhk;
                 this.hhkDS = getRdfDatasource("hhk", this.folder, this.hhk);
             }
 
@@ -123,7 +118,7 @@ function Book() {
 
     this.initWithMd5 = function(md5) {
         this.md5 = md5;
-        this.folder = bookshelf + this.md5 + "/";
+        this.folder = bookshelf + "/" + this.md5;
 
         var infoFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
         infoFile.initWithPath(this.folder + "/chmsee_bookinfo.rdf");
@@ -182,10 +177,12 @@ function Book() {
     };
 }
 
+/*** Event handlers ***/
+
 function onWindowLoad() {
     d("windowInit", "starter");
 
-    bookshelf = dirService.get("Home", Ci.nsIFile).path + "/.chmsee/bookshelf/";
+    bookshelf = dirService.get("Home", Ci.nsIFile).path + "/.chmsee/bookshelf";
 
     initTabbox();
 }
@@ -199,8 +196,80 @@ function onTocSelected(panel) {
     var browser = panel.browser;
     var url = "chmsee://" + cellText;
     d("onTocSelected", "browser = " + browser.tagName + "url = " + url);
-    browser.setAttribute("src", url);
+    panel.setAttribute("url", url);
 }
+
+/*** Commanders ***/
+
+function openFile() {
+    // Read last opened directory
+    var prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+    var lastDir = dirService.get("Home", Ci.nsIFile);
+
+    if (prefs.getPrefType("chmsee.lastdir") == prefs.PREF_STRING) {
+        var lastPath = prefs.getCharPref("chmsee.lastdir");
+        lastDir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
+        lastDir.initWithPath(lastPath);
+    }
+
+    // Popup file open dialog
+    var nsIFilePicker = Ci.nsIFilePicker;
+    var fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
+
+    var strbundle = document.getElementById("bundle-main");
+    var strSelectFile=strbundle.getString("selectChmFile");
+    var strChmFile=strbundle.getString("chmFile");
+
+    fp.init(window, strSelectFile, nsIFilePicker.modeOpen);
+    fp.displayDirectory = lastDir;
+    fp.appendFilter(strChmFile, "*.chm;*.CHM");
+    fp.appendFilters(nsIFilePicker.filterAll);
+
+    var res = fp.show();
+
+    if (res == nsIFilePicker.returnOK) {
+        d("openFile", "selected file path = " + fp.file.path);
+        prefs.setCharPref("chmsee.lastdir", fp.file.parent.path);
+
+        var book = new Book();
+        book.initWithFile(fp.file);
+
+        updateTab(book);
+    }
+}
+
+function newTab() {
+    var tabbox = document.getElementById("content-tabbox");
+
+    var currentTabLabel = tabbox.selectedTab.getAttribute("label");
+    var currentUrl = tabbox.selectedPanel.getAttribute("url");
+    var currentBook = tabbox.selectedPanel.book;
+
+    var newIndex = createTab();
+    tabbox.selectedIndex = newIndex;
+
+    updateTab(currentBook);
+}
+
+function closeTab() {
+    var tabbox = document.getElementById("content-tabbox");
+    var tabs = tabbox.tabs;
+    var tabpanels = tabbox.tabpanels;
+    var currentIndex = tabbox.selectedIndex;
+    d("closeTab", "selected index = " + currentIndex + ", tabindex = " + tabs.selectedIndex);
+
+    if (currentIndex == 0 && tabs.itemCount == 1 ){
+        return;
+    } else {
+        tabs.removeChild(tabbox.selectedTab);
+        tabpanels.removeChild(tabbox.selectedPanel);
+
+        if (tabbox.selectedIndex == -1 && tabs.itemCount > 0){
+            tabbox.selectedIndex = currentIndex -1;
+        }
+    }
+}
+
 
 function initTabbox() {
     var tabbox = document.getElementById("content-tabbox");
@@ -234,25 +303,13 @@ function createTab() {
     return tabbox.tabs.itemCount - 1;
 }
 
-function newTab() {
-    var tabbox = document.getElementById("content-tabbox");
-
-    var currentTabLabel = tabbox.selectedTab.getAttribute("label");
-    var currentUrl = tabbox.selectedPanel.getAttribute("url");
-    var currentBook = tabbox.selectedPanel.book;
-
-    var newIndex = createTab();
-    tabbox.selectedIndex = newIndex;
-
-    updateTab(currentBook);
-}
-
 function updateTab(book) {
     var tabbox = document.getElementById("content-tabbox");
     var tab = tabbox.selectedTab;
     tab.setAttribute("label", book.title);
 
     var panel = tabbox.selectedPanel;
+    // panel.browser.loadURI(book.url);
     panel.setAttribute("url", book.url);
     panel.book = book;
 
@@ -268,27 +325,33 @@ function updateTab(book) {
         panel.setAttribute("splitter", "collapsed");
 }
 
-function closeTab() {
-    var tabbox = document.getElementById("content-tabbox");
-    var tabs = tabbox.tabs;
-    var tabpanels = tabbox.tabpanels;
-    var currentIndex = tabbox.selectedIndex;
-    d("closeTab", "selected index = " + currentIndex + ", tabindex = " + tabs.selectedIndex);
-
-    if (currentIndex == 0 && tabs.itemCount == 1 ){
-        return;
-    } else {
-        tabs.removeChild(tabbox.selectedTab);
-        tabpanels.removeChild(tabbox.selectedPanel);
-
-        if (tabbox.selectedIndex == -1 && tabs.itemCount > 0){
-            tabbox.selectedIndex = currentIndex -1;
-        }
-    }
+function goHome(panel) {
+    d("goHome", "brower homepage = " + panel.browser.getAttribute("homepage"));
+    panel.browser.goHome();
 }
 
-function goHome() {
-    document.getElementById("browser").goHome();
+function goBack(panel) {
+    d("goBack", "brower tag = " + panel.browser.tagName);
+    panel.browser.goBack();
+}
+
+function goForward(panel) {
+    d("goForward", "brower tag = " + panel.browser.tagName);
+    panel.browser.goForward();
+}
+
+function tocClick(panel) {
+    d("tocClick", "");
+    var book = panel.book;
+    if (book.hhcDS != null)
+        panel.setTree(book.hhcDS);
+}
+
+function indexClick(panel) {
+    d("indexClick", "");
+    var book = panel.book;
+    if (book.hhkDS != null)
+        panel.setTree(book.hhkDS);
 }
 
 function md5Hash(file) {
@@ -350,41 +413,11 @@ function getRdfDatasource(type, bookfolder, path) {
     return datasource;
 }
 
-function openFile() {
-    // Read last opened directory
-    var prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
-    var lastDir = dirService.get("Home", Ci.nsIFile);
+/*** Debug ***/
 
-    if (prefs.getPrefType("chmsee.lastdir") == prefs.PREF_STRING) {
-        var lastPath = prefs.getCharPref("chmsee.lastdir");
-        lastDir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
-        lastDir.initWithPath(lastPath);
-    }
-
-    // Popup file open dialog
-    var nsIFilePicker = Ci.nsIFilePicker;
-    var fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
-
-    var strbundle = document.getElementById("bundle-main");
-    var strSelectFile=strbundle.getString("selectChmFile");
-    var strChmFile=strbundle.getString("chmFile");
-
-    fp.init(window, strSelectFile, nsIFilePicker.modeOpen);
-    fp.displayDirectory = lastDir;
-    fp.appendFilter(strChmFile, "*.chm;*.CHM");
-    fp.appendFilters(nsIFilePicker.filterAll);
-
-    var res = fp.show();
-
-    if (res == nsIFilePicker.returnOK) {
-        d("openFile", "selected file path = " + fp.file.path);
-        prefs.setCharPref("chmsee.lastdir", fp.file.parent.path);
-
-        var book = new Book();
-        book.initWithFile(fp.file);
-
-        updateTab(book);
-    }
+function d(f, s) {
+    if (CsDebug)
+        dump(f + " >>> " + s + "\n");
 }
 
 // Call DOM inspector for debugging
@@ -397,18 +430,4 @@ function startDOMi()
     var sl = Cc["@mozilla.org/moz/jssubscript-loader;1"].createInstance(Ci.mozIJSSubScriptLoader);
     sl.loadSubScript("chrome://inspector/content/hooks.js", tmpNameSpace);
     tmpNameSpace.inspectDOMDocument(document);
-}
-
-function tocClick(panel) {
-    d("tocClick", "");
-    var book = panel.book;
-    if (book.hhcDS != null)
-        panel.setTree(book.hhcDS);
-}
-
-function indexClick(panel) {
-    d("indexClick", "");
-    var book = panel.book;
-    if (book.hhkDS != null)
-        panel.setTree(book.hhkDS);
 }

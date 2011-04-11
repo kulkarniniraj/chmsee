@@ -1,9 +1,29 @@
 @import url(chrome://global/skin/);
 
 /* .box { */
-    
+
 /* } */
 
 /* .window { */
 /*     margin: 5px; */
 /* } */
+
+.home-btn {
+    list-style-image: url("chrome://chmsee/skin/go-home.png");
+}
+
+.back-btn {
+    list-style-image: url("chrome://chmsee/skin/go-back.png");
+}
+
+.forward-btn {
+    list-style-image: url("chrome://chmsee/skin/go-forward.png");
+}
+
+.previous-btn {
+    list-style-image: url("chrome://chmsee/skin/go-previous.png");
+}
+
+.next-btn {
+    list-style-image: url("chrome://chmsee/skin/go-next.png");
+}

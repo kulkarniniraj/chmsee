@@ -83,7 +83,7 @@ ContentHandler.prototype = {
             this.ds.Assert(res, predicate, object, true);
 
             predicate = rdfService.GetResource("urn:chmsee:rdf#local");
-            object = rdfService.GetLiteral(this.folder + this.local);
+            object = rdfService.GetLiteral(this.folder + "/" + this.local);
             this.ds.Assert(res, predicate, object, true);
 
             this.containers[this.containers.length - 1].AppendElement(res);

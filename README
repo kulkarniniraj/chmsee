@@ -1,41 +1,48 @@
 Introduction
 ============
 
-ChmSee is an HTML Help viewer for Unix/Linux. It is based on CHMLIB
-and use GTK+ as its frontend toolkit. Because of using gecko HTML
-rendering engine, ChmSee can support rich features of modern HTML
-page, specially CSS.
+ChmSee is an HTML Help viewer for Unix/Linux.
 
 Homepage: http://code.google.com/p/chmsee
 
-Dependencies
-============
+From 2.0, ChmSee becomes to a xulrunner application. I think this
+migration will bring some interesting features which provided by
+xulrunner to ChmSee and make developing more fun.
 
-To compile ChmSee from source, the following packages should have been
-installed and met their version on your system:
+Building
+========
 
- * cmake >= 2.8
- * gtk2 >= 2.20
- * xulrunner >= 1.9
- * chmlib >= 0.39
- * libxml2
- * libgcrypt
- * intltool
+In this new version of ChmSee, most codes use cross-platform languages:
+xul, javascript, css and dtd, and they do not need to build. But
+ChmSee still depend on CHMLIB to retrieve book contents from a CHM
+file, so there now a XPCOM component named libxpcomchm.so written in
+C++ require to be compiled.
 
-Installation
-============
+The source code of libxpcomchm.so located in ./src directory. To
+successfully compile this XPCOM component, you need have xulrunner-sdk
+and chmlib installed.
 
-$ tar xzf chmsee-$VERSION.tar.gz
-$ mkdir build
-$ cd build
-$ cmake ../chmsee-$VERSION
-$ make
-# make install
+Then in the ./src directory, choose one of Makefile.${OS} files and
+rename it to Makefile. If there is not a proper Makefile.${OS} file,
+you can copy Makefile.sample and modify the INCLUDE and LIB variables
+according to your building system.
+
+When the Makefile is ready, run `make` command in this ./src
+directory, a libxpcomchm.so file and its xpt defines will be generated
+to the components folder.
+
+Running
+=======
+
+After building libxpcomchm.so, execute following command line in your
+chmsee folder to launch the program:
+
+$ xulrunner application.ini
 
 Source code repository
 ======================
 
-You can use git command below to retrive develping ChmSee code:
+You can use git command below to retrieve developing ChmSee code:
 
 $ git clone git://github.com/jungleji/chmsee.git
 

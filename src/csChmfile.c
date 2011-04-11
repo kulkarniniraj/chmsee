@@ -86,7 +86,7 @@ static int _extract_callback(struct chmFile *h,
                 return CHM_ENUMERATOR_CONTINUE;
         }
 
-        if (snprintf(buffer, sizeof(buffer), "%s%s", ctx->base_path, ui->path) > 1024)
+        if (snprintf(buffer, sizeof(buffer), "%s/%s", ctx->base_path, ui->path) > 1024)
                 return CHM_ENUMERATOR_FAILURE;
 
         /* Get the length of the path */
