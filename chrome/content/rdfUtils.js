@@ -17,11 +17,135 @@
  *  Boston, MA 02110-1301, USA.
  */
 
+var EXPORTED_SYMBOLS = ["RDF"];
+
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
+const Cu = Components.utils;
 
-function ContentHandler(parseInfo) {
+Cu.import("chrome://chmsee/content/utils.js");
+
+const rdfService = Cc["@mozilla.org/rdf/rdf-service;1"].getService(Ci.nsIRDFService);
+const rdfContainerUtils = Cc["@mozilla.org/rdf/container-utils;1"].createInstance(Ci.nsIRDFContainerUtils);
+
+var RDF = {
+    saveBookinfo: function (book) {
+        var infoDS = rdfService.GetDataSourceBlocking("file://" + book.folder + "/chmsee_bookinfo.rdf");
+        var res = rdfService.GetResource("urn:chmsee:bookinfo");
+
+        var predicate = rdfService.GetResource("urn:chmsee:rdf#homepage");
+        var object = rdfService.GetLiteral(book.homepage);
+        infoDS.Assert(res, predicate, object, true);
+
+        predicate = rdfService.GetResource("urn:chmsee:rdf#title");
+        object = rdfService.GetLiteral(book.title);
+        infoDS.Assert(res, predicate, object, true);
+
+        predicate = rdfService.GetResource("urn:chmsee:rdf#charset");
+        object = rdfService.GetLiteral(book.charset);
+        infoDS.Assert(res, predicate, object, true);
+
+        if (book.hhc !== null) {
+            predicate = rdfService.GetResource("urn:chmsee:rdf#hhc");
+            object = rdfService.GetLiteral(book.hhc);
+            infoDS.Assert(res, predicate, object, true);
+        }
+
+        if (book.hhk !== null) {
+            predicate = rdfService.GetResource("urn:chmsee:rdf#hhk");
+            object = rdfService.GetLiteral(book.hhk);
+            infoDS.Assert(res, predicate, object, true);
+        }
+
+        infoDS.QueryInterface(Ci.nsIRDFRemoteDataSource);
+        infoDS.Flush();
+    },
+
+    loadBookinfo: function (book) {
+        var infoFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
+        infoFile.initWithPath(book.folder + "/chmsee_bookinfo.rdf");
+        d("RDF::loadBookinfo", "bookinfo = " + infoFile.path);
+
+        if (infoFile.exists() === true) { // Reading saved bookinfo
+            var infoDS = rdfService.GetDataSourceBlocking("file://" + infoFile.path);
+            var res = rdfService.GetResource("urn:chmsee:bookinfo");
+
+            book.homepage = getBookinfoValue(infoDS, res, "urn:chmsee:rdf#homepage") || "";
+            d("RDF::loadBookinfo", "bookinfo homepage = " + book.homepage);
+
+            book.url = "chmsee://" + book.homepage;
+
+            book.title = getBookinfoValue(infoDS, res, "urn:chmsee:rdf#title") || "";
+            d("RDF::loadBookinfo", "bookinfo title = " + book.title);
+
+            book.charset = getBookinfoValue(infoDS, res, "urn:chmsee:rdf#charset") || "ISO-8859-1";
+            d("RDF::loadBookinfo", "bookinfo charset = " + book.charset);
+
+            book.hhc = getBookinfoValue(infoDS, res, "urn:chmsee:rdf#hhc") || null;
+            d("RDF::loadBookinfo", "bookinfo hhc = " + book.hhc);
+
+            if (book.hhc !== null) {
+                var rdf = book.hhc.slice(0, book.hhc.lastIndexOf(".hhc")) + "_hhc.rdf";
+                book.hhcDS = rdfService.GetDataSourceBlocking("file://" + rdf);
+            }
+
+            book.hhk = getBookinfoValue(infoDS, res, "urn:chmsee:rdf#hhk") || null;
+            d("RDF::loadBookinfo", "bookinfo hhk = " + book.hhk);
+
+            if (book.hhk !== null) {
+                var rdf = book.hhk.slice(0, book.hhk.lastIndexOf(".hhk")) + "_hhk.rdf";
+                book.hhkDS = rdfService.GetDataSourceBlocking("file://" + rdf);
+            }
+
+            return true;
+        } else
+            return false;
+    },
+
+    getRdfDatasource: function (type, book) {
+        var rdfPath, treeType, path;
+
+        if (type == "hhc") {
+            rdfPath = book.hhc.slice(0, book.hhc.lastIndexOf(".hhc")) + "_hhc.rdf";
+            treeType = true;
+            path = book.hhc;
+        } else if (type == "hhk") {
+            rdfPath = book.hhk.slice(0, book.hhk.lastIndexOf(".hhk")) + "_hhk.rdf";
+            treeType = false;
+            path = book.hhk;
+        } else
+            return null;
+
+        d("RDF::getRdfDatasource", "rdfPath = " + rdfPath);
+
+        var datasource = rdfService.GetDataSourceBlocking("file://" + rdfPath);
+        var sourceFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
+        sourceFile.initWithPath(path);
+
+        generateRdf(treeType, sourceFile, book.folder, datasource, book.charset);
+
+        datasource.QueryInterface(Ci.nsIRDFRemoteDataSource);
+        datasource.Flush();
+
+        return datasource;
+    },
+};
+
+var getBookinfoValue = function (datasource, resource, urn) {
+    var target = datasource.GetTarget(resource, rdfService.GetResource(urn), true);
+
+    if (target instanceof Ci.nsIRDFLiteral)
+        return target.Value;
+    else
+        return null;
+};
+
+String.prototype.ncmp = function(str) {
+    return this.toLowerCase() == str.toLowerCase() ? true : false;
+};
+
+var ContentHandler = function (parseInfo) {
     this.ds = parseInfo.ds;
     this.folder = parseInfo.folder;
     this.isItem = false;
@@ -30,7 +154,7 @@ function ContentHandler(parseInfo) {
     this.containers = [];
     this.lastRes = null;
     this.treeType = parseInfo.type; // false: list, true: tree
-}
+};
 
 ContentHandler.prototype = {
     startElement: function(tag, attrs) {
@@ -102,14 +226,14 @@ ContentHandler.prototype = {
     },
 };
 
-function generateRdf(treeType, file, bookfolder, datasource)
-{
+var generateRdf = function (treeType, file, bookfolder, datasource, charset) {
+    d("RDF::generateRdf", "charset = " + charset);
     var data = "";
     var fstream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
     var cstream = Cc["@mozilla.org/intl/converter-input-stream;1"].createInstance(Ci.nsIConverterInputStream);
 
     fstream.init(file, -1, 0, 0);
-    cstream.init(fstream, "UTF-8", 0, 0);
+    cstream.init(fstream, charset, 0, 0);
 
     let (str = {}) {
         let read = 0;
@@ -127,4 +251,4 @@ function generateRdf(treeType, file, bookfolder, datasource)
     var parser = new tmpNameSpace.SimpleHtmlParser();
     var pinfo = {folder: bookfolder, ds: datasource, type: treeType};
     parser.parse(data, new ContentHandler(pinfo));
-}
+};

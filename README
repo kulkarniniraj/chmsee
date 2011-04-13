@@ -5,37 +5,37 @@ ChmSee is an HTML Help viewer for Unix/Linux.
 
 Homepage: http://code.google.com/p/chmsee
 
-From 2.0, ChmSee becomes to a xulrunner application. I think this
-migration will bring some interesting features which provided by
-xulrunner to ChmSee and make developing more fun.
-
 Building
 ========
 
-In this new version of ChmSee, most codes use cross-platform languages:
-xul, javascript, css and dtd, and they do not need to build. But
-ChmSee still depend on CHMLIB to retrieve book contents from a CHM
-file, so there now a XPCOM component named libxpcomchm.so written in
-C++ require to be compiled.
+From 2.0, ChmSee becomes a xulrunner application. I think this
+migration will bring some interesting features and make developing
+ChmSee more fun.
 
-The source code of libxpcomchm.so located in ./src directory. To
-successfully compile this XPCOM component, you need have xulrunner-sdk
-and chmlib installed.
+In the new version of ChmSee, most codes use cross-platform languages:
+xul, javascript, css and dtd, and these do not need to build before
+running.  But ChmSee still depend on CHMLIB to retrieve book contents
+from a CHM file, so there a XPCOM component named libxpcomchm.so
+written in C++ require to compile.
 
-Then in the ./src directory, choose one of Makefile.${OS} files and
-rename it to Makefile. If there is not a proper Makefile.${OS} file,
-you can copy Makefile.sample and modify the INCLUDE and LIB variables
-according to your building system.
+The source codes of libxpcomchm.so are located in ./src directory. To
+successfully compile this XPCOM component, you need to have
+xulrunner-sdk 2.0 and chmlib installed.
 
-When the Makefile is ready, run `make` command in this ./src
-directory, a libxpcomchm.so file and its xpt defines will be generated
-to the components folder.
+Then go to the ./src directory, choose one of Makefile.${OS} files and
+rename it to Makefile. If there is no proper Makefile.${OS} file for
+your system, you can copy and modify Makefile.sample file and set the
+INCLUDE and LIB variables according to your building system.
+
+When the Makefile is ready, run `make` in this ./src directory, a
+libxpcomchm.so file and its xpt defines will generate to the
+components folder.
 
 Running
 =======
 
-After building libxpcomchm.so, execute following command line in your
-chmsee folder to launch the program:
+After building libxpcomchm.so, back to your chmsee directory and input
+following command line, it will launch the ChmSee program:
 
 $ xulrunner application.ini
 
