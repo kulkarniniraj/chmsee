@@ -20,6 +20,7 @@
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
+const Cu = Components.utils;
 
 const nsIProtocolHandler    = Ci.nsIProtocolHandler;
 const nsIURI                = Ci.nsIURI;
@@ -32,26 +33,22 @@ const nsIContentPolicy      = Ci.nsIContentPolicy;
 const SCHEME = "chmsee";
 const PROTOCOL_CID = Components.ID("e75fd986-51d4-11e0-938b-00241d8cf371");
 
-const CsDebug = true;
+Cu.import("chrome://chmsee/content/utils.js");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
-function d(f, s) {
-    if (CsDebug)
-        dump(f + " >>> " + s + "\n");
-}
-
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-
-function ChmseeProtocolHandler(scheme) {
+var ChmseeProtocolHandler = function (scheme) {
     this.scheme = scheme;
-}
+};
 
 ChmseeProtocolHandler.prototype = {
     defaultPort: -1,
-    protocolFlags: nsIProtocolHandler.URI_NORELATIVE |
-                   nsIProtocolHandler.URI_NOAUTH,
+    protocolFlags: nsIProtocolHandler.URI_NORELATIVE
+        | nsIProtocolHandler.URI_LOADABLE_BY_ANYONE
+        | nsIProtocolHandler.URI_FORBIDS_AUTOMATIC_DOCUMENT_REPLACEMENT
+        | nsIProtocolHandler.URI_NOAUTH,
 
     allowPort: function(aPort, aScheme) {
-        return false;
+        return true;
     },
 
     newURI: function(aSpec, aCharset, aBaseURI) {
@@ -87,9 +84,9 @@ ChmseeProtocolHandler.prototype = {
     },
 };
 
-function ChmseeProtocolHandlerFactory(scheme) {
+var ChmseeProtocolHandlerFactory = function (scheme) {
     this.scheme = scheme;
-}
+};
 
 ChmseeProtocolHandlerFactory.prototype = {
     createInstance: function(outer, iid) {
@@ -103,9 +100,9 @@ ChmseeProtocolHandlerFactory.prototype = {
     },
 };
 
-function Chmsee () {
+var Chmsee = function () {
     this.wrappedJSObject = this;
-}
+};
 
 Chmsee.prototype = {
     classID: PROTOCOL_CID,

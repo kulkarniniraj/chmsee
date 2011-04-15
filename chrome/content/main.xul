@@ -46,7 +46,10 @@
       </menubar>
     </toolbox>
 
-    <tabbox id="content-tabbox" flex="1" />
+    <tabbox id="content-tabbox" flex="1">
+      <tabs id="content-tabs" />
+      <tabpanels id="content-tabpanels" flex="1"/>
+    </tabbox>
 
   </vbox>
 </window>

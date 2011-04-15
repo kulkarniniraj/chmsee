@@ -2,86 +2,45 @@
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xbl="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <binding id="book-tab">
+  <binding id="book-toolbox">
     <content>
-      <xul:tab xbl:inherits="label=title"/>
+      <xul:toolbar>
+        <xul:toolbarbutton class="home-btn" oncommand="goHome(event);"/>
+        <xul:toolbarbutton class="back-btn" oncommand="goBack(event);"/>
+        <xul:toolbarbutton class="forward-btn" oncommand="goForward(event);"/>
+        <xul:toolbarbutton class="previous-btn" oncommand="goPrevious(event);"/>
+        <xul:toolbarbutton class="next-btn" oncommand="goNext(event);"/>
+      </xul:toolbar>
     </content>
   </binding>
 
-  <binding id="book-tabpanel">
+  <binding id="book-treebox">
     <content>
-      <xul:tabpanel orient="vertical" flex="1">
-        <xul:toolbox>
-          <xul:toolbar>
-            <xul:toolbarbutton class="home-btn" oncommand="goHome(document.getBindingParent(this));"/>
-            <xul:toolbarbutton class="back-btn" oncommand="goBack(document.getBindingParent(this));"/>
-            <xul:toolbarbutton class="forward-btn" oncommand="goForward(document.getBindingParent(this));"/>
-            <xul:toolbarbutton class="previous-btn" oncommand="goPrevious(document.getBindingParent(this));"/>
-            <xul:toolbarbutton class="next-btn" oncommand="goNext(document.getBindingParent(this));"/>
-            <xul:label xbl:inherits="value=contentTitle" flex="1"/>
-          </xul:toolbar>
-        </xul:toolbox>
+      <xul:tree seltype="single" datasources="rdf:null" ref="urn:chmsee:root"
+                flags="dont-build-content" hidecolumnpicker="true" onselect="onTocSelected(event);" treelines="true"
+                flex="1" width="200" persist="width">
+        <xul:treecols>
+          <xul:treecol label="Title" primary="true" flex="1"/>
+          <xul:treecol label="Local" hidden="true" flex="1"/>
+        </xul:treecols>
 
-        <xul:hbox flex="1">
-          <xul:tabbox>
-            <xul:tabs xbl:inherits="hidden=hiddenTocIndex">
-              <xul:tab label="TOC" onclick="tocClick(document.getBindingParent(this));"/>
-              <xul:tab label="Index" onclick="indexClick(document.getBindingParent(this));"/>
-            </xul:tabs>
-            <xul:tree seltype="single" flex="1" datasources="rdf:null" ref="urn:chmsee:root"
-                      flags="dont-build-content" hidecolumnpicker="true" onselect="onTocSelected(document.getBindingParent(this));" treelines="true"
-                      width="200" persist="width">
-              <xul:treecols>
-                <xul:treecol label="Title" primary="true" flex="1"/>
-                <xul:treecol label="Local" hidden="true" flex="1"/>
-              </xul:treecols>
-
-              <xul:template>
-                <xul:rule>
-                  <xul:treechildren>
-                    <xul:treeitem uri="rdf:*">
-                      <xul:treerow>
-                        <xul:treecell label="rdf:urn:chmsee:rdf#name"/>
-                        <xul:treecell label="rdf:urn:chmsee:rdf#local"/>
-                      </xul:treerow>
-                    </xul:treeitem>
-                  </xul:treechildren>
-                </xul:rule>
-              </xul:template>
-            </xul:tree>
-          </xul:tabbox>
-
-          <xul:splitter state="collapsed" xbl:inherits="state=splitter" collapse="before">
-            <xul:grippy/>
-          </xul:splitter>
-
-          <xul:browser xbl:inherits="src=url" flex="1"/>
-
-        </xul:hbox>
-      </xul:tabpanel>
+        <xul:template>
+          <xul:rule>
+            <xul:treechildren>
+              <xul:treeitem uri="rdf:*">
+                <xul:treerow>
+                  <xul:treecell label="rdf:urn:chmsee:rdf#name"/>
+                  <xul:treecell label="rdf:urn:chmsee:rdf#local"/>
+                </xul:treerow>
+              </xul:treeitem>
+            </xul:treechildren>
+          </xul:rule>
+        </xul:template>
+      </xul:tree>
     </content>
     <implementation>
-      <field name="book"/>
-      <property name="toc" read-only="true" onget="return document.getAnonymousNodes(this)[0].childNodes[1].childNodes[0].childNodes[1];"/>
-      <property name="splitter" read-only="true" onget="return document.getAnonymousNodes(this)[0].childNodes[1].childNodes[1];"/>
-      <property name="browser" read-only="true" onget="return document.getAnonymousNodes(this)[0].childNodes[1].childNodes[2];"/>
-      <method name="setTree">
-      <parameter name="ds"/>
-      <body>
-        <![CDATA[
-          var tree = document.getAnonymousNodes(this)[0].childNodes[1].childNodes[0].childNodes[1];
-          var list = tree.database.GetDataSources();
-          while (list.hasMoreElements()){
-            var aDS = list.getNext();
-             if (aDS instanceof Components.interfaces.nsIRDFDataSource) {
-               tree.database.RemoveDataSource(aDS);
-             }
-          }
-          tree.database.AddDataSource(ds);
-          tree.builder.rebuild();
-        ]]>
-      </body>
-    </method>
+      <property name="tree" read-only="true" onget="return document.getAnonymousNodes(this)[0];"/>
     </implementation>
   </binding>
+
 </bindings>

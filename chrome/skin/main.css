@@ -1,8 +1,15 @@
 @import url(chrome://global/skin/);
 
-/* .box { */
+tabpanels {
+    border: 0px;
+    margin: 0px;
+    padding: 1px;
+}
 
-/* } */
+tabpanel {
+    border: 0px;
+    margin: 0px;
+}
 
 /* .window { */
 /*     margin: 5px; */

@@ -1,7 +1,7 @@
-tab.book-tab {
-    -moz-binding: url(chrome://chmsee/content/panelBindings.xml#book-tab);
+toolbox.book-toolbox {
+    -moz-binding: url(chrome://chmsee/content/panelBindings.xml#book-toolbox);
 }
 
-tabpanel.book-tabpanel {
-    -moz-binding: url(chrome://chmsee/content/panelBindings.xml#book-tabpanel);
+box.book-treebox {
+    -moz-binding: url(chrome://chmsee/content/panelBindings.xml#book-treebox);
 }
