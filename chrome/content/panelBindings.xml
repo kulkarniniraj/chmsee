@@ -5,6 +5,7 @@
   <binding id="book-toolbox">
     <content>
       <xul:toolbar>
+        <xul:toolbarbutton class="panel-btn" type="checkbox" checked="true" oncommand="togglePanel(event);"/>
         <xul:toolbarbutton class="back-btn" oncommand="goBack();"/>
         <xul:toolbarbutton class="forward-btn" oncommand="goForward();"/>
         <xul:toolbarbutton class="home-btn" oncommand="goHome();"/>
@@ -23,8 +24,8 @@
                 flags="dont-build-content" hidecolumnpicker="true" onselect="onTocSelected(event);" treelines="true"
                 flex="1" width="200" persist="width">
         <xul:treecols>
-          <xul:treecol label="Title" primary="true" flex="1"/>
-          <xul:treecol label="Local" hidden="true" flex="1"/>
+          <xul:treecol primary="true" hideheader="true" flex="1"/>
+          <xul:treecol hidden="true" flex="1"/>
         </xul:treecols>
 
         <xul:template>

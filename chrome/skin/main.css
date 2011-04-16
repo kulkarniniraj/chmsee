@@ -34,9 +34,15 @@ tabpanel {
 .zoomin-btn {
     list-style-image: url("chrome://chmsee/skin/zoom-in.png");
 }
+
 .zoomout-btn {
     list-style-image: url("chrome://chmsee/skin/zoom-out.png");
 }
+
 .zoomreset-btn {
     list-style-image: url("chrome://chmsee/skin/zoom-original.png");
+}
+
+.panel-btn {
+    list-style-image: url("chrome://chmsee/skin/show-pane.png");
 }

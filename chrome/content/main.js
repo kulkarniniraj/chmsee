@@ -135,6 +135,19 @@ var zoomReset = function () {
     contentTabbox.selectedPanel.browser.markupDocumentViewer.fullZoom = 1.0;
 };
 
+var togglePanel = function (e) {
+    var button = e.target;
+    var splitter = contentTabbox.selectedPanel.splitter;
+
+    if (button.checked) {
+        splitter.setAttribute("state", "open");
+        button.image = "chrome://chmsee/skin/show-pane.png";
+    } else {
+        splitter.setAttribute("state","collapsed");
+        button.image = "chrome://chmsee/skin/hide-pane.png";
+    }
+};
+
 /*** Other functions ***/
 
 var initTabbox = function () {
@@ -219,7 +232,7 @@ var createBookTab = function (book) {
     bookPanel.type = "book";
     bookPanel.book = book;
     bookPanel.treebox = treeTabbox;
-    bookPanel.spliter = splitter;
+    bookPanel.splitter = splitter;
     bookPanel.browser = browser;
 
     return {tab: bookTab, panel: bookPanel};
