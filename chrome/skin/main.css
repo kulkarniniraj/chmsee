@@ -11,6 +11,10 @@ tabpanel {
     margin: 0px;
 }
 
+.openfile-btn {
+    list-style-image: url("chrome://chmsee/skin/open-file.png");
+}
+
 .home-btn {
     list-style-image: url("chrome://chmsee/skin/go-home.png");
 }

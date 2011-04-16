@@ -42,7 +42,7 @@ var onTocSelected = function (event) {
 
     var browser = tree.browser;
     var url = CsScheme + cellText;
-    d("onTocSelected", "url = " + url);
+    d("onTocSelected", "index = " + tree.view.selection.currentIndex + ", url = " + url);
     browser.setAttribute("src", url);
 };
 
@@ -80,7 +80,6 @@ var newTab = function () {
 
     var index = -1;
 
-    try {
     if (currentPanel.type === "book") {
         var newTab = createBookTab(currentPanel.book);
         appendTab(newTab);
@@ -91,9 +90,6 @@ var newTab = function () {
         index = contentTabbox.tabs.itemCount - 1;
     } else {
         index = 0;
-    }
-    } catch (e) {
-        alert (e);
     }
 
     contentTabbox.selectedIndex = index;
@@ -117,6 +113,36 @@ var goBack = function () {
 
 var goForward = function () {
     contentTabbox.selectedPanel.browser.goForward();
+};
+
+var goPrevious = function () {
+    var tocTree = contentTabbox.selectedPanel.treebox.toc.tree;
+    var view = tocTree.view;
+    var index = tocTree.currentIndex;
+
+    if (index >= 1) {
+        if (view.isContainer(index - 1) && !view.isContainerOpen(index - 1)) {
+            view.toggleOpenState(index - 1);
+            goPrevious();
+        } else {
+            view.selection.select(index - 1);
+        }
+    }
+};
+
+var goNext = function () {
+    var tocTree = contentTabbox.selectedPanel.treebox.toc.tree;
+    var view = tocTree.view;
+    var index = tocTree.currentIndex;
+
+    if (index < view.rowCount - 1) {
+        if (view.isContainer(index + 1) && !view.isContainerOpen(index + 1)) {
+            view.toggleOpenState(index + 1);
+            goNext();
+        } else {
+            view.selection.select(index + 1);
+        }
+    }
 };
 
 var zoomIn = function () {
@@ -310,6 +336,11 @@ var refreshBookTab = function (tab) {
     if (treebox.tabs.itemCount === 0) {
         treebox.hidden = true;
         splitter.hidden = true;
+    }
+
+    if (tocTree) {
+        tocTree.view.selection.select(0);
+        tocTree.focus();
     }
 };
 

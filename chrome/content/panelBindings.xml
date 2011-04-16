@@ -5,6 +5,8 @@
   <binding id="book-toolbox">
     <content>
       <xul:toolbar>
+        <xul:toolbarbutton class="openfile-btn" oncommand="openFile();"/>
+        <xul:toolbarseparator />
         <xul:toolbarbutton class="panel-btn" type="checkbox" checked="true" oncommand="togglePanel(event);"/>
         <xul:toolbarbutton class="back-btn" oncommand="goBack();"/>
         <xul:toolbarbutton class="forward-btn" oncommand="goForward();"/>
