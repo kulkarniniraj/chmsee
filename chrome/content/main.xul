@@ -5,7 +5,7 @@
 
 <!DOCTYPE window SYSTEM "chrome://chmsee/locale/main.dtd">
 
-<window id="main" title="&mainWindow.title;" width="300" height="300" onload="onWindowLoad();"
+<window id="main" title="&mainWindow.title;" onload="onWindowLoad();" persist="width height"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="application/javascript" src="chrome://chmsee/content/main.js"/>

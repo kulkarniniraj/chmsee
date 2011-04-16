@@ -41,7 +41,7 @@ var onTocSelected = function (event) {
     var cellText = tree.view.getCellText(tree.currentIndex, tree.columns.getColumnAt(cellIndex));
 
     var browser = tree.browser;
-    var url = "chmsee://" + cellText;
+    var url = CsScheme + cellText;
     d("onTocSelected", "url = " + url);
     browser.setAttribute("src", url);
 };
@@ -49,22 +49,21 @@ var onTocSelected = function (event) {
 /*** Commands ***/
 
 var openFile = function () {
-    var nsIFilePicker = Ci.nsIFilePicker;
     var fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
 
     var strbundle = document.getElementById("bundle-main");
     var strSelectFile=strbundle.getString("selectChmFile");
     var strChmFile=strbundle.getString("chmFile");
 
-    fp.init(window, strSelectFile, nsIFilePicker.modeOpen);
+    fp.init(window, strSelectFile, Ci.nsIFilePicker.modeOpen);
     fp.displayDirectory = Pref.getLastDir();
     fp.appendFilter(strChmFile, "*.chm;*.CHM");
-    fp.appendFilters(nsIFilePicker.filterAll);
+    fp.appendFilters(Ci.nsIFilePicker.filterAll);
 
     // Popup open file dialog
     var res = fp.show();
 
-    if (res == nsIFilePicker.returnOK) {
+    if (res == Ci.nsIFilePicker.returnOK) {
         d("openFile", "selected file path = " + fp.file.path);
         Pref.saveLastDir(fp.file.parent.path);
 
@@ -107,6 +106,35 @@ var closeTab = function () {
     removeTab(getCurrentTab());
 };
 
+var goHome = function () {
+    var panel = contentTabbox.selectedPanel;
+    panel.browser.setAttribute("src", CsScheme + panel.book.homepage);
+};
+
+var goBack = function () {
+    contentTabbox.selectedPanel.browser.goBack();
+};
+
+var goForward = function () {
+    contentTabbox.selectedPanel.browser.goForward();
+};
+
+var zoomIn = function () {
+    var browser = contentTabbox.selectedPanel.browser;
+    var zoom = browser.markupDocumentViewer.fullZoom;
+    browser.markupDocumentViewer.fullZoom = zoom * 1.2;
+};
+
+var zoomOut = function () {
+    var browser = contentTabbox.selectedPanel.browser;
+    var zoom = browser.markupDocumentViewer.fullZoom;
+    browser.markupDocumentViewer.fullZoom = zoom * 0.8;
+};
+
+var zoomReset = function () {
+    contentTabbox.selectedPanel.browser.markupDocumentViewer.fullZoom = 1.0;
+};
+
 /*** Other functions ***/
 
 var initTabbox = function () {
@@ -122,8 +150,9 @@ var createWelcomeTab = function () {
     tab.setAttribute("label", book.title);
 
     var panel = document.createElement("tabpanel");
-    var browser = document.createElement("iframe");
+    var browser = document.createElement("browser");
     browser.setAttribute("flex", 1);
+    browser.setAttribute("type", "content");
     browser.setAttribute("src", book.homepage);
     panel.appendChild(browser);
 
@@ -181,9 +210,9 @@ var createBookTab = function (book) {
     splitter.appendChild(document.createElement("grippy"));
     bookContentBox.appendChild(splitter);
 
-    // XUL browser element only support standard scheme
-    var browser = document.createElement("iframe");
-    browser.setAttribute("src", book.url);
+    var browser = document.createElement("browser");
+    browser.setAttribute("type", "content");
+    browser.setAttribute("src", CsScheme + book.homepage);
     browser.setAttribute("flex", "1");
     bookContentBox.appendChild(browser);
 

@@ -11,10 +11,6 @@ tabpanel {
     margin: 0px;
 }
 
-/* .window { */
-/*     margin: 5px; */
-/* } */
-
 .home-btn {
     list-style-image: url("chrome://chmsee/skin/go-home.png");
 }
@@ -33,4 +29,14 @@ tabpanel {
 
 .next-btn {
     list-style-image: url("chrome://chmsee/skin/go-next.png");
+}
+
+.zoomin-btn {
+    list-style-image: url("chrome://chmsee/skin/zoom-in.png");
+}
+.zoomout-btn {
+    list-style-image: url("chrome://chmsee/skin/zoom-out.png");
+}
+.zoomreset-btn {
+    list-style-image: url("chrome://chmsee/skin/zoom-original.png");
 }

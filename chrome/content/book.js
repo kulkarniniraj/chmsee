@@ -56,7 +56,7 @@ var Book = {
 
                 book.homepage = book.folder + "/" + chmobj.homepage;
                 d("Book::getBookFromFile", "chm homepage = " + book.homepage);
-                book.url = "chmsee://" + book.homepage;
+                book.url = book.homepage;
 
                 book.title = chmobj.bookname;
                 d("Book::getBookFromFile", "lcid = " + chmobj.lcid);

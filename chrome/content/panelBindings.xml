@@ -5,11 +5,14 @@
   <binding id="book-toolbox">
     <content>
       <xul:toolbar>
-        <xul:toolbarbutton class="home-btn" oncommand="goHome(event);"/>
-        <xul:toolbarbutton class="back-btn" oncommand="goBack(event);"/>
-        <xul:toolbarbutton class="forward-btn" oncommand="goForward(event);"/>
-        <xul:toolbarbutton class="previous-btn" oncommand="goPrevious(event);"/>
-        <xul:toolbarbutton class="next-btn" oncommand="goNext(event);"/>
+        <xul:toolbarbutton class="back-btn" oncommand="goBack();"/>
+        <xul:toolbarbutton class="forward-btn" oncommand="goForward();"/>
+        <xul:toolbarbutton class="home-btn" oncommand="goHome();"/>
+        <xul:toolbarbutton class="previous-btn" oncommand="goPrevious();"/>
+        <xul:toolbarbutton class="next-btn" oncommand="goNext();"/>
+        <xul:toolbarbutton class="zoomin-btn" oncommand="zoomIn();"/>
+        <xul:toolbarbutton class="zoomreset-btn" oncommand="zoomReset();"/>
+        <xul:toolbarbutton class="zoomout-btn" oncommand="zoomOut();"/>
       </xul:toolbar>
     </content>
   </binding>

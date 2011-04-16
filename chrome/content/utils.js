@@ -17,12 +17,14 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-var EXPORTED_SYMBOLS = ["Pref", "d"];
+var EXPORTED_SYMBOLS = ["Pref", "d", "CsScheme"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
+
+var CsScheme = "file://";
 
 /*** Read/Save preference ***/
 

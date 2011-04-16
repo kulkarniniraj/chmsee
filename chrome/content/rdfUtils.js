@@ -74,7 +74,7 @@ var RDF = {
             book.homepage = getBookinfoValue(infoDS, res, "urn:chmsee:rdf#homepage") || "";
             d("RDF::loadBookinfo", "bookinfo homepage = " + book.homepage);
 
-            book.url = "chmsee://" + book.homepage;
+            book.url = book.homepage;
 
             book.title = getBookinfoValue(infoDS, res, "urn:chmsee:rdf#title") || "";
             d("RDF::loadBookinfo", "bookinfo title = " + book.title);
