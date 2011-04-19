@@ -1,7 +1,3 @@
-toolbox.book-toolbox {
-    -moz-binding: url(chrome://chmsee/content/panelBindings.xml#book-toolbox);
-}
-
 box.book-treebox {
     -moz-binding: url(chrome://chmsee/content/panelBindings.xml#book-treebox);
 }

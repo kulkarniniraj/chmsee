@@ -2,24 +2,6 @@
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xbl="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <binding id="book-toolbox">
-    <content>
-      <xul:toolbar>
-        <xul:toolbarbutton class="openfile-btn" oncommand="openFile();"/>
-        <xul:toolbarseparator />
-        <xul:toolbarbutton class="panel-btn" type="checkbox" checked="true" oncommand="togglePanel(event);"/>
-        <xul:toolbarbutton class="back-btn" oncommand="goBack();"/>
-        <xul:toolbarbutton class="forward-btn" oncommand="goForward();"/>
-        <xul:toolbarbutton class="home-btn" oncommand="goHome();"/>
-        <xul:toolbarbutton class="previous-btn" oncommand="goPrevious();"/>
-        <xul:toolbarbutton class="next-btn" oncommand="goNext();"/>
-        <xul:toolbarbutton class="zoomin-btn" oncommand="zoomIn();"/>
-        <xul:toolbarbutton class="zoomreset-btn" oncommand="zoomReset();"/>
-        <xul:toolbarbutton class="zoomout-btn" oncommand="zoomOut();"/>
-      </xul:toolbar>
-    </content>
-  </binding>
-
   <binding id="book-treebox">
     <content>
       <xul:tree seltype="single" datasources="rdf:null" ref="urn:chmsee:root"

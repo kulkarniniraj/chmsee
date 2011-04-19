@@ -17,3 +17,22 @@
 <!ENTITY helpMenu.accesskey "h">
 <!ENTITY about.label "About">
 <!ENTITY about.accesskey "a">
+<!ENTITY openCmd.tooltip "Open a CHM file">
+<!ENTITY togglePanel.label "Show/Hide panel">
+<!ENTITY togglePanel.tooltip "Show/Hide book tree panel">
+<!ENTITY backCmd.label "Back">
+<!ENTITY backCmd.tooltip "Back">
+<!ENTITY forwardCmd.label "Forward">
+<!ENTITY forwardCmd.tooltip "Forward">
+<!ENTITY homeCmd.label "Home">
+<!ENTITY homeCmd.tooltip "Home">
+<!ENTITY previousCmd.label "Previous">
+<!ENTITY previousCmd.tooltip "Previous">
+<!ENTITY nextCmd.label "Next">
+<!ENTITY nextCmd.tooltip "Next">
+<!ENTITY zoominCmd.label "Zoom In">
+<!ENTITY zoominCmd.tooltip "Zoom In">
+<!ENTITY zoomoutCmd.label "Zoom Out">
+<!ENTITY zoomoutCmd.tooltip "Zoom Out">
+<!ENTITY zoomresetCmd.label "Zoom Reset">
+<!ENTITY zoomresetCmd.tooltip "Zoom Reset">

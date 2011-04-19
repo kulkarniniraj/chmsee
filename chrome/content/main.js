@@ -161,8 +161,8 @@ var zoomReset = function () {
     contentTabbox.selectedPanel.browser.markupDocumentViewer.fullZoom = 1.0;
 };
 
-var togglePanel = function (e) {
-    var button = e.target;
+var togglePanel = function () {
+    var button = document.getElementById("panel-btn");
     var splitter = contentTabbox.selectedPanel.splitter;
 
     if (button.checked) {
@@ -182,6 +182,24 @@ var initTabbox = function () {
     contentTabbox.selectedIndex = 0;
 };
 
+var setCommandStatus = function(type) {
+    if (type === "welcome") {
+        document.getElementById("panel-btn").setAttribute("hidden", "true");
+        document.getElementById("cmd_gohome").setAttribute("disabled", "true");
+        document.getElementById("cmd_goback").setAttribute("disabled", "true");
+        document.getElementById("cmd_goforward").setAttribute("disabled", "true");
+        document.getElementById("cmd_goprevious").setAttribute("disabled", "true");
+        document.getElementById("cmd_gonext").setAttribute("disabled", "true");
+    } else {
+        document.getElementById("panel-btn").setAttribute("hidden", "false");
+        document.getElementById("cmd_gohome").removeAttribute("disabled");
+        document.getElementById("cmd_goback").removeAttribute("disabled");
+        document.getElementById("cmd_goforward").removeAttribute("disabled");
+        document.getElementById("cmd_goprevious").removeAttribute("disabled");
+        document.getElementById("cmd_gonext").removeAttribute("disabled");
+    }
+};
+
 var createWelcomeTab = function () {
     var book = Book.getBookFromUrl("Welcome", "about:mozilla");
 
@@ -195,8 +213,9 @@ var createWelcomeTab = function () {
     browser.setAttribute("src", book.homepage);
     panel.appendChild(browser);
 
-    panel.book = book;
     panel.type = "welcome";
+    panel.book = book;
+    panel.browser = browser;
 
     return {tab: tab, panel: panel};
 };
@@ -212,10 +231,6 @@ var createBookTab = function (book) {
     var bookPanelBox = document.createElement("vbox");
     bookPanelBox.setAttribute("flex", "1");
     bookPanel.appendChild(bookPanelBox);
-
-    var bookToolbox = document.createElement("toolbox");
-    bookToolbox.setAttribute("class", "book-toolbox");
-    bookPanelBox.appendChild(bookToolbox);
 
     var bookContentBox = document.createElement("hbox");
     bookContentBox.setAttribute("flex", "1");
@@ -280,6 +295,7 @@ var createTreeTab = function (title) {
 var appendTab = function (tab) {
     contentTabbox.tabs.appendChild(tab.tab);
     contentTabbox.tabpanels.appendChild(tab.panel);
+    setCommandStatus(tab.panel.type);
 };
 
 var replaceTab = function (newTab, oldTab) {
@@ -290,6 +306,8 @@ var replaceTab = function (newTab, oldTab) {
 
     if (currentIndex !== contentTabbox.selectedIndex)
         contentTabbox.selectedIndex = currentIndex;
+
+    setCommandStatus(newTab.panel.type);
 };
 
 var removeTab = function (tab) {

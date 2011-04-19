@@ -12,41 +12,81 @@ tabpanel {
 }
 
 .openfile-btn {
-    list-style-image: url("chrome://chmsee/skin/open-file.png");
+    list-style-image: url("moz-icon://stock/gtk-open?size=toolbar");
+}
+
+.openfile-btn[disabled] {
+    list-style-image: url("moz-icon://stock/gtk-open?size=toolbar&state=disabled");
 }
 
 .home-btn {
-    list-style-image: url("chrome://chmsee/skin/go-home.png");
+    list-style-image: url("moz-icon://stock/gtk-home?size=toolbar");
+}
+
+.home-btn[disabled] {
+    list-style-image: url("moz-icon://stock/gtk-home?size=toolbar&state=disabled");
 }
 
 .back-btn {
-    list-style-image: url("chrome://chmsee/skin/go-back.png");
+    list-style-image: url("moz-icon://stock/gtk-go-back?size=toolbar");
+}
+
+.back-btn[disabled] {
+    list-style-image: url("moz-icon://stock/gtk-go-back?size=toolbar&state=disabled");
 }
 
 .forward-btn {
-    list-style-image: url("chrome://chmsee/skin/go-forward.png");
+    list-style-image: url("moz-icon://stock/gtk-go-forward?size=toolbar");
+}
+
+.forward-btn[disabled] {
+    list-style-image: url("moz-icon://stock/gtk-go-forward?size=toolbar&state=disabled");
 }
 
 .previous-btn {
-    list-style-image: url("chrome://chmsee/skin/go-previous.png");
+    list-style-image: url("moz-icon://stock/gtk-go-up?size=toolbar");
+}
+
+.previous-btn[disabled] {
+    list-style-image: url("moz-icon://stock/gtk-go-up?size=toolbar&state=disabled");
 }
 
 .next-btn {
-    list-style-image: url("chrome://chmsee/skin/go-next.png");
+    list-style-image: url("moz-icon://stock/gtk-go-down?size=toolbar");
+}
+
+.next-btn[disabled] {
+    list-style-image: url("moz-icon://stock/gtk-go-down?size=toolbar&state=disabled");
 }
 
 .zoomin-btn {
-    list-style-image: url("chrome://chmsee/skin/zoom-in.png");
+    list-style-image: url("moz-icon://stock/gtk-zoom-in?size=toolbar");
+}
+
+.zoomin-btn[disabled] {
+    list-style-image: url("moz-icon://stock/gtk-zoom-in?size=toolbar&state=disabled");
 }
 
 .zoomout-btn {
-    list-style-image: url("chrome://chmsee/skin/zoom-out.png");
+    list-style-image: url("moz-icon://stock/gtk-zoom-out?size=toolbar");
+}
+
+.zoomout-btn[disabled] {
+    list-style-image: url("moz-icon://stock/gtk-zoom-out?size=toolbar&state=disabled");
 }
 
 .zoomreset-btn {
-    list-style-image: url("chrome://chmsee/skin/zoom-original.png");
+    list-style-image: url("moz-icon://stock/gtk-zoom-100?size=toolbar");
+}
+
+.zoomreset-btn[disabled] {
+    list-style-image: url("moz-icon://stock/gtk-zoom-100?size=toolbar&state=disabled");
 }
 
 .panel-btn {
+    list-style-image: url("chrome://chmsee/skin/show-pane.png");
+}
+
+.panel-btn[disabled] {
     list-style-image: url("chrome://chmsee/skin/show-pane.png");
 }

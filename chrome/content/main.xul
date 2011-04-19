@@ -15,11 +15,27 @@
     <stringbundle id="bundle-main" src="chrome://chmsee/locale/main.properties"/>
   </stringbundleset>
 
+  <commandset>
+    <command id="cmd_openfile" oncommand="openFile();"/>
+    <command id="cmd_quit" oncommand="window.close();"/>
+    <command id="cmd_newtab" oncommand="newTab();"/>
+    <command id="cmd_closetab" oncommand="closeTab();"/>
+    <command id="cmd_togglepanel" oncommand="togglePanel();"/>
+    <command id="cmd_goback" oncommand="goBack();"/>
+    <command id="cmd_goforward" oncommand="goForward();"/>
+    <command id="cmd_gohome" oncommand="goHome();"/>
+    <command id="cmd_goprevious" oncommand="goPrevious();"/>
+    <command id="cmd_gonext" oncommand="goNext();"/>
+    <command id="cmd_zoomin" oncommand="zoomIn();"/>
+    <command id="cmd_zoomout" oncommand="zoomOut();"/>
+    <command id="cmd_zoomreset" oncommand="zoomReset();"/>
+  </commandset>
+
   <keyset>
-    <key id="open-cmd" modifiers="accel" key="O" oncommand="openFile();"/>
-    <key id="close-cmd" modifiers="accel" key="Q" oncommand="window.close();"/>
-    <key id="open-tab-cmd" modifiers="accel" key="T" oncommand="newTab();"/>
-    <key id="close-tab-cmd" modifiers="accel" key="W" oncommand="closeTab();"/>
+    <key id="open-cmd" modifiers="accel" key="O" command="cmd_openfile"/>
+    <key id="close-cmd" modifiers="accel" key="Q" command="cmd_quit"/>
+    <key id="open-tab-cmd" modifiers="accel" key="T" command="cmd_newtab"/>
+    <key id="close-tab-cmd" modifiers="accel" key="W" command="cmd_closetab"/>
   </keyset>
 
   <vbox flex="1">
@@ -27,11 +43,11 @@
       <menubar id="main-menubar">
         <menu id="file-menu" label="&fileMenu.label;" accesskey="&fileMenu.accesskey;">
           <menupopup id="file-popup">
-            <menuitem label="&openCmd.label;" accesskey="&openCmd.accesskey;" key="open-cmd" oncommand="openFile();"/>
-            <menuitem label="&newTab.label;" accesskey="&newTab.accesskey;" key="open-tab-cmd" oncommand="newTab();"/>
-            <menuitem label="&closeTab.label;" accesskey="&closeTab.accesskey;" key="close-tab-cmd" oncommand="closeTab();"/>
+            <menuitem label="&openCmd.label;" accesskey="&openCmd.accesskey;" key="open-cmd" command="cmd_openfile"/>
+            <menuitem label="&newTab.label;" accesskey="&newTab.accesskey;" key="open-tab-cmd" command="cmd_newtab"/>
+            <menuitem label="&closeTab.label;" accesskey="&closeTab.accesskey;" key="close-tab-cmd" command="cmd_closetab"/>
             <menuseparator />
-            <menuitem label="&quitCmd.label;" accesskey="&quitCmd.accesskey;" key="close-cmd" oncommand="window.close();" />
+            <menuitem label="&quitCmd.label;" accesskey="&quitCmd.accesskey;" key="close-cmd" command="cmd_quit" />
           </menupopup>
         </menu>
         <menu id="view-menu" label="&viewMenu.label;" accesskey="&viewMenu.accesskey;">
@@ -45,6 +61,20 @@
           </menupopup>
         </menu>
       </menubar>
+
+      <toolbar mode="icons">
+        <toolbarbutton class="openfile-btn" label="&openCmd.label;" tooltiptext="&openCmd.tooltip;" command="cmd_openfile"/>
+        <toolbarseparator/>
+        <toolbarbutton id="panel-btn" class="panel-btn" label="&togglePanel.label;" tooltiptext="&togglePanel.tooltip;" type="checkbox" checked="true" command="cmd_togglepanel"/>
+        <toolbarbutton class="back-btn" label="&backCmd.label;" tooltiptext="&backCmd.tooltip;" command="cmd_goback"/>
+        <toolbarbutton class="forward-btn" label="&forwardCmd.label;" tooltiptext="&forwardCmd.tooltip;" command="cmd_goforward"/>
+        <toolbarbutton class="home-btn" label="&homeCmd.label;" tooltiptext="&homeCmd.tooltip;" command="cmd_gohome"/>
+        <toolbarbutton class="previous-btn" label="&previousCmd.label;" tooltiptext="&previousCmd.tooltip;" command="cmd_goprevious"/>
+        <toolbarbutton class="next-btn" label="&nextCmd.label;" tooltiptext="&nextCmd.tooltip;" command="cmd_gonext"/>
+        <toolbarbutton class="zoomin-btn" label="&zoominCmd.label;" tooltiptext="&zoominCmd.tooltip;" command="cmd_zoomin"/>
+        <toolbarbutton class="zoomreset-btn" label="&zoomresetCmd.label;" tooltiptext="&zoomresetCmd.tooltip;" command="cmd_zoomreset"/>
+        <toolbarbutton class="zoomout-btn" label="&zoomoutCmd.label;" tooltiptext="&zoomoutCmd.tooltip;" command="cmd_zoomout"/>
+      </toolbar>
     </toolbox>
 
     <tabbox id="content-tabbox" flex="1">
