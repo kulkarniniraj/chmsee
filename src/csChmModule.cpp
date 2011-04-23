@@ -42,4 +42,4 @@ static const mozilla::Module kcsChmModule = {
         kcsChmContracts
 };
 
-NSMODULE_DEFN(nscsChmModule) = &kcsChmModule;
+NSMODULE_DEFN(csChmModule) = &kcsChmModule;

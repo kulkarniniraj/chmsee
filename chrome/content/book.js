@@ -58,9 +58,11 @@ var Book = {
                 d("Book::getBookFromFile", "chm homepage = " + book.homepage);
                 book.url = book.homepage;
 
-                book.title = chmobj.bookname;
                 d("Book::getBookFromFile", "lcid = " + chmobj.lcid);
                 book.charset = getCharset(chmobj.lcid);
+
+                book.title = convertToUTF8(chmobj.bookname, book.charset);
+                d("Book::getBookFromFile", "book title = " + book.title);
 
                 if (chmobj.hhc !== null) {
                     d("Book::getBookFromFile", "hhc = " + chmobj.hhc);
@@ -102,6 +104,13 @@ var newBook = function () {
     var NewBook = function() {};
     NewBook.prototype = EmptyBook;
     return new NewBook();
+};
+
+var convertToUTF8 = function (string, charset) {
+    d("convertToUTF8", "string = " + string + ", charset = " + charset);
+
+    var UTF8Service = Cc["@mozilla.org/intl/utf8converterservice;1"].getService(Ci.nsIUTF8ConverterService);
+    return UTF8Service.convertStringToUTF8(string, charset, false);
 };
 
 var md5Hash = function (file) {

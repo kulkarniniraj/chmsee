@@ -46,6 +46,11 @@ var onTocSelected = function (event) {
     browser.setAttribute("src", url);
 };
 
+var onTabSelect = function () {
+    var currentPanel = contentTabbox.selectedPanel;
+    setCommandStatus(currentPanel.type);
+};
+
 /*** Commands ***/
 
 var openFile = function () {
@@ -178,6 +183,7 @@ var togglePanel = function () {
 
 var initTabbox = function () {
     contentTabbox = document.getElementById("content-tabbox");
+    contentTabbox.tabs.addEventListener("select", onTabSelect, true);
     appendTab(createWelcomeTab());
     contentTabbox.selectedIndex = 0;
 };
@@ -204,6 +210,8 @@ var createWelcomeTab = function () {
     var book = Book.getBookFromUrl("Welcome", "about:mozilla");
 
     var tab = document.createElement("tab");
+    tab.setAttribute("align", "start");
+    tab.setAttribute("crop", "end");
     tab.setAttribute("label", book.title);
 
     var panel = document.createElement("tabpanel");
@@ -223,6 +231,8 @@ var createWelcomeTab = function () {
 var createBookTab = function (book) {
     var bookTab = document.createElement("tab");
     bookTab.setAttribute("label", book.title);
+    bookTab.setAttribute("align", "start");
+    bookTab.setAttribute("crop", "end");
 
     var bookPanel = document.createElement("tabpanel");
     bookPanel.setAttribute("orient", "vertical");
@@ -296,6 +306,8 @@ var appendTab = function (tab) {
     contentTabbox.tabs.appendChild(tab.tab);
     contentTabbox.tabpanels.appendChild(tab.panel);
     setCommandStatus(tab.panel.type);
+
+    adjustTabWidth(contentTabbox.tabs);
 };
 
 var replaceTab = function (newTab, oldTab) {
@@ -308,6 +320,7 @@ var replaceTab = function (newTab, oldTab) {
         contentTabbox.selectedIndex = currentIndex;
 
     setCommandStatus(newTab.panel.type);
+    adjustTabWidth(contentTabbox.tabs);
 };
 
 var removeTab = function (tab) {
@@ -317,6 +330,7 @@ var removeTab = function (tab) {
 
     tabs.removeChild(tab.tab);
     tabpanels.removeChild(tab.panel);
+    adjustTabWidth(tabs);
 
     if (tab.index === currentIndex && tabs.itemCount > 1)
         contentTabbox.selectedIndex = tab.index -1;
@@ -366,6 +380,21 @@ var getCurrentTab = function () {
     return { index: contentTabbox.selectedIndex,
              tab: contentTabbox.selectedTab,
              panel: contentTabbox.selectedPanel };
+};
+
+var adjustTabWidth = function (tabs) {
+    var winWidth = document.getElementById("main").width;
+    var tabCount = tabs.itemCount;
+    var tabWidth = Math.round(winWidth/tabCount);
+
+    var totalWidth = 0;
+
+    for (var i = 0; i < tabCount - 1; i++) {
+        tabs.getItemAtIndex(i).width = tabWidth;
+        totalWidth += tabWidth;
+    }
+
+    tabs.getItemAtIndex(tabCount-1).width = winWidth - totalWidth + 2*i;
 };
 
 // Call DOM inspector for debugging
