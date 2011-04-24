@@ -47,8 +47,19 @@ var onTocSelected = function (event) {
 };
 
 var onTabSelect = function () {
+    d("onTabSelect", "");
     var currentPanel = contentTabbox.selectedPanel;
     setCommandStatus(currentPanel.type);
+};
+
+var onInputFilter = function (event) {
+    var currentPanel = contentTabbox.selectedPanel;
+    var book = currentPanel.book;
+    var tree = currentPanel.treebox.index.tree;
+
+    var filterText = event.target.value;
+    rebuildIndexTree(tree, book.hhkData, filterText);
+    d("onInputFilter", "filter text = " + filterText);
 };
 
 /*** Commands ***/
@@ -73,8 +84,8 @@ var openFile = function () {
         Pref.saveLastDir(fp.file.parent.path);
 
         var book = Book.getBookFromFile(fp.file);
-
         var newTab = createBookTab(book);
+
         replaceTab(newTab, getCurrentTab());
         refreshBookTab(newTab);
     }
@@ -254,14 +265,14 @@ var createBookTab = function (book) {
     treeTabbox.appendChild(treePanels);
 
     if (book.hhcDS !== null) {
-        var toc = createTreeTab("Toc");
+        var toc = createTreeTab("toc");
         treeTabs.appendChild(toc.tab);
         treePanels.appendChild(toc.panel);
         treeTabbox.toc = toc.treeBox;
     }
 
     if (book.hhkDS !== null) {
-        var index = createTreeTab("Index");
+        var index = createTreeTab("index");
         treeTabs.appendChild(index.tab);
         treePanels.appendChild(index.panel);
         treeTabbox.index = index.treeBox;
@@ -289,13 +300,21 @@ var createBookTab = function (book) {
     return {tab: bookTab, panel: bookPanel};
 };
 
-var createTreeTab = function (title) {
+var createTreeTab = function (type) {
+    var title = "TOC";
+    var boxClass = "toc-treebox";
+
+    if (type === "index") {
+        title = "index";
+        boxClass = "index-treebox";
+    }
+
     var tab = document.createElement("tab");
     tab.setAttribute("label", title);
 
     var panel = document.createElement("tabpanel");
-    var treeBox = document.createElement("box");
-    treeBox.setAttribute("class", "book-treebox");
+    var treeBox = document.createElement("vbox");
+    treeBox.className = boxClass;
     treeBox.setAttribute("flex", 1);
     panel.appendChild(treeBox);
 
@@ -357,15 +376,13 @@ var refreshBookTab = function (tab) {
     }
 
     if (book.hhkDS !== null && indexTree) {
-        indexTree.database.AddDataSource(book.hhkDS);
-        indexTree.builder.rebuild();
+        rebuildIndexTree(indexTree, book.hhkData, "");
         indexTree.browser = panel.browser;
     }
 
-    if (treebox.tabs.itemCount === 1)
+    if (treebox.tabs.itemCount === 1) {
         treebox.tabs.hidden = true;
-
-    if (treebox.tabs.itemCount === 0) {
+    } else if (treebox.tabs.itemCount === 0) {
         treebox.hidden = true;
         splitter.hidden = true;
     }
@@ -374,6 +391,47 @@ var refreshBookTab = function (tab) {
         tocTree.view.selection.select(0);
         tocTree.focus();
     }
+
+};
+
+var rebuildIndexTree = function (tree, data, filterText) {
+    var table = null;
+
+    if (filterText === "") {
+        table = data;
+    } else {
+        table = [];
+
+        for (var i = 0; i < data.length; i++) {
+            if ((data[i].name.toLowerCase()).indexOf(filterText) !== -1)
+                table.push({name:data[i].name, local:data[i].local});
+        }
+    }
+
+    table.sort(function (a, b) { return a.name > b.name; });
+    tree.view = new TreeView(table);
+};
+
+var TreeView = function (table) {
+    this.rowCount = table.length;
+    this.getCellText = function(row, col) {
+        if (col.index === 0)
+            return table[row].name;
+        else
+            return table[row].local;
+    };
+    this.setTree = function(treebox) {
+        this.treebox = treebox;
+    };
+    this.isContainer = function(row){ return false; };
+    this.isSeparator = function(row){ return false; };
+    this.isSorted = function(){ return false; };
+    this.getLevel = function(row){ return 0; };
+    this.getImageSrc = function(row,col){ return null; };
+    this.getRowProperties = function(row,props){};
+    this.getCellProperties = function(row,col,props){};
+    this.getColumnProperties = function(colid,col,props){};
+    this.cycleHeader = function(col, elem) {};
 };
 
 var getCurrentTab = function () {

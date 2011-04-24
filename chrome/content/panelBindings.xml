@@ -2,7 +2,7 @@
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xbl="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <binding id="book-treebox">
+  <binding id="toc-treebox">
     <content>
       <xul:tree seltype="single" datasources="rdf:null" ref="urn:chmsee:root"
                 flags="dont-build-content" hidecolumnpicker="true" onselect="onTocSelected(event);" treelines="true"
@@ -31,4 +31,21 @@
     </implementation>
   </binding>
 
+  <binding id="index-treebox">
+    <content>
+      <xul:textbox oninput="onInputFilter(event)"/>
+      <xul:tree seltype="single" sortDirection="ascending"
+                hidecolumnpicker="true" onselect="onTocSelected(event);" treelines="true"
+                flex="1" width="200" persist="width">
+        <xul:treecols>
+          <xul:treecol primary="true" hideheader="true" flex="1"/>
+          <xul:treecol hidden="true" flex="1"/>
+        </xul:treecols>
+        <xul:treechildren id="tree-children"/>
+      </xul:tree>
+    </content>
+    <implementation>
+      <property name="tree" read-only="true" onget="return document.getAnonymousNodes(this)[1];"/>
+    </implementation>
+  </binding>
 </bindings>

@@ -83,6 +83,10 @@ var Book = {
             RDF.saveBookinfo(book);
         }
 
+        if (book.hhkDS !== null) {
+            book.hhkData = RDF.convertDSToArray(book.hhkDS);
+        }
+
         return book;
     },
 };
@@ -97,6 +101,7 @@ var EmptyBook = {
     hhcDS: null,
     hhk: null,
     hhkDS: null,
+    hhkData: null,
     charset: "ISO-8859-1",
 };
 

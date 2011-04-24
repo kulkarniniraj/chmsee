@@ -33,6 +33,7 @@ var RDF = {
     saveBookinfo: function (book) {
         var infoDS = rdfService.GetDataSourceBlocking("file://" + book.folder + "/chmsee_bookinfo.rdf");
         var res = rdfService.GetResource("urn:chmsee:bookinfo");
+        d("RDF::saveBookinfo", "bookinfo = " + "file://" + book.folder + "/chmsee_bookinfo.rdf");
 
         var predicate = rdfService.GetResource("urn:chmsee:rdf#homepage");
         var object = rdfService.GetLiteral(book.homepage);
@@ -71,18 +72,18 @@ var RDF = {
             var infoDS = rdfService.GetDataSourceBlocking("file://" + infoFile.path);
             var res = rdfService.GetResource("urn:chmsee:bookinfo");
 
-            book.homepage = getBookinfoValue(infoDS, res, "urn:chmsee:rdf#homepage") || "";
+            book.homepage = getTargetValue(infoDS, res, "urn:chmsee:rdf#homepage") || "";
             d("RDF::loadBookinfo", "bookinfo homepage = " + book.homepage);
 
             book.url = book.homepage;
 
-            book.title = getBookinfoValue(infoDS, res, "urn:chmsee:rdf#title") || "";
+            book.title = getTargetValue(infoDS, res, "urn:chmsee:rdf#title") || "";
             d("RDF::loadBookinfo", "bookinfo title = " + book.title);
 
-            book.charset = getBookinfoValue(infoDS, res, "urn:chmsee:rdf#charset") || "ISO-8859-1";
+            book.charset = getTargetValue(infoDS, res, "urn:chmsee:rdf#charset") || "ISO-8859-1";
             d("RDF::loadBookinfo", "bookinfo charset = " + book.charset);
 
-            book.hhc = getBookinfoValue(infoDS, res, "urn:chmsee:rdf#hhc") || null;
+            book.hhc = getTargetValue(infoDS, res, "urn:chmsee:rdf#hhc") || null;
             d("RDF::loadBookinfo", "bookinfo hhc = " + book.hhc);
 
             if (book.hhc !== null) {
@@ -90,7 +91,7 @@ var RDF = {
                 book.hhcDS = rdfService.GetDataSourceBlocking("file://" + rdf);
             }
 
-            book.hhk = getBookinfoValue(infoDS, res, "urn:chmsee:rdf#hhk") || null;
+            book.hhk = getTargetValue(infoDS, res, "urn:chmsee:rdf#hhk") || null;
             d("RDF::loadBookinfo", "bookinfo hhk = " + book.hhk);
 
             if (book.hhk !== null) {
@@ -130,9 +131,28 @@ var RDF = {
 
         return datasource;
     },
+
+    convertDSToArray: function (datasource) {
+        var data = [];
+        var resource = rdfService.GetResource("urn:chmsee:root");
+        var container = rdfContainerUtils.MakeSeq(datasource, resource);
+
+        var children = container.GetElements();
+        while (children.hasMoreElements()){
+            var child = children.getNext();
+            if (child instanceof Ci.nsIRDFResource){
+                var name = getTargetValue(datasource, child, "urn:chmsee:rdf#name");
+                var local = getTargetValue(datasource, child, "urn:chmsee:rdf#local");
+
+                data.push({name: name, local: local});
+            }
+        }
+
+        return data;
+    },
 };
 
-var getBookinfoValue = function (datasource, resource, urn) {
+var getTargetValue = function (datasource, resource, urn) {
     var target = datasource.GetTarget(resource, rdfService.GetResource(urn), true);
 
     if (target instanceof Ci.nsIRDFLiteral)

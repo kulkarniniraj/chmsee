@@ -1,3 +1,7 @@
-box.book-treebox {
-    -moz-binding: url(chrome://chmsee/content/panelBindings.xml#book-treebox);
+vbox.toc-treebox {
+    -moz-binding: url(chrome://chmsee/content/panelBindings.xml#toc-treebox);
+}
+
+vbox.index-treebox {
+    -moz-binding: url(chrome://chmsee/content/panelBindings.xml#index-treebox);
 }
