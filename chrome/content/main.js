@@ -32,7 +32,13 @@ var contentTabbox = null;
 var onWindowLoad = function () {
     d("onWindowLoad", "init");
 
+    window.addEventListener("resize", onResize, true);
+
     initTabbox();
+};
+
+var onResize = function () {
+    adjustTabWidth(contentTabbox.tabs);
 };
 
 var onTocSelected = function (event) {
@@ -47,7 +53,6 @@ var onTocSelected = function (event) {
 };
 
 var onTabSelect = function () {
-    d("onTabSelect", "");
     var currentPanel = contentTabbox.selectedPanel;
     setCommandStatus(currentPanel.type);
 };
@@ -120,7 +125,10 @@ var closeTab = function () {
 
 var goHome = function () {
     var panel = contentTabbox.selectedPanel;
+    var tocTree = panel.treebox.toc.tree;
     panel.browser.setAttribute("src", CsScheme + panel.book.homepage);
+    tocTree.view.selection.select(0);
+    tocTree.treeBoxObject.ensureRowIsVisible(0);
 };
 
 var goBack = function () {
@@ -142,6 +150,7 @@ var goPrevious = function () {
             goPrevious();
         } else {
             view.selection.select(index - 1);
+            tocTree.treeBoxObject.ensureRowIsVisible(index - 1);
         }
     }
 };
@@ -157,6 +166,7 @@ var goNext = function () {
             goNext();
         } else {
             view.selection.select(index + 1);
+            tocTree.treeBoxObject.ensureRowIsVisible(index + 1);
         }
     }
 };
@@ -441,7 +451,7 @@ var getCurrentTab = function () {
 };
 
 var adjustTabWidth = function (tabs) {
-    var winWidth = document.getElementById("main").width;
+    var winWidth = window.outerWidth;
     var tabCount = tabs.itemCount;
     var tabWidth = Math.round(winWidth/tabCount);
 
