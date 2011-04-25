@@ -191,6 +191,12 @@ var zoomReset = function () {
 
 var togglePanel = function () {
     var button = document.getElementById("panel-btn");
+    button.checked = !button.checked;
+    changePanel();
+};
+
+var changePanel = function () {
+    var button = document.getElementById("panel-btn");
     var splitter = contentTabbox.selectedPanel.splitter;
 
     if (button.checked) {
@@ -212,6 +218,11 @@ var showFindbar = function () {
     } catch (e) {
         d("showFindbar", "error name = " + e.name + " message = " + e.message);
     }
+};
+
+var openPreferences = function () {
+    var features = "chrome,titlebar,toolbar,centerscreen,modal";
+    window.openDialog("chrome://chmsee/content/prefwin.xul", "Preferences", features);
 };
 
 /*** Other functions ***/
@@ -313,6 +324,7 @@ var createBookTab = function (book) {
     browser.setAttribute("type", "content");
     browser.setAttribute("src", CsScheme + book.homepage);
     browser.setAttribute("flex", "1");
+    browser.contextMenu = "context-popup";
     bookContentBox.appendChild(browser);
 
     bookPanel.type = "book";

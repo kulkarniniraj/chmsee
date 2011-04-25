@@ -9,10 +9,38 @@
 <!ENTITY closeTab.accesskey "c">
 <!ENTITY quitCmd.label "Quit">
 <!ENTITY quitCmd.accesskey "q">
+<!ENTITY editMenu.label "Edit">
+<!ENTITY editMenu.accesskey "d">
+<!ENTITY copy.label "Copy">
+<!ENTITY copy.accesskey "c">
+<!ENTITY selectall.label "Select all">
+<!ENTITY selectall.accesskey "a">
+<!ENTITY find.label "Find">
+<!ENTITY find.accesskey "f">
+<!ENTITY preferences.label "Preferences">
+<!ENTITY preferences.accesskey "p">
 <!ENTITY viewMenu.label "View">
 <!ENTITY viewMenu.accesskey "v">
 <!ENTITY fullScreen.label "Full screen">
 <!ENTITY fullScreen.accesskey "u">
+<!ENTITY panel.label "Show/Hide panel">
+<!ENTITY panel.accesskey "p">
+<!ENTITY home.label "Home">
+<!ENTITY home.accesskey "h">
+<!ENTITY back.label "Back">
+<!ENTITY back.accesskey "b">
+<!ENTITY forward.label "Forward">
+<!ENTITY forward.accesskey "f">
+<!ENTITY previous.label "Previous">
+<!ENTITY previous.accesskey "p">
+<!ENTITY next.label "Next">
+<!ENTITY next.accesskey "n">
+<!ENTITY zoomin.label "Zoom in">
+<!ENTITY zoomin.accesskey "i">
+<!ENTITY zoomout.label "Zoom out">
+<!ENTITY zoomout.accesskey "o">
+<!ENTITY zoomreset.label "Zoom reset">
+<!ENTITY zoomreset.accesskey "r">
 <!ENTITY helpMenu.label "Help">
 <!ENTITY helpMenu.accesskey "h">
 <!ENTITY about.label "About">
