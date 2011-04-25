@@ -55,6 +55,8 @@ var onTocSelected = function (event) {
 var onTabSelect = function () {
     var currentPanel = contentTabbox.selectedPanel;
     setCommandStatus(currentPanel.type);
+    var findbar = document.getElementById("content-findbar");
+    findbar.browser = currentPanel.browser;
 };
 
 var onInputFilter = function (event) {
@@ -197,6 +199,18 @@ var togglePanel = function () {
     } else {
         splitter.setAttribute("state","collapsed");
         button.image = "chrome://chmsee/skin/hide-pane.png";
+    }
+};
+
+var showFindbar = function () {
+    try {
+        var findbar = document.getElementById("content-findbar");
+        findbar.browser = contentTabbox.selectedPanel.browser;
+        findbar.nsITypeAheadFind = Ci.nsITypeAheadFind;
+
+        findbar.startFind(0);
+    } catch (e) {
+        d("showFindbar", "error name = " + e.name + " message = " + e.message);
     }
 };
 

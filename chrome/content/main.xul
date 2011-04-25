@@ -29,6 +29,7 @@
     <command id="cmd_zoomin" oncommand="zoomIn();"/>
     <command id="cmd_zoomout" oncommand="zoomOut();"/>
     <command id="cmd_zoomreset" oncommand="zoomReset();"/>
+    <command id="cmd_showfindbar" oncommand="showFindbar();"/>
   </commandset>
 
   <keyset>
@@ -36,6 +37,13 @@
     <key id="close-cmd" modifiers="accel" key="Q" command="cmd_quit"/>
     <key id="open-tab-cmd" modifiers="accel" key="T" command="cmd_newtab"/>
     <key id="close-tab-cmd" modifiers="accel" key="W" command="cmd_closetab"/>
+    <key id="zoomin-cmd" modifiers="accel" key="-" command="cmd_zoomin"/>
+    <key id="zoomout-cmd" modifiers="accel" key="=" command="cmd_zoomout"/>
+    <key id="zoomreset-cmd" modifiers="accel" key="0" command="cmd_zoomreset"/>
+    <key id="gohome-cmd" modifiers="accel" keycode="VK_HOME" command="cmd_gohome"/>
+    <key id="goprevious-cmd" modifiers="accel" keycode="VK_UP" command="cmd_goprevious"/>
+    <key id="gonext-cmd" modifiers="accel" keycode="VK_DOWN" command="cmd_gonext"/>
+    <key id="showfindbar-cmd" modifiers="accel" key="F" command="cmd_showfindbar"/>
   </keyset>
 
   <vbox flex="1">
@@ -63,17 +71,17 @@
       </menubar>
 
       <toolbar mode="icons">
-        <toolbarbutton class="openfile-btn" label="&openCmd.label;" tooltiptext="&openCmd.tooltip;" command="cmd_openfile"/>
+        <toolbarbutton id="openfile-btn" label="&openCmd.label;" tooltiptext="&openCmd.tooltip;" command="cmd_openfile"/>
         <toolbarseparator/>
-        <toolbarbutton id="panel-btn" class="panel-btn" label="&togglePanel.label;" tooltiptext="&togglePanel.tooltip;" type="checkbox" checked="true" command="cmd_togglepanel"/>
-        <toolbarbutton class="back-btn" label="&backCmd.label;" tooltiptext="&backCmd.tooltip;" command="cmd_goback"/>
-        <toolbarbutton class="forward-btn" label="&forwardCmd.label;" tooltiptext="&forwardCmd.tooltip;" command="cmd_goforward"/>
-        <toolbarbutton class="home-btn" label="&homeCmd.label;" tooltiptext="&homeCmd.tooltip;" command="cmd_gohome"/>
-        <toolbarbutton class="previous-btn" label="&previousCmd.label;" tooltiptext="&previousCmd.tooltip;" command="cmd_goprevious"/>
-        <toolbarbutton class="next-btn" label="&nextCmd.label;" tooltiptext="&nextCmd.tooltip;" command="cmd_gonext"/>
-        <toolbarbutton class="zoomin-btn" label="&zoominCmd.label;" tooltiptext="&zoominCmd.tooltip;" command="cmd_zoomin"/>
-        <toolbarbutton class="zoomreset-btn" label="&zoomresetCmd.label;" tooltiptext="&zoomresetCmd.tooltip;" command="cmd_zoomreset"/>
-        <toolbarbutton class="zoomout-btn" label="&zoomoutCmd.label;" tooltiptext="&zoomoutCmd.tooltip;" command="cmd_zoomout"/>
+        <toolbarbutton id="panel-btn" label="&togglePanel.label;" tooltiptext="&togglePanel.tooltip;" type="checkbox" checked="true" command="cmd_togglepanel"/>
+        <toolbarbutton id="back-btn" label="&backCmd.label;" tooltiptext="&backCmd.tooltip;" command="cmd_goback"/>
+        <toolbarbutton id="forward-btn" label="&forwardCmd.label;" tooltiptext="&forwardCmd.tooltip;" command="cmd_goforward"/>
+        <toolbarbutton id="home-btn" label="&homeCmd.label;" tooltiptext="&homeCmd.tooltip;" command="cmd_gohome"/>
+        <toolbarbutton id="previous-btn" label="&previousCmd.label;" tooltiptext="&previousCmd.tooltip;" command="cmd_goprevious"/>
+        <toolbarbutton id="next-btn" label="&nextCmd.label;" tooltiptext="&nextCmd.tooltip;" command="cmd_gonext"/>
+        <toolbarbutton id="zoomin-btn" label="&zoominCmd.label;" tooltiptext="&zoominCmd.tooltip;" command="cmd_zoomin"/>
+        <toolbarbutton id="zoomreset-btn" label="&zoomresetCmd.label;" tooltiptext="&zoomresetCmd.tooltip;" command="cmd_zoomreset"/>
+        <toolbarbutton id="zoomout-btn" label="&zoomoutCmd.label;" tooltiptext="&zoomoutCmd.tooltip;" command="cmd_zoomout"/>
       </toolbar>
     </toolbox>
 
@@ -82,5 +90,6 @@
       <tabpanels id="content-tabpanels" flex="1"/>
     </tabbox>
 
+    <findbar id="content-findbar" />
   </vbox>
 </window>
