@@ -53,20 +53,21 @@ var Prefs = {
 
     get bookshelf() {
         var path;
-        if (application.prefs.has("chmsee.bookshelf")) {
-            path = application.prefs.get("chmsee.bookshelf").value;
+        if (application.prefs.has("chmsee.bookshelf.dir")) {
+            path = application.prefs.get("chmsee.bookshelf.dir").value;
         } else {
             path = homeDir.path + "/.chmsee/bookshelf";
-            application.prefs.setValue("chmsee.bookshelf", path);
+            application.prefs.setValue("chmsee.bookshelf.dir", path);
         }
 
-        var bookshelf = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
-        bookshelf.initWithPath(path);
-        return bookshelf;
+        bookshelfDir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
+        bookshelfDir.initWithPath(path);
+
+        return bookshelfDir;
     },
 
     set bookshelf(dir) {
-        application.prefs.setValue("chmsee.bookshelf", dir.path);
+        application.prefs.setValue("chmsee.bookshelf.dir", dir.path);
     },
 };
 

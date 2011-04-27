@@ -33,7 +33,7 @@ var onWindowLoad = function () {
     d("onWindowLoad", "init");
 
     window.addEventListener("resize", onResize, true);
-    d("onWindowLoad", "bookshelf = " + Prefs.bookshelf.path);
+
     initTabbox();
 };
 

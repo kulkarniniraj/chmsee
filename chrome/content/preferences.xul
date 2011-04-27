@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>   
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
 <!DOCTYPE prefwindow SYSTEM "chrome://chmsee/locale/preferences.dtd">
 
@@ -17,17 +17,37 @@
                   name="browser.display.use_document_fonts"
                   type="int"/>
       <preference id="intl.charset.default" name="intl.charset.default" type="wstring"/>
+
+      <preference id="browser.display.use_document_colors"  name="browser.display.use_document_colors"  type="bool"/>
+      <preference id="browser.anchor_color"                 name="browser.anchor_color"                 type="string"/>
+      <preference id="browser.visited_color"                name="browser.visited_color"                type="string"/>
+      <preference id="browser.underline_anchors"            name="browser.underline_anchors"            type="bool"/>
+      <preference id="browser.display.foreground_color"     name="browser.display.foreground_color"     type="string"/>
+      <preference id="browser.display.background_color"     name="browser.display.background_color"     type="string"/>
+      <preference id="browser.display.use_system_colors"    name="browser.display.use_system_colors"    type="bool"/>
+
+      <preference id="chmsee.bookshelf.dir" name="chmsee.bookshelf.dir" type="file" onchange="gPref.displayDownloadDirPref();"/>
+
     </preferences>
 
     <script type="application/javascript" src="chrome://mozapps/content/preferences/fontbuilder.js"/>
+    <script type="application/javascript" src="chrome://chmsee/content/preferences.js"/>
     <script type="application/javascript" src="chrome://chmsee/content/fonts.js"/>
+
+    <stringbundle id="bundlePreferences" src="chrome://chmsee/locale/main.properties"/>
 
     <vbox>
       <groupbox flex="1">
         <caption label="&bookshelf.title;"/>
         <hbox align="center">
-          <label control="bookshelf" value="&bookshelf.label;" />
-          <textbox id="bookshelf" preference="pref-bookshelf" flex="1"/>
+          <label control="bookshelfFolder" value="&bookshelf.label;" />
+          <filefield id="bookshelfFolder" flex="1"
+                     preference="chmsee.bookshelf.dir"
+                     preference-editable="true"
+                     onsyncfrompreference="return Pref.displayBookshelfDir();" />
+          <button id="chooseFolder" oncommand="Pref.chooseFolder();"
+                  accesskey="&chooseFolder.accesskey;"
+                  label="&chooseFolder.label;"/>
         </hbox>
       </groupbox>
 
@@ -74,7 +94,7 @@
             </menupopup>
           </menulist>
         </caption>
-        
+
         <grid>
           <columns>
             <column/>
@@ -82,7 +102,7 @@
             <column/>
             <column/>
           </columns>
-          
+
           <rows>
             <row>
               <separator class="thin"/>
@@ -102,7 +122,7 @@
                 <label value="&size.label;"
                        accesskey="&sizeProportional.accesskey;"
                        control="sizeVar"/>
-              </hbox>  
+              </hbox>
               <menulist id="sizeVar">
                 <menupopup>
                   <menuitem value="9" label="9"/>
@@ -159,7 +179,7 @@
                 <label value="&size.label;"
                        accesskey="&sizeMonospace.accesskey;"
                        control="sizeMono"/>
-              </hbox>  
+              </hbox>
               <menulist id="sizeMono">
                 <menupopup>
                   <menuitem value="9" label="9"/>
@@ -217,10 +237,8 @@
             </menulist>
           </hbox>
         </hbox>
-        <separator/>
-        <separator class="groove"/>
         <hbox>
-          <checkbox id="useDocumentFonts" 
+          <checkbox id="useDocumentFonts"
                     label="&allowPagesToUse.label;" accesskey="&allowPagesToUse.accesskey;"
                     preference="browser.display.use_document_fonts"
                     onsyncfrompreference="return gFontsDialog.readUseDocumentFonts();"
@@ -236,7 +254,7 @@
                  accesskey="&languages.customize.DefaultCharset.accesskey;"
                  control="DefaultCharsetList"/>
           <menulist id="DefaultCharsetList" ref="NC:DecodersRoot" datasources="rdf:charset-menu"
-                    preference="intl.charset.default" 
+                    preference="intl.charset.default"
                     onsyncfrompreference="return gFontsDialog.readDefaultCharset();">
             <template>
               <menupopup>
@@ -246,6 +264,61 @@
           </menulist>
         </hbox>
       </groupbox>
+
+      <groupbox flex="1">
+        <caption label="&color;"/>
+        <vbox>
+          <hbox>
+            <vbox flex="1">
+              <hbox align="center">
+                <label value="&textColor.label;" accesskey="&textColor.accesskey;" control="foregroundtextmenu"/>
+                <spacer flex="1"/>
+                <colorpicker type="button" id="foregroundtextmenu" palettename="standard"
+                             preference="browser.display.foreground_color"/>
+              </hbox>
+              <hbox align="center" style="margin-top: 5px">
+                <label value="&backgroundColor.label;" accesskey="&backgroundColor.accesskey;" control="backgroundmenu"/>
+                <spacer flex="1"/>
+                <colorpicker type="button" id="backgroundmenu" palettename="standard"
+                             preference="browser.display.background_color"/>
+              </hbox>
+              <separator class="thin"/>
+              <hbox align="center">
+                <checkbox id="browserUseSystemColors" label="&useSystemColors.label;" accesskey="&useSystemColors.accesskey;"
+                          preference="browser.display.use_system_colors"/>
+              </hbox>
+            </vbox>
+
+            <spacer flex="1"/>
+
+            <vbox flex="1">
+              <hbox align="center">
+                <label value="&linkColor.label;" accesskey="&linkColor.accesskey;" control="unvisitedlinkmenu"/>
+                <spacer flex="1"/>
+                <colorpicker type="button" id="unvisitedlinkmenu" palettename="standard"
+                             preference="browser.anchor_color"/>
+              </hbox>
+              <hbox align="center" style="margin-top: 5px">
+                <label value="&visitedLinkColor.label;" accesskey="&visitedLinkColor.accesskey;" control="visitedlinkmenu"/>
+                <spacer flex="1"/>
+                <colorpicker type="button" id="visitedlinkmenu" palettename="standard"
+                             preference="browser.visited_color"/>
+              </hbox>
+              <separator class="thin"/>
+              <hbox align="center">
+                <checkbox id="browserUnderlineAnchors" label="&underlineLinks.label;" accesskey="&underlineLinks.accesskey;"
+                          preference="browser.underline_anchors"/>
+              </hbox>
+            </vbox>
+          </hbox>
+          <hbox>
+            <checkbox id="useDocumentColors"
+                      label="&allowPagesToUseColor.label;" accesskey="&allowPagesToUseColor.accesskey;"
+                      preference="browser.display.use_document_colors" flex="1"/>
+          </hbox>
+        </vbox>
+      </groupbox>
+
 
       <groupbox flex="1">
         <caption label="&startup.title;"/>
