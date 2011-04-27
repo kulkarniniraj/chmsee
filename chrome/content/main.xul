@@ -125,6 +125,8 @@
         <toolbarbutton id="zoomin-btn" label="&zoominCmd.label;" tooltiptext="&zoominCmd.tooltip;" command="cmd_zoomin"/>
         <toolbarbutton id="zoomreset-btn" label="&zoomresetCmd.label;" tooltiptext="&zoomresetCmd.tooltip;" command="cmd_zoomreset"/>
         <toolbarbutton id="zoomout-btn" label="&zoomoutCmd.label;" tooltiptext="&zoomoutCmd.tooltip;" command="cmd_zoomout"/>
+        <toolbarseparator/>
+        <toolbarbutton id="preferences-btn" label="&preferences.label;" tooltiptext="&preferences.tooltip;" command="cmd_preferences"/>
       </toolbar>
     </toolbox>
 

@@ -33,7 +33,7 @@ var onWindowLoad = function () {
     d("onWindowLoad", "init");
 
     window.addEventListener("resize", onResize, true);
-
+    d("onWindowLoad", "bookshelf = " + Prefs.bookshelf.path);
     initTabbox();
 };
 
@@ -79,7 +79,8 @@ var openFile = function () {
     var strChmFile=strbundle.getString("chmFile");
 
     fp.init(window, strSelectFile, Ci.nsIFilePicker.modeOpen);
-    fp.displayDirectory = Pref.getLastDir();
+    fp.displayDirectory = Prefs.lastDir;
+
     fp.appendFilter(strChmFile, "*.chm;*.CHM");
     fp.appendFilters(Ci.nsIFilePicker.filterAll);
 
@@ -87,8 +88,7 @@ var openFile = function () {
     var res = fp.show();
 
     if (res == Ci.nsIFilePicker.returnOK) {
-        d("openFile", "selected file path = " + fp.file.path);
-        Pref.saveLastDir(fp.file.parent.path);
+        Prefs.lastDir = fp.file.parent;
 
         var book = Book.getBookFromFile(fp.file);
         var newTab = createBookTab(book);
@@ -222,7 +222,7 @@ var showFindbar = function () {
 
 var openPreferences = function () {
     var features = "chrome,titlebar,toolbar,centerscreen,modal";
-    window.openDialog("chrome://chmsee/content/prefwin.xul", "Preferences", features);
+    window.openDialog("chrome://chmsee/content/preferences.xul", "Preferences", features);
 };
 
 /*** Other functions ***/

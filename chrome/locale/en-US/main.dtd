@@ -64,3 +64,5 @@
 <!ENTITY zoomoutCmd.tooltip "Zoom Out">
 <!ENTITY zoomresetCmd.label "Zoom Reset">
 <!ENTITY zoomresetCmd.tooltip "Zoom Reset">
+<!ENTITY preferences.label "Preferences">
+<!ENTITY preferences.tooltip "Open preferences dialog">

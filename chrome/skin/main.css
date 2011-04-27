@@ -90,3 +90,7 @@ tabpanel {
 #panel-btn[disabled] {
     list-style-image: url("chrome://chmsee/skin/show-pane.png");
 }
+
+#preferences-btn {
+    list-style-image: url("moz-icon://stock/gtk-preferences?size=toolbar");
+}
