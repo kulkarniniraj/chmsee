@@ -12,11 +12,13 @@ From 2.0, ChmSee becomes a xulrunner application. I think this
 migration will bring some interesting features and make developing
 ChmSee more fun.
 
-In the new version of ChmSee, most codes use cross-platform languages:
-xul, javascript, css and dtd, and these do not need to build before
-running.  But ChmSee still depend on CHMLIB to retrieve book contents
-from a CHM file, so there a XPCOM component named libxpcomchm.so
-written in C++ require to compile.
+In the new version of ChmSee, most of codes use cross-platform
+languages: XUL, JavaScript, CSS and DTD. One advantage feature of
+these script and markup language is that they do not need to build
+before running. But ChmSee still depends on the CHMLIB - a C Lib used
+to retrieved book contents from CHM file. In order to call functions
+from CHMLIB, a C++ XPCOM component named libxpcomchm.so is introduced,
+this module is the only one required to compile.
 
 The source codes of libxpcomchm.so are located in ./src directory. To
 successfully compile this XPCOM component, you need to have
@@ -38,6 +40,10 @@ After building libxpcomchm.so, back to your chmsee directory and input
 following command line, it will launch the ChmSee program:
 
 $ xulrunner application.ini
+
+There is another way: copy xulrunner-stub from xulrunner-sdk to chmsee
+directory and rename it to chmsee, after that, you can run this chmsee
+file to launch the program.
 
 Source code repository
 ======================

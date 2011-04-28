@@ -28,11 +28,35 @@ Cu.import("chrome://chmsee/content/utils.js");
 Cu.import("chrome://chmsee/content/rdfUtils.js");
 
 var Book = {
-    getBookFromUrl: function(title, url) {
+    getBookFromUrl: function(url) {
+        d("Book::getBookFromUrl", "url = " + url);
         var book = newBook();
-        book.title = title;
-        book.homepage = url;
         book.url = url;
+
+        var uri = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService).newURI(url, null, null);
+        d("Book::getBookFromUrl", "scheme = " + uri.scheme);
+
+        if (uri.scheme === "about") {
+            if (uri.path === "mozilla") {
+                book.title = "Welcome";
+            }
+        } else if (uri.scheme === "file") {
+            d("Book::getBookFromUrl", "path = " + uri.path);
+            d("Book::getBookFromUrl", "bookshelf = " + Prefs.bookshelf.path);
+            var bookshelf = Prefs.bookshelf.path;
+
+            if (uri.path.indexOf(bookshelf) !== -1) {
+                var pos = uri.path.substring(bookshelf.length + 1).indexOf("/");
+                book.folder = uri.path.substring(0, bookshelf.length + pos + 1);
+
+                if (RDF.loadBookinfo(book) === false) {
+                    d("Book::getBookFromUrl", "load book info failed, url = " + url);
+                    return null;
+                }
+            } else { // normal page
+            }
+        } else { // XXX HTTP?
+        }
 
         return book;
     },
@@ -43,10 +67,7 @@ var Book = {
         var dirService = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties);
         var bookshelf = dirService.get("Home", Ci.nsIFile).path + "/.chmsee/bookshelf";
 
-        book.md5 = md5Hash(file);
-        d("Book::getBookFromFile", "chm md5 = " + book.md5);
-
-        book.folder = bookshelf + "/" + book.md5;
+        book.folder = bookshelf + "/" + md5Hash(file);
 
         if (RDF.loadBookinfo(book) === false) {
             try {
@@ -56,7 +77,6 @@ var Book = {
 
                 book.homepage = book.folder + "/" + chmobj.homepage;
                 d("Book::getBookFromFile", "chm homepage = " + book.homepage);
-                book.url = book.homepage;
 
                 d("Book::getBookFromFile", "lcid = " + chmobj.lcid);
                 book.charset = getCharset(chmobj.lcid);
@@ -64,6 +84,7 @@ var Book = {
                 book.title = convertToUTF8(chmobj.bookname, book.charset);
                 d("Book::getBookFromFile", "book title = " + book.title);
 
+                book.type = "book";
                 if (chmobj.hhc !== null) {
                     d("Book::getBookFromFile", "hhc = " + chmobj.hhc);
                     book.hhc = book.folder + "/" + chmobj.hhc;
@@ -87,14 +108,16 @@ var Book = {
             book.hhkData = RDF.convertDSToArray(book.hhkDS);
         }
 
+        book.url = CsScheme + book.homepage;
         return book;
     },
 };
 
 var EmptyBook = {
-    md5: "",
+    type: "page",
     folder: "",
     homepage: "",
+    lastpage: "",
     url: "",
     title: "",
     hhc: null,

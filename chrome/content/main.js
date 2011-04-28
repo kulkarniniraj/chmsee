@@ -37,6 +37,15 @@ var onWindowLoad = function () {
     initTabbox();
 };
 
+var onQuit = function (aForceQuit)  {
+    var appStartup = Cc['@mozilla.org/toolkit/app-startup;1'].getService(Ci.nsIAppStartup);
+
+    var quitSeverity = aForceQuit ? Ci.nsIAppStartup.eForceQuit : Ci.nsIAppStartup.eAttemptQuit;
+
+    saveCurrentTabs();
+    appStartup.quit(quitSeverity);
+};
+
 var onResize = function () {
     adjustTabWidth(contentTabbox.tabs);
 };
@@ -54,9 +63,9 @@ var onTocSelected = function (event) {
 
 var onTabSelect = function () {
     var currentPanel = contentTabbox.selectedPanel;
-    setCommandStatus(currentPanel.type);
-    var findbar = document.getElementById("content-findbar");
-    findbar.browser = currentPanel.browser;
+
+    setCommandStatus(currentPanel.book.type);
+    document.getElementById("content-findbar").browser = currentPanel.browser;
 };
 
 var onInputFilter = function (event) {
@@ -99,17 +108,19 @@ var openFile = function () {
 };
 
 var newTab = function () {
-    var currentPanel = contentTabbox.selectedPanel;
+    var browser = contentTabbox.selectedPanel.browser;
+    var url = browser.currentURI.spec;
 
+    var book = Book.getBookFromUrl(url);
     var index = -1;
 
-    if (currentPanel.type === "book") {
-        var newTab = createBookTab(currentPanel.book);
+    if (book.type === "book") {
+        var newTab = createBookTab(book);
         appendTab(newTab);
         refreshBookTab(newTab);
         index = contentTabbox.tabs.itemCount - 1;
-    } else if (currentPanel.type === "welcome") {
-        appendTab(createWelcomeTab());
+    } else if (book.type === "page") {
+        appendTab(createPageTab(book));
         index = contentTabbox.tabs.itemCount - 1;
     } else {
         index = 0;
@@ -227,15 +238,53 @@ var openPreferences = function () {
 
 /*** Other functions ***/
 
+var loadSavedTabs = function () {
+    var data = LastUrls.read();
+    var urls = JSON.parse(data);
+    var book = null;
+    var newTab = null;
+
+    for (var i = 0; i < urls.length; i += 1) {
+        d("loadCurrentTabs", "url = " + urls[i]);
+        book = Book.getBookFromUrl(urls[i]);
+        if (book.type === "book") {
+            newTab = createBookTab(book);
+            appendTab(newTab);
+            refreshBookTab(newTab);
+        } else {
+            appendTab(createPageTab(book));
+        }
+    }
+    contentTabbox.selectedIndex = 0;
+};
+
+var saveCurrentTabs = function () {
+    var panels = contentTabbox.tabpanels;
+    var urls = [];
+
+    for (var i = 0; i < panels.childNodes.length; i ++) {
+        var child = panels.childNodes[i];
+        d("saveCurrentTabs", "url = " + child.browser.currentURI.spec);
+        urls.push(child.browser.currentURI.spec);
+    }
+
+    LastUrls.save(urls);
+};
+
 var initTabbox = function () {
     contentTabbox = document.getElementById("content-tabbox");
     contentTabbox.tabs.addEventListener("select", onTabSelect, true);
-    appendTab(createWelcomeTab());
+
+    if (LastUrls.reopen) {
+        loadSavedTabs();
+    } else {
+        appendTab(createPageTab(Book.getBookFromUrl("about:mozilla")));
+    }
     contentTabbox.selectedIndex = 0;
 };
 
 var setCommandStatus = function(type) {
-    if (type === "welcome") {
+    if (type === "page") {
         document.getElementById("panel-btn").setAttribute("hidden", "true");
         document.getElementById("cmd_gohome").setAttribute("disabled", "true");
         document.getElementById("cmd_goback").setAttribute("disabled", "true");
@@ -252,9 +301,7 @@ var setCommandStatus = function(type) {
     }
 };
 
-var createWelcomeTab = function () {
-    var book = Book.getBookFromUrl("Welcome", "about:mozilla");
-
+var createPageTab = function (book) {
     var tab = document.createElement("tab");
     tab.setAttribute("align", "start");
     tab.setAttribute("crop", "end");
@@ -264,10 +311,9 @@ var createWelcomeTab = function () {
     var browser = document.createElement("browser");
     browser.setAttribute("flex", 1);
     browser.setAttribute("type", "content");
-    browser.setAttribute("src", book.homepage);
+    browser.setAttribute("src", book.url);
     panel.appendChild(browser);
 
-    panel.type = "welcome";
     panel.book = book;
     panel.browser = browser;
 
@@ -327,7 +373,6 @@ var createBookTab = function (book) {
     browser.contextMenu = "context-popup";
     bookContentBox.appendChild(browser);
 
-    bookPanel.type = "book";
     bookPanel.book = book;
     bookPanel.treebox = treeTabbox;
     bookPanel.splitter = splitter;
@@ -360,7 +405,7 @@ var createTreeTab = function (type) {
 var appendTab = function (tab) {
     contentTabbox.tabs.appendChild(tab.tab);
     contentTabbox.tabpanels.appendChild(tab.panel);
-    setCommandStatus(tab.panel.type);
+    setCommandStatus(tab.panel.book.type);
 
     adjustTabWidth(contentTabbox.tabs);
 };
@@ -374,7 +419,7 @@ var replaceTab = function (newTab, oldTab) {
     if (currentIndex !== contentTabbox.selectedIndex)
         contentTabbox.selectedIndex = currentIndex;
 
-    setCommandStatus(newTab.panel.type);
+    setCommandStatus(newTab.panel.book.type);
     adjustTabWidth(contentTabbox.tabs);
 };
 
@@ -422,12 +467,15 @@ var refreshBookTab = function (tab) {
         treebox.hidden = true;
         splitter.hidden = true;
     }
-
+/*
     if (tocTree) {
         tocTree.view.selection.select(0);
         tocTree.focus();
     }
-
+*/
+    if (book.url !== "") {
+        tab.panel.browser.setAttribute("src", book.url);
+    }
 };
 
 var rebuildIndexTree = function (tree, data, filterText) {

@@ -9,8 +9,8 @@
 
   <prefpane id="options" label="Chmsee Settings">
     <preferences id="fontPreferences">
-      <preference id="pref-bookshelf" name="chmsee.bookshelf" type="string"/>
-      <preference id="pref-lastfile" name="chmsee.startup.loadlast" type="bool"/>
+      <preference id="chmsee.bookshelf.dir" name="chmsee.bookshelf.dir" type="file" onchange="gPref.displayDownloadDirPref();"/>
+      <preference id="chmsee.open.lasturls" name="chmsee.open.lasturls" type="bool"/>
 
       <preference id="font.language.group" name="font.language.group" type="wstring"/>
       <preference id="browser.display.use_document_fonts"
@@ -25,8 +25,6 @@
       <preference id="browser.display.foreground_color"     name="browser.display.foreground_color"     type="string"/>
       <preference id="browser.display.background_color"     name="browser.display.background_color"     type="string"/>
       <preference id="browser.display.use_system_colors"    name="browser.display.use_system_colors"    type="bool"/>
-
-      <preference id="chmsee.bookshelf.dir" name="chmsee.bookshelf.dir" type="file" onchange="gPref.displayDownloadDirPref();"/>
 
     </preferences>
 
@@ -322,7 +320,7 @@
 
       <groupbox flex="1">
         <caption label="&startup.title;"/>
-        <checkbox label="&startup.label;" preference="pref-lastfile" />
+        <checkbox label="&lasturls.label;" preference="chmsee.open.lasturls" />
       </groupbox>
     </vbox>
   </prefpane>

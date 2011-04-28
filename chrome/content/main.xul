@@ -18,7 +18,7 @@
 
   <commandset>
     <command id="cmd_openfile" oncommand="openFile();"/>
-    <command id="cmd_quit" oncommand="window.close();"/>
+    <command id="cmd_quit" oncommand="onQuit();"/>
     <command id="cmd_newtab" oncommand="newTab();"/>
     <command id="cmd_closetab" oncommand="closeTab();"/>
     <command id="cmd_togglepanel" oncommand="togglePanel();"/>

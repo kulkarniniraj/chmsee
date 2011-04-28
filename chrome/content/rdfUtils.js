@@ -75,8 +75,6 @@ var RDF = {
             book.homepage = getTargetValue(infoDS, res, "urn:chmsee:rdf#homepage") || "";
             d("RDF::loadBookinfo", "bookinfo homepage = " + book.homepage);
 
-            book.url = book.homepage;
-
             book.title = getTargetValue(infoDS, res, "urn:chmsee:rdf#title") || "";
             d("RDF::loadBookinfo", "bookinfo title = " + book.title);
 
@@ -99,6 +97,7 @@ var RDF = {
                 book.hhkDS = rdfService.GetDataSourceBlocking("file://" + rdf);
             }
 
+            book.type = "book";
             return true;
         } else
             return false;

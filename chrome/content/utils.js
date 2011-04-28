@@ -17,7 +17,7 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-var EXPORTED_SYMBOLS = ["Prefs", "d", "CsScheme"];
+var EXPORTED_SYMBOLS = ["Prefs", "LastUrls", "d", "CsScheme"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -68,6 +68,62 @@ var Prefs = {
 
     set bookshelf(dir) {
         application.prefs.setValue("chmsee.bookshelf.dir", dir.path);
+    },
+};
+
+var LastUrls = {
+    get reopen () {
+        if (application.prefs.has("chmsee.open.lasturls")) {
+            return application.prefs.get("chmsee.open.lasturls").value;
+        } else
+            return false;
+    },
+
+    set reopen (val) {
+        application.prefs.setValue("chmsee.open.lasturls", val);
+    },
+
+    save: function (urls) {
+        var data = JSON.stringify(urls);
+
+        var profileDir = dirService.get("ProfD", Ci.nsIFile);
+
+        d("LastUrls::save", "profile = " + profileDir.path);
+
+        var urlsFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
+        urlsFile.initWithPath(profileDir.path + "/lastUrls.json");
+
+        var foStream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
+        foStream.init(urlsFile, -1, -1, 0);
+
+        var converter = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
+        converter.init(foStream, "UTF-8", 0, 0);
+        converter.writeString(data);
+        converter.close();
+    },
+
+    read: function () {
+        var profileDir = dirService.get("ProfD", Ci.nsIFile);
+
+        var urlsFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
+        urlsFile.initWithPath(profileDir.path + "/lastUrls.json");
+        d("LastUrls::read", "urlsFile = " + urlsFile.path);
+
+        var data = "";
+        var fstream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
+        var cstream = Cc["@mozilla.org/intl/converter-input-stream;1"].createInstance(Ci.nsIConverterInputStream);
+        fstream.init(urlsFile, -1, 0, 0);
+        cstream.init(fstream, "UTF-8", 0, 0);
+
+        let (str = {}) {
+            let read = 0;
+            do {
+                read = cstream.readString(0xffffffff, str);
+                data += str.value;
+            } while (read != 0);
+        }
+        cstream.close();
+        return data;
     },
 };
 

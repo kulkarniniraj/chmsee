@@ -2,7 +2,7 @@
 <!ENTITY  bookshelf.title                         "Bookshelf">
 <!ENTITY  bookshelf.label                         "Directory">
 <!ENTITY  startup.title                           "Startup">
-<!ENTITY  startup.label                           "Load last opened files">
+<!ENTITY  lasturls.label                          "Load last opened tabs">
 
 <!ENTITY  window.width                            "39em">
 <!ENTITY  window.macWidth                         "43em">
