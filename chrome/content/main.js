@@ -37,6 +37,37 @@ var onWindowLoad = function () {
     initTabbox();
 };
 
+var onBookmarks = function (e) {
+    var label = e.target.getAttribute("label");
+    var value = e.target.getAttribute("value");
+    d("onBookmarks", "label = " + label + ", value = " + value);
+
+    var book = Book.getBookFromUrl(value);
+    if (book.type === "book") {
+        var newTab = createBookTab(book);
+        replaceTab(newTab, getCurrentTab());
+        refreshBookTab(newTab);
+    } else if (book.type === "page") {
+        replaceTab(createPageTab(book), getCurrentTab());
+    }
+};
+
+var buildBookmarks = function () {
+    var items = Bookmarks.getItems();
+    var menu = document.getElementById("bookmarks-menu");
+
+    for (var i = 0; i < items.length; i += 1) {
+        menu.appendItem(items[i].title, items[i].uri);
+    }
+};
+
+var clearBookmarks = function () {
+    var menu = document.getElementById("bookmarks-menu");
+    for (var i = menu.itemCount - 1; i > 1; i -= 1) {
+        menu.removeItemAt(i);
+    }
+};
+
 var onQuit = function (aForceQuit)  {
     var appStartup = Cc['@mozilla.org/toolkit/app-startup;1'].getService(Ci.nsIAppStartup);
 
@@ -134,6 +165,46 @@ var closeTab = function () {
         return;
 
     removeTab(getCurrentTab());
+};
+
+var addBookmark = function() {
+    var browser = contentTabbox.selectedPanel.browser;
+    var title = browser.contentDocument.title || contentTabbox.selectedPanel.book.title;
+    if (title.length > 50)
+        title = title.substring(0, 45) + "...";
+    var uri = browser.currentURI.spec;
+    d("addBookmark", "title = " + title + ", uri = " + uri);
+
+    Bookmarks.insertItem(uri, title);
+};
+
+var adjustBookmarksContext = function(node) {
+    if (node.id === "addBookmark")
+        return false;
+    else
+        return true;
+};
+
+var onOpenBookmarkTab = function(node) {
+    var uri = node.value;
+    d("onOpenBookmarkTab", "node = " + uri);
+
+    var book = Book.getBookFromUrl(uri);
+
+    if (book.type === "book") {
+        var newTab = createBookTab(book);
+        appendTab(newTab);
+        refreshBookTab(newTab);
+    } else if (book.type === "page") {
+        appendTab(createPageTab(book));
+    }
+    contentTabbox.selectedIndex = contentTabbox.tabs.itemCount - 1;
+};
+
+var onRemoveBookmark = function(node) {
+    var uri = node.value;
+    d("onRemoveBookmark", "node = " + uri);
+    Bookmarks.removeItem(uri);
 };
 
 var goHome = function () {
@@ -370,7 +441,7 @@ var createBookTab = function (book) {
     browser.setAttribute("type", "content");
     browser.setAttribute("src", CsScheme + book.homepage);
     browser.setAttribute("flex", "1");
-    browser.contextMenu = "context-popup";
+    browser.contextMenu = "browser-context";
     bookContentBox.appendChild(browser);
 
     bookPanel.book = book;

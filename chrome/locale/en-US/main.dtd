@@ -41,6 +41,10 @@
 <!ENTITY zoomout.accesskey "o">
 <!ENTITY zoomreset.label "Zoom reset">
 <!ENTITY zoomreset.accesskey "r">
+<!ENTITY bookmarksMenu.label "Bookmarks">
+<!ENTITY bookmarksMenu.accesskey "b">
+<!ENTITY addBookmark.label "Bookmark this page">
+<!ENTITY addBookmark.accesskey "m">
 <!ENTITY helpMenu.label "Help">
 <!ENTITY helpMenu.accesskey "h">
 <!ENTITY about.label "About">
@@ -66,3 +70,11 @@
 <!ENTITY zoomresetCmd.tooltip "Zoom Reset">
 <!ENTITY preferences.label "Preferences">
 <!ENTITY preferences.tooltip "Open preferences dialog">
+<!ENTITY copy.label "Copy">
+<!ENTITY copy.accesskey "a">
+<!ENTITY selectAll.label "Select All">
+<!ENTITY selectAll.accesskey "a">
+<!ENTITY openBookmarkTab.label "Open in new tab">
+<!ENTITY openBookmarkTab.accesskey "t">
+<!ENTITY delete.label "Delete">
+<!ENTITY delete.accesskey "d">

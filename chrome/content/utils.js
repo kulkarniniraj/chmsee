@@ -17,14 +17,14 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-var EXPORTED_SYMBOLS = ["Prefs", "LastUrls", "d", "CsScheme"];
+var EXPORTED_SYMBOLS = ["Prefs", "LastUrls", "Bookmarks", "d", "CsScheme"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 
-var CsScheme = "file://";
+const CsScheme = "file://";
 
 /*** Read/Save preference ***/
 
@@ -125,6 +125,73 @@ var LastUrls = {
         cstream.close();
         return data;
     },
+};
+
+var Bookmarks = {
+    insertItem: function (address, title) {
+        d("Bookmarks::insertItem", "address = " + address);
+        try {
+            var bmsvc = Cc["@mozilla.org/browser/nav-bookmarks-service;1"].getService(Ci.nsINavBookmarksService);
+            var menuFolder = bmsvc.bookmarksMenuFolder;
+            var newUrl = url(address);
+            d("Bookmarks::insertItem", "newUrl.spec = " + newUrl.spec);
+
+            if (!bmsvc.isBookmarked(newUrl)) {
+                bmsvc.insertBookmark(menuFolder, newUrl, bmsvc.DEFAULT_INDEX, title);
+            }
+
+        } catch(e) {
+            d("Bookmarks::insertItem", "error e.name = " + e.name + ", message = " + e.message);
+        }
+    },
+
+    removeItem: function (spec) {
+        var uri = url(spec);
+        var bmsvc = Cc["@mozilla.org/browser/nav-bookmarks-service;1"].getService(Ci.nsINavBookmarksService);
+        try {
+            var id = bmsvc.getBookmarkIdsForURI(uri);
+            d("Bookmarks::removeItem", "id = " + id);
+            bmsvc.removeItem(id);
+        } catch (e) {
+            d("Bookmarks::removeItem", "e name = " + e.name + ", message = " + e.message);
+        }
+    },
+
+    getItems: function () {
+        d("Bookmarks::getItems", "");
+        var items = [];
+        try {
+            var historyService = Cc["@mozilla.org/browser/nav-history-service;1"].getService(Ci.nsINavHistoryService);
+            var options = historyService.getNewQueryOptions();
+            var query = historyService.getNewQuery();
+
+            var bookmarksService = Cc["@mozilla.org/browser/nav-bookmarks-service;1"].getService(Ci.nsINavBookmarksService);
+            var menuFolder = bookmarksService.bookmarksMenuFolder;
+
+            query.setFolders([menuFolder], 1);
+
+            var result = historyService.executeQuery(query, options);
+            var rootNode = result.root;
+            rootNode.containerOpen = true;
+
+            for (var i = 0; i < rootNode.childCount; i ++) {
+                var node = rootNode.getChild(i);
+                d("Bookmarks::getItems", "item title = " + node.title + ", url = " + node.uri);
+                items.push({title: node.title, uri: node.uri});
+            }
+
+            rootNode.containerOpen = false;
+        }catch(e) {
+            d("Bookmarks::getItems", "error e.name = " + e.name + ", message = " + e.message);
+        }
+
+        return items;
+    },
+};
+
+var url = function (spec) {
+    var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+    return ios.newURI(spec, null, null);
 };
 
 /*** Debug ***/

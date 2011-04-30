@@ -38,6 +38,8 @@
     <command id="cmd_selectAll" oncommand="goDoCommand('cmd_selectAll');"/>
 
     <command id="cmd_preferences" oncommand="openPreferences();"/>
+    <command id="cmd_addbookmark" oncommand="addBookmark();"/>
+    <command id="cmd_removebookmark" oncommand="removeBookmark();"/>
   </commandset>
 
   <commandset id="updateCopyCmd"
@@ -60,12 +62,18 @@
     <key id="goprevious-key" modifiers="alt" keycode="VK_LEFT" command="cmd_goprevious"/>
     <key id="gonext-key" modifiers="accel" keycode="VK_DOWN" command="cmd_gonext"/>
     <key id="showfindbar-key" modifiers="accel" key="F" command="cmd_showfindbar"/>
+    <key id="addbookmark-key" modifiers="accel" key="D" command="cmd_addbookmark"/>
   </keyset>
 
   <popupset>
-    <menupopup id="context-popup">
-      <menuitem label="Copy" accesskey="c" command="cmd_copy"/>
-      <menuitem label="Select All" accesskey="a" command="cmd_selectAll"/>
+    <menupopup id="browser-context">
+      <menuitem label="&copy.label;" accesskey="&copy.accesskey;" command="cmd_copy"/>
+      <menuitem label="&selectAll.label;" accesskey="&selectAll.accesskey;" command="cmd_selectAll"/>
+    </menupopup>
+    <menupopup id="bookmarks-context" onpopupshowing="return adjustBookmarksContext(this.triggerNode);">
+      <menuitem label="&openBookmarkTab.label;" accesskey="&openBookmarkTab.accesskey;" oncommand="onOpenBookmarkTab(this.parentNode.triggerNode);"/>
+      <menuseparator />
+      <menuitem label="&delete.label;" accesskey="&delete.accesskey;" oncommand="onRemoveBookmark(this.parentNode.triggerNode);"/>
     </menupopup>
   </popupset>
 
@@ -104,6 +112,12 @@
             <menuitem label="&zoomin.label;" accesskey="&zoomin.accesskey;" key="zoomin-key" command="cmd_zoomin" />
             <menuitem label="&zoomreset.label;" accesskey="&zoomreset.accesskey;" key="zoomreset-key" command="cmd_zoomreset" />
             <menuitem label="&zoomout.label;" accesskey="&zoomout.accesskey;" key="zoomout-key" command="cmd_zoomout" />
+          </menupopup>
+        </menu>
+        <menu id="bookmarks-menu" label="&bookmarksMenu.label;" accesskey="&bookmarksMenu.accesskey;" context="bookmarks-context" oncommand="onBookmarks(event);">
+          <menupopup onpopupshowing="buildBookmarks();" onpopuphidden="clearBookmarks();">
+            <menuitem id="addBookmark" label="&addBookmark.label;" accesskey="&addBookmark.accesskey;" key="addbookmark-key" command="cmd_addbookmark" />
+            <menuseparator />
           </menupopup>
         </menu>
         <menu id="help-menu" label="&helpMenu.label;" accesskey="&helpMenu.accesskey;">
