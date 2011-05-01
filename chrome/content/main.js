@@ -111,6 +111,16 @@ var onInputFilter = function (event) {
 
 /*** Commands ***/
 
+var onPrint = function () {
+    try {
+        var browser = contentTabbox.selectedPanel.browser;
+        var win = browser.contentWindow;
+        PrintUtils.print(win);
+    } catch (e) {
+        d("onPrint", "error = " + e);
+    }
+};
+
 var openFile = function () {
     var fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
 

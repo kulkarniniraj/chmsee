@@ -7,6 +7,8 @@
 <!ENTITY newTab.accesskey "t">
 <!ENTITY closeTab.label "Close Tab">
 <!ENTITY closeTab.accesskey "c">
+<!ENTITY printCmd.label "Print">
+<!ENTITY printCmd.accesskey "p">
 <!ENTITY quitCmd.label "Quit">
 <!ENTITY quitCmd.accesskey "q">
 <!ENTITY editMenu.label "Edit">

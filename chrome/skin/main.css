@@ -94,3 +94,7 @@ tabpanel {
 #preferences-btn {
     list-style-image: url("moz-icon://stock/gtk-preferences?size=toolbar");
 }
+
+toolbar[printpreview="true"] {
+  -moz-binding: url("chrome://global/content/printPreviewBindings.xml#printpreviewtoolbar");
+}

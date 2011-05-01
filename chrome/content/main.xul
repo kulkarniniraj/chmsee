@@ -10,6 +10,7 @@
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="application/javascript" src="chrome://global/content/globalOverlay.js"/>
+  <script type="application/javascript" src="chrome://global/content/printUtils.js"/>
   <script type="application/javascript" src="chrome://chmsee/content/main.js"/>
 
   <stringbundleset id="stringbundleset">
@@ -40,6 +41,8 @@
     <command id="cmd_preferences" oncommand="openPreferences();"/>
     <command id="cmd_addbookmark" oncommand="addBookmark();"/>
     <command id="cmd_removebookmark" oncommand="removeBookmark();"/>
+
+    <command id="cmd_print" oncommand="onPrint();"/>
   </commandset>
 
   <commandset id="updateCopyCmd"
@@ -63,6 +66,7 @@
     <key id="gonext-key" modifiers="accel" keycode="VK_DOWN" command="cmd_gonext"/>
     <key id="showfindbar-key" modifiers="accel" key="F" command="cmd_showfindbar"/>
     <key id="addbookmark-key" modifiers="accel" key="D" command="cmd_addbookmark"/>
+    <key id="print-key" modifiers="accel" key="P" command="cmd_print"/>
   </keyset>
 
   <popupset>
@@ -78,13 +82,15 @@
   </popupset>
 
   <vbox flex="1">
-    <toolbox>
+    <toolbox id="navToolbox">
       <menubar id="main-menubar">
         <menu id="file-menu" label="&fileMenu.label;" accesskey="&fileMenu.accesskey;">
           <menupopup id="file-popup">
             <menuitem label="&openCmd.label;" accesskey="&openCmd.accesskey;" key="open-key" command="cmd_openfile"/>
             <menuitem label="&newTab.label;" accesskey="&newTab.accesskey;" key="open-tab-key" command="cmd_newtab"/>
             <menuitem label="&closeTab.label;" accesskey="&closeTab.accesskey;" key="close-tab-key" command="cmd_closetab"/>
+            <menuseparator />
+            <menuitem label="&printCmd.label;" accesskey="&printCmd.accesskey;" key="print-key" command="cmd_print"/>
             <menuseparator />
             <menuitem label="&quitCmd.label;" accesskey="&quitCmd.accesskey;" key="close-key" command="cmd_quit" />
           </menupopup>
