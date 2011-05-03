@@ -45,13 +45,6 @@ There is another way: copy xulrunner-stub from xulrunner-sdk to chmsee
 directory and rename it to chmsee, after that, you can run this chmsee
 file to launch the program.
 
-Source code repository
-======================
-
-You can use git command below to retrieve developing ChmSee code:
-
-$ git clone git://github.com/jungleji/chmsee.git
-
 Report bug
 ==========
 

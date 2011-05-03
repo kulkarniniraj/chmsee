@@ -1,0 +1,72 @@
+Source code repository
+======================
+
+ChmSee project hosts at Google Code:
+http://code.google.com/p/chmsee
+
+But the codes released on there are only the tagged source on main
+branch. If you want to track the developing code, you can use
+following git command fetching them to your local directory
+
+$ git clone git://github.com/jungleji/chmsee.git
+
+or browse them from
+
+https://github.com/jungleji/chmsee/tree/cmake
+
+
+Branches
+=======
+
+master:  xulrunner application, will release on version 2.*
+gtk:     gtk based, version 1.* code
+webkit:  patch on 1.3.0, replace gtk with webkit
+cmake:   old and deprecated
+
+
+Files and directories
+=====================
+
+There is an introduction article described some base concepts about
+the xulrunner application and it's structure. 
+
+Getting started with XULRunner
+https://developer.mozilla.org/en/Getting_started_with_XULRunner
+
+ChmSee is an event-driven program, it composed with UI part and script
+part. The UI part is written with XUL, an HTML like markup
+language. For now, there are only two xul files in ChmSee: main.xul
+and preferences.xul. One is used to display ChmSee main window,
+another popups the preferences dialog.
+
+When you click a button on main window, an EventListener function is called.
+The EventListener functions written in JavaScript store in js files,
+the main.xul couples with main.js, preferences.xul with
+preferences.js. After finish processing in EventListener function, it
+will modify the UI and wait another event.
+
+Other js files in chrome/content directory are helper modules for
+main.js and preferences.js For instance, book.js create Book object
+that extracted chm file to bookshelf directory.
+
+
+Multilanguages
+==============
+
+The strings which displayed on xul are entities stored in DTD files in
+the chrome/locale directory. Strings in JavaScript use properties
+files to store also locate in the same directory.
+
+All these DTD and properties files are plain text, so it's easy to
+make a new translation, just copy the en-US folder to a new locale,
+and open the file you want to translate with your favorite editor.
+
+
+Xulrunner application documents
+===============================
+
+During the ChmSee developing, the most frequently visited site by me is:
+
+https://developer.mozilla.org/en-US/mozilla
+
+Another important resource is the xulrunner source code.
