@@ -53,6 +53,10 @@ var Book = {
                     d("Book::getBookFromUrl", "load book info failed, url = " + url);
                     return null;
                 }
+
+                if (book.hhkDS !== null) {
+                    book.hhkData = RDF.convertDSToArray(book.hhkDS);
+                }
             } else { // normal page
             }
         } else { // XXX HTTP?

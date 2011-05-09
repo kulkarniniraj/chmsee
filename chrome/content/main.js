@@ -326,7 +326,6 @@ var loadSavedTabs = function () {
     var newTab = null;
 
     for (var i = 0; i < urls.length; i += 1) {
-        d("loadCurrentTabs", "url = " + urls[i]);
         book = Book.getBookFromUrl(urls[i]);
         if (book.type === "book") {
             newTab = createBookTab(book);
