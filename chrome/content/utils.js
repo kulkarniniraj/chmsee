@@ -157,6 +157,18 @@ var Bookmarks = {
         }
     },
 
+    editItem: function (spec, title) {
+        var uri = url(spec);
+        var bmsvc = Cc["@mozilla.org/browser/nav-bookmarks-service;1"].getService(Ci.nsINavBookmarksService);
+        try {
+            var id = bmsvc.getBookmarkIdsForURI(uri);
+            d("Bookmarks::editItem", "id = " + id);
+            bmsvc.setItemTitle(id, title);
+        } catch (e) {
+            d("Bookmarks::editItem", "error = " + e);
+        }
+    },
+
     getItems: function () {
         d("Bookmarks::getItems", "");
         var items = [];

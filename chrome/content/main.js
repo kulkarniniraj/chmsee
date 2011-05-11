@@ -180,12 +180,15 @@ var closeTab = function () {
 var addBookmark = function() {
     var browser = contentTabbox.selectedPanel.browser;
     var title = browser.contentDocument.title || contentTabbox.selectedPanel.book.title;
-    if (title.length > 50)
-        title = title.substring(0, 45) + "...";
     var uri = browser.currentURI.spec;
     d("addBookmark", "title = " + title + ", uri = " + uri);
+    var bookmark = {title: title, uri: uri};
+    window.openDialog("chrome://chmsee/content/bookmarkDialog.xul","Add Bookmark","modal", bookmark);
 
-    Bookmarks.insertItem(uri, title);
+    if (bookmark.title.length > 50)
+        bookmark.title = bookmark.title.substring(0, 45) + "...";
+
+    Bookmarks.insertItem(bookmark.uri, bookmark.title);
 };
 
 var adjustBookmarksContext = function(node) {
@@ -209,6 +212,12 @@ var onOpenBookmarkTab = function(node) {
         appendTab(createPageTab(book));
     }
     contentTabbox.selectedIndex = contentTabbox.tabs.itemCount - 1;
+};
+
+var onEditBookmark = function(node) {
+    var bookmark = {title: node.label, uri: node.value};
+    window.openDialog("chrome://chmsee/content/bookmarkDialog.xul","Edit Bookmark","modal", bookmark);
+    Bookmarks.editItem(bookmark.uri, bookmark.title);
 };
 
 var onRemoveBookmark = function(node) {

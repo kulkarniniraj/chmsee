@@ -80,3 +80,5 @@
 <!ENTITY openBookmarkTab.accesskey "t">
 <!ENTITY delete.label "Delete">
 <!ENTITY delete.accesskey "d">
+<!ENTITY edit.label "Edit">
+<!ENTITY edit.accesskey "e">

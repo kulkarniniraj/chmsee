@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+
+<dialog id="bookmarkDialog" title="Bookmark"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onload="onOpen();"
+        buttons="accept,cancel"
+        ondialogaccept="return doSave();"
+        buttonlabelcancel="Cancel"
+        ondialogcancel="return doCancel();">
+
+  <script>
+    function onOpen(){
+        var bookmark = window.arguments[0];
+        var title = document.getElementById("title");
+        title.value = bookmark.title;
+        window.sizeToContent();
+    }
+
+    function doSave(){
+        var bookmark = window.arguments[0];
+        var title = document.getElementById("title");
+        bookmark.title = title.value;
+        return true;
+    }
+
+    function doCancel(){
+        return true;
+    }
+  </script>
+
+  <groupbox flex="1">
+    <caption label="Bookmark Title"/>
+    <textbox id="title"/>
+  </groupbox>
+
+</dialog>

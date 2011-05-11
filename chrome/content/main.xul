@@ -60,9 +60,9 @@
     <key id="zoomout-key" modifiers="accel" key="=" command="cmd_zoomout"/>
     <key id="zoomreset-key" modifiers="accel" key="0" command="cmd_zoomreset"/>
     <key id="gohome-key" modifiers="accel" keycode="VK_HOME" command="cmd_gohome"/>
-    <key id="goback-key" modifiers="accel" keycode="VK_UP" command="cmd_goback"/>
+    <key id="goback-key" modifiers="alt" keycode="VK_LEFT" command="cmd_goback"/>
     <key id="goforward-key" modifiers="alt" keycode="VK_RIGHT" command="cmd_goforward"/>
-    <key id="goprevious-key" modifiers="alt" keycode="VK_LEFT" command="cmd_goprevious"/>
+    <key id="goprevious-key" modifiers="accel" keycode="VK_UP" command="cmd_goprevious"/>
     <key id="gonext-key" modifiers="accel" keycode="VK_DOWN" command="cmd_gonext"/>
     <key id="showfindbar-key" modifiers="accel" key="F" command="cmd_showfindbar"/>
     <key id="addbookmark-key" modifiers="accel" key="D" command="cmd_addbookmark"/>
@@ -77,6 +77,7 @@
     <menupopup id="bookmarks-context" onpopupshowing="return adjustBookmarksContext(this.triggerNode);">
       <menuitem label="&openBookmarkTab.label;" accesskey="&openBookmarkTab.accesskey;" oncommand="onOpenBookmarkTab(this.parentNode.triggerNode);"/>
       <menuseparator />
+      <menuitem label="&edit.label;" accesskey="&edit.accesskey;" oncommand="onEditBookmark(this.parentNode.triggerNode);"/>
       <menuitem label="&delete.label;" accesskey="&delete.accesskey;" oncommand="onRemoveBookmark(this.parentNode.triggerNode);"/>
     </menupopup>
   </popupset>
