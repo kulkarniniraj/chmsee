@@ -181,14 +181,20 @@ var addBookmark = function() {
     var browser = contentTabbox.selectedPanel.browser;
     var title = browser.contentDocument.title || contentTabbox.selectedPanel.book.title;
     var uri = browser.currentURI.spec;
+
+    if (Bookmarks.isBookmarked(uri))
+        return;
+
     d("addBookmark", "title = " + title + ", uri = " + uri);
-    var bookmark = {title: title, uri: uri};
+    var bookmark = {title: title, uri: uri, insert: true};
     window.openDialog("chrome://chmsee/content/bookmarkDialog.xul","Add Bookmark","modal", bookmark);
 
-    if (bookmark.title.length > 50)
-        bookmark.title = bookmark.title.substring(0, 45) + "...";
+    if (bookmark.insert) {
+        if (bookmark.title.length > 50)
+            bookmark.title = bookmark.title.substring(0, 45) + "...";
 
-    Bookmarks.insertItem(bookmark.uri, bookmark.title);
+        Bookmarks.insertItem(bookmark.uri, bookmark.title);
+    }
 };
 
 var adjustBookmarksContext = function(node) {

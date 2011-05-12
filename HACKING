@@ -16,7 +16,7 @@ https://github.com/jungleji/chmsee/tree/cmake
 
 
 Branches
-=======
+========
 
 master:  xulrunner application, will release on version 2.*
 gtk:     gtk based, version 1.* code
@@ -68,7 +68,7 @@ Xulrunner application documents
 During the ChmSee developing, the most frequently visited site by me is:
 https://developer.mozilla.org/en-US/mozilla
 
-If you need to know the XUL language, this is a good start:
+If you need to know the XUL language, this tutorial is a good start:
 https://developer.mozilla.org/en/XUL_Tutorial
 
 If you want to learn how to create XPCOM components, reference:
@@ -83,5 +83,5 @@ Provide patch
 
 If you found bugs or have some new features for chmsee, we can use
 GitHub's "Fork + Pull Model" to collaborate, the following page
-descripted this method:
+descripted how to use this method:
 http://help.github.com/pull-requests/

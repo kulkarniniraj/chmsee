@@ -25,6 +25,8 @@
     }
 
     function doCancel(){
+        var bookmark = window.arguments[0];
+        bookmark.insert = false;
         return true;
     }
   </script>

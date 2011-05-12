@@ -30,6 +30,7 @@ const CsScheme = "file://";
 
 const application = Cc["@mozilla.org/fuel/application;1"].getService(Ci.extIApplication);
 const dirService = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties);
+const bmsvc = Cc["@mozilla.org/browser/nav-bookmarks-service;1"].getService(Ci.nsINavBookmarksService);
 const homeDir = dirService.get("Home", Ci.nsIFile);
 
 var Prefs = {
@@ -128,17 +129,19 @@ var LastUrls = {
 };
 
 var Bookmarks = {
+    isBookmarked: function (address) {
+        var newUrl = url(address);
+        return bmsvc.isBookmarked(newUrl);
+    },
+
     insertItem: function (address, title) {
         d("Bookmarks::insertItem", "address = " + address);
         try {
-            var bmsvc = Cc["@mozilla.org/browser/nav-bookmarks-service;1"].getService(Ci.nsINavBookmarksService);
             var menuFolder = bmsvc.bookmarksMenuFolder;
             var newUrl = url(address);
             d("Bookmarks::insertItem", "newUrl.spec = " + newUrl.spec);
 
-            if (!bmsvc.isBookmarked(newUrl)) {
-                bmsvc.insertBookmark(menuFolder, newUrl, bmsvc.DEFAULT_INDEX, title);
-            }
+            bmsvc.insertBookmark(menuFolder, newUrl, bmsvc.DEFAULT_INDEX, title);
 
         } catch(e) {
             d("Bookmarks::insertItem", "error e.name = " + e.name + ", message = " + e.message);
@@ -147,7 +150,6 @@ var Bookmarks = {
 
     removeItem: function (spec) {
         var uri = url(spec);
-        var bmsvc = Cc["@mozilla.org/browser/nav-bookmarks-service;1"].getService(Ci.nsINavBookmarksService);
         try {
             var id = bmsvc.getBookmarkIdsForURI(uri);
             d("Bookmarks::removeItem", "id = " + id);
@@ -159,7 +161,6 @@ var Bookmarks = {
 
     editItem: function (spec, title) {
         var uri = url(spec);
-        var bmsvc = Cc["@mozilla.org/browser/nav-bookmarks-service;1"].getService(Ci.nsINavBookmarksService);
         try {
             var id = bmsvc.getBookmarkIdsForURI(uri);
             d("Bookmarks::editItem", "id = " + id);
@@ -177,8 +178,7 @@ var Bookmarks = {
             var options = historyService.getNewQueryOptions();
             var query = historyService.getNewQuery();
 
-            var bookmarksService = Cc["@mozilla.org/browser/nav-bookmarks-service;1"].getService(Ci.nsINavBookmarksService);
-            var menuFolder = bookmarksService.bookmarksMenuFolder;
+            var menuFolder = bmsvc.bookmarksMenuFolder;
 
             query.setFolders([menuFolder], 1);
 
