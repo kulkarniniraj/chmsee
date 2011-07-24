@@ -31,7 +31,6 @@ var contentTabbox = null;
 
 var onWindowLoad = function () {
     d("onWindowLoad", "init");
-
     window.addEventListener("resize", onResize, true);
 
     initTabbox();
@@ -125,8 +124,8 @@ var openFile = function () {
     var fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
 
     var strbundle = document.getElementById("bundle-main");
-    var strSelectFile=strbundle.getString("selectChmFile");
-    var strChmFile=strbundle.getString("chmFile");
+    var strSelectFile = strbundle.getString("selectChmFile");
+    var strChmFile = strbundle.getString("chmFile");
 
     fp.init(window, strSelectFile, Ci.nsIFilePicker.modeOpen);
     fp.displayDirectory = Prefs.lastDir;
@@ -334,6 +333,32 @@ var openPreferences = function () {
 
 /*** Other functions ***/
 
+var openCmdLineFiles = function(cmdLine) {
+    var count = 0;
+
+    for (var i = 0; i < cmdLine.length; i += 1) {
+        var argu = cmdLine.getArgument(i);
+        d("openCmdLineFiles", "i = " + i + ", argu =  " + argu);
+        try {
+            var file = cmdLine.resolveFile(argu);
+            d("openCmdLineFiles", "resolved file = " + file.path);
+            var book = Book.getBookFromFile(file);
+
+            if (book) {
+                newTab = createBookTab(book);
+                appendTab(newTab);
+                refreshBookTab(newTab);
+                count++;
+            }
+        } catch (e) {
+            d("openCmdLineFiles", "Cannot open specified file " + argu + ", " + e.message);
+        }
+    }
+
+    if (count == 0)
+        appendTab(createPageTab(Book.getBookFromUrl("about:mozilla")));
+};
+
 var loadSavedTabs = function () {
     var data = LastUrls.read();
     var urls = JSON.parse(data);
@@ -370,7 +395,13 @@ var initTabbox = function () {
     contentTabbox = document.getElementById("content-tabbox");
     contentTabbox.tabs.addEventListener("select", onTabSelect, true);
 
-    if (LastUrls.reopen) {
+    var cmdLine =  window.arguments[0];
+    cmdLine = cmdLine.QueryInterface(Components.interfaces.nsICommandLine);
+    d("initTabbox", "cmdLine arguments length = " + cmdLine.length);
+
+    if (cmdLine.length > 0) {
+        openCmdLineFiles(cmdLine);
+    } else if (LastUrls.reopen) {
         loadSavedTabs();
     } else {
         appendTab(createPageTab(Book.getBookFromUrl("about:mozilla")));

@@ -45,6 +45,10 @@ There is another way: copy xulrunner-stub from xulrunner-sdk to chmsee
 directory and rename it to chmsee, after that, you can run this chmsee
 file to launch the program.
 
+TIP: Omit debug info
+
+$ xulrunner application.ini > /dev/null 2>&1
+
 Report bug
 ==========
 
