@@ -20,8 +20,6 @@
 #ifndef __CS_CHMFILE_H__
 #define __CS_CHMFILE_H__
 
-#define CS_DEBUG
-
 #ifdef CS_DEBUG
 #define d(x) x
 #else

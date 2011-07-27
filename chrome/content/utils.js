@@ -208,7 +208,7 @@ var url = function (spec) {
 
 /*** Debug ***/
 
-const CsDebug = true;
+const CsDebug = false;
 
 var d = function (f, s) {
     if (CsDebug)
