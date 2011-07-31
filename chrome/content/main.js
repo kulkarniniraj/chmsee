@@ -675,3 +675,16 @@ var startDOMi = function () {
     sl.loadSubScript("chrome://inspector/content/hooks.js", tmpNameSpace);
     tmpNameSpace.inspectDOMDocument(document);
 };
+
+function scroll(event){
+	if(event.ctrlKey==false)
+		return;
+	if(event.detail<0)
+		zoomIn();
+	else
+		zoomOut();
+
+}
+
+var button = document.getElementById("main");
+button.addEventListener('DOMMouseScroll', scroll, true);
